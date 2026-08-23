@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-luxury-sapphire: #1A56DB;
+  --color-luxury-darkSapphire: #0F3EAB;
+  --color-luxury-deepSapphire: #0A266E;
+  --color-luxury-gold: #D4AF37;
+  --color-luxury-champagne: #C5A059;
+  --color-luxury-obsidian: #0A0E17;
+  
+  --color-toyota-blue: #1A56DB;
+  --color-toyota-darkBlue: #0F3EAB;
+  --color-toyota-deepBlue: #0A266E;
+  --color-toyota-black: #0A0E17;
+  
+  --font-arabic: "Tajawal", "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
+  --font-display: "Tajawal", "Outfit", "Inter", sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", "Inter", system-ui, -apple-system, sans-serif;
+  --shadow-toyota: 0 4px 20px -2px rgba(26, 86, 219, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-toyota-hover: 0 12px 30px -4px rgba(26, 86, 219, 0.2), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Tajawal', 'IBM Plex Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  body {
+    background-color: #F8FAFC;
+    color: #0F172A;
+    overflow-x: hidden;
+  }
+
+  [dir="ltr"] {
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94A3B8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1A56DB;
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel-dark {
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hide scrollbar for horizontal tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Printable Official Quotation Media Query */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+  .fixed.inset-0.z-50 {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .fixed.inset-0.z-50 > div {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .fixed.inset-0.z-50 > div * {
+    visibility: visible;
+  }
+}

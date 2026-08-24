@@ -64,7 +64,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
 
   if (!isOpen) return null;
 
-  const quoteNumber = `ALJ-SA-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+  const quoteNumber = `ALJABRANI-2026-${Math.floor(100000 + Math.random() * 900000)}`;
   const issueDate = new Date().toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', {
     year: 'numeric',
     month: 'long',
@@ -86,7 +86,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
         <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6 print:hidden">
           <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
             <FileText className="w-5 h-5 text-blue-600" />
-            <span>{language === 'ar' ? 'عرض سعر رسمي معتمد - جبراني للسيارات' : 'Official Authorized Quotation - Gibrani Motors'}</span>
+            <span>{language === 'ar' ? 'عرض سعر رسمي معتمد — الجبراني للسيارات' : 'Official Authorized Quotation — Al Jabrani Motors'}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -123,13 +123,13 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
               </div>
               <div>
                 <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight font-display">
-                  {language === 'ar' ? 'شركة جبراني للسيارات' : 'Gibrani Motors'}
+                  {language === 'ar' ? 'شركة الجبراني للسيارات' : 'Al Jabrani Motors'}
                 </h1>
                 <p className="text-[11px] text-gray-500 font-medium">
-                  {language === 'ar' ? 'الموزع المعتمد لسيارات تويوتا ولكزس في المملكة العربية السعودية' : 'Authorized Distributor for Toyota & Lexus Vehicles in Saudi Arabia'}
+                  {language === 'ar' ? 'الموزع والوكيل المعتمد للسيارات في المملكة العربية السعودية' : 'Authorized Automotive Distributor in Saudi Arabia'}
                 </p>
                 <p className="text-[10px] text-gray-400 font-mono">
-                  {language === 'ar' ? 'الرقم الضريبي (VAT ID): 300000000000003' : 'VAT Registration: 300000000000003'}
+                  {language === 'ar' ? 'الرقم الضريبي (VAT ID): 300159478400003' : 'VAT Registration: 300159478400003'}
                 </p>
               </div>
             </div>
@@ -159,29 +159,31 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
               <h2 className="text-xl font-black text-gray-900 font-display">
                 {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
               </h2>
-              <p className="text-xs font-bold text-gray-700">
+              <p className="text-xs font-bold text-blue-600">
                 {language === 'ar' ? `الفئة المختارة: ${activeGrade.name}` : `Selected Trim: ${activeGrade.nameEn}`}
               </p>
-              <div className="flex flex-wrap gap-3 text-[11px] text-gray-600 pt-1">
-                <span>• {language === 'ar' ? `المحرك: ${activeGrade.engine}` : `Engine: ${activeGrade.engineEn}`}</span>
-                <span>• {language === 'ar' ? `القير: ${activeGrade.transmission}` : `Trans: ${activeGrade.transmissionEn}`}</span>
-                <span>• {language === 'ar' ? `الاستهلاك: ${vehicle.fuelEconomy}` : `Economy: ${vehicle.fuelEconomyEn}`}</span>
+              <div className="text-[11px] text-gray-500 flex flex-wrap gap-4 pt-1">
+                <span>• المحرك: {activeGrade.engine}</span>
+                <span>• القير: {activeGrade.transmission}</span>
+                <span>• الاستهلاك: {vehicle.fuelEconomy}</span>
               </div>
             </div>
 
-            <div className="w-44 h-24 flex items-center justify-center bg-white p-2 rounded-xl border border-gray-200">
-              <img src={vehicle.cardImage} alt={vehicle.nameAr} className="max-h-full max-w-full object-contain" />
+            <div className="w-44 h-24 flex items-center justify-center bg-white rounded-xl border border-gray-200 p-2">
+              <img
+                src={activeGrade.image || vehicle.cardImage}
+                alt={vehicle.nameAr}
+                className="max-h-full max-w-full object-contain filter drop-shadow-md"
+              />
             </div>
           </div>
 
-          {/* Standard Features Included in Trim */}
-          <div>
-            <h3 className="font-bold text-gray-900 text-xs mb-2">
-              {language === 'ar' ? 'المواصفات والتجهيزات القياسية للفئة:' : 'Key Included Specifications:'}
-            </h3>
-            <div className="grid grid-cols-2 gap-2 bg-gray-50/70 p-3.5 rounded-xl border border-gray-200/80">
-              {(language === 'ar' ? activeGrade.features : activeGrade.featuresEn).map((feat, idx) => (
-                <div key={idx} className="flex items-center gap-1.5 text-gray-700">
+          {/* Features Highlights */}
+          <div className="space-y-2">
+            <span className="text-xs font-bold text-gray-700 block">{language === 'ar' ? 'المواصفات والتجهيزات القياسية للفئة:' : 'Standard Equipment for Trim:'}</span>
+            <div className="grid grid-cols-2 gap-2 text-[11px] bg-white p-3 rounded-xl border border-gray-200">
+              {activeGrade.features.map((feat, i) => (
+                <div key={i} className="flex items-center gap-1.5 text-gray-700">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                   <span>{feat}</span>
                 </div>
@@ -189,91 +191,73 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
             </div>
           </div>
 
-          {/* Detailed Financial Breakdown Table */}
-          <div>
-            <h3 className="font-bold text-gray-900 text-xs mb-2">
-              {language === 'ar' ? 'جدول تسعير المركبة والضرائب المعتمدة:' : 'Price Breakdown & Official Tax Schedule:'}
-            </h3>
-            <table className="w-full text-right border-collapse border border-gray-200 rounded-xl overflow-hidden">
-              <thead className="bg-gray-100 text-gray-700 font-bold text-[11px]">
-                <tr>
-                  <th className="p-2.5 border-b border-gray-200">{language === 'ar' ? 'البند والتفاصيل' : 'Item Description'}</th>
-                  <th className="p-2.5 border-b border-gray-200 text-center">{language === 'ar' ? 'النسبة' : 'Rate'}</th>
-                  <th className="p-2.5 border-b border-gray-200 text-left">{language === 'ar' ? 'المبلغ (ريال سعودي)' : 'Amount (SAR)'}</th>
+          {/* Pricing & VAT Breakdown Table */}
+          <div className="space-y-2">
+            <span className="text-xs font-bold text-gray-700 block">{language === 'ar' ? 'جدول تسعير المركبة والضرائب المعتمدة:' : 'Pricing & Tax Schedule:'}</span>
+            <table className="w-full text-[11px] border-collapse bg-white rounded-xl overflow-hidden border border-gray-200">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 border-b border-gray-200">
+                  <th className="p-2.5 text-start">{language === 'ar' ? 'البند والتفاصيل' : 'Item Description'}</th>
+                  <th className="p-2.5 text-center">{language === 'ar' ? 'النسبة' : 'Rate'}</th>
+                  <th className="p-2.5 text-end">{language === 'ar' ? 'المبلغ (ريال سعودي)' : 'Amount (SAR)'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 text-gray-800">
+              <tbody className="divide-y divide-gray-100">
                 <tr>
-                  <td className="p-2.5 font-medium">{language === 'ar' ? 'سعر السيارة الأساسي (قبل ضريبة القيمة المضافة)' : 'Vehicle Base Price (Excl. VAT)'}</td>
-                  <td className="p-2.5 text-center text-gray-500">-</td>
-                  <td className="p-2.5 text-left font-mono font-semibold">{formatPrice(priceExcludingVat)} ر.س</td>
+                  <td className="p-2.5 text-gray-700">{language === 'ar' ? 'سعر السيارة الأساسي (قبل ضريبة القيمة المضافة)' : 'Vehicle Base Price (Excl. VAT)'}</td>
+                  <td className="p-2.5 text-center font-mono">-</td>
+                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(priceExcludingVat)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-medium">{language === 'ar' ? 'ضريبة القيمة المضافة (VAT)' : 'Value Added Tax (VAT)'}</td>
-                  <td className="p-2.5 text-center text-blue-600 font-bold">15%</td>
-                  <td className="p-2.5 text-left font-mono font-semibold">{formatPrice(vatAmount)} ر.س</td>
+                  <td className="p-2.5 text-gray-700">{language === 'ar' ? 'ضريبة القيمة المضافة (VAT)' : 'Value Added Tax (VAT)'}</td>
+                  <td className="p-2.5 text-center font-mono text-blue-600 font-bold">15%</td>
+                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(vatAmount)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-medium">{language === 'ar' ? 'رسوم اللوحات والاستمارة وإصدار رخصة السير' : 'Registration, Plates & Admin Fees'}</td>
-                  <td className="p-2.5 text-center text-gray-500">-</td>
-                  <td className="p-2.5 text-left font-mono font-semibold">{formatPrice(registrationFees)} ر.س</td>
+                  <td className="p-2.5 text-gray-700">{language === 'ar' ? 'رسوم اللوحات والاستمارة وإصدار رخصة السير' : 'Registration & License Plate Fees'}</td>
+                  <td className="p-2.5 text-center font-mono">-</td>
+                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(registrationFees)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
                 </tr>
-                <tr className="bg-blue-50/50 font-bold text-gray-900 text-sm">
-                  <td className="p-3 text-blue-600">{language === 'ar' ? 'إجمالي السعر النقدي الشامل على الطريق:' : 'Total Cash Price (On-Road):'}</td>
-                  <td className="p-3 text-center">-</td>
-                  <td className="p-3 text-left font-mono text-blue-600 text-base">{formatPrice(totalPriceOnRoad)} ر.س</td>
+                <tr className="bg-blue-50/50 font-bold text-blue-900">
+                  <td className="p-3 text-xs">{language === 'ar' ? 'إجمالي السعر النقدي الشامل على الطريق:' : 'Total On-Road Cash Price:'}</td>
+                  <td className="p-3 text-center font-mono">-</td>
+                  <td className="p-3 text-end font-mono text-sm text-blue-600">{formatPrice(totalPriceOnRoad)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* Financing Plan Breakdown if available */}
+          {/* Financing Plan if available */}
           {financingDetails && (
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200">
-              <h3 className="font-bold text-gray-900 text-xs mb-2 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                <span>{language === 'ar' ? 'خطة التأجير التمويلي التقديرية (جبراني للتمويل):' : 'Estimated Lease Financing Plan (Gibrani Finance):'}</span>
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                <div className="bg-white p-2.5 rounded-xl border border-gray-200">
-                  <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'الدفعة الأولى' : 'Down Payment'}</span>
+            <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-2">
+              <span className="text-xs font-bold text-blue-900 block">{language === 'ar' ? 'خطة التمويل التأجيري التقديرية:' : 'Estimated Lease Financing Plan:'}</span>
+              <div className="grid grid-cols-3 gap-3 text-[11px]">
+                <div>
+                  <span className="text-gray-500 block">{language === 'ar' ? 'الدفعة الأولى:' : 'Down Payment:'}</span>
                   <span className="font-bold text-gray-900 font-mono">{formatPrice(financingDetails.downPaymentAmount)} ر.س ({financingDetails.downPaymentPercent}%)</span>
                 </div>
-                <div className="bg-white p-2.5 rounded-xl border border-gray-200">
-                  <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'مدة التمويل' : 'Tenure'}</span>
-                  <span className="font-bold text-gray-900">{financingDetails.termMonths} {language === 'ar' ? 'شهراً' : 'Months'}</span>
+                <div>
+                  <span className="text-gray-500 block">{language === 'ar' ? 'مدة التمويل:' : 'Tenure:'}</span>
+                  <span className="font-bold text-gray-900 font-mono">{financingDetails.termMonths} شهر</span>
                 </div>
-                <div className="bg-white p-2.5 rounded-xl border border-gray-200">
-                  <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'الدفعة الأخيرة' : 'Balloon Payment'}</span>
-                  <span className="font-bold text-gray-900 font-mono">{formatPrice(financingDetails.balloonPaymentAmount)} ر.س</span>
-                </div>
-                <div className="bg-blue-50 p-2.5 rounded-xl border border-blue-200">
-                  <span className="text-[10px] text-blue-700 font-bold block">{language === 'ar' ? 'القسط الشهري التقديري' : 'Monthly Payment'}</span>
-                  <span className="font-black text-blue-700 font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ر.س</span>
+                <div>
+                  <span className="text-gray-500 block">{language === 'ar' ? 'القسط الشهري التقديري:' : 'Est. Monthly Payment:'}</span>
+                  <span className="font-bold text-blue-600 font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ر.س/ش</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Warranty & Terms Barcode Footer */}
-          <div className="pt-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="space-y-1 text-[10px] text-gray-500">
-              <p className="flex items-center gap-1 font-semibold text-gray-800">
-                <Shield className="w-3.5 h-3.5 text-emerald-600" />
-                <span>{language === 'ar' ? 'يشمل ضمان المصنع 5 سنوات أو 150,000 كم + خدمة المساعدة على الطريق مجاناً' : 'Includes 5-Year / 150,000 KM Factory Warranty + 24/7 Roadside Assistance'}</span>
-              </p>
-              <p>• {language === 'ar' ? 'عرض السعر إلكتروني ومعتمد ويخضع لتوفر المخزون عند إتمام الشراء.' : 'This quotation is electronically generated and subject to stock availability.'}</p>
-              <p>• {language === 'ar' ? 'للاستفسار والتواصل: 8004400055 | مركز خدمة العملاء الموحد' : 'Inquiries & Contact: 8004400055 | ALJ Unified Customer Care'}</p>
+          {/* Official Footnote & Barcode */}
+          <div className="pt-4 border-t border-gray-200 flex items-center justify-between text-[10px] text-gray-500">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-emerald-600" />
+              <span>{language === 'ar' ? 'يشمل ضمان المصنع 5 سنوات أو 150,000 كم + خدمة المساعدة على الطريق مجاناً' : 'Includes 5-year/150,000 km warranty & 24/7 Roadside Assistance'}</span>
             </div>
 
-            {/* Official Seal / Barcode Graphic */}
-            <div className="flex flex-col items-center">
-              <div className="w-28 h-10 bg-gray-900 flex items-center justify-center p-1 rounded">
-                <div className="w-full h-full bg-white flex items-center justify-around px-1 font-mono text-[9px] tracking-tighter">
-                  ||| | |||| || ||| || |||| | ||
-                </div>
-              </div>
-              <span className="text-[9px] text-gray-400 font-mono mt-0.5">{quoteNumber}</span>
+            <div className="text-end font-mono">
+              <span className="block font-bold">AL JABRANI MOTORS • RIYADH</span>
+              <span>800 244 4400 • aljabranimotors.com.sa</span>
             </div>
           </div>
         </div>

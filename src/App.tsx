@@ -5,11 +5,11 @@ import { Header } from './components/Header';
 import { HeroSlider } from './components/HeroSlider';
 import { QuickServicesBar } from './components/QuickServicesBar';
 import { ExploreVehicles } from './components/ExploreVehicles';
-import { DiscoverAlJabraniSection } from './components/DiscoverAlJabraniSection';
 import { OffersSection } from './components/OffersSection';
+import { DiscoverAlJabraniSection } from './components/DiscoverAlJabraniSection';
 import { GuestCommitmentSection } from './components/GuestCommitmentSection';
-import { CarFinderWizard } from './components/CarFinderWizard';
 import { Vehicle360Customizer } from './components/Vehicle360Customizer';
+import { CarFinderWizard } from './components/CarFinderWizard';
 import { TechSimulator } from './components/TechSimulator';
 import { GRPerformanceSection } from './components/GRPerformanceSection';
 import { FinanceCalculator } from './components/FinanceCalculator';
@@ -35,7 +35,7 @@ import { type Vehicle, type VehicleGrade } from './data/toyotaData';
 const MainAppContent: React.FC = () => {
   const { language } = useLanguage();
   const { vehicles } = useAdminData();
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('sedan');
   
   // Admin View State
   const [adminViewOpen, setAdminViewOpen] = useState<boolean>(false);
@@ -134,20 +134,13 @@ const MainAppContent: React.FC = () => {
           onExploreModel={handleExploreModelFromHero}
         />
 
-        {/* 3. Quick Action Services Hub (كيف يمكننا مساعدتك اليوم؟) */}
+        {/* 3. Quick Action Services Hub ("كيف يمكننا مساعدتك اليوم؟") */}
         <QuickServicesBar
           onOpenTestDrive={() => handleOpenTestDrive()}
           onOpenServiceBooking={handleOpenServiceBooking}
         />
 
-        {/* 4. Interactive 360° Customizer Studio & Engine Sound Showcase */}
-        <Vehicle360Customizer
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenDetails={handleSelectVehicle}
-          onOpenQuotation={(v) => handleOpenQuotation(v, v.grades[0])}
-        />
-
-        {/* 5. Explore Vehicles Grid & Category Filters (استكشف جميع المركبات) */}
+        {/* 4. Explore Vehicles Carousel & Category Tabs ("استكشف جميع المركبات") */}
         <ExploreVehicles
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
@@ -158,14 +151,21 @@ const MainAppContent: React.FC = () => {
           comparedVehicleIds={comparedVehicles.map(v => v.id)}
         />
 
-        {/* 6. Discover Al Jabrani & Future Innovations (اكتشف الجبراني) */}
-        <DiscoverAlJabraniSection />
-
-        {/* 7. Promotional Offers & Seasonal Deals (أحدث العروض: قد أكثر وادفع أقل) */}
+        {/* 5. Promotional Offers ("أحدث العروض") */}
         <OffersSection onOpenTestDrive={handleOpenTestDrive} />
 
-        {/* 8. Our Commitment to Our Guests (التزامنا نحو ضيوفنا) */}
+        {/* 6. Discover Al Jabrani ("اكتشف الجبراني") */}
+        <DiscoverAlJabraniSection />
+
+        {/* 7. Guest Commitment Section ("التزامنا نحو ضيوفنا") */}
         <GuestCommitmentSection />
+
+        {/* 8. Interactive 360° Customizer Studio & Engine Sound Showcase */}
+        <Vehicle360Customizer
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenDetails={handleSelectVehicle}
+          onOpenQuotation={(v) => handleOpenQuotation(v, v.grades[0])}
+        />
 
         {/* 9. Smart Car Matcher / AI Recommendation Wizard */}
         <CarFinderWizard

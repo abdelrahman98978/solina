@@ -1,5 +1,5 @@
 import React from 'react';
-import { Car, Calculator, Wrench, MapPin, ArrowLeft, ArrowRight, FileText, Sparkles } from 'lucide-react';
+import { Wrench, MapPin, Tag, Car, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface QuickServicesBarProps {
@@ -11,55 +11,52 @@ export const QuickServicesBar: React.FC<QuickServicesBarProps> = ({
   onOpenTestDrive,
   onOpenServiceBooking
 }) => {
-  const { language, isRTL } = useLanguage();
+  const { language } = useLanguage();
 
   const services = [
     {
       id: 'book-service',
-      title: 'حجز خدمة صيانة',
-      titleEn: 'Book a Service',
-      badge: 'خدمة سريعة',
-      badgeEn: 'Express Service',
-      description: 'احجز موعد الصيانة الدورية لسيارتك في أقرب مركز خدمة معتمد بكل سهولة.',
-      descriptionEn: 'Schedule periodic maintenance at your nearest certified service center effortlessly.',
-      iconImg: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/navigation/quick-links/bookservice.png?w=64&q=75&f=webp',
-      fallbackIcon: <Wrench className="w-6 h-6 text-blue-600" />,
+      title: language === 'ar' ? 'حجز خدمة' : 'Book a Service',
+      icon: (
+        <svg className="w-5 h-5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+      ),
       action: 'service'
     },
     {
       id: 'find-center',
-      title: 'ابحث عن مركز وفروعنا',
-      titleEn: 'Find a Centre',
-      badge: '+70 فرع بالمملكة',
-      badgeEn: '70+ Branches',
-      description: 'استكشف شبكة صالات العرض ومراكز الصيانة الموزعة استراتيجياً في أنحاء المملكة.',
-      descriptionEn: 'Explore our widespread network of showrooms and service centers across KSA.',
-      iconImg: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/navigation/quick-links/findacentre-latest.png?w=64&q=75&f=webp',
-      fallbackIcon: <MapPin className="w-6 h-6 text-blue-600" />,
+      title: language === 'ar' ? 'ابحث عن مركز' : 'Find a Centre',
+      icon: (
+        <svg className="w-5 h-5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      ),
       action: 'showrooms'
     },
     {
       id: 'offers',
-      title: 'إكتشف أحدث العروض',
-      titleEn: 'Discover Latest Offers',
-      badge: 'عروض حصرية 2026',
-      badgeEn: 'Exclusive Deals',
-      description: 'تعرف على أقوى العروض التمويلية، عروض الهايبرد، وباقات الصيانة المجانية المتاحة الآن.',
-      descriptionEn: 'Check out the strongest financing offers, hybrid deals, and free maintenance packages.',
-      iconImg: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/navigation/quick-links/offers-latest.png?w=64&q=75&f=webp',
-      fallbackIcon: <Sparkles className="w-6 h-6 text-blue-600" />,
+      title: language === 'ar' ? 'إكتشف العروض' : 'Discover Offers',
+      icon: (
+        <svg className="w-5 h-5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+          <path d="M7 7h.01"/>
+        </svg>
+      ),
       action: 'offers'
     },
     {
       id: 'test-drive',
-      title: 'طلب تجربة قيادة',
-      titleEn: 'Book a Test Drive',
-      badge: 'تجربة حية ومجانية',
-      badgeEn: 'Complimentary Drive',
-      description: 'عش متعة قيادة موديلات تويوتا 2026 بنفسك قبل اتخاذ قرار الشراء.',
-      descriptionEn: 'Experience driving the latest 2026 Toyota models firsthand before buying.',
-      iconImg: null,
-      fallbackIcon: <Car className="w-6 h-6 text-blue-600" />,
+      title: language === 'ar' ? 'طلب تجربة قيادة' : 'Test Drive',
+      icon: (
+        <svg className="w-5 h-5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+          <circle cx="7" cy="17" r="2"/>
+          <path d="M9 17h6"/>
+          <circle cx="17" cy="17" r="2"/>
+        </svg>
+      ),
       action: 'test-drive'
     }
   ];
@@ -79,77 +76,28 @@ export const QuickServicesBar: React.FC<QuickServicesBarProps> = ({
   };
 
   return (
-    <section className="relative z-30 max-w-7xl mx-auto px-4 md:px-12 -mt-10 md:-mt-14 mb-16">
-      {/* Section Sub-Title matching Toyota SA */}
-      <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-gray-100/80">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-5 border-b border-gray-100">
-          <div>
-            <h2 className="text-xl md:text-2xl font-black text-gray-900 font-display">
-              {language === 'ar' ? 'كيف يمكننا مساعدتك اليوم؟' : 'How can we help you today?'}
-            </h2>
-            <p className="text-xs md:text-sm text-gray-500 mt-1">
-              {language === 'ar' ? 'اختر إحدى الخدمات السريعة لبدء رحلتك مع الجبراني للسيارات' : 'Choose a quick action service to start your journey with Al-Jabrani Motors'}
-            </p>
-          </div>
+    <section className="py-12 bg-white border-b border-gray-100">
+      <div className="max-w-6xl mx-auto px-4 text-center">
+        {/* Toyota SA Exact Centered Title */}
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 font-display mb-8">
+          {language === 'ar' ? 'كيف يمكننا مساعدتك اليوم؟' : 'How can we help you today?'}
+        </h2>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                const el = document.getElementById('explore-vehicles');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="px-4 py-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer"
-            >
-              {language === 'ar' ? 'استكشف جميع المركبات ←' : 'Explore All Vehicles →'}
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Horizontal Quick Actions Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
           {services.map((srv) => (
-            <div
+            <button
               key={srv.id}
               onClick={() => handleAction(srv.action)}
-              className="group bg-gray-50/60 hover:bg-blue-50/40 rounded-2xl p-5 border border-gray-200/70 hover:border-blue-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+              className="group flex items-center justify-center gap-3 px-6 md:px-8 py-3.5 rounded-full bg-white hover:bg-blue-600 border border-gray-300 hover:border-blue-600 text-gray-800 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer min-w-[200px]"
             >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 rounded-2xl bg-white group-hover:bg-blue-600 text-blue-600 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-gray-100 p-2.5">
-                    {srv.iconImg ? (
-                      <img
-                        src={srv.iconImg}
-                        alt={srv.title}
-                        className="w-full h-full object-contain group-hover:brightness-0 group-hover:invert transition-all"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      srv.fallbackIcon
-                    )}
-                  </div>
-                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white text-gray-700 border border-gray-200 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors shadow-xs">
-                    {language === 'ar' ? srv.badge : srv.badgeEn}
-                  </span>
-                </div>
-
-                <h3 className="font-bold text-base text-gray-900 mb-1.5 group-hover:text-blue-600 transition-colors font-display">
-                  {language === 'ar' ? srv.title : srv.titleEn}
-                </h3>
-                <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
-                  {language === 'ar' ? srv.description : srv.descriptionEn}
-                </p>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-gray-200/60 flex items-center justify-between text-xs font-bold text-gray-700 group-hover:text-blue-600 transition-colors">
-                <span>{language === 'ar' ? 'انتقل للخدمة' : 'Access Service'}</span>
-                {isRTL ? (
-                  <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1.5 transition-transform text-blue-600" />
-                ) : (
-                  <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform text-blue-600" />
-                )}
-              </div>
-            </div>
+              <span className="text-gray-700 group-hover:text-white transition-colors">
+                {srv.icon}
+              </span>
+              <span className="text-sm md:text-base font-bold">
+                {srv.title}
+              </span>
+            </button>
           ))}
         </div>
       </div>

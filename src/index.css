@@ -1,7 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+:root {
+  --brand-primary: #1A56DB;
+  --brand-primary-hover: #1546B8;
+  --brand-primary-active: #0F3EAB;
+  --brand-secondary: #0A266E;
+  --brand-dark: #0A0E17;
+  --brand-light: #EFF6FF;
+  --background-primary: #FFFFFF;
+  --background-secondary: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-hover: #F1F5F9;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --border: #E2E8F0;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+}
+
 @theme {
+  --color-brand-primary: #1A56DB;
+  --color-brand-primaryHover: #1546B8;
+  --color-brand-primaryActive: #0F3EAB;
+  --color-brand-secondary: #0A266E;
+  --color-brand-dark: #0A0E17;
+  --color-brand-light: #EFF6FF;
+  
   --color-luxury-sapphire: #1A56DB;
   --color-luxury-darkSapphire: #0F3EAB;
   --color-luxury-deepSapphire: #0A266E;
@@ -59,26 +85,31 @@
 
 /* Glassmorphism */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .glass-panel-dark {
-  background: rgba(10, 14, 23, 0.85);
+  background: rgba(10, 14, 23, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Hide scrollbar for horizontal tabs */
+/* Hide scrollbar for horizontal tabs & carousels */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Micro-animations */
+.transition-smooth {
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Printable Official Quotation Media Query */

@@ -5,7 +5,7 @@ import { Header } from './components/Header';
 import { HeroSlider } from './components/HeroSlider';
 import { QuickServicesBar } from './components/QuickServicesBar';
 import { ExploreVehicles } from './components/ExploreVehicles';
-import { DiscoverToyotaSection } from './components/DiscoverToyotaSection';
+import { DiscoverAlJabraniSection } from './components/DiscoverAlJabraniSection';
 import { OffersSection } from './components/OffersSection';
 import { GuestCommitmentSection } from './components/GuestCommitmentSection';
 import { CarFinderWizard } from './components/CarFinderWizard';
@@ -158,8 +158,8 @@ const MainAppContent: React.FC = () => {
           comparedVehicleIds={comparedVehicles.map(v => v.id)}
         />
 
-        {/* 6. Discover Toyota & Future Innovations (اكتشف تويوتا) */}
-        <DiscoverToyotaSection />
+        {/* 6. Discover Al Jabrani & Future Innovations (اكتشف الجبراني) */}
+        <DiscoverAlJabraniSection />
 
         {/* 7. Promotional Offers & Seasonal Deals (أحدث العروض: قد أكثر وادفع أقل) */}
         <OffersSection onOpenTestDrive={handleOpenTestDrive} />
@@ -176,13 +176,13 @@ const MainAppContent: React.FC = () => {
         {/* 10. Hybrid Energy Flow & Safety Sense Simulator */}
         <TechSimulator />
 
-        {/* 11. Toyota Gazoo Racing (GR) Sport Performance Showcase */}
+        {/* 11. Performance Showcase */}
         <GRPerformanceSection
           onSelectVehicle={handleSelectVehicle}
           onOpenTestDrive={handleOpenTestDrive}
         />
 
-        {/* 12. Official Toyota & Lexus 4K Launch Cinema */}
+        {/* 12. 4K Launch Cinema */}
         <ToyotaCinemaSection />
 
         {/* 13. Installment & Finance Calculator */}
@@ -191,7 +191,7 @@ const MainAppContent: React.FC = () => {
           onOpenQuotation={(v, g, f) => handleOpenQuotation(v, g, f)}
         />
 
-        {/* 14. AutoHub Certified Pre-Owned (CPO) Vehicles */}
+        {/* 14. Certified Pre-Owned (CPO) Vehicles */}
         <CertifiedPreOwnedSection
           onOpenTestDrive={(title) => handleOpenTestDrive(title)}
         />
@@ -202,7 +202,7 @@ const MainAppContent: React.FC = () => {
         {/* 16. Official Showrooms & Service Centers GPS Locator */}
         <ShowroomsSection />
 
-        {/* 17. Why Toyota Brand Pillars */}
+        {/* 17. Why Al Jabrani Brand Pillars */}
         <WhyToyotaSection />
       </main>
 

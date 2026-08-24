@@ -1,32 +1,80 @@
-# React + TypeScript + Vite
+# الجبراني للسيارات — Al Jabrani Motors
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **الموقع الرسمي لشركة الجبراني للسيارات (Al Jabrani Motors)** — منصة رقمية متطورة لاستكشاف أحدث أسطول سيارات 2026، حجز الصيانة الفورية، تجارب القيادة، عروض التمويل، والمقارنة التفاعلية.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 أبرز المميزات (Key Features)
 
-## React Compiler
+- **الهيرو التفاعلي الفاخر (Current Hero Preserved)**: واجهة هيرو ثلاثية الأبعاد بدقة وسلاسة عالية مع الحفاظ على الهوية البصرية.
+- **الخدمات السريعة («كيف يمكننا مساعدتك اليوم؟»)**: وصول سريع لحجز الصيانة، البحث عن الفروع، العروض، وتجارب القيادة.
+- **مستكشف المركبات الذكي (Vehicle Explorer & Slider)**:
+  - تصنيفات ديناميكية: السيدان، الدفع الرباعي SUV، الكروس أوفر، العائلية، التجارية والبيك أب، الهجينة HEV، والأداء الرياضي GR.
+  - دعم العرض الشبكي (Grid View) والسلايدر الأفقي السلس (Slider Carousel) مع دعم اللمس والسحب.
+  - بطاقات سيارات متكاملة بالأسعار والمواصفات وخيارات التمويل والألوان والمفضلة.
+- **صفحة / قالب تفاصيل المركبة المتكامل (Vehicle Detail Template)**:
+  - معرض صور داخلي وخارجي (Exterior & Interior).
+  - مواصفات فنية تفصيلية (محرك، قوة، عزم، استهلاك الوقود، أنظمة الأمان والسلامة الذكية ADAS).
+  - جدول مقارنة فئات الموديل وأسعارها.
+  - حاسبة تمويل مدمجة بالدفعة الأولى والأقساط الشهرية.
+  - طباعة عرض سعر رسمي فوري بصيغة PDF وتحميل الكتالوج الرقمي.
+- **اكتشف الجبراني (Discover Al Jabrani)**: مقالات وتقنيات الطاقة الهجينة، نصائح الصيانة الدورية، وفلسفة «الضيف أولاً».
+- **حملات وعروض 2026 الحصرية (Exclusive 2026 Offers)**: عروض التمويل بهامش ربح 0%، باقات الصيانة المجانية 5 سنوات، وضمان ممتد.
+- **فروع ومراكز الخدمة (Interactive Branch Locator)**: شبكة تضم أكثر من 70 صالة عرض ومركز صيانة في المملكة مع خريطة تفاعلية وساعات العمل.
+- **محرك البحث الشامل (Global Search)**: بحث لحظي حسب الاسم، الفئة، نوع الوقود، والميزانية.
+- **مقارنة السيارات (Vehicle Comparison Tool)**: مقارنة دقيقة بين 2 إلى 4 سيارات جنبًا إلى جنب.
+- **ثنائي اللغة بالكامل (Full Bi-directional RTL / LTR)**: دعم كامل للغة العربية والإنجليزية.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 🎨 نظام التصميم والألوان (Design Tokens)
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+تم بناء التصميم وفق لوحة الألوان الزرقاء الفاخرة المعتمدة للجبراني:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```css
+--brand-primary: #1A56DB;
+--brand-primary-hover: #1546B8;
+--brand-primary-active: #0F3EAB;
+--brand-secondary: #0A266E;
+--brand-dark: #0A0E17;
+--brand-light: #EFF6FF;
+--background-primary: #FFFFFF;
+--background-secondary: #F8FAFC;
+--surface: #FFFFFF;
+--surface-hover: #F1F5F9;
+--text-primary: #0F172A;
+--text-secondary: #64748B;
+--border: #E2E8F0;
+--success: #10B981;
+--warning: #F59E0B;
+--danger: #EF4444;
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 🚀 التشغيل والتطوير (Getting Started)
+
+### المتطلبات:
+- Node.js 18+
+- npm أو yarn أو pnpm
+
+### أوامر التشغيل:
+```bash
+# تثبيت الاعتماديات
+npm install
+
+# تشغيل خادم التطوير المحلي
+npm run dev
+
+# بناء النسخة الإنتاجية
+npm run build
+
+# معاينة النسخة الإنتاجية
+npm run preview
+```
+
+---
+
+## 📄 الترخيص والحقوق (Copyright)
+
+جميع الحقوق محفوظة © 2026 شركة الجبراني للسيارات (**Al Jabrani Motors**).

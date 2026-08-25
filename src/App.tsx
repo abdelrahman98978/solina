@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { AdminDataProvider, useAdminData } from './context/AdminDataContext';
 import { Header } from './components/Header';
@@ -6,7 +6,7 @@ import { HeroSlider } from './components/HeroSlider';
 import { QuickServicesBar } from './components/QuickServicesBar';
 import { ExploreVehicles } from './components/ExploreVehicles';
 import { OffersSection } from './components/OffersSection';
-import { DiscoverAlJabraniSection } from './components/DiscoverAlJabraniSection';
+import { DiscoverSolinaSection } from './components/DiscoverToyotaSection';
 import { GuestCommitmentSection } from './components/GuestCommitmentSection';
 import { Vehicle360Customizer } from './components/Vehicle360Customizer';
 import { CarFinderWizard } from './components/CarFinderWizard';
@@ -15,10 +15,26 @@ import { GRPerformanceSection } from './components/GRPerformanceSection';
 import { FinanceCalculator } from './components/FinanceCalculator';
 import { CertifiedPreOwnedSection } from './components/CertifiedPreOwnedSection';
 import { PartsAccessoriesSection } from './components/PartsAccessoriesSection';
-import { ToyotaCinemaSection } from './components/ToyotaCinemaSection';
+import { SolinaCinemaSection } from './components/ToyotaCinemaSection';
 import { ShowroomsSection } from './components/ShowroomsSection';
-import { WhyToyotaSection } from './components/WhyToyotaSection';
+import { WhySolinaSection } from './components/WhyToyotaSection';
 import { Footer } from './components/Footer';
+import { SectionDivider } from './components/SectionDivider';
+import { SolinaQualitySection } from './components/SolinaQualitySection';
+import { SolinaFleetShowcase } from './components/SolinaFleetShowcase';
+import { SolinaHeadquartersShowcase } from './components/SolinaHeadquartersShowcase';
+import { SolinaBrandHeritage } from './components/SolinaBrandHeritage';
+import { SolinaMobileAppSection } from './components/SolinaMobileAppSection';
+import { SolinaAIAssistant } from './components/SolinaAIAssistant';
+
+// Standalone Pages
+import { VehicleModelPage } from './components/VehicleModelPage';
+import { OffersPage } from './pages/OffersPage';
+import { OwnersPage } from './pages/OwnersPage';
+import { DiscoverPage } from './pages/DiscoverPage';
+import { ShowroomsPage } from './pages/ShowroomsPage';
+import { SolinaAppPage } from './pages/SolinaAppPage';
+import { SolinaAppExperience } from './components/SolinaAppExperience';
 
 // Admin Dashboard Component
 import { AdminDashboard } from './components/admin/AdminDashboard';
@@ -30,13 +46,33 @@ import { VehicleDetailModal } from './components/VehicleDetailModal';
 import { ComparisonDrawer } from './components/ComparisonDrawer';
 import { QuotationModal } from './components/QuotationModal';
 
-import { type Vehicle, type VehicleGrade } from './data/toyotaData';
+import { type Vehicle, type VehicleGrade, VEHICLES } from './data/toyotaData';
+
+type AppRoute = 'home' | 'offers' | 'owners' | 'discover' | 'showrooms' | 'vehicle' | 'app' | 'mobile-app';
 
 const MainAppContent: React.FC = () => {
   const { language } = useLanguage();
   const { vehicles } = useAdminData();
   const [selectedCategory, setSelectedCategory] = useState<string>('sedan');
   
+  // Active Navigation Route
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>('home');
+  const [dedicatedVehicle, setDedicatedVehicle] = useState<Vehicle | null>(null);
+
+  // Screen type detection (Mobile vs Desktop)
+  const [isMobileScreen, setIsMobileScreen] = useState<boolean>(() => 
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileScreen(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Admin View State
   const [adminViewOpen, setAdminViewOpen] = useState<boolean>(false);
 
@@ -56,7 +92,72 @@ const MainAppContent: React.FC = () => {
   const [quotationGrade, setQuotationGrade] = useState<VehicleGrade | undefined>(undefined);
   const [quotationFinanceDetails, setQuotationFinanceDetails] = useState<any>(undefined);
 
-  // Handlers
+  // Check URL pathname on initial load and back/forward browser actions
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+
+      if (path.includes('/offers') || hash.includes('offers')) {
+        setCurrentRoute('offers');
+        setDedicatedVehicle(null);
+      } else if (path.includes('/owners') || hash.includes('owners')) {
+        setCurrentRoute('owners');
+        setDedicatedVehicle(null);
+      } else if (path.includes('/discover') || hash.includes('discover')) {
+        setCurrentRoute('discover');
+        setDedicatedVehicle(null);
+      } else if (path.includes('/showrooms') || path.includes('/locations') || hash.includes('showrooms')) {
+        setCurrentRoute('showrooms');
+        setDedicatedVehicle(null);
+      } else if (path.includes('/app') || path.includes('/mobile-app') || hash.includes('app')) {
+        setCurrentRoute('app');
+        setDedicatedVehicle(null);
+      } else if (path.includes('/vehicles/')) {
+        const targetQuery = path.split('/vehicles/')[1].replace(/\/$/, '');
+        const found = vehicles.find(v => 
+          v.id.toLowerCase().includes(targetQuery) || 
+          v.nameEn.toLowerCase().includes(targetQuery)
+        );
+        if (found) {
+          setDedicatedVehicle(found);
+          setCurrentRoute('vehicle');
+        } else {
+          setCurrentRoute('home');
+        }
+      } else {
+        setCurrentRoute('home');
+        setDedicatedVehicle(null);
+      }
+    };
+
+    handleUrlChange();
+    window.addEventListener('popstate', handleUrlChange);
+    return () => window.removeEventListener('popstate', handleUrlChange);
+  }, [vehicles]);
+
+  // Route Navigation Handlers
+  const navigateTo = (route: string, customPath?: string) => {
+    setCurrentRoute((['home', 'offers', 'owners', 'discover', 'showrooms', 'vehicle', 'app', 'mobile-app'].includes(route) ? route : 'home') as AppRoute);
+    setDedicatedVehicle(null);
+    window.history.pushState({}, '', customPath || (route === 'home' ? '/' : `/${route}`));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSelectVehicle = (vehicleId: string) => {
+    const v = vehicles.find(item => item.id === vehicleId);
+    if (v) {
+      setDedicatedVehicle(v);
+      setCurrentRoute('vehicle');
+      window.history.pushState({}, '', `/vehicles/${v.id.replace('-2026', '')}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleBackToHome = () => {
+    navigateTo('home');
+  };
+
   const handleOpenTestDrive = (modelName?: string) => {
     setTestDriveDefaultModel(modelName);
     setTestDriveModalOpen(true);
@@ -64,13 +165,6 @@ const MainAppContent: React.FC = () => {
 
   const handleOpenServiceBooking = () => {
     setServiceBookingModalOpen(true);
-  };
-
-  const handleSelectVehicle = (vehicleId: string) => {
-    const v = vehicles.find(item => item.id === vehicleId);
-    if (v) {
-      setSelectedVehicleForDetails(v);
-    }
   };
 
   const handleToggleCompare = (vehicle: Vehicle) => {
@@ -103,113 +197,14 @@ const MainAppContent: React.FC = () => {
     setQuotationModalOpen(true);
   };
 
-  const handleExploreModelFromHero = (modelId: string) => {
-    const el = document.getElementById('explore-vehicles');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-    handleSelectVehicle(modelId);
-  };
-
   // If Admin Dashboard is active, render it directly
   if (adminViewOpen) {
     return <AdminDashboard onClose={() => setAdminViewOpen(false)} />;
   }
 
-  return (
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
-      {/* 1. Global Navigation Header */}
-      <Header
-        onOpenTestDrive={handleOpenTestDrive}
-        onOpenServiceBooking={handleOpenServiceBooking}
-        onOpenCompare={() => setIsComparisonDrawerOpen(true)}
-        comparisonCount={comparedVehicles.length}
-        onSelectCategory={setSelectedCategory}
-        onSelectVehicle={handleSelectVehicle}
-        onOpenAdmin={() => setAdminViewOpen(true)}
-      />
-
-      <main className="flex-1">
-        {/* 2. Hero Interactive Slider (Preserved as requested) */}
-        <HeroSlider
-          onOpenTestDrive={handleOpenTestDrive}
-          onExploreModel={handleExploreModelFromHero}
-        />
-
-        {/* 3. Quick Action Services Hub ("كيف يمكننا مساعدتك اليوم؟") */}
-        <QuickServicesBar
-          onOpenTestDrive={() => handleOpenTestDrive()}
-          onOpenServiceBooking={handleOpenServiceBooking}
-        />
-
-        {/* 4. Explore Vehicles Carousel & Category Tabs ("استكشف جميع المركبات") */}
-        <ExploreVehicles
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          onSelectVehicle={handleSelectVehicle}
-          onOpenTestDrive={handleOpenTestDrive}
-          onToggleCompare={handleToggleCompare}
-          onOpenQuotation={(v) => handleOpenQuotation(v, v.grades[0])}
-          comparedVehicleIds={comparedVehicles.map(v => v.id)}
-        />
-
-        {/* 5. Promotional Offers ("أحدث العروض") */}
-        <OffersSection onOpenTestDrive={handleOpenTestDrive} />
-
-        {/* 6. Discover Al Jabrani ("اكتشف الجبراني") */}
-        <DiscoverAlJabraniSection />
-
-        {/* 7. Guest Commitment Section ("التزامنا نحو ضيوفنا") */}
-        <GuestCommitmentSection />
-
-        {/* 8. Interactive 360° Customizer Studio & Engine Sound Showcase */}
-        <Vehicle360Customizer
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenDetails={handleSelectVehicle}
-          onOpenQuotation={(v) => handleOpenQuotation(v, v.grades[0])}
-        />
-
-        {/* 9. Smart Car Matcher / AI Recommendation Wizard */}
-        <CarFinderWizard
-          onSelectVehicle={handleSelectVehicle}
-          onOpenTestDrive={handleOpenTestDrive}
-        />
-
-        {/* 10. Hybrid Energy Flow & Safety Sense Simulator */}
-        <TechSimulator />
-
-        {/* 11. Performance Showcase */}
-        <GRPerformanceSection
-          onSelectVehicle={handleSelectVehicle}
-          onOpenTestDrive={handleOpenTestDrive}
-        />
-
-        {/* 12. 4K Launch Cinema */}
-        <ToyotaCinemaSection />
-
-        {/* 13. Installment & Finance Calculator */}
-        <FinanceCalculator
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenQuotation={(v, g, f) => handleOpenQuotation(v, g, f)}
-        />
-
-        {/* 14. Certified Pre-Owned (CPO) Vehicles */}
-        <CertifiedPreOwnedSection
-          onOpenTestDrive={(title) => handleOpenTestDrive(title)}
-        />
-
-        {/* 15. Genuine Spare Parts & Accessories Catalog */}
-        <PartsAccessoriesSection onOpenTestDrive={handleOpenTestDrive} />
-
-        {/* 16. Official Showrooms & Service Centers GPS Locator */}
-        <ShowroomsSection />
-
-        {/* 17. Why Al Jabrani Brand Pillars */}
-        <WhyToyotaSection />
-      </main>
-
-      {/* 18. Official Multi-Column Footer */}
-      <Footer />
-
-      {/* Global Modals & Drawers */}
+  // Common Modals Wrapper
+  const renderModals = () => (
+    <>
       <TestDriveModal
         isOpen={testDriveModalOpen}
         onClose={() => setTestDriveModalOpen(false)}
@@ -249,6 +244,241 @@ const MainAppContent: React.FC = () => {
           financingDetails={quotationFinanceDetails}
         />
       )}
+
+      {/* Solina AI Smart Assistant Floating Widget & Chat Modal */}
+      <SolinaAIAssistant
+        onSelectVehicle={handleSelectVehicle}
+        onOpenTestDrive={handleOpenTestDrive}
+        onOpenServiceBooking={handleOpenServiceBooking}
+        onNavigate={navigateTo}
+      />
+    </>
+  );
+
+  // 1. DEDICATED VEHICLE MODEL PAGE
+  if (currentRoute === 'vehicle' && dedicatedVehicle) {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+        <VehicleModelPage
+          vehicle={dedicatedVehicle}
+          onBackToHome={handleBackToHome}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenQuotation={(v, g, f) => handleOpenQuotation(v, g, f)}
+          onSelectOtherVehicle={(id) => handleSelectVehicle(id)}
+          onOpenServiceBooking={handleOpenServiceBooking}
+          onOpenCompare={() => setIsComparisonDrawerOpen(true)}
+          comparisonCount={comparedVehicles.length}
+        />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 2. OFFERS PAGE
+  if (currentRoute === 'offers') {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+        <OffersPage
+          onBackToHome={handleBackToHome}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenServiceBooking={handleOpenServiceBooking}
+          onSelectVehicle={handleSelectVehicle}
+        />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 3. OWNERS PAGE
+  if (currentRoute === 'owners') {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+        <OwnersPage
+          onBackToHome={handleBackToHome}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenServiceBooking={handleOpenServiceBooking}
+          onSelectVehicle={handleSelectVehicle}
+        />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 4. DISCOVER SOLINA PAGE
+  if (currentRoute === 'discover') {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+        <DiscoverPage
+          onBackToHome={handleBackToHome}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenServiceBooking={handleOpenServiceBooking}
+          onSelectVehicle={handleSelectVehicle}
+        />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 5. SHOWROOMS & CENTERS PAGE
+  if (currentRoute === 'showrooms') {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+        <ShowroomsPage
+          onBackToHome={handleBackToHome}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenServiceBooking={handleOpenServiceBooking}
+          onSelectVehicle={handleSelectVehicle}
+        />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 6. SOLINA MOBILE APP INTERACTIVE PAGE
+  if (currentRoute === 'app' || currentRoute === 'mobile-app') {
+    return (
+      <div className="min-h-screen bg-neutral-950 text-white flex flex-col font-arabic">
+        <SolinaAppPage
+          onNavigateHome={handleBackToHome}
+          onNavigateBack={handleBackToHome}
+          onSelectVehicle={handleSelectVehicle}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenServiceBooking={handleOpenServiceBooking}
+        />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 7. NATIVE MOBILE APP VIEW (When viewed on Mobile Phone only)
+  if (isMobileScreen && currentRoute === 'home') {
+    return (
+      <div className="min-h-screen bg-slate-50 text-gray-900 flex flex-col font-arabic">
+        <SolinaAppExperience
+          isNativeMobileView={true}
+          onSelectVehicle={handleSelectVehicle}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenServiceBooking={handleOpenServiceBooking}
+        />
+        {/* Solina 24/7 AI Smart Assistant */}
+        <SolinaAIAssistant />
+        {renderModals()}
+      </div>
+    );
+  }
+
+  // 8. MAIN DESKTOP HOMEPAGE (Desktop View: All Official Sections)
+  return (
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+      {/* 1. Global Navigation Header */}
+      <Header
+        onOpenTestDrive={handleOpenTestDrive}
+        onOpenServiceBooking={handleOpenServiceBooking}
+        onOpenCompare={() => setIsComparisonDrawerOpen(true)}
+        comparisonCount={comparedVehicles.length}
+        onSelectCategory={setSelectedCategory}
+        onSelectVehicle={handleSelectVehicle}
+        onOpenAdmin={() => setAdminViewOpen(true)}
+        onNavigate={navigateTo}
+      />
+
+      <main className="flex-1">
+        {/* 2. Official 2026 Hero Slider */}
+        <HeroSlider
+          onOpenTestDrive={handleOpenTestDrive}
+          onExploreModel={handleSelectVehicle}
+        />
+
+        {/* 3. Quick Action Services Bar */}
+        <QuickServicesBar
+          onOpenTestDrive={() => handleOpenTestDrive()}
+          onOpenServiceBooking={handleOpenServiceBooking}
+        />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 4. Explore Vehicles Carousel & Category Tabs */}
+        <ExploreVehicles
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          onSelectVehicle={handleSelectVehicle}
+          onOpenTestDrive={handleOpenTestDrive}
+          onToggleCompare={handleToggleCompare}
+          onOpenQuotation={(v) => handleOpenQuotation(v, v.grades[0])}
+          comparedVehicleIds={comparedVehicles.map(v => v.id)}
+        />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 5. Promotional Offers (قد أكثر وادفع أقل) */}
+        <OffersSection onOpenTestDrive={handleOpenTestDrive} />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 6. Solina Grand Fleet Floor (صالة العرض الكبرى وأسطول 2026) */}
+        <SolinaFleetShowcase
+          onOpenTestDrive={(model) => handleOpenTestDrive(model)}
+          onExploreVehicles={() => {
+            const el = document.getElementById('explore-vehicles');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          onSelectVehicle={handleSelectVehicle}
+        />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 7. Discover Solina (ابتكار تثق به) */}
+        <DiscoverSolinaSection />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 8. Solina Quality Section (جودة تتجاوز التوقعات) */}
+        <SolinaQualitySection
+          onOpenTestDrive={() => handleOpenTestDrive()}
+          onNavigateToDiscover={() => navigateTo('discover')}
+        />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 9. Solina Headquarters Landmark (المقر الرئيسي وصالات العرض) */}
+        <SolinaHeadquartersShowcase
+          onNavigateToShowrooms={() => navigateTo('showrooms')}
+          onOpenQuotation={() => handleOpenQuotation(vehicles[0], vehicles[0].grades[0])}
+        />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 10. Solina Brand & Heritage (راية التميز وهوية سولينا) */}
+        <SolinaBrandHeritage
+          onNavigateToDiscover={() => navigateTo('discover')}
+          onOpenTestDrive={() => handleOpenTestDrive()}
+        />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 11. Solina Mobile Application Showcase (تطبيق سولينا للسيارات) */}
+        <SolinaMobileAppSection onNavigateToApp={() => navigateTo('app')} />
+
+        {/* Section Divider */}
+        <SectionDivider />
+
+        {/* 12. Guest Commitment Section (التزامنا نحو ضيوفنا) */}
+        <GuestCommitmentSection />
+      </main>
+
+      {/* 8. Official Multi-Column Footer */}
+      <Footer />
+
+      {/* Interactive Modals */}
+      {renderModals()}
     </div>
   );
 };

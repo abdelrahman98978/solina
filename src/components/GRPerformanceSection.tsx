@@ -27,9 +27,9 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
   };
 
   return (
-    <section id="gr-performance" className="py-20 bg-[#090A0D] text-white relative overflow-hidden border-t-2 border-[#EB0A1E]">
+    <section id="gr-performance" className="py-20 bg-[#090A0D] text-white relative overflow-hidden border-t-2 border-[#0056B3]">
       {/* Carbon fiber grid pattern & Red racing glow */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#EB0A1E]/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0056B3]/15 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-950/20 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10">
@@ -38,7 +38,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/20 border border-red-500/30 text-xs font-bold text-red-400 mb-3">
               <Flame className="w-4 h-4 text-red-500 animate-pulse" />
-              <span>TOYOTA GAZOO RACING (GR)</span>
+              <span>SOLINA GAZOO RACING (GR)</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white font-display">
               {language === 'ar' ? 'أداء حلبات السباق الخالص' : 'Pure Motorsport DNA & Adrenaline'}
@@ -58,11 +58,11 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
                 onClick={() => setActiveModelId(v.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                   activeModelId === v.id
-                    ? 'bg-[#EB0A1E] text-white shadow-lg shadow-red-600/30'
+                    ? 'bg-[#0056B3] text-white shadow-lg shadow-red-600/30'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
-                {v.nameAr.replace('تويوتا ', '')}
+                {v.nameAr.replace('سولينا ', '')}
               </button>
             ))}
           </div>
@@ -150,7 +150,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
 
               <button
                 onClick={() => onOpenTestDrive(selectedVehicle.nameAr)}
-                className="flex-1 py-3.5 px-4 rounded-xl bg-[#EB0A1E] hover:bg-[#BA0817] text-white font-bold text-xs text-center transition-colors shadow-lg shadow-red-600/30"
+                className="flex-1 py-3.5 px-4 rounded-xl bg-[#0056B3] hover:bg-[#BA0817] text-white font-bold text-xs text-center transition-colors shadow-lg shadow-red-600/30"
               >
                 {language === 'ar' ? 'حجز تجربة قيادة GR' : 'Book GR Test Drive'}
               </button>

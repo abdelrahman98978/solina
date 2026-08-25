@@ -215,7 +215,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({ initialSubTab = 't
                           </a>
 
                           <a
-                            href={`https://wa.me/966${td.phone.replace(/^0/, '')}?text=${encodeURIComponent(`مرحباً ${td.fullName}، نتواصل معك من تويوتا عبد اللطيف جميل بخصوص طلب تجربة قيادة ${td.modelName}.`)}`}
+                            href={`https://wa.me/966${td.phone.replace(/^0/, '')}?text=${encodeURIComponent(`مرحباً ${td.fullName}، نتواصل معك من سولينا عبد اللطيف جميل بخصوص طلب تجربة قيادة ${td.modelName}.`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-600 transition-colors shadow-sm cursor-pointer"

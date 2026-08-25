@@ -37,22 +37,22 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
   });
 
   return (
-    <section id="spare-parts" className="py-20 bg-white border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 md:px-12">
+    <section id="spare-parts" className="py-20 bg-white border-t border-gray-200 font-arabic">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Heading */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-3 border border-blue-200">
-              <Wrench className="w-4 h-4 text-blue-600" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 text-[#0056B3] text-xs font-bold mb-3 border border-red-100">
+              <Wrench className="w-4 h-4 text-[#0056B3]" />
               <span>{language === 'ar' ? 'قطع الغيار والإكسسوارات الأصلية 100%' : '100% Genuine Parts & Accessories'}</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 font-display">
-              {language === 'ar' ? 'حافظ على أداء وأصالة سيارتك تويوتا' : 'Preserve Your Toyota\'s Peak Performance'}
+            <h2 className="text-3xl md:text-4xl font-normal text-black font-arabic tracking-tight">
+              {language === 'ar' ? 'حافظ على أداء وأصالة سيارتك سولينا' : 'Preserve Your Solina\'s Peak Performance'}
             </h2>
             <p className="text-gray-600 text-sm md:text-base mt-2 max-w-xl">
               {language === 'ar'
-                ? 'قطع غيار تويوتا الأصلية صممت واختبرت هندسياً بأعلى معايير الجودة اليابانية لضمان أقصى درجات الأمان والعمر المديد.'
-                : 'Engineered and certified to exact Toyota factory specifications for uncompromised safety and durability.'}
+                ? 'قطع غيار سولينا الأصلية صممت واختبرت هندسياً بأعلى معايير الجودة اليابانية لضمان أقصى درجات الأمان والعمر المديد.'
+                : 'Engineered and certified to exact Solina factory specifications for uncompromised safety and durability.'}
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
               placeholder={language === 'ar' ? 'ابحث باسم القطعة، الموديل أو رقم القطعة...' : 'Search by part name or number...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-2xl py-3 pr-10 pl-4 focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-3 pr-10 pl-4 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
             />
           </div>
         </div>
@@ -77,7 +77,7 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
               onClick={() => setActiveCategory(cat.id)}
               className={`px-5 py-2.5 rounded-full font-bold text-xs whitespace-nowrap transition-all cursor-pointer ${
                 activeCategory === cat.id
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  ? 'bg-[#0056B3] text-white shadow-sm'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -91,7 +91,7 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
           {filteredParts.map(part => (
             <div
               key={part.id}
-              className="bg-white rounded-3xl border border-gray-200/90 hover:border-blue-300 hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between group"
+              className="bg-white rounded-2xl border border-gray-200 hover:border-[#0056B3]/40 hover:shadow-lg transition-all duration-300 p-6 flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -99,13 +99,13 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
                     {part.partNumber}
                   </span>
                   {part.badge && (
-                    <span className="text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold bg-red-50 text-[#0056B3] border border-red-200 px-2.5 py-0.5 rounded-full">
                       {part.badge}
                     </span>
                   )}
                 </div>
 
-                <h3 className="text-base font-black text-gray-900 mb-1 font-display group-hover:text-blue-600 transition-colors">
+                <h3 className="text-base font-bold text-gray-900 mb-1 font-arabic group-hover:text-[#0056B3] transition-colors">
                   {language === 'ar' ? part.nameAr : part.nameEn}
                 </h3>
 
@@ -130,12 +130,12 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
               <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'السعر الرسمي' : 'Official Price'}</span>
-                  <span className="text-xl font-black text-gray-900 font-mono">{formatPrice(part.price)} ر.س</span>
+                  <span className="text-lg font-bold text-gray-900 font-mono">{formatPrice(part.price)} ﷼</span>
                 </div>
 
                 <button
                   onClick={() => onOpenTestDrive(`طلب واستفسار عن قطعة الغيار: ${part.nameAr} (${part.partNumber})`)}
-                  className="py-2.5 px-4 bg-gray-100 hover:bg-blue-600 text-gray-800 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  className="py-2.5 px-4 bg-gray-100 hover:bg-[#0056B3] text-gray-800 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
                   <span>{language === 'ar' ? 'طلب القطعة' : 'Order Part'}</span>

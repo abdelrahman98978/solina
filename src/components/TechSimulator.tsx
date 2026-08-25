@@ -46,15 +46,15 @@ export const TechSimulator: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-3 border border-blue-200">
             <Cpu className="w-3.5 h-3.5 text-blue-600" />
-            <span>{language === 'ar' ? 'ابتكارات وهندسة تويوتا المستقبلية' : 'Toyota Engineering & Safety Innovations'}</span>
+            <span>{language === 'ar' ? 'ابتكارات وهندسة سولينا المستقبلية' : 'Solina Engineering & Safety Innovations'}</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-3 font-display">
-            {language === 'ar' ? 'محاكي تقنيات تويوتا التفاعلي' : 'Interactive Toyota Technology Studio'}
+            {language === 'ar' ? 'محاكي تقنيات سولينا التفاعلي' : 'Interactive Solina Technology Studio'}
           </h2>
           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
             {language === 'ar'
-              ? 'جرّب كيف تعمل منظومة الهايبرد المتطورة، وأنظمة السلامة الذكية Toyota Safety Sense 3.0 لحمايتك على الطريق.'
-              : 'Discover how Toyota Hybrid Synergy Drive and Toyota Safety Sense 3.0 work seamlessly to empower your journeys.'}
+              ? 'جرّب كيف تعمل منظومة الهايبرد المتطورة، وأنظمة السلامة الذكية Solina Safety Sense 3.0 لحمايتك على الطريق.'
+              : 'Discover how Solina Hybrid Synergy Drive and Solina Safety Sense 3.0 work seamlessly to empower your journeys.'}
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export const TechSimulator: React.FC = () => {
         <div className="flex items-center justify-center gap-3 mb-10 overflow-x-auto no-scrollbar">
           {[
             { id: 'hybrid', labelAr: 'منظومة الهايبرد HEV وتدفق الطاقة', labelEn: 'Hybrid Synergy Drive (HEV)', icon: BatteryCharging },
-            { id: 'tss', labelAr: 'أنظمة الأمان Toyota Safety Sense 3.0', labelEn: 'Toyota Safety Sense (TSS 3.0)', icon: Shield },
+            { id: 'tss', labelAr: 'أنظمة الأمان Solina Safety Sense 3.0', labelEn: 'Solina Safety Sense (TSS 3.0)', icon: Shield },
             { id: 'mts', labelAr: 'أنظمة التضاريس والزحف Multi-Terrain', labelEn: 'Multi-Terrain & Crawl Control', icon: Compass }
           ].map(tab => {
             const Icon = tab.icon;
@@ -177,21 +177,21 @@ export const TechSimulator: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 2: Toyota Safety Sense 3.0 */}
+        {/* Tab 2: Solina Safety Sense 3.0 */}
         {activeTab === 'tss' && (
           <div className="bg-gray-50 rounded-3xl p-6 md:p-10 border border-gray-200 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center animate-in fade-in duration-300">
             <div className="lg:col-span-5 space-y-4">
               <div>
                 <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">
-                  TOYOTA SAFETY SENSE 3.0
+                  SOLINA SAFETY SENSE 3.0
                 </span>
                 <h3 className="text-2xl md:text-3xl font-black font-display text-gray-900 mb-2">
                   {language === 'ar' ? 'حماية شاملة 360 درجة لجميع الركاب' : 'Comprehensive 360° Passenger Protection'}
                 </h3>
                 <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                   {language === 'ar'
-                    ? 'أحدث حزمة سلامة ومساعدة قيادة شبه ذاتية من تويوتا لتجنب الحوادث والتعامل مع مفاجآت الطريق.'
-                    : 'Toyota\'s latest suite of active safety technologies engineered to protect you and your loved ones.'}
+                    ? 'أحدث حزمة سلامة ومساعدة قيادة شبه ذاتية من سولينا لتجنب الحوادث والتعامل مع مفاجآت الطريق.'
+                    : 'Solina\'s latest suite of active safety technologies engineered to protect you and your loved ones.'}
                 </p>
               </div>
 
@@ -257,7 +257,7 @@ export const TechSimulator: React.FC = () => {
               <p className="text-xs md:text-sm text-gray-400 leading-relaxed">
                 {language === 'ar'
                   ? 'تمتع بالسيطرة الكاملة على الرمال الناعمة، الصخور الشاهقة، والمنحدرات الزلقة مع أنظمة الدفع الرباعي الأسطورية في لاند كروزر وبرادو وهايلكس.'
-                  : 'Dominate deep desert dunes, rocky trails, and muddy wadis with legendary Toyota 4x4 engineering.'}
+                  : 'Dominate deep desert dunes, rocky trails, and muddy wadis with legendary Solina 4x4 engineering.'}
               </p>
 
               <div className="grid grid-cols-2 gap-3 pt-2">

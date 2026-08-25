@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu as MenuIcon, 
   X, 
@@ -8,23 +8,23 @@ import {
   Tag, 
   FileText, 
   MapPin, 
-  Layers, 
   ChevronDown, 
-  Globe,
+  Wrench, 
+  ShieldCheck, 
+  Cpu, 
+  Flame, 
+  Sparkles, 
+  User, 
   SlidersHorizontal,
-  Wrench,
-  ShieldCheck,
-  Cpu,
-  Flame,
-  Sparkles,
+  Check,
   ArrowLeft,
   ArrowRight,
-  Calculator,
-  Compass,
-  Clock,
-  CheckCircle2
+  ExternalLink,
+  PhoneCall,
+  Scale,
+  Smartphone
 } from 'lucide-react';
-import { VEHICLES } from '../data/toyotaData';
+import { VEHICLES, type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 
 interface HeaderProps {
@@ -35,6 +35,7 @@ interface HeaderProps {
   onSelectCategory: (category: string) => void;
   onSelectVehicle: (vehicleId: string) => void;
   onOpenAdmin?: () => void;
+  onNavigate?: (route: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -44,649 +45,925 @@ export const Header: React.FC<HeaderProps> = ({
   comparisonCount,
   onSelectCategory,
   onSelectVehicle,
-  onOpenAdmin
+  onOpenAdmin,
+  onNavigate
 }) => {
-  const { language, toggleLanguage, t, formatPrice, isRTL } = useLanguage();
+  const { language, toggleLanguage, isRTL } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [vehiclesDropdownOpen, setVehiclesDropdownOpen] = useState(false);
-  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
-  const [offersDropdownOpen, setOffersDropdownOpen] = useState(false);
+  
+  // Navigation Menus State
+  const [activeMenu, setActiveMenu] = useState<'vehicles' | 'offers' | 'owners' | 'discover' | null>(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeMegaCategory, setActiveMegaCategory] = useState<'all' | 'sedan' | 'suv' | 'commercial' | 'hybrid' | 'gr'>('all');
+
+  // Mega Menu Filters
+  const [filterBodyType, setFilterBodyType] = useState<string>('all');
+  const [filterPowertrain, setFilterPowertrain] = useState<string>('all');
+  const [maxPrice, setMaxPrice] = useState<number>(350000);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const filteredVehicles = VEHICLES.filter(v => {
-    if (!searchQuery.trim()) return false;
-    const q = searchQuery.toLowerCase();
-    return (
-      v.nameAr.toLowerCase().includes(q) ||
-      v.nameEn.toLowerCase().includes(q) ||
-      v.bodyTypeAr.toLowerCase().includes(q) ||
-      v.bodyTypeEn.toLowerCase().includes(q) ||
-      v.powertrain.toLowerCase().includes(q)
-    );
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        setActiveMenu(null);
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter vehicles for the mega menu
+  // Filter Solina models for fleet mega menu
+  const toyotaOnlyVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
+
+  const filteredMegaVehicles = toyotaOnlyVehicles.filter(v => {
+    if (filterBodyType !== 'all') {
+      if (filterBodyType === 'sedan' && v.category !== 'sedan' && v.category !== 'gr') return false;
+      if (filterBodyType === 'suv' && v.category !== 'suv') return false;
+      if (filterBodyType === 'commercial' && v.category !== 'commercial') return false;
+    }
+    if (filterPowertrain !== 'all') {
+      if (filterPowertrain === 'hybrid' && !v.isHybrid && v.powertrain !== 'هايبرد') return false;
+      if (filterPowertrain === 'petrol' && v.powertrain !== 'بنزين') return false;
+      if (filterPowertrain === 'diesel' && v.powertrain !== 'ديزل') return false;
+    }
+    if (v.priceStartingFrom > maxPrice) return false;
+    return true;
   });
 
-  const megaMenuVehicles = activeMegaCategory === 'all' 
-    ? VEHICLES.slice(0, 6) 
-    : VEHICLES.filter(v => {
-        if (activeMegaCategory === 'hybrid') return v.isHybrid || v.powertrain === 'هايبرد';
-        if (activeMegaCategory === 'gr') return v.isGR || v.category === 'gr';
-        return v.category === activeMegaCategory;
-      }).slice(0, 6);
+  const getModelTitle = (v: any) => {
+    if (v.id.includes('yaris')) return `Yaris ${v.year}`;
+    if (v.id.includes('corolla-cross')) return `Corolla Cross ${v.year}`;
+    if (v.id.includes('corolla')) return `Corolla ${v.year}`;
+    if (v.id.includes('camry')) return `Camry ${v.year}`;
+    if (v.id.includes('crown')) return `Crown ${v.year}`;
+    if (v.id.includes('gr86')) return `GR86 ${v.year}`;
+    if (v.id.includes('supra')) return `Supra ${v.year}`;
+    if (v.id.includes('raize')) return `Raize ${v.year}`;
+    if (v.id.includes('urban-cruiser')) return `Urban Cruiser ${v.year}`;
+    if (v.id.includes('veloz')) return `Veloz ${v.year}`;
+    if (v.id.includes('rav4')) return `RAV4 ${v.year}`;
+    if (v.id.includes('innova')) return `Innova ${v.year}`;
+    if (v.id.includes('fortuner')) return `Fortuner ${v.year}`;
+    if (v.id.includes('highlander')) return `Highlander ${v.year}`;
+    if (v.id.includes('prado')) return `Prado ${v.year}`;
+    if (v.id.includes('lc300') || v.id.includes('land-cruiser')) return `Land Cruiser ${v.year}`;
+    if (v.id.includes('hilux')) return `Hilux ${v.year}`;
+    if (v.id.includes('hiace')) return `Hiace ${v.year}`;
+    if (v.id.includes('liteace')) return `LiteAce ${v.year}`;
+    if (v.id.includes('coaster')) return `Coaster ${v.year}`;
+    return v.nameEn.replace(/Solina |All-New /gi, '');
+  };
+
+  const sedanOrder = ['yaris-2026', 'corolla-2026', 'camry-2026', 'crown-2026', 'gr86-2026', 'gr-supra-2026'];
+  const suvOrder = ['raize-2026', 'urban-cruiser-2026', 'veloz-2026', 'corolla-cross-2025', 'rav4-2026', 'innova-zenix-2026', 'fortuner-2026', 'highlander-2026', 'prado-2026', 'lc300-2026'];
+  const commercialOrder = ['hilux-2026', 'hiace-2026', 'liteace-2026', 'coaster-2026'];
+
+  const sedanVehicles = filteredMegaVehicles
+    .filter(v => v.category === 'sedan' || v.category === 'gr')
+    .sort((a, b) => {
+      const idxA = sedanOrder.indexOf(a.id);
+      const idxB = sedanOrder.indexOf(b.id);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
+
+  const suvVehicles = filteredMegaVehicles
+    .filter(v => v.category === 'suv')
+    .sort((a, b) => {
+      const idxA = suvOrder.indexOf(a.id);
+      const idxB = suvOrder.indexOf(b.id);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
+
+  const commercialVehicles = filteredMegaVehicles
+    .filter(v => v.category === 'commercial')
+    .sort((a, b) => {
+      const idxA = commercialOrder.indexOf(a.id);
+      const idxB = commercialOrder.indexOf(b.id);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
+
+  const colorPalette = [
+    { name: 'كحلي', hex: '#1B2A4A' },
+    { name: 'بني', hex: '#5C3A21' },
+    { name: 'برونزي', hex: '#9C7A5B' },
+    { name: 'رمادي مزرق', hex: '#637D92' },
+    { name: 'أسود', hex: '#111111' },
+    { name: 'ذهبي', hex: '#B89758' },
+    { name: 'سماوي', hex: '#00BCD4' },
+    { name: 'أبيض لؤلؤي', hex: '#EEEEEE' },
+    { name: 'أحمر سولينا', hex: '#0056B3' },
+    { name: 'برتقالي', hex: '#E65100' },
+    { name: 'فحمي', hex: '#37474F' },
+    { name: 'أخضر داكن', hex: '#1B3B2B' }
+  ];
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300">
-      {/* Top Utility Bar */}
-      <div className="bg-[#0A0E17] text-gray-300 text-xs py-2 px-4 md:px-12 border-b border-white/10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-2 text-white font-medium">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-              {language === 'ar' ? 'الموزع المعتمد — الجبراني للسيارات' : 'Official Distributor — Al Jabrani Motors'}
-            </span>
-            <span className="hidden md:inline-block text-gray-600">|</span>
-            <a 
-              href="tel:8002444400" 
-              className="hidden md:flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5 text-blue-400" />
-              <span>{language === 'ar' ? 'الرقم المجاني: 800 244 4400' : 'Toll Free: 800 244 4400'}</span>
-            </a>
-          </div>
+    <div ref={headerRef} className="sticky top-0 z-50 w-full bg-white font-arabic shadow-sm border-b border-gray-100">
+      {/* Top Main Navigation Bar */}
+      <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16 h-20 flex items-center justify-between">
+        {/* Right Side: Solina Motors Official Logo */}
+        <div className="flex items-center gap-6">
+          <a href="#" onClick={(e) => { e.preventDefault(); if (onNavigate) onNavigate('home'); }} className="flex items-center gap-3 group">
+            <img 
+              src="/solina-logo.png" 
+              alt="سولينا للسيارات - Solina Motors" 
+              className="h-12 md:h-14 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+          </a>
 
-          <div className="flex items-center gap-4 text-xs">
-            <a 
-              href="#showrooms" 
-              className="hidden sm:flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
-            >
-              <MapPin className="w-3.5 h-3.5 text-blue-400" />
-              <span>{language === 'ar' ? 'الفروع ومراكز الخدمة' : 'Branches & Service Centers'}</span>
-            </a>
-
-            {onOpenAdmin && (
-              <button
-                onClick={onOpenAdmin}
-                className="text-[11px] font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 bg-yellow-400/10 px-2.5 py-0.5 rounded-full border border-yellow-400/20 cursor-pointer"
-              >
-                <span>{language === 'ar' ? 'لوحة الإدارة' : 'Admin'}</span>
-              </button>
-            )}
-
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-8 mr-6">
+            {/* 1. المركبات */}
             <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors cursor-pointer"
+              onClick={() => setActiveMenu(activeMenu === 'vehicles' ? null : 'vehicles')}
+              className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
+                activeMenu === 'vehicles' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+              }`}
             >
-              <Globe className="w-3.5 h-3.5 text-yellow-400" />
-              <span>{language === 'ar' ? 'English' : 'العربية'}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Navigation Bar */}
-      <nav className={`bg-white text-gray-900 border-b border-gray-200 transition-all duration-300 ${
-        isScrolled ? 'shadow-lg py-3' : 'py-4'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 md:px-12 flex items-center justify-between">
-          {/* Brand Logo: Al Jabrani Motors */}
-          <div className="flex items-center gap-4">
-            <a href="#" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-gradient-to-br from-blue-700 to-indigo-900 text-white flex items-center justify-center shadow-md shadow-blue-600/20 p-1.5 border border-blue-400/30">
-                <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
-                  <path
-                    d="M50 8C26.8 8 8 26.8 8 50C8 73.2 26.8 92 50 92C73.2 92 92 73.2 92 50C92 26.8 73.2 8 50 8ZM50 86.5C29.8 86.5 13.5 70.2 13.5 50C13.5 29.8 29.8 13.5 50 13.5C70.2 13.5 86.5 29.8 86.5 50C86.5 70.2 70.2 86.5 50 86.5Z"
-                    fill="white"
-                  />
-                  <ellipse cx="50" cy="50" rx="38" ry="18" stroke="white" strokeWidth="5.5" fill="none" />
-                  <ellipse cx="50" cy="38" rx="16" ry="24" stroke="white" strokeWidth="5.5" fill="none" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-black text-lg md:text-xl font-display tracking-tight text-gray-900 leading-none group-hover:text-blue-600 transition-colors">
-                  {language === 'ar' ? 'الجبراني للسيارات' : 'AL JABRANI MOTORS'}
-                </span>
-                <span className="text-[10px] font-semibold text-blue-600 tracking-wider uppercase mt-1">
-                  {language === 'ar' ? 'الموزع المعتمد المتميز' : 'Authorized Premier Dealer'}
-                </span>
-              </div>
-            </a>
-          </div>
-
-          {/* Desktop Mega Menu Navigation Links */}
-          <div className="hidden lg:flex items-center gap-1 font-semibold text-xs md:text-sm">
-            {/* 1. Vehicles Mega Menu Trigger */}
-            <div 
-              className="relative"
-              onMouseEnter={() => { setVehiclesDropdownOpen(true); setServicesDropdownOpen(false); setOffersDropdownOpen(false); }}
-            >
-              <button 
-                onClick={() => {
-                  const el = document.getElementById('explore-vehicles');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer ${
-                  vehiclesDropdownOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
-              >
-                <Car className="w-4 h-4 text-blue-600" />
-                <span>{language === 'ar' ? 'السيارات' : 'Vehicles'}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${vehiclesDropdownOpen ? 'rotate-180 text-blue-600' : 'text-gray-400'}`} />
-              </button>
-            </div>
-
-            {/* 2. Offers Menu Trigger */}
-            <div 
-              className="relative"
-              onMouseEnter={() => { setOffersDropdownOpen(true); setVehiclesDropdownOpen(false); setServicesDropdownOpen(false); }}
-            >
-              <button 
-                onClick={() => {
-                  const el = document.getElementById('offers');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer ${
-                  offersDropdownOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
-              >
-                <Tag className="w-4 h-4 text-blue-600" />
-                <span>{language === 'ar' ? 'العروض' : 'Offers'}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${offersDropdownOpen ? 'rotate-180 text-blue-600' : 'text-gray-400'}`} />
-              </button>
-            </div>
-
-            {/* 3. Aftersales & Services Menu Trigger */}
-            <div 
-              className="relative"
-              onMouseEnter={() => { setServicesDropdownOpen(true); setVehiclesDropdownOpen(false); setOffersDropdownOpen(false); }}
-            >
-              <button 
-                className={`px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer ${
-                  servicesDropdownOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
-              >
-                <Wrench className="w-4 h-4 text-blue-600" />
-                <span>{language === 'ar' ? 'خدمات ما بعد البيع' : 'After-sales & Services'}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${servicesDropdownOpen ? 'rotate-180 text-blue-600' : 'text-gray-400'}`} />
-              </button>
-            </div>
-
-            {/* 4. Certified Pre-Owned */}
-            <a 
-              href="#certified-preowned" 
-              className="px-3.5 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
-            >
-              {language === 'ar' ? 'السيارات المستعملة المعتمدة' : 'Certified Pre-Owned'}
-            </a>
-
-            {/* 5. Finance Calculator */}
-            <a 
-              href="#finance" 
-              className="px-3.5 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
-            >
-              {language === 'ar' ? 'حاسبة التمويل' : 'Finance Calculator'}
-            </a>
-
-            {/* 6. Branches */}
-            <a 
-              href="#showrooms" 
-              className="px-3.5 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
-            >
-              {language === 'ar' ? 'الفروع' : 'Branches'}
-            </a>
-          </div>
-
-          {/* Action CTAs: Search, Compare, Book Test Drive */}
-          <div className="flex items-center gap-2.5">
-            {/* Global Search Button */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer"
-              title={language === 'ar' ? 'البحث عن سيارة' : 'Search vehicles'}
-            >
-              <Search className="w-4 h-4" />
-            </button>
-
-            {/* Compare Vehicle Drawer Trigger */}
-            <button
-              onClick={onOpenCompare}
-              className="relative p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer"
-              title={language === 'ar' ? 'مقارنة السيارات' : 'Compare vehicles'}
-            >
-              <Layers className="w-4 h-4" />
-              {comparisonCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-bounce shadow-sm">
-                  {comparisonCount}
-                </span>
+              <span>{language === 'ar' ? 'المركبات' : 'Vehicles'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'vehicles' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              {activeMenu === 'vehicles' && (
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
               )}
             </button>
 
-            {/* Book Test Drive CTA */}
+            {/* 2. العروض */}
             <button
-              onClick={() => onOpenTestDrive()}
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all cursor-pointer"
+              onClick={() => setActiveMenu(activeMenu === 'offers' ? null : 'offers')}
+              className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
+                activeMenu === 'offers' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+              }`}
             >
-              <Car className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'حجز تجربة قيادة' : 'Book Test Drive'}</span>
+              <span>{language === 'ar' ? 'العروض' : 'Offers'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'offers' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              {activeMenu === 'offers' && (
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+              )}
             </button>
 
-            {/* Mobile Hamburger Menu Toggle */}
+            {/* 3. ملاك سولينا */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-xl bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors cursor-pointer"
+              onClick={() => setActiveMenu(activeMenu === 'owners' ? null : 'owners')}
+              className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
+                activeMenu === 'owners' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+              }`}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
+              <span>{language === 'ar' ? 'ملاك سولينا' : 'Solina Owners'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'owners' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              {activeMenu === 'owners' && (
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+              )}
             </button>
-          </div>
+
+            {/* 4. اكتشف */}
+            <button
+              onClick={() => setActiveMenu(activeMenu === 'discover' ? null : 'discover')}
+              className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
+                activeMenu === 'discover' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+              }`}
+            >
+              <span>{language === 'ar' ? 'اكتشف' : 'Discover'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'discover' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              {activeMenu === 'discover' && (
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+              )}
+            </button>
+          </nav>
         </div>
 
-        {/* 1. Vehicles Mega Menu Dropdown */}
-        {vehiclesDropdownOpen && (
-          <div 
-            className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 py-8 transition-all animate-in fade-in slide-in-from-top-2 duration-200"
-            onMouseLeave={() => setVehiclesDropdownOpen(false)}
-          >
-            <div className="max-w-7xl mx-auto px-4 md:px-12">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-                <div className="flex items-center gap-2">
-                  {(['all', 'sedan', 'suv', 'commercial', 'hybrid', 'gr'] as const).map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => {
-                        setActiveMegaCategory(cat);
-                        onSelectCategory(cat);
-                      }}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        activeMegaCategory === cat
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      {cat === 'all' && (language === 'ar' ? 'كافة السيارات' : 'All Models')}
-                      {cat === 'sedan' && (language === 'ar' ? 'السيدان' : 'Sedan')}
-                      {cat === 'suv' && (language === 'ar' ? 'الدفع الرباعي SUV' : 'SUV & Crossover')}
-                      {cat === 'commercial' && (language === 'ar' ? 'السيارات التجارية' : 'Commercial')}
-                      {cat === 'hybrid' && (language === 'ar' ? 'الهايبرد HEV' : 'Hybrid & Electric')}
-                      {cat === 'gr' && (language === 'ar' ? 'الأداء الرياضي GR' : 'Performance GR')}
+        {/* Left Side: Language Toggle, User Profile, and Red Solina Logo */}
+        <div className="flex items-center gap-5">
+          {/* Compare Shortcut Badge */}
+          {comparisonCount > 0 && (
+            <button 
+              onClick={onOpenCompare}
+              className="relative hidden sm:flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
+            >
+              <Scale className="w-4 h-4 text-[#0056B3]" />
+              <span>{language === 'ar' ? 'المقارنة' : 'Compare'}</span>
+              <span className="w-5 h-5 rounded-full bg-[#0056B3] text-white flex items-center justify-center text-[10px]">
+                {comparisonCount}
+              </span>
+            </button>
+          )}
+
+          {/* User Profile Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              className="flex items-center gap-1.5 text-gray-700 hover:text-black py-2 px-2.5 rounded-full hover:bg-gray-100 transition-colors"
+              title="حساب الضيف"
+            >
+              <User className="w-5 h-5 text-gray-700" />
+              <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+            </button>
+
+            {userDropdownOpen && (
+              <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="px-4 py-2 border-b border-gray-100">
+                  <p className="text-xs text-gray-500">{language === 'ar' ? 'أهلاً بك في سولينا' : 'Welcome to Solina'}</p>
+                  <p className="text-sm font-bold text-gray-900">{language === 'ar' ? 'بوابة الضيف' : 'Guest Portal'}</p>
+                </div>
+                <div className="py-1">
+                  <a href="#test-drive" onClick={() => { onOpenTestDrive(); setUserDropdownOpen(false); }} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#0056B3] transition-colors">
+                    <Car className="w-4 h-4" />
+                    <span>{language === 'ar' ? 'طلب تجربة قيادة' : 'Book Test Drive'}</span>
+                  </a>
+                  <a href="#service" onClick={() => { onOpenServiceBooking(); setUserDropdownOpen(false); }} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#0056B3] transition-colors">
+                    <Wrench className="w-4 h-4" />
+                    <span>{language === 'ar' ? 'حجز موعد صيانة' : 'Book Service'}</span>
+                  </a>
+                  <button onClick={() => { if (onNavigate) onNavigate('showrooms'); else window.location.href = '#showrooms'; setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                    <MapPin className="w-4 h-4" />
+                    <span>{language === 'ar' ? 'أقرب فرع وصالة عرض' : 'Find Showroom'}</span>
+                  </button>
+                  <button onClick={() => { if (onNavigate) onNavigate('app'); else window.location.href = '#solina-app'; setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors text-right cursor-pointer">
+                    <Smartphone className="w-4 h-4 text-red-600" />
+                    <span>{language === 'ar' ? 'تطبيق سولينا التفاعلي' : 'Solina Interactive App'}</span>
+                  </button>
+                  {onOpenAdmin && (
+                    <button onClick={() => { onOpenAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors text-right">
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>{language === 'ar' ? 'لوحة تحكم الوكالة' : 'Dealership Admin'}</span>
                     </button>
-                  ))}
+                  )}
                 </div>
-
-                <button
-                  onClick={() => {
-                    setVehiclesDropdownOpen(false);
-                    const el = document.getElementById('explore-vehicles');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
-                >
-                  <span>{language === 'ar' ? 'عرض جميع الموديلات في الكتالوج' : 'View full vehicle showroom'}</span>
-                  {isRTL ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
-                </button>
               </div>
-
-              {/* Grid of Vehicles in Mega Menu */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                {megaMenuVehicles.map(vehicle => (
-                  <div
-                    key={vehicle.id}
-                    onClick={() => {
-                      setVehiclesDropdownOpen(false);
-                      onSelectVehicle(vehicle.id);
-                    }}
-                    className="group bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-3 border border-gray-200/70 hover:border-blue-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="h-24 flex items-center justify-center overflow-hidden">
-                      <img
-                        src={vehicle.cardImage}
-                        alt={vehicle.nameAr}
-                        className="max-h-20 w-auto object-contain group-hover:scale-105 transition-transform"
-                      />
-                    </div>
-                    <div className="mt-2 text-center">
-                      <span className="text-xs font-bold text-gray-900 group-hover:text-blue-600 block line-clamp-1">
-                        {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
-                      </span>
-                      <span className="text-[11px] font-mono text-gray-500 block mt-0.5">
-                        {language === 'ar' ? 'تبدأ من ' : 'From '}
-                        <strong className="text-blue-600">{formatPrice(vehicle.priceStartingFrom)}</strong> {language === 'ar' ? 'ر.س' : 'SAR'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
           </div>
-        )}
 
-        {/* 2. Services Dropdown */}
-        {servicesDropdownOpen && (
-          <div 
-            className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 py-8 transition-all animate-in fade-in slide-in-from-top-2 duration-200"
-            onMouseLeave={() => setServicesDropdownOpen(false)}
+          {/* Language Switcher: ع | EN */}
+          <div className="flex items-center gap-1 text-sm font-bold text-gray-800">
+            <button 
+              onClick={() => language !== 'ar' && toggleLanguage()}
+              className={`hover:text-[#0056B3] transition-colors ${language === 'ar' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
+            >
+              ع
+            </button>
+            <span className="text-gray-300">|</span>
+            <button 
+              onClick={() => language !== 'en' && toggleLanguage()}
+              className={`hover:text-[#0056B3] transition-colors ${language === 'en' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
+            >
+              EN
+            </button>
+          </div>
+
+          {/* Official Solina Motors Left Brand Link */}
+          <button 
+            onClick={() => onNavigate ? onNavigate('home') : window.location.href = '/'}
+            className="flex items-center gap-2 group cursor-pointer"
+            title="سولينا للسيارات"
           >
-            <div className="max-w-7xl mx-auto px-4 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div 
-                onClick={() => { setServicesDropdownOpen(false); onOpenServiceBooking(); }}
-                className="p-5 rounded-2xl bg-gray-50 hover:bg-blue-50 border border-gray-200/80 hover:border-blue-300 transition-all cursor-pointer group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-3">
-                  <Wrench className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 mb-1">
-                  {language === 'ar' ? 'حجز موعد صيانة' : 'Book a Service'}
-                </h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {language === 'ar' ? 'احجز موعد الصيانة الدورية أو الإصلاحات السريعة مع كادرنا الفني المعتمد.' : 'Schedule periodic service or rapid express maintenance.'}
-                </p>
-              </div>
+            <img
+              src="/solina-logo.png"
+              alt="سولينا للسيارات"
+              className="h-10 md:h-11 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+          </button>
 
-              <div 
-                onClick={() => { setServicesDropdownOpen(false); const el = document.getElementById('spare-parts'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-                className="p-5 rounded-2xl bg-gray-50 hover:bg-blue-50 border border-gray-200/80 hover:border-blue-300 transition-all cursor-pointer group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-3">
-                  <Cpu className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 mb-1">
-                  {language === 'ar' ? 'قطع الغيار الأصلية 100%' : 'Genuine Spare Parts'}
-                </h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {language === 'ar' ? 'كتالوج قطع الغيار المعتمدة والإكسسوارات مع الضمان الذهبي.' : 'Authorized genuine components and factory accessories catalog.'}
-                </p>
-              </div>
-
-              <div 
-                onClick={() => { setServicesDropdownOpen(false); const el = document.getElementById('finance'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-                className="p-5 rounded-2xl bg-gray-50 hover:bg-blue-50 border border-gray-200/80 hover:border-blue-300 transition-all cursor-pointer group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-3">
-                  <Calculator className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 mb-1">
-                  {language === 'ar' ? 'برامج التمويل والتأجير' : 'Financing Solutions'}
-                </h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {language === 'ar' ? 'حلول تمويلية معتمدة ومتوافقة مع الشريعة بأقل هامش ربح.' : 'Sharia-compliant financing and flexible leasing schemes.'}
-                </p>
-              </div>
-
-              <div 
-                onClick={() => { setServicesDropdownOpen(false); const el = document.getElementById('showrooms'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-                className="p-5 rounded-2xl bg-gray-50 hover:bg-blue-50 border border-gray-200/80 hover:border-blue-300 transition-all cursor-pointer group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-3">
-                  <MapPin className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 mb-1">
-                  {language === 'ar' ? 'فروعنا وشبكة الخدمة' : 'Our Branch Network'}
-                </h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {language === 'ar' ? 'أكثر من 70 صالة عرض ومركز خدمة موزعة في جميع مناطق المملكة.' : 'Over 70 showrooms and certified centers across Saudi Arabia.'}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 3. Offers Dropdown */}
-        {offersDropdownOpen && (
-          <div 
-            className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 py-8 transition-all animate-in fade-in slide-in-from-top-2 duration-200"
-            onMouseLeave={() => setOffersDropdownOpen(false)}
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 text-gray-800 hover:text-black rounded-lg"
           >
-            <div className="max-w-7xl mx-auto px-4 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div 
-                onClick={() => { setOffersDropdownOpen(false); const el = document.getElementById('offers'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-                className="p-5 rounded-2xl bg-blue-50/50 hover:bg-blue-50 border border-blue-200 transition-all cursor-pointer group"
-              >
-                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-600 text-white inline-block mb-3">
-                  {language === 'ar' ? 'عروض 2026' : '2026 Campaigns'}
-                </span>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-blue-600 mb-1">
-                  {language === 'ar' ? '5 سنوات راحة بال مع فيلوز 2026' : '5 Years Peace of Mind with Veloz'}
-                </h4>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  {language === 'ar' ? 'صيانة مجانية 5 سنوات أو 100,000 كم مع ضمان شامل.' : 'Complimentary 5-year scheduled maintenance and warranty.'}
-                </p>
-              </div>
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
 
-              <div 
-                onClick={() => { setOffersDropdownOpen(false); const el = document.getElementById('offers'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-                className="p-5 rounded-2xl bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-200 transition-all cursor-pointer group"
+      {/* ========================================================================= */}
+      {/* 1. MEGA MENU: المركبات (EXACT 1:1 SOLINA SA MEGNA MENU) */}
+      {/* ========================================================================= */}
+      {activeMenu === 'vehicles' && (
+        <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16 py-8 relative">
+            
+            {/* Top Close Button (Top Left) */}
+            <div className="flex items-center justify-between pb-4 mb-6">
+              <button 
+                onClick={() => setActiveMenu(null)}
+                className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-full transition-colors"
+                title="إغلاق"
               >
-                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-600 text-white inline-block mb-3">
-                  {language === 'ar' ? 'عروض الهايبرد' : 'Hybrid Campaigns'}
-                </span>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-emerald-700 mb-1">
-                  {language === 'ar' ? 'عروض تويوتا الهايبرد HEV الذكية' : 'Toyota HEV Smart Hybrid Offers'}
-                </h4>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  {language === 'ar' ? 'استرداد نقدي فوري يصل حتى 15,000 ر.س مع تمويل ميسر.' : 'Instant cash refund up to 15,000 SAR and 0.99% profit rate.'}
-                </p>
-              </div>
-
-              <div 
-                onClick={() => { setOffersDropdownOpen(false); const el = document.getElementById('offers'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-                className="p-5 rounded-2xl bg-amber-50/50 hover:bg-amber-50 border border-amber-200 transition-all cursor-pointer group"
-              >
-                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-600 text-white inline-block mb-3">
-                  {language === 'ar' ? 'تدشين حصري' : 'New Launch'}
-                </span>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-amber-700 mb-1">
-                  {language === 'ar' ? 'برادو 2026 الشكل الجديد كلياً' : 'All-New Prado 2026 Launch'}
-                </h4>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  {language === 'ar' ? 'تسليم فوري من صالات العرض مع باقة حماية النانو مجاناً.' : 'Priority immediate delivery with free nano-ceramic package.'}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Global Vehicle Search Modal */}
-      {searchOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-20 px-4 animate-in fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border border-gray-200">
-            <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-              <Search className="w-5 h-5 text-blue-600" />
-              <input
-                type="text"
-                autoFocus
-                placeholder={language === 'ar' ? 'ابحث باسم الموديل (كامري، برادو، لاندكروزر، هايبرد)...' : 'Search by model (Camry, Prado, Land Cruiser, Hybrid)...'}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-sm md:text-base text-gray-900 outline-none font-medium"
-              />
-              <button
-                onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
+                <X className="w-7 h-7" />
               </button>
             </div>
 
-            {/* Results or Suggested Tags */}
-            <div className="p-5 max-h-96 overflow-y-auto">
-              {searchQuery.trim() ? (
-                filteredVehicles.length > 0 ? (
-                  <div className="space-y-3">
-                    {filteredVehicles.map(vehicle => (
-                      <div
-                        key={vehicle.id}
-                        onClick={() => {
-                          setSearchOpen(false);
-                          setSearchQuery('');
-                          onSelectVehicle(vehicle.id);
-                        }}
-                        className="flex items-center justify-between p-3 rounded-2xl bg-gray-50 hover:bg-blue-50 border border-gray-200/70 hover:border-blue-300 transition-all cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={vehicle.cardImage}
-                            alt={vehicle.nameAr}
-                            className="w-16 h-10 object-contain"
-                          />
-                          <div>
-                            <span className="font-bold text-sm text-gray-900 block">
-                              {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {language === 'ar' ? vehicle.bodyTypeAr : vehicle.bodyTypeEn} • {vehicle.powertrain}
-                            </span>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Main Vehicles Grid (Left 9 cols in RTL) */}
+              <div className="lg:col-span-9 space-y-12 order-2 lg:order-1">
+                
+                {/* 1. قسم السيدان والرياضية */}
+                {sedanVehicles.length > 0 && (
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-8 text-right font-arabic">
+                      {language === 'ar' ? 'السيدان' : 'Sedans & Sports'}
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+                      {sedanVehicles.map((v) => (
+                        <div 
+                          key={v.id} 
+                          onClick={() => {
+                            onSelectVehicle(v.id);
+                            setActiveMenu(null);
+                          }}
+                          className="group cursor-pointer flex flex-col items-center text-center transition-all p-2 rounded-xl hover:bg-gray-50/80"
+                        >
+                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#0056B3] transition-colors leading-tight">
+                            {getModelTitle(v)}
+                          </h4>
+                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
+                            <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
+                            <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
+                            <span className="text-[#0056B3] mr-1"> ﷼</span>
+                          </p>
+                          <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
+                            <img 
+                              src={v.cardImage} 
+                              alt={v.nameAr} 
+                              className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
                           </div>
                         </div>
-                        <div className="text-end">
-                          <span className="text-xs font-mono font-bold text-blue-600 block">
-                            {formatPrice(vehicle.priceStartingFrom)} {language === 'ar' ? 'ر.س' : 'SAR'}
-                          </span>
-                          <span className="text-[10px] text-gray-400">
-                            {language === 'ar' ? 'تبدأ من' : 'Starts from'}
-                          </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. قسم السيارات متعددة الإستخدامات SUV */}
+                {suvVehicles.length > 0 && (
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-8 text-right font-arabic">
+                      {language === 'ar' ? 'السيارات متعددة الإستخدامات' : 'SUVs & Crossovers'}
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+                      {suvVehicles.map((v) => (
+                        <div 
+                          key={v.id} 
+                          onClick={() => {
+                            onSelectVehicle(v.id);
+                            setActiveMenu(null);
+                          }}
+                          className="group cursor-pointer flex flex-col items-center text-center transition-all p-2 rounded-xl hover:bg-gray-50/80"
+                        >
+                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#0056B3] transition-colors leading-tight">
+                            {getModelTitle(v)}
+                          </h4>
+                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
+                            <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
+                            <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
+                            <span className="text-[#0056B3] mr-1"> ﷼</span>
+                          </p>
+                          <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
+                            <img 
+                              src={v.cardImage} 
+                              alt={v.nameAr} 
+                              className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                ) : (
-                  <div className="text-center py-10 text-gray-500 text-xs">
-                    {language === 'ar' ? 'لم يتم العثور على سيارات مطابقة لبحثك.' : 'No vehicles found matching your search.'}
+                )}
+
+                {/* 3. قسم السيارات التجارية */}
+                {commercialVehicles.length > 0 && (
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-8 text-right font-arabic">
+                      {language === 'ar' ? 'السيارات التجارية' : 'Commercial Vehicles'}
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+                      {commercialVehicles.map((v) => (
+                        <div 
+                          key={v.id} 
+                          onClick={() => {
+                            onSelectVehicle(v.id);
+                            setActiveMenu(null);
+                          }}
+                          className="group cursor-pointer flex flex-col items-center text-center transition-all p-2 rounded-xl hover:bg-gray-50/80"
+                        >
+                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#0056B3] transition-colors leading-tight">
+                            {getModelTitle(v)}
+                          </h4>
+                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
+                            <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
+                            <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
+                            <span className="text-[#0056B3] mr-1"> ﷼</span>
+                          </p>
+                          <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
+                            <img 
+                              src={v.cardImage} 
+                              alt={v.nameAr} 
+                              className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                )
-              ) : (
+                )}
+              </div>
+
+              {/* Filter Sidebar on Right (3 columns) */}
+              <div className="lg:col-span-3 bg-[#F8F9FA] rounded-2xl p-6 border border-gray-200/60 space-y-6 order-1 lg:order-2 h-fit text-right">
+                
+                {/* 1. نوع الهيكل (Body Type) */}
                 <div>
-                  <span className="text-xs font-bold text-gray-400 block mb-3">
-                    {language === 'ar' ? 'عمليات البحث الشائعة:' : 'Popular Searches:'}
-                  </span>
+                  <label className="block text-sm font-bold text-gray-900 mb-3">
+                    {language === 'ar' ? 'نوع الهيكل' : 'Body Type'}
+                  </label>
                   <div className="flex flex-wrap gap-2">
-                    {['كامري 2026', 'برادو 2026', 'لاندكروزر 300', 'راف فور هايبرد', 'فيلوز 7 ركاب', 'هايلكس غمارتين', 'سوبرا GR'].map(tag => (
+                    {[
+                      { id: 'all', label: 'الجميع' },
+                      { id: 'sedan', label: 'السيدان' },
+                      { id: 'suv', label: 'السيارات متعددة الإستخدامات' },
+                      { id: 'commercial', label: 'السيارات التجارية' }
+                    ].map(tab => (
                       <button
-                        key={tag}
-                        onClick={() => setSearchQuery(tag)}
-                        className="px-3 py-1.5 rounded-full bg-gray-100 hover:bg-blue-50 hover:text-blue-600 text-xs font-medium text-gray-700 transition-colors cursor-pointer"
+                        key={tab.id}
+                        onClick={() => setFilterBodyType(tab.id)}
+                        className={`text-xs px-4 py-2 rounded-full font-bold transition-all ${
+                          filterBodyType === tab.id
+                            ? 'bg-black text-white shadow-sm'
+                            : 'bg-white text-gray-800 border border-gray-300 hover:border-black'
+                        }`}
                       >
-                        {tag}
+                        {tab.label}
                       </button>
                     ))}
                   </div>
                 </div>
-              )}
+
+                {/* 2. نوع المحرك (Engine / Powertrain) */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 mb-3">
+                    {language === 'ar' ? 'نوع المحرك' : 'Engine Type'}
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'all', label: 'الجميع' },
+                      { id: 'petrol', label: 'بنزين' },
+                      { id: 'hybrid', label: 'هجين' },
+                      { id: 'diesel', label: 'ديزل' }
+                    ].map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setFilterPowertrain(tab.id)}
+                        className={`text-xs px-4 py-2 rounded-full font-bold transition-all ${
+                          filterPowertrain === tab.id
+                            ? 'bg-black text-white shadow-sm'
+                            : 'bg-white text-gray-800 border border-gray-300 hover:border-black'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. شريط مدى السعر (Price Range Slider) */}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-sm font-bold text-gray-900">
+                      {language === 'ar' ? 'السعر' : 'Price'}
+                    </label>
+                    <span className="text-xs font-mono font-bold text-[#0056B3]">
+                      {maxPrice.toLocaleString()} ﷼
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="65000"
+                    max="350000"
+                    step="5000"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Number(e.target.value))}
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0056B3]"
+                  />
+                  <div className="flex justify-between text-[11px] text-gray-500 mt-1 font-mono">
+                    <span>66,987 ﷼</span>
+                    <span>334,535 ﷼</span>
+                  </div>
+                </div>
+
+                {/* 4. دوائر الألوان (Colors) */}
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-sm font-bold text-gray-900">
+                      {language === 'ar' ? 'اللون' : 'Color'}
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-6 gap-2">
+                    {colorPalette.map((col, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedColor(selectedColor === col.hex ? null : col.hex)}
+                        className={`w-6 h-6 rounded-full border transition-all ${
+                          selectedColor === col.hex ? 'scale-125 border-black shadow-md ring-2 ring-[#0056B3]' : 'border-gray-200 hover:scale-110'
+                        }`}
+                        style={{ backgroundColor: col.hex }}
+                        title={col.name}
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-2 text-left">
+                    <button 
+                      onClick={() => setSelectedColor(null)}
+                      className="text-xs text-[#0056B3] hover:underline font-semibold"
+                    >
+                      {language === 'ar' ? 'رؤية الكل' : 'View All'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Action Links matching reference */}
+                <div className="pt-4 border-t border-gray-200 space-y-3">
+                  <button
+                    onClick={() => {
+                      onOpenCompare();
+                      setActiveMenu(null);
+                    }}
+                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#0056B3] py-1.5 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Scale className="w-4 h-4 text-[#0056B3]" />
+                      <span>{language === 'ar' ? 'قارن المركبات' : 'Compare Vehicles'}</span>
+                    </div>
+                    <ArrowLeft className="w-4 h-4 text-gray-400" />
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      onOpenTestDrive();
+                      setActiveMenu(null);
+                    }}
+                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#0056B3] py-1.5 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <PhoneCall className="w-4 h-4 text-[#0056B3]" />
+                      <span>{language === 'ar' ? 'اطلب مكالمة' : 'Request a Call'}</span>
+                    </div>
+                    <ArrowLeft className="w-4 h-4 text-gray-400" />
+                  </button>
+
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (onNavigate) onNavigate('offers');
+                      setActiveMenu(null);
+                    }}
+                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#0056B3] py-1.5 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Tag className="w-4 h-4 text-[#0056B3]" />
+                      <span>{language === 'ar' ? 'أحدث العروض' : 'Latest Offers'}</span>
+                    </div>
+                    <ArrowLeft className="w-4 h-4 text-gray-400" />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-gray-200 p-6 space-y-5 animate-in slide-in-from-top-2 shadow-2xl">
-          <div className="flex flex-col space-y-3 font-bold text-sm">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                const el = document.getElementById('explore-vehicles');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-start py-2 text-gray-800 hover:text-blue-600 border-b border-gray-100 flex items-center justify-between"
-            >
-              <span>{language === 'ar' ? 'السيارات وموديلات 2026' : 'Vehicles & 2026 Lineup'}</span>
-              <Car className="w-4 h-4 text-blue-600" />
-            </button>
+      {/* ========================================================================= */}
+      {/* 2. DROPDOWN: العروض (OFFERS) */}
+      {/* ========================================================================= */}
+      {activeMenu === 'offers' && (
+        <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-gray-100">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">أحدث عروض سولينا للسيارات</h3>
+                <p className="text-xs text-gray-500">عروض الشراء والتمويل والصيانة المعتمدة</p>
+              </div>
+              <button 
+                onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
+                className="px-5 py-2 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>استكشف صفحة العروض كاملة</span>
+                <ArrowLeft className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <a 
+                href="#offers" 
+                onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
+                className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-red-100 text-[#0056B3] flex items-center justify-center mb-3">
+                  <Tag className="w-5 h-5" />
+                </div>
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                  عروض 5 سنوات مع فيلوز
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  صيانة ممتدة ومساعدة مجانية على الطريق لمدة 5 سنوات.
+                </p>
+              </a>
 
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                const el = document.getElementById('offers');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-start py-2 text-gray-800 hover:text-blue-600 border-b border-gray-100 flex items-center justify-between"
-            >
-              <span>{language === 'ar' ? 'أحدث العروض التمويلية' : 'Financing & Deals'}</span>
-              <Tag className="w-4 h-4 text-blue-600" />
-            </button>
+              <a 
+                href="#offers" 
+                onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
+                className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                  راحة بال HEV حتى 10 سنوات
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  ضمان ممتد على بطاريات كافة موديلات الهايبرد الصديقة للبيئة.
+                </p>
+              </a>
 
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenServiceBooking();
-              }}
-              className="text-start py-2 text-gray-800 hover:text-blue-600 border-b border-gray-100 flex items-center justify-between"
-            >
-              <span>{language === 'ar' ? 'حجز خدمة صيانة' : 'Book Maintenance Service'}</span>
-              <Wrench className="w-4 h-4 text-blue-600" />
-            </button>
+              <a 
+                href="#offers" 
+                onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
+                className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-3">
+                  <Wrench className="w-5 h-5" />
+                </div>
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                  باقات الصيانة الدورية
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  صيانة 10,000 كم بـ 99 ريال، وخدمة 30,000 كم مجانية بالكامل.
+                </p>
+              </a>
 
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                const el = document.getElementById('certified-preowned');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-start py-2 text-gray-800 hover:text-blue-600 border-b border-gray-100 flex items-center justify-between"
-            >
-              <span>{language === 'ar' ? 'السيارات المستعملة المعتمدة' : 'Certified Pre-Owned'}</span>
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-            </button>
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                const el = document.getElementById('finance');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-start py-2 text-gray-800 hover:text-blue-600 border-b border-gray-100 flex items-center justify-between"
-            >
-              <span>{language === 'ar' ? 'حاسبة التمويل والأقساط' : 'Finance Calculator'}</span>
-              <Calculator className="w-4 h-4 text-blue-600" />
-            </button>
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                const el = document.getElementById('showrooms');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-start py-2 text-gray-800 hover:text-blue-600 border-b border-gray-100 flex items-center justify-between"
-            >
-              <span>{language === 'ar' ? 'الفروع وصالات العرض' : 'Showrooms & Branches'}</span>
-              <MapPin className="w-4 h-4 text-blue-600" />
-            </button>
-          </div>
-
-          <div className="pt-2 flex flex-col gap-2.5">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenTestDrive();
-              }}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
-            >
-              <Car className="w-4 h-4" />
-              <span>{language === 'ar' ? 'حجز تجربة قيادة' : 'Book a Test Drive'}</span>
-            </button>
-
-            <a
-              href="tel:8002444400"
-              className="w-full py-3 bg-gray-100 text-gray-800 font-bold text-xs rounded-xl flex items-center justify-center gap-2"
-            >
-              <Phone className="w-4 h-4 text-blue-600" />
-              <span>{language === 'ar' ? 'اتصل بخدمة الضيوف: 800 244 4400' : 'Call Care: 800 244 4400'}</span>
-            </a>
+              <a 
+                href="#calculator" 
+                onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
+                className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
+                  <Car className="w-5 h-5" />
+                </div>
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                  حاسبة التمويل والأقساط
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  احسب قسطك الشهري بدقة مع عروض التمويل التأجيري الميسرة.
+                </p>
+              </a>
+            </div>
           </div>
         </div>
       )}
-    </header>
+
+      {/* ========================================================================= */}
+      {/* 3. DROPDOWN: ملاك سولينا (SOLINA OWNERS) */}
+      {/* ========================================================================= */}
+      {activeMenu === 'owners' && (
+        <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-gray-100">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">بوابة ملاك سولينا والخدمات المعتمدة</h3>
+                <p className="text-xs text-gray-500">جداول الصيانة، برنامج جميل كير، وحجز المواعيد</p>
+              </div>
+              <button 
+                onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }}
+                className="px-5 py-2 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>فتح صفحة ملاك سولينا بالكامل</span>
+                <ArrowLeft className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">خدمات الصيانة</h4>
+                <button onClick={() => { onOpenServiceBooking(); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  حجز الصيانة
+                </button>
+                <button onClick={() => { onOpenServiceBooking(); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  تعديل حجز الصيانة
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  الصيانة الدورية وأسعارها
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">الرعاية والدعم</h4>
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  مؤشرات لوحة المعلومات (رموز الطبلون)
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  حملات الإستدعاء
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  الضمان وبرامج العناية
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">مراكز الخدمة</h4>
+                <button onClick={() => { if (onNavigate) onNavigate('showrooms'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  فروعنا ومراكز الصيانة السريعة
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  مبيعات قطع الغيار الأصلية
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  الأسئلة الشائعة للملاك
+                </button>
+              </div>
+
+              <div className="bg-red-50/60 rounded-2xl p-5 border border-red-100 flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#0056B3]">العناية بالضيوف 24/7</span>
+                  <h5 className="text-base font-bold text-gray-900 mt-1 mb-2">اتصل بنا على الرقم المجاني</h5>
+                  <p className="text-xl font-bold font-mono text-[#0056B3]">800 440 0055</p>
+                </div>
+                <button
+                  onClick={() => {
+                    onOpenServiceBooking();
+                    setActiveMenu(null);
+                  }}
+                  className="mt-4 w-full bg-[#0056B3] text-white py-2.5 px-4 rounded-full text-xs font-bold hover:bg-black transition-colors cursor-pointer"
+                >
+                  احجز موعدك الآن
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4. DROPDOWN: اكتشف (DISCOVER) */}
+      {/* ========================================================================= */}
+      {activeMenu === 'discover' && (
+        <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-gray-100">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">عالم سولينا والابتكار</h3>
+                <p className="text-xs text-gray-500">تاريخ الهايبرد، أنظمة الأمان TSS، وسباقات GR</p>
+              </div>
+              <button 
+                onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }}
+                className="px-5 py-2 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>عرض صفحة اكتشف كاملة</span>
+                <ArrowLeft className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">تكنولوجيا وابتكار</h4>
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  مستقبل التنقل وتكنولوجيا HEV
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  جازو ريسنج Gazoo Racing (GR)
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  رياضة السيارات و Esports
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  الحياد الكربوني و #غدك_اليوم
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">عن سولينا للسيارات</h4>
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  معلومات عنا وقصة 80 عاماً
+                </button>
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  التزامنا نحو ضيوفنا (الضيف أولاً)
+                </button>
+                <a href="#news" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                  أخبار سولينا للسيارات
+                </a>
+                <a href="#fake-parts" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                  حملة التوعية ضد القطع المقلدة
+                </a>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">الدعم والتواصل</h4>
+                <a href="#faq" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                  الأسئلة الشائعة
+                </a>
+                <a href="#contact" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                  اتصل بنا
+                </a>
+                <a href="#showrooms" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                  مراكزنا وفروعنا
+                </a>
+              </div>
+
+              <div className="relative rounded-2xl overflow-hidden group">
+                <img 
+                  src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/discover-toyota/hev-a-desktop-478x717.webp?w=1920&q=75&f=webp" 
+                  alt="مستقبل التنقل" 
+                  className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 flex flex-col justify-end text-white">
+                  <span className="text-[10px] font-bold text-[#0056B3] bg-white px-2 py-0.5 rounded w-fit mb-1">ابتكار هجين</span>
+                  <h5 className="font-bold text-sm">تكنولوجيا الهايبرد HEV من سولينا</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 5. MOBILE DRAWER NAVIGATION */}
+      {/* ========================================================================= */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
+          <div className="space-y-2">
+            <button 
+              onClick={() => {
+                setActiveMenu(activeMenu === 'vehicles' ? null : 'vehicles');
+              }} 
+              className="w-full flex justify-between items-center py-3 text-base font-bold text-gray-900 border-b border-gray-100"
+            >
+              <span>المركبات</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => {
+                setActiveMenu(activeMenu === 'offers' ? null : 'offers');
+              }} 
+              className="w-full flex justify-between items-center py-3 text-base font-bold text-gray-900 border-b border-gray-100"
+            >
+              <span>العروض</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => {
+                setActiveMenu(activeMenu === 'owners' ? null : 'owners');
+              }} 
+              className="w-full flex justify-between items-center py-3 text-base font-bold text-gray-900 border-b border-gray-100"
+            >
+              <span>ملاك سولينا</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => {
+                setActiveMenu(activeMenu === 'discover' ? null : 'discover');
+              }} 
+              className="w-full flex justify-between items-center py-3 text-base font-bold text-gray-900 border-b border-gray-100"
+            >
+              <span>اكتشف</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="pt-4 space-y-3">
+            <button
+              onClick={() => {
+                onOpenTestDrive();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full bg-[#0056B3] text-white py-3 rounded-full text-sm font-bold hover:bg-black transition-colors"
+            >
+              طلب تجربة قيادة
+            </button>
+            <button
+              onClick={() => {
+                onOpenServiceBooking();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full bg-gray-900 text-white py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition-colors"
+            >
+              حجز خدمة صيانة
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };

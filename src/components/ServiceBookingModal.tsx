@@ -18,8 +18,9 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 }) => {
   const { language, formatPrice } = useLanguage();
   const { addServiceAppointment } = useAdminData();
+  const toyotaVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
   const [step, setStep] = useState<'details' | 'booking' | 'success'>('details');
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>(VEHICLES[2].id); // Camry
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>(toyotaVehicles[2]?.id || toyotaVehicles[0]?.id); // Camry
   const [selectedMileage, setSelectedMileage] = useState<number>(10000);
   const [selectedBranchId, setSelectedBranchId] = useState<string>(SHOWROOMS[0].id);
   const [bookingDate, setBookingDate] = useState<string>('');
@@ -31,7 +32,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 
   if (!isOpen) return null;
 
-  const currentVehicle = VEHICLES.find(v => v.id === selectedVehicleId) || VEHICLES[0];
+  const currentVehicle = toyotaVehicles.find(v => v.id === selectedVehicleId) || toyotaVehicles[0];
   const currentPackage = MAINTENANCE_PACKAGES.find(p => p.mileage === selectedMileage) || MAINTENANCE_PACKAGES[0];
   const currentBranch = SHOWROOMS.find(s => s.id === selectedBranchId) || SHOWROOMS[0];
 
@@ -86,20 +87,20 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto font-arabic">
       <div className="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-gray-200 my-8 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-red-50 text-[#0056B3] flex items-center justify-center font-bold">
               <Wrench className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-gray-900 font-display">
-                {language === 'ar' ? 'حجز موعد صيانة تويوتا السريعة (45 دقيقة)' : 'Toyota 45-Min Express Service Booking'}
+              <h3 className="text-xl font-bold text-gray-900 font-arabic">
+                {language === 'ar' ? 'حجز موعد صيانة سولينا السريعة (45 دقيقة)' : 'Solina 45-Min Express Service Booking'}
               </h3>
               <p className="text-xs text-gray-500">
-                {language === 'ar' ? 'مراكز صيانة جبراني للسيارات المعتمدة بالمملكة' : 'Authorized Gibrani Motors Service Centers'}
+                {language === 'ar' ? 'مراكز صيانة سولينا للسيارات المعتمدة بالمملكة' : 'Authorized Solina Motors Service Centers'}
               </p>
             </div>
           </div>
@@ -122,9 +123,9 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                 <select
                   value={selectedVehicleId}
                   onChange={(e) => setSelectedVehicleId(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3.5 focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3.5 focus:ring-2 focus:ring-[#0056B3] outline-none cursor-pointer"
                 >
-                  {VEHICLES.map(v => (
+                  {toyotaVehicles.map(v => (
                     <option key={v.id} value={v.id}>
                       {language === 'ar' ? v.nameAr : v.nameEn} ({v.bodyTypeAr})
                     </option>
@@ -139,7 +140,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                 <select
                   value={selectedMileage}
                   onChange={(e) => setSelectedMileage(Number(e.target.value))}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3.5 focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3.5 focus:ring-2 focus:ring-[#0056B3] outline-none cursor-pointer"
                 >
                   {MAINTENANCE_PACKAGES.map(p => (
                     <option key={p.mileage} value={p.mileage}>
@@ -151,13 +152,13 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
             </div>
 
             {/* Maintenance Schedule & Price Card */}
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50/40 p-5 rounded-2xl border border-blue-100">
+            <div className="bg-gradient-to-br from-gray-50 to-red-50/20 p-5 rounded-2xl border border-red-100">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200/80">
                 <div>
-                  <span className="text-[10px] font-bold text-blue-600 bg-blue-100/70 px-2.5 py-0.5 rounded-full border border-blue-200">
+                  <span className="text-[10px] font-bold text-[#0056B3] bg-red-100/70 px-2.5 py-0.5 rounded-full border border-red-200">
                     {language === 'ar' ? currentPackage.estimatedDuration : currentPackage.estimatedDuration}
                   </span>
-                  <h4 className="font-bold text-sm text-gray-900 mt-1">
+                  <h4 className="font-bold text-sm text-gray-900 mt-1 font-arabic">
                     {language === 'ar' ? currentPackage.nameAr : currentPackage.nameEn}
                   </h4>
                 </div>
@@ -165,8 +166,8 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                 <div className="text-right sm:text-left">
                   <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'التكلفة التقديرية (شامل الضريبة والزيوت):' : 'Estimated Cost (Incl. VAT & Oils):'}</span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-blue-600 font-mono">{formatPrice(estimatedCost)}</span>
-                    <span className="text-xs font-bold text-gray-700">ر.س</span>
+                    <span className="text-2xl font-black text-[#0056B3] font-mono">{formatPrice(estimatedCost)}</span>
+                    <span className="text-xs font-bold text-gray-700">﷼</span>
                   </div>
                 </div>
               </div>
@@ -189,7 +190,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
             {/* Next Step Button */}
             <button
               onClick={() => setStep('booking')}
-              className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>{language === 'ar' ? 'متابعة لاختيار المركز والموعد' : 'Proceed to Branch & Slot Selection'}</span>
             </button>
@@ -206,7 +207,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
               <select
                 value={selectedBranchId}
                 onChange={(e) => setSelectedBranchId(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer"
+                className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none cursor-pointer"
               >
                 {SHOWROOMS.map(s => (
                   <option key={s.id} value={s.id}>
@@ -228,7 +229,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                   value={bookingDate}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setBookingDate(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none"
                 />
               </div>
 
@@ -239,7 +240,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                 <select
                   value={timeSlot}
                   onChange={(e) => setTimeSlot(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none cursor-pointer"
                 >
                   {timeSlots.map((ts, idx) => (
                     <option key={idx} value={ts}>{ts}</option>
@@ -260,7 +261,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                   placeholder={language === 'ar' ? 'مثال: فيصل العتيبي' : 'e.g. Faisal Al Otaibi'}
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none"
                 />
               </div>
 
@@ -274,7 +275,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                   placeholder="05XXXXXXXX"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none font-mono"
                 />
               </div>
 
@@ -287,7 +288,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                   placeholder={language === 'ar' ? 'مثال: أ ب ج 1 2 3 4' : 'e.g. ABC 1234'}
                   value={plateNumber}
                   onChange={(e) => setPlateNumber(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none"
                 />
               </div>
             </div>
@@ -304,7 +305,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 
               <button
                 type="submit"
-                className="flex-1 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-3.5 bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>{language === 'ar' ? 'تأكيد وحجز الموعد الفوري' : 'Confirm Service Booking'}</span>
               </button>
@@ -318,7 +319,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
               <CheckCircle2 className="w-9 h-9" />
             </div>
 
-            <h3 className="text-2xl font-black text-gray-900 font-display">
+            <h3 className="text-2xl font-bold text-gray-900 font-arabic">
               {language === 'ar' ? 'تم تأكيد حجز موعد الصيانة بنجاح!' : 'Service Appointment Successfully Confirmed!'}
             </h3>
 
@@ -330,7 +331,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 max-w-sm mx-auto font-mono text-xs text-gray-800 space-y-1">
               <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'رقم الحجز المرجعي:' : 'Booking Reference:'}</span>
-              <span className="font-bold text-blue-600 text-base">{bookingRef}</span>
+              <span className="font-bold text-[#0056B3] text-base">{bookingRef}</span>
               <div className="text-[11px] text-gray-600 pt-1">
                 <span>{currentVehicle.nameAr} | {currentPackage.nameAr}</span>
               </div>

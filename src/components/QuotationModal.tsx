@@ -56,7 +56,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
         downPaymentAmount: financingDetails?.downPaymentAmount,
         durationMonths: financingDetails?.termMonths,
         monthlyInstallment: financingDetails?.monthlyInstallment,
-        bankName: 'مصرف الراجحي / البنك الأهلي',
+        bankName: 'سولينا للسيارات للتمويل / مصرف الراجحي / الأهلي',
         status: 'sent'
       });
     }
@@ -64,7 +64,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
 
   if (!isOpen) return null;
 
-  const quoteNumber = `ALJABRANI-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+  const quoteNumber = `ALJ-SOLINA-2026-${Math.floor(100000 + Math.random() * 900000)}`;
   const issueDate = new Date().toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', {
     year: 'numeric',
     month: 'long',
@@ -80,19 +80,19 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto font-arabic">
       <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-10 shadow-2xl border border-gray-200 my-8 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
         {/* Top Control Bar (Hidden in Print) */}
         <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6 print:hidden">
           <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
-            <FileText className="w-5 h-5 text-blue-600" />
-            <span>{language === 'ar' ? 'عرض سعر رسمي معتمد — الجبراني للسيارات' : 'Official Authorized Quotation — Al Jabrani Motors'}</span>
+            <FileText className="w-5 h-5 text-[#0056B3]" />
+            <span>{language === 'ar' ? 'عرض سعر رسمي معتمد — سولينا للسيارات' : 'Official Quotation — Solina Motors'}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold shadow transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>{language === 'ar' ? 'طباعة / حفظ PDF' : 'Print / Save PDF'}</span>
@@ -111,25 +111,20 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           {/* Header & Logo Banner */}
           <div className="flex items-center justify-between pb-6 border-b-2 border-gray-900">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center p-1 border-2 border-gray-200">
-                <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
-                  <path
-                    d="M50 8C26.8 8 8 26.8 8 50C8 73.2 26.8 92 50 92C73.2 92 92 73.2 92 50C92 26.8 73.2 8 50 8ZM50 86.5C29.8 86.5 13.5 70.2 13.5 50C13.5 29.8 29.8 13.5 50 13.5C70.2 13.5 86.5 29.8 86.5 50C86.5 70.2 70.2 86.5 50 86.5Z"
-                    fill="#1A56DB"
-                  />
-                  <ellipse cx="50" cy="50" rx="38" ry="18" stroke="#1A56DB" strokeWidth="5.5" fill="none" />
-                  <ellipse cx="50" cy="38" rx="16" ry="24" stroke="#1A56DB" strokeWidth="5.5" fill="none" />
-                </svg>
-              </div>
+              <img
+                src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/Feature/alj/shared/header/toyota-logo.svg"
+                alt="Solina"
+                className="h-10 w-auto"
+              />
               <div>
-                <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight font-display">
-                  {language === 'ar' ? 'شركة الجبراني للسيارات' : 'Al Jabrani Motors'}
+                <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight font-arabic">
+                  {language === 'ar' ? 'شركة سولينا للسيارات المحدودة' : 'Solina Motors Retail Co. Ltd.'}
                 </h1>
-                <p className="text-[11px] text-gray-500 font-medium">
-                  {language === 'ar' ? 'الموزع والوكيل المعتمد للسيارات في المملكة العربية السعودية' : 'Authorized Automotive Distributor in Saudi Arabia'}
+                <p className="text-[11px] text-gray-600 font-medium">
+                  {language === 'ar' ? 'الموزع المعتمد لسيارات سولينا في المملكة العربية السعودية' : 'Authorized Distributor of Solina in Saudi Arabia'}
                 </p>
-                <p className="text-[10px] text-gray-400 font-mono">
-                  {language === 'ar' ? 'الرقم الضريبي (VAT ID): 300159478400003' : 'VAT Registration: 300159478400003'}
+                <p className="text-[10px] text-gray-500 font-mono">
+                  {language === 'ar' ? 'سجل تجاري: 4030794548 | الرقم الضريبي: 300159478400003' : 'CR: 4030794548 | VAT: 300159478400003'}
                 </p>
               </div>
             </div>
@@ -137,7 +132,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
             <div className="text-left font-mono">
               <div className="bg-gray-100 p-2.5 rounded-xl border border-gray-200">
                 <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'رقم عرض السعر:' : 'Quotation Ref:'}</span>
-                <span className="text-xs font-bold text-blue-600">{quoteNumber}</span>
+                <span className="text-xs font-bold text-[#0056B3]">{quoteNumber}</span>
                 <div className="mt-1 text-[10px] text-gray-500">
                   <span>{language === 'ar' ? 'تاريخ الإصدار: ' : 'Date: '}</span>
                   <span className="font-semibold text-gray-800">{issueDate}</span>
@@ -153,13 +148,13 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           {/* Vehicle Information Box */}
           <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1.5 flex-1">
-              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-[#0056B3] border border-red-200">
                 {vehicle.bodyTypeAr} | موديل {vehicle.year}
               </span>
-              <h2 className="text-xl font-black text-gray-900 font-display">
+              <h2 className="text-xl font-bold text-gray-900 font-arabic">
                 {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
               </h2>
-              <p className="text-xs font-bold text-blue-600">
+              <p className="text-xs font-bold text-[#0056B3]">
                 {language === 'ar' ? `الفئة المختارة: ${activeGrade.name}` : `Selected Trim: ${activeGrade.nameEn}`}
               </p>
               <div className="text-[11px] text-gray-500 flex flex-wrap gap-4 pt-1">
@@ -206,22 +201,22 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 <tr>
                   <td className="p-2.5 text-gray-700">{language === 'ar' ? 'سعر السيارة الأساسي (قبل ضريبة القيمة المضافة)' : 'Vehicle Base Price (Excl. VAT)'}</td>
                   <td className="p-2.5 text-center font-mono">-</td>
-                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(priceExcludingVat)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
+                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(priceExcludingVat)} {language === 'ar' ? '﷼' : 'SAR'}</td>
                 </tr>
                 <tr>
                   <td className="p-2.5 text-gray-700">{language === 'ar' ? 'ضريبة القيمة المضافة (VAT)' : 'Value Added Tax (VAT)'}</td>
-                  <td className="p-2.5 text-center font-mono text-blue-600 font-bold">15%</td>
-                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(vatAmount)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
+                  <td className="p-2.5 text-center font-mono text-[#0056B3] font-bold">15%</td>
+                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(vatAmount)} {language === 'ar' ? '﷼' : 'SAR'}</td>
                 </tr>
                 <tr>
                   <td className="p-2.5 text-gray-700">{language === 'ar' ? 'رسوم اللوحات والاستمارة وإصدار رخصة السير' : 'Registration & License Plate Fees'}</td>
                   <td className="p-2.5 text-center font-mono">-</td>
-                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(registrationFees)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
+                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(registrationFees)} {language === 'ar' ? '﷼' : 'SAR'}</td>
                 </tr>
-                <tr className="bg-blue-50/50 font-bold text-blue-900">
+                <tr className="bg-red-50/50 font-bold text-gray-900">
                   <td className="p-3 text-xs">{language === 'ar' ? 'إجمالي السعر النقدي الشامل على الطريق:' : 'Total On-Road Cash Price:'}</td>
                   <td className="p-3 text-center font-mono">-</td>
-                  <td className="p-3 text-end font-mono text-sm text-blue-600">{formatPrice(totalPriceOnRoad)} {language === 'ar' ? 'ر.س' : 'SAR'}</td>
+                  <td className="p-3 text-end font-mono text-sm text-[#0056B3]">{formatPrice(totalPriceOnRoad)} {language === 'ar' ? '﷼' : 'SAR'}</td>
                 </tr>
               </tbody>
             </table>
@@ -229,12 +224,12 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
 
           {/* Financing Plan if available */}
           {financingDetails && (
-            <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-2">
-              <span className="text-xs font-bold text-blue-900 block">{language === 'ar' ? 'خطة التمويل التأجيري التقديرية:' : 'Estimated Lease Financing Plan:'}</span>
+            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-2">
+              <span className="text-xs font-bold text-gray-900 block">{language === 'ar' ? 'خطة التمويل التأجيري التقديرية:' : 'Estimated Lease Financing Plan:'}</span>
               <div className="grid grid-cols-3 gap-3 text-[11px]">
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'الدفعة الأولى:' : 'Down Payment:'}</span>
-                  <span className="font-bold text-gray-900 font-mono">{formatPrice(financingDetails.downPaymentAmount)} ر.س ({financingDetails.downPaymentPercent}%)</span>
+                  <span className="font-bold text-gray-900 font-mono">{formatPrice(financingDetails.downPaymentAmount)} ﷼ ({financingDetails.downPaymentPercent}%)</span>
                 </div>
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'مدة التمويل:' : 'Tenure:'}</span>
@@ -242,7 +237,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 </div>
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'القسط الشهري التقديري:' : 'Est. Monthly Payment:'}</span>
-                  <span className="font-bold text-blue-600 font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ر.س/ش</span>
+                  <span className="font-bold text-[#0056B3] font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ﷼/ش</span>
                 </div>
               </div>
             </div>
@@ -252,12 +247,12 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           <div className="pt-4 border-t border-gray-200 flex items-center justify-between text-[10px] text-gray-500">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-emerald-600" />
-              <span>{language === 'ar' ? 'يشمل ضمان المصنع 5 سنوات أو 150,000 كم + خدمة المساعدة على الطريق مجاناً' : 'Includes 5-year/150,000 km warranty & 24/7 Roadside Assistance'}</span>
+              <span>{language === 'ar' ? 'يشمل ضمان المصنع 5 سنوات أو 150,000 كم + برنامج جميل كير لسيارات الهايبرد' : 'Includes 5-year/150,000 km warranty & Jameel Care Hybrid Coverage'}</span>
             </div>
 
             <div className="text-end font-mono">
-              <span className="block font-bold">AL JABRANI MOTORS • RIYADH</span>
-              <span>800 244 4400 • aljabranimotors.com.sa</span>
+              <span className="block font-bold">ABDUL LATIF JAMEEL MOTORS</span>
+              <span>800 244 4400 • toyota.com.sa</span>
             </div>
           </div>
         </div>

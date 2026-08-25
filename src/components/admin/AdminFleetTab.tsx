@@ -62,7 +62,7 @@ export const AdminFleetTab: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold text-gray-900 font-display">
-              {language === 'ar' ? 'إدارة أسطول سيارات تويوتا والأسعار (2026 Fleet)' : 'Fleet Inventory & Pricing Management'}
+              {language === 'ar' ? 'إدارة أسطول سيارات سولينا والأسعار (2026 Fleet)' : 'Fleet Inventory & Pricing Management'}
             </h2>
             <p className="text-xs text-gray-500">
               {language === 'ar' 

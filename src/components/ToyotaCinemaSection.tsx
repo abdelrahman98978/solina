@@ -20,8 +20,8 @@ interface VideoItem {
 const CINEMA_VIDEOS: VideoItem[] = [
   {
     id: 'lc300-hev-max-video',
-    title: 'تويوتا لاند كروزر 300 HEV Max - نفس الروح بتقنيات متجددة',
-    titleEn: 'Toyota Land Cruiser 300 HEV Max - The Same Spirit, Renewed Tech',
+    title: 'سولينا لاند كروزر 300 HEV Max - نفس الروح بتقنيات متجددة',
+    titleEn: 'Solina Land Cruiser 300 HEV Max - The Same Spirit, Renewed Tech',
     category: 'هايبرد ودفع رباعي ماكس',
     categoryEn: 'HEV Max 4WD',
     duration: '02:30',
@@ -34,8 +34,8 @@ const CINEMA_VIDEOS: VideoItem[] = [
   },
   {
     id: 'prado-2026-video',
-    title: 'تويوتا لاند كروزر برادو 2026 - عودة الأسطورة بتصميم جريء',
-    titleEn: 'All-New Toyota Prado 2026 - The Legend Reborn',
+    title: 'سولينا لاند كروزر برادو 2026 - عودة الأسطورة بتصميم جريء',
+    titleEn: 'All-New Solina Prado 2026 - The Legend Reborn',
     category: 'مغامرات ودفع رباعي',
     categoryEn: 'Adventure & 4WD',
     duration: '04:12',
@@ -62,8 +62,8 @@ const CINEMA_VIDEOS: VideoItem[] = [
   },
   {
     id: 'rav4-hybrid-video',
-    title: 'تويوتا راف فور هايبرد RAV4 - كفاءة استثنائية وانسيابية ذكية',
-    titleEn: 'Toyota RAV4 Hybrid - Efficiency Meets Dynamic Power',
+    title: 'سولينا راف فور هايبرد RAV4 - كفاءة استثنائية وانسيابية ذكية',
+    titleEn: 'Solina RAV4 Hybrid - Efficiency Meets Dynamic Power',
     category: 'هايبرد صديق للبيئة',
     categoryEn: 'Hybrid HEV',
     duration: '03:10',
@@ -76,21 +76,21 @@ const CINEMA_VIDEOS: VideoItem[] = [
   },
   {
     id: 'gr86-motorsport-video',
-    title: 'تويوتا GR86 و GR سوبرا - أدرينالين حلبات السباق الرياضية',
-    titleEn: 'Toyota GR86 & GR Supra - Motorsport Adrenaline',
+    title: 'سولينا GR86 و GR سوبرا - أدرينالين حلبات السباق الرياضية',
+    titleEn: 'Solina GR86 & GR Supra - Motorsport Adrenaline',
     category: 'سيارات الأداء الرياضي GR',
     categoryEn: 'GR Performance',
     duration: '04:50',
     thumbnail: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/gr86/1870x850-ar.webp',
     videoSrc: '/document_5769533339421646917.mp4',
     youtubeUrl: 'https://www.youtube.com/watch?v=Y-P2n4XyL_Q',
-    description: 'شاهد أداء سيارات تويوتا جازو للسباقات Gazoo Racing على المنعطفات السريعة ومضامير الدريفت الاحترافية.',
-    descriptionEn: 'Witness Toyota Gazoo Racing engineering conquering fast apexes and high-speed drift tracks.',
+    description: 'شاهد أداء سيارات سولينا جازو للسباقات Gazoo Racing على المنعطفات السريعة ومضامير الدريفت الاحترافية.',
+    descriptionEn: 'Witness Solina Gazoo Racing engineering conquering fast apexes and high-speed drift tracks.',
     tags: ['GR86', 'Gazoo Racing', 'Track Mode', 'Boxer Engine']
   }
 ];
 
-export const ToyotaCinemaSection: React.FC = () => {
+export const SolinaCinemaSection: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const [selectedVideo, setSelectedVideo] = useState<VideoItem>(CINEMA_VIDEOS[0]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -100,7 +100,7 @@ export const ToyotaCinemaSection: React.FC = () => {
     { id: 'all', labelAr: 'كافة الأفلام الرسمية', labelEn: 'All Official Films' },
     { id: '4x4', labelAr: 'سيارات الدفع الرباعي', labelEn: 'SUV & 4x4' },
     { id: 'lexus', labelAr: 'لكزس الفاخرة', labelEn: 'Lexus Luxury' },
-    { id: 'gr', labelAr: 'تويوتا جازو للسباقات GR', labelEn: 'Gazoo Racing' }
+    { id: 'gr', labelAr: 'سولينا جازو للسباقات GR', labelEn: 'Gazoo Racing' }
   ];
 
   const filteredVideos = CINEMA_VIDEOS.filter((vid) => {
@@ -127,11 +127,11 @@ export const ToyotaCinemaSection: React.FC = () => {
               <span>{language === 'ar' ? 'سينما جبراني للسيارات - أفلام تدشين 2026 الرسمية' : 'Gibrani Cinema - Official 2026 Launch Films'}</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight font-display">
-              {language === 'ar' ? 'فيديوهات وعروض سيارات تويوتا ولكزس بدقة 4K' : 'Toyota & Lexus Official 4K Cinematic Films'}
+              {language === 'ar' ? 'فيديوهات وعروض سيارات سولينا ولكزس بدقة 4K' : 'Solina & Lexus Official 4K Cinematic Films'}
             </h2>
             <p className="text-gray-400 text-sm md:text-base mt-2 max-w-2xl">
               {language === 'ar'
-                ? 'شاهد أحدث عروض الإطلاق والتجارب الميدانية لسيارات تويوتا لاند كروزر، برادو 2026، راف فور، وأسطول لكزس الفاخر.'
+                ? 'شاهد أحدث عروض الإطلاق والتجارب الميدانية لسيارات سولينا لاند كروزر، برادو 2026، راف فور، وأسطول لكزس الفاخر.'
                 : 'Watch official launch films, desert expeditions, and track tests for Land Cruiser, Prado 2026, RAV4, and Lexus.'}
             </p>
           </div>

@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Volume2, VolumeX, Maximize2, Film, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface HeroSliderProps {
@@ -7,157 +7,147 @@ interface HeroSliderProps {
   onExploreModel?: (modelId: string) => void;
 }
 
-interface HeroVideoTrack {
+interface HeroSlide {
   id: string;
-  videoUrl: string;
-  tag: string;
-  titleAr: string;
-  titleEn: string;
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  targetId: string;
+  desktopImage: string;
+  mobileImage: string;
 }
 
-export const HeroSlider: React.FC<HeroSliderProps> = () => {
-  const { language } = useLanguage();
+export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExploreModel }) => {
+  const { language, isRTL } = useLanguage();
 
-  const HERO_VIDEOS: HeroVideoTrack[] = [
+  const slides: HeroSlide[] = [
     {
-      id: 'lc300-hev-max',
-      videoUrl: '/لاندكروزر 300 HEV Max _نفس الروح بتقنيات متجددة.mp4',
-      tag: 'لاند كروزر 300 HEV Max',
-      titleAr: 'لاند كروزر 300 HEV Max',
-      titleEn: 'Land Cruiser 300 HEV Max'
+      id: 'rav4-2026',
+      title: 'راف فور 2026 الجديدة كلياً',
+      subtitle: 'تنبض حياة',
+      ctaText: 'اكتشف المزيد',
+      targetId: 'rav4',
+      desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/rav4campaign/webp/alj-toyota_rav4-launch-2026_web-banners_1870x850-ar.webp?w=1920&q=75&f=webp',
+      mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/rav4campaign/webp/alj-toyota_rav4-launch-2026_web-banners_375x666_ar.webp?w=1920&q=75&f=webp'
     },
     {
-      id: 'toyota-showcase-film',
-      videoUrl: '/7717637.mp4',
-      tag: 'استعراض تويوتا 2026',
-      titleAr: 'استعراض أداء سيارات تويوتا الرسمي',
-      titleEn: 'Toyota Saudi Arabia Dynamic Showcase'
+      id: 'lc300-hev',
+      title: 'لاندكروزر 300 هايبرد ماكس',
+      subtitle: 'قمة القوة والأداء الهجين',
+      ctaText: 'اكتشف المزيد',
+      targetId: 'lc300-hev-max',
+      desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/lc300-hev/website-banner-1870x850-arab.webp?w=1920&q=75&f=webp',
+      mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/lc300-hev/website-banner-375x666-arab.webp?w=1920&q=75&f=webp'
     },
     {
-      id: 'toyota-launch-film',
-      videoUrl: '/document_5769533339421646917.mp4',
-      tag: 'فيلم الأسطول 4K',
-      titleAr: 'فيلم تدشين أسطول تويوتا ولكزس 2026',
-      titleEn: 'Toyota & Lexus Fleet Launch Film'
+      id: 'back-to-school',
+      title: 'عروض العودة إلى المدارس',
+      subtitle: 'فيلوز وأوربان كروزر بأقساط ميسرة',
+      ctaText: 'اكتشف المزيد',
+      targetId: 'veloz',
+      desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/backtoschool/btsurben-cruiser--velozwebsite-bannersdt1870x850ar.webp?w=1920&q=75&f=webp',
+      mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/backtoschool/btsurben-cruiser--velozwebsite-bannersmob375x666ar.webp?w=1920&q=75&f=webp'
+    },
+    {
+      id: 'buy-online',
+      title: 'سولينا GR86 و سوبرا',
+      subtitle: 'اشترِ سيارتك أونلاين بضغطة زر',
+      ctaText: 'اكتشف المزيد',
+      targetId: 'gr86',
+      desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/gr86/1870x850-ar.webp?w=1920&q=75&f=webp',
+      mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/hero-slider/ar/mobile/buy-it-online-mobile-375x666-arab.webp?w=1920&q=75&f=webp'
     }
   ];
 
-  const [activeVideoIdx, setActiveVideoIdx] = useState<number>(0);
-  const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [isCinemaModalOpen, setIsCinemaModalOpen] = useState<boolean>(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const currentVideo = HERO_VIDEOS[activeVideoIdx];
+  // Autoplay
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
 
-  // Auto-play the next video when current one ends
-  const handleVideoEnded = () => {
-    setActiveVideoIdx((prev) => (prev + 1) % HERO_VIDEOS.length);
+  const handlePrev = () => {
+    setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
   };
 
-  const handleVideoSelect = (idx: number) => {
-    setActiveVideoIdx(idx);
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    }
+  const handleNext = () => {
+    setCurrentSlide(prev => (prev + 1) % slides.length);
   };
+
+  const activeSlide = slides[currentSlide];
 
   return (
-    <div className="relative w-full overflow-hidden bg-black text-white min-h-[500px] md:min-h-[640px] lg:min-h-[780px] flex items-center justify-center select-none">
-      
-      {/* 1. Pure Fullscreen Crystal-Clear Video Layer (Sequential Auto-Playlist / Zero Text Overlays) */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
-        <video
-          ref={videoRef}
-          key={currentVideo.id}
-          src={currentVideo.videoUrl}
-          autoPlay
-          muted={isMuted}
-          playsInline
-          onEnded={handleVideoEnded}
-          className="w-full h-full object-cover object-center opacity-100"
-        />
+    <section className="relative w-full overflow-hidden bg-black select-none">
+      {/* Slider Viewport */}
+      <div className="relative w-full aspect-[1870/850] min-h-[380px] md:min-h-[500px] lg:min-h-[640px]">
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+            }`}
+          >
+            {/* Responsive Background Images */}
+            <picture className="w-full h-full">
+              <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
+              <img
+                src={slide.desktopImage}
+                alt={slide.title}
+                className="w-full h-full object-cover object-center"
+                loading={index === 0 ? 'eager' : 'lazy'}
+              />
+            </picture>
 
-        {/* Minimal soft top & bottom edge gradients */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0A0E17] via-[#0A0E17]/40 to-transparent pointer-events-none" />
-        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
-      </div>
-
-      {/* 2. Minimal Floating Controls in Corner */}
-      <div className="absolute bottom-6 right-6 md:right-12 z-30 flex items-center gap-2.5">
-        {/* Discrete Video Switcher */}
-        <div className="flex items-center gap-1 bg-black/60 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-lg">
-          {HERO_VIDEOS.map((track, idx) => (
-            <button
-              key={track.id}
-              onClick={() => handleVideoSelect(idx)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeVideoIdx === idx
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              {track.tag}
-            </button>
-          ))}
-        </div>
-
-        {/* Sound Toggle */}
-        <button
-          onClick={() => setIsMuted(!isMuted)}
-          className="p-2.5 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white text-xs font-bold transition-all cursor-pointer shadow-lg"
-          title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
-        >
-          {isMuted ? (
-            <VolumeX className="w-4 h-4 text-gray-300" />
-          ) : (
-            <Volume2 className="w-4 h-4 text-blue-400 animate-pulse" />
-          )}
-        </button>
-
-        {/* Fullscreen Modal View Button */}
-        <button
-          onClick={() => setIsCinemaModalOpen(true)}
-          className="p-2.5 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white transition-all cursor-pointer shadow-lg"
-          title={language === 'ar' ? 'عرض بشاشة كاملة' : 'Fullscreen'}
-        >
-          <Maximize2 className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* 3. Fullscreen Cinema Video Modal */}
-      {isCinemaModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
-          <div className="relative w-full max-w-5xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
-            <div className="flex items-center justify-between p-4 md:p-6 bg-gradient-to-b from-black/90 to-transparent absolute top-0 inset-x-0 z-20">
-              <div className="flex items-center gap-3">
-                <Film className="w-5 h-5 text-blue-400" />
-                <h3 className="text-sm md:text-base font-bold text-white font-display">
-                  {language === 'ar' ? currentVideo.titleAr : currentVideo.titleEn}
-                </h3>
-              </div>
-
+            {/* Floating CTA Overlay (Official Positioning matching Solina SA) */}
+            <div className="absolute inset-0 flex flex-col justify-end items-center pb-8 sm:pb-12 md:pb-16 z-20 pointer-events-none">
               <button
-                onClick={() => setIsCinemaModalOpen(false)}
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                onClick={() => {
+                  if (onExploreModel) {
+                    onExploreModel(slide.targetId);
+                  }
+                }}
+                className="pointer-events-auto bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm sm:text-base px-8 sm:px-12 py-2.5 sm:py-3.5 rounded-full shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
               >
-                <X className="w-5 h-5" />
+                {slide.ctaText}
               </button>
             </div>
-
-            <div className="aspect-video w-full bg-black flex items-center justify-center pt-14 md:pt-16">
-              <video
-                src={currentVideo.videoUrl}
-                autoPlay
-                controls
-                playsInline
-                onEnded={handleVideoEnded}
-                className="w-full h-full object-contain"
-              />
-            </div>
           </div>
+        ))}
+
+        {/* Navigation Arrows */}
+        <button
+          onClick={handlePrev}
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 group cursor-pointer"
+          aria-label="Previous Slide"
+        >
+          <ChevronRight className="w-6 h-6 transform group-hover:scale-110 transition-transform" />
+        </button>
+
+        <button
+          onClick={handleNext}
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 group cursor-pointer"
+          aria-label="Next Slide"
+        >
+          <ChevronLeft className="w-6 h-6 transform group-hover:scale-110 transition-transform" />
+        </button>
+
+        {/* Slide Indicators / Bar */}
+        <div className="absolute bottom-3 sm:bottom-4 inset-x-0 z-30 flex items-center justify-center gap-2">
+          {slides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                idx === currentSlide ? 'w-8 bg-[#0056B3]' : 'w-2 bg-white/40 hover:bg-white/70'
+              }`}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
         </div>
-      )}
-    </div>
+      </div>
+    </section>
   );
 };

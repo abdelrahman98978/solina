@@ -28,7 +28,7 @@ export const DiscoverAlJabraniSection: React.FC = () => {
   return (
     <section id="discover-aljabrani" className="py-16 bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
-        {/* Centered Heading matching Toyota SA */}
+        {/* Centered Heading matching Solina SA */}
         <h2 className="text-3xl md:text-5xl font-black text-gray-900 font-display mb-2">
           {language === 'ar' ? 'اكتشف الجبراني' : 'Discover Al Jabrani'}
         </h2>
@@ -36,7 +36,7 @@ export const DiscoverAlJabraniSection: React.FC = () => {
           {language === 'ar' ? 'ابتكار تثق به' : 'Innovation You Can Trust'}
         </p>
 
-        {/* 3 Tall Vertical Story Cards matching Toyota SA */}
+        {/* 3 Tall Vertical Story Cards matching Solina SA */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10">
           {stories.map((story) => (
             <div

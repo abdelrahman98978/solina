@@ -37,35 +37,35 @@ export const ShowroomsSection: React.FC = () => {
   };
 
   return (
-    <section id="showrooms" className="py-20 bg-gray-50 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 md:px-12">
+    <section id="showrooms" className="py-20 bg-gray-50 border-t border-gray-200 font-arabic">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-3 border border-blue-200">
-            <MapPin className="w-3.5 h-3.5 text-blue-600" />
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-[#0056B3] text-xs font-bold mb-4 border border-red-100">
+            <MapPin className="w-4 h-4 text-[#0056B3]" />
             <span>{language === 'ar' ? 'شبكة الفروع ومراكز الخدمة' : 'Showrooms & Service Network'}</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3 font-display">
-            {language === 'ar' ? 'مواقع المعارض ومراكز صيانة جبراني' : 'Find Authorized Showrooms & Service Hubs'}
+          <h2 className="text-3xl md:text-4xl font-normal text-black mb-4 font-arabic tracking-tight">
+            {language === 'ar' ? 'صالات العرض ومراكز صيانة سولينا المعتمدة' : 'Find Authorized Solina Showrooms & Service Centers'}
           </h2>
           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
             {language === 'ar'
-              ? 'أكثر من 100 صالة عرض ومركز خدمة وصيانة معتمد لخدمتكم في كافة مدن ومناطق المملكة.'
-              : 'Over 100 modern showrooms and express service centers ready to assist you across Saudi Arabia.'}
+              ? 'أكثر من 100 صالة عرض ومركز خدمة وصيانة معتمد لشركة سولينا للسيارات لخدمتكم في كافة مدن ومناطق المملكة.'
+              : 'Over 100 modern Solina Motors showrooms and express service centers ready to assist you across Saudi Arabia.'}
           </p>
         </div>
 
         {/* Filter & Region Selectors */}
-        <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-200/80 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Region Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full md:w-auto">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto">
             {regions.map((reg) => (
               <button
                 key={reg.id}
                 onClick={() => setSelectedRegion(reg.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                   selectedRegion === reg.id
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    ? 'bg-[#0056B3] text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -79,10 +79,10 @@ export const ShowroomsSection: React.FC = () => {
             <Search className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder={language === 'ar' ? 'ابحث باسم الحي أو الفرع...' : 'Search branch or city...'}
+              placeholder={language === 'ar' ? 'ابحث باسم المدينة أو الفرع...' : 'Search branch or city...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-9 pl-3 focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-9 pl-3 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
             />
           </div>
         </div>
@@ -92,7 +92,7 @@ export const ShowroomsSection: React.FC = () => {
           {filteredShowrooms.map((branch) => (
             <div
               key={branch.id}
-              className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-blue-300 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-[#0056B3]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -100,67 +100,58 @@ export const ShowroomsSection: React.FC = () => {
                     {language === 'ar' ? branch.city : branch.cityEn}
                   </span>
                   {branch.isMain && (
-                    <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
-                      {language === 'ar' ? 'فرع رئيسي معتمد' : 'Flagship Center'}
+                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-[#0056B3]">
+                      {language === 'ar' ? 'المركز الرئيسي' : 'Main Hub'}
                     </span>
                   )}
                 </div>
 
-                <h3 className="text-lg font-black text-gray-900 mb-2 font-display">
+                <h3 className="text-base font-bold text-gray-900 mb-2 font-arabic">
                   {language === 'ar' ? branch.name : branch.nameEn}
                 </h3>
 
-                <p className="text-xs text-gray-500 mb-4 flex items-start gap-1.5 leading-relaxed">
-                  <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-gray-600 mb-4 flex items-start gap-1.5 leading-relaxed">
+                  <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                   <span>{language === 'ar' ? branch.address : branch.addressEn}</span>
                 </p>
 
-                {/* Working Hours */}
-                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 mb-4 text-[11px] text-gray-700 space-y-1">
-                  <div className="flex items-center gap-1.5 font-semibold text-gray-900">
-                    <Clock className="w-3.5 h-3.5 text-blue-600" />
-                    <span>{language === 'ar' ? 'أوقات العمل الرسمية:' : 'Working Hours:'}</span>
+                <div className="space-y-2 mb-5 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-gray-400" />
+                    <span>{language === 'ar' ? branch.workingHours : branch.workingHoursEn}</span>
                   </div>
-                  <p className="text-gray-500 pr-5">
-                    {language === 'ar' ? branch.workingHours : branch.workingHoursEn}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-gray-400" />
+                    <span dir="ltr" className="font-mono text-gray-800 font-bold">{branch.phone}</span>
+                  </div>
                 </div>
 
                 {/* Available Services */}
-                <div className="mb-6">
-                  <span className="text-[11px] font-bold text-gray-400 block mb-2">
-                    {language === 'ar' ? 'الخدمات المتوفرة في هذا الفرع:' : 'Available Services:'}
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(language === 'ar' ? branch.services : branch.servicesEn).map((srv, idx) => (
-                      <span
-                        key={idx}
-                        className="text-[10px] font-medium bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg"
-                      >
-                        ✓ {srv}
-                      </span>
-                    ))}
-                  </div>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  {(language === 'ar' ? branch.services : branch.servicesEn).map((srv, i) => (
+                    <span key={i} className="text-[10px] bg-red-50 text-[#0056B3] font-medium px-2 py-0.5 rounded-md">
+                      {srv}
+                    </span>
+                  ))}
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-gray-100 grid grid-cols-2 gap-2">
-                <a
-                  href={`tel:${branch.phone}`}
-                  className="py-2.5 px-3 rounded-xl border border-gray-200 hover:border-blue-400 font-bold text-xs text-gray-800 text-center flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <Phone className="w-3.5 h-3.5 text-blue-600" />
-                  <span>{language === 'ar' ? 'اتصال بالفرع' : 'Call Branch'}</span>
-                </a>
-
+              <div className="grid grid-cols-2 gap-2 pt-4 border-t border-gray-100">
                 <button
                   onClick={() => handleOpenNavigation(branch)}
-                  className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs text-center flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  className="w-full py-2 px-3 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Navigation className="w-3.5 h-3.5" />
-                  <span>{language === 'ar' ? 'اتجاهات الخريطة' : 'GPS Directions'}</span>
+                  <span>{language === 'ar' ? 'الاتجاهات' : 'Directions'}</span>
                 </button>
+                <a
+                  href={`tel:${branch.phone.replace(/[^0-9+]/g, '')}`}
+                  className="w-full py-2 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>{language === 'ar' ? 'اتصل الآن' : 'Call'}</span>
+                </a>
               </div>
             </div>
           ))}

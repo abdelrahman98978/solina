@@ -38,7 +38,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
 }) => {
   const { language, formatPrice, isRTL } = useLanguage();
   
-  // Showcase Fleet (Flagship Toyota & Lexus models)
+  // Showcase Fleet (Flagship Solina & Lexus models)
   const showcaseModels = VEHICLES.filter(v => 
     ['lexus-lx600-2026', 'prado-2026', 'lc300-2026', 'lexus-gx550-2026', 'camry-2026', 'lexus-rx350h-2026', 'crown-2026', 'lexus-lc500-2026', 'gr86-2026'].includes(v.id)
   );
@@ -119,7 +119,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 activeBrandTab === 'toyota' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
-              TOYOTA
+              SOLINA
             </button>
             <button
               onClick={() => setActiveBrandTab('lexus')}
@@ -295,7 +295,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               {viewMode === 'grades' && (
                 <div className="w-full max-w-2xl bg-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/15 space-y-4 animate-in fade-in">
                   <span className="text-xs font-bold text-gray-300 block">
-                    {language === 'ar' ? 'الفئات والأسعار المعتمدة من عبد اللطيف جميل:' : 'Official ALJ Grades & Pricing:'}
+                    {language === 'ar' ? 'الفئات والأسعار المعتمدة من سولينا للسيارات:' : 'Official ALJ Grades & Pricing:'}
                   </span>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
                     {activeVehicle.grades.map((grd, idx) => {
@@ -386,7 +386,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                   </span>
                 ) : (
                   <span className="bg-blue-600/20 text-blue-400 text-[10px] font-bold px-2.5 py-1 rounded-full border border-blue-500/30">
-                    TOYOTA OFFICIAL
+                    SOLINA OFFICIAL
                   </span>
                 )}
                 <span className="text-xs text-gray-400">

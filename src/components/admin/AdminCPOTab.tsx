@@ -70,7 +70,7 @@ export const AdminCPOTab: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-600" />
-            <span>{language === 'ar' ? 'إدارة سيارات تويوتا المستعملة المعتمدة (AutoHub CPO)' : 'Certified Pre-Owned Inventory'}</span>
+            <span>{language === 'ar' ? 'إدارة سيارات سولينا المستعملة المعتمدة (AutoHub CPO)' : 'Certified Pre-Owned Inventory'}</span>
           </h2>
           <p className="text-xs text-gray-500">
             {language === 'ar' 
@@ -182,7 +182,7 @@ export const AdminCPOTab: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="مثال: تويوتا كامري GLX 2023"
+                  placeholder="مثال: سولينا كامري GLX 2023"
                   value={titleAr}
                   onChange={(e) => setTitleAr(e.target.value)}
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none"

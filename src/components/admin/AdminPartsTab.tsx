@@ -52,7 +52,7 @@ export const AdminPartsTab: React.FC = () => {
           </h2>
           <p className="text-xs text-gray-500">
             {language === 'ar' 
-              ? 'متابعة أرقام القطع الأصلية (Part Numbers)، الأسعار، والتوافق مع موديلات تويوتا.' 
+              ? 'متابعة أرقام القطع الأصلية (Part Numbers)، الأسعار، والتوافق مع موديلات سولينا.' 
               : 'Manage OEM part numbers, pricing, and vehicle compatibility.'}
           </p>
         </div>

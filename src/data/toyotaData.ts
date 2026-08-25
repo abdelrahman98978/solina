@@ -1,5 +1,5 @@
 // =============================================================
-// TOYOTA SAUDI ARABIA (ABDUL LATIF JAMEEL MOTORS)
+// SOLINA SAUDI ARABIA (ABDUL LATIF JAMEEL MOTORS)
 // 100% AUTHENTIC OFFICIAL 2026 FLEET DATASET & CDN ASSETS
 // Scraped & Verified directly from https://www.toyota.com.sa/ar
 // =============================================================
@@ -171,8 +171,8 @@ export const HERO_SLIDES = [
   },
   {
     id: 'prado-2026',
-    title: 'تويوتا لاند كروزر برادو 2026 الجديد كلياً',
-    titleEn: 'All-New Toyota Land Cruiser Prado 2026',
+    title: 'سولينا لاند كروزر برادو 2026 الجديد كلياً',
+    titleEn: 'All-New Solina Land Cruiser Prado 2026',
     subtitle: 'الأسطورة عادت بتصميم كلاسيكي عصري جريء وتيربو مزدوج 281 حصان',
     subtitleEn: 'The Legend returns with bold retro-modern styling and 281 HP Turbo performance',
     badge: 'تدشين الجيل الجديد كلياً',
@@ -191,8 +191,8 @@ export const HERO_SLIDES = [
   },
   {
     id: 'lc300-flagship',
-    title: 'تويوتا لاند كروزر LC300 سيد الدفع الرباعي',
-    titleEn: 'Toyota Land Cruiser LC300 Master of All Terrains',
+    title: 'سولينا لاند كروزر LC300 سيد الدفع الرباعي',
+    titleEn: 'Solina Land Cruiser LC300 Master of All Terrains',
     subtitle: 'الفخامة المطلقة تلتقي مع القوة الأسطورية 409 حصان ونظام الزحف الذكي',
     subtitleEn: 'Unrivaled luxury meets 409 HP legendary twin-turbo twin prowess and Crawl Control',
     badge: 'فخر سيارات الدفع الرباعي',
@@ -211,8 +211,8 @@ export const HERO_SLIDES = [
   },
   {
     id: 'rav4-2026-launch',
-    title: 'تويوتا راف فور 2026 RAV4 الجديد كلياً',
-    titleEn: 'All-New Toyota RAV4 2026',
+    title: 'سولينا راف فور 2026 RAV4 الجديد كلياً',
+    titleEn: 'All-New Solina RAV4 2026',
     subtitle: 'انطلق إلى آفاق لا حدود لها مع التصميم العصري الجريء وكفاءة الهايبرد الاستثنائية',
     subtitleEn: 'Ignite endless journeys with bold modern styling and benchmark hybrid performance',
     badge: 'تدشين موديل 2026 الجديد',
@@ -231,11 +231,11 @@ export const HERO_SLIDES = [
   },
   {
     id: 'gr86-motorsport',
-    title: 'تويوتا GR86 متعة القيادة الرياضية النقية',
-    titleEn: 'Toyota GR86 Pure Driving Adrenaline',
+    title: 'سولينا GR86 متعة القيادة الرياضية النقية',
+    titleEn: 'Solina GR86 Pure Driving Adrenaline',
     subtitle: 'طوّرت على حلبات السباق العالمية بمحرك بوكسر 228 حصان ودفع خلفي متزن',
     subtitleEn: 'Engineered on motorsport tracks with 228 HP Boxer engine and rear-wheel drive balance',
-    badge: 'TOYOTA GAZOO RACING',
+    badge: 'SOLINA GAZOO RACING',
     badgeEn: 'Gazoo Racing Performance',
     imageDesktop: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/gr86/1870x850-ar.webp',
     imageMobile: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/gr86/1870x850-ar.webp',
@@ -255,6 +255,255 @@ export const HERO_SLIDES = [
 // 2. OFFICIAL 2026 COMPLETE VEHICLES LINEUP (With Grade & Color Images)
 // -------------------------------------------------------------
 export const VEHICLES: Vehicle[] = [
+  {
+    "id": "liteace-2026",
+    "nameAr": "سولينا لايت إيس 2026",
+    "nameEn": "LiteAce 2026",
+    "year": 2026,
+    "brand": "toyota",
+    "category": "commercial",
+    "bodyTypeAr": "فان نقل مدمجة للمدن",
+    "bodyTypeEn": "Compact City Cargo Van",
+    "priceStartingFrom": 69000,
+    "monthlyInstallmentStartingFrom": 1035,
+    "fuelEconomy": "14.8 كم/لتر",
+    "fuelEconomyEn": "14.8 km/L",
+    "engineSpec": "1.5 لتر 4 أسطوانات",
+    "engineSpecEn": "1.5L 4-Cyl",
+    "horsepower": "97 حصان",
+    "horsepowerEn": "97 HP",
+    "torque": "134 ن.م",
+    "seats": 2,
+    "transmissionAr": "أوتوماتيكي 4 سرعات / يدوي",
+    "transmissionEn": "4-Speed Auto / 5MT",
+    "powertrain": "بنزين",
+    "drivetrain": "دفع خلفي RWD",
+    "drivetrainEn": "Rear-Wheel Drive RWD",
+    "cardImage": "https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/commercial/liteace-306x122.webp",
+    "overviewUrl": "https://www.toyota.com.sa/ar/vehicles/commercial/liteace",
+    "colors": [
+      {
+        "id": "white",
+        "name": "أبيض",
+        "nameEn": "White",
+        "hex": "#FFFFFF"
+      }
+    ],
+    "grades": [
+      {
+        "name": "LiteAce Van 1.5L 4AT",
+        "nameEn": "LiteAce Van 1.5L 4AT",
+        "price": 69000,
+        "engine": "1.5L 97 HP",
+        "engineEn": "1.5L 97 HP",
+        "transmission": "4-Speed Auto",
+        "transmissionEn": "4-Speed Auto",
+        "features": [
+          "مساحة تخزين واسعة",
+          "أبواب جانبية مزدوجة منزلقة",
+          "وسائد هوائية مزدوجة"
+        ],
+        "featuresEn": [
+          "Spacious Cargo Bed",
+          "Dual Sliding Side Doors",
+          "Dual Airbags"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hilux-2026",
+    "nameAr": "سولينا هايلكس 2026",
+    "nameEn": "Hilux 2026",
+    "year": 2026,
+    "brand": "toyota",
+    "category": "commercial",
+    "bodyTypeAr": "بيك أب أسطورية للمهام الشاقة",
+    "bodyTypeEn": "Heavy-Duty Pickup",
+    "priceStartingFrom": 88500,
+    "monthlyInstallmentStartingFrom": 1327,
+    "fuelEconomy": "14.1 كم/لتر",
+    "fuelEconomyEn": "14.1 km/L",
+    "engineSpec": "2.4L / 2.8L تيربو ديزل",
+    "engineSpecEn": "2.4L / 2.8L Turbo Diesel",
+    "horsepower": "201 حصان",
+    "horsepowerEn": "201 HP",
+    "torque": "500 ن.م",
+    "seats": 5,
+    "transmissionAr": "أوتوماتيكي 6 سرعات / يدوي",
+    "transmissionEn": "6-Speed Auto / Manual",
+    "powertrain": "ديزل",
+    "drivetrain": "دفع رباعي 4x4 مع دبل خفيف وثقيل",
+    "drivetrainEn": "Part-Time 4WD with High/Low Range",
+    "cardImage": "https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/commercial/hilux-306x122.webp",
+    "overviewUrl": "https://www.toyota.com.sa/ar/vehicles/commercial/hilux",
+    "colors": [
+      {
+        "id": "super-white",
+        "name": "أبيض ناصع",
+        "nameEn": "Super White",
+        "hex": "#FFFFFF"
+      },
+      {
+        "id": "attitude-black",
+        "name": "أسود ميكا",
+        "nameEn": "Attitude Black",
+        "hex": "#1C1D21"
+      }
+    ],
+    "grades": [
+      {
+        "name": "Hilux GLX 2.8L 4x4 Auto",
+        "nameEn": "Hilux GLX 2.8L 4x4 Auto",
+        "price": 145000,
+        "engine": "2.8L Turbo Diesel 201 HP",
+        "engineEn": "2.8L Turbo Diesel 201 HP",
+        "transmission": "6-Speed Auto",
+        "transmissionEn": "6-Speed Auto",
+        "features": [
+          "دفع رباعي مع قفل دفرنس خلفي",
+          "شاشة 8 إنش",
+          "حساسات وكاميرا"
+        ],
+        "featuresEn": [
+          "4WD with Rear Diff Lock",
+          "8 Inch Display",
+          "Sensors and Camera"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "corolla-cross-2025",
+    "nameAr": "سولينا كورولا كروس 2025",
+    "nameEn": "Corolla Cross 2025",
+    "year": 2025,
+    "brand": "toyota",
+    "category": "suv",
+    "bodyTypeAr": "كروس أوفر هايبرد عائلية",
+    "bodyTypeEn": "Family Hybrid Crossover",
+    "priceStartingFrom": 94990,
+    "monthlyInstallmentStartingFrom": 1425,
+    "fuelEconomy": "23.7 كم/لتر",
+    "fuelEconomyEn": "23.7 km/L",
+    "engineSpec": "1.8 لتر هايبرد HEV",
+    "engineSpecEn": "1.8L Hybrid Electric HEV",
+    "horsepower": "121 حصان",
+    "horsepowerEn": "121 HP",
+    "torque": "142 ن.م",
+    "seats": 5,
+    "transmissionAr": "تتابعي E-CVT",
+    "transmissionEn": "E-CVT Automatic",
+    "powertrain": "هايبرد",
+    "drivetrain": "دفع أمامي FWD",
+    "drivetrainEn": "Front-Wheel Drive FWD",
+    "isHybrid": true,
+    "cardImage": "https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/suv_mpv/corolla-cross-306x122.webp",
+    "overviewUrl": "https://www.toyota.com.sa/ar/vehicles/suv/corolla-cross",
+    "colors": [
+      {
+        "id": "celestite-gray",
+        "name": "رمادي سيليستيت",
+        "nameEn": "Celestite Gray",
+        "hex": "#63707B"
+      },
+      {
+        "id": "pearl-white",
+        "name": "أبيض لؤلؤي",
+        "nameEn": "Platinum White Pearl",
+        "hex": "#F7F7F7"
+      }
+    ],
+    "grades": [
+      {
+        "name": "Corolla Cross XL HEV",
+        "nameEn": "Corolla Cross XL HEV",
+        "price": 94990,
+        "engine": "1.8L Hybrid 121 HP",
+        "engineEn": "1.8L Hybrid 121 HP",
+        "transmission": "E-CVT",
+        "transmissionEn": "E-CVT",
+        "features": [
+          "شاشة ترفيه 8 إنش",
+          "حساسات أمامية وخلفية",
+          "كفاءة وقود 23.7 كم/لتر"
+        ],
+        "featuresEn": [
+          "8 Inch Screen",
+          "Front and Rear Sensors",
+          "23.7 km/L Fuel Efficiency"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "yaris-2026",
+    "nameAr": "سولينا يارس 2026",
+    "nameEn": "Yaris 2026",
+    "year": 2026,
+    "brand": "toyota",
+    "category": "sedan",
+    "bodyTypeAr": "سيدان مدمجة",
+    "bodyTypeEn": "Compact Sedan",
+    "priceStartingFrom": 66987.5,
+    "monthlyInstallmentStartingFrom": 999,
+    "fuelEconomy": "22.4 كم/لتر",
+    "fuelEconomyEn": "22.4 km/L",
+    "engineSpec": "1.3 لتر 4 أسطوانات VVT-i",
+    "engineSpecEn": "1.3L 4-Cyl VVT-i",
+    "horsepower": "97 حصان",
+    "horsepowerEn": "97 HP",
+    "torque": "122 ن.م",
+    "seats": 5,
+    "transmissionAr": "تتابعي متغير CVT",
+    "transmissionEn": "CVT Automatic",
+    "powertrain": "بنزين",
+    "drivetrain": "دفع أمامي FWD",
+    "drivetrainEn": "Front-Wheel Drive FWD",
+    "cardImage": "https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/passenger/yaris-306x122.webp",
+    "overviewUrl": "https://www.toyota.com.sa/ar/vehicles/passenger/yaris",
+    "colors": [
+      {
+        "id": "red",
+        "name": "أحمر ميكا",
+        "nameEn": "Red Mica",
+        "hex": "#A81C24"
+      },
+      {
+        "id": "silver",
+        "name": "فضي معدني",
+        "nameEn": "Silver Metallic",
+        "hex": "#D2D4D7"
+      },
+      {
+        "id": "white",
+        "name": "أبيض لؤلؤي",
+        "nameEn": "Pearl White",
+        "hex": "#FFFFFF"
+      }
+    ],
+    "grades": [
+      {
+        "name": "Yaris Y 1.3L CVT",
+        "nameEn": "Yaris Y 1.3L CVT",
+        "price": 66987.5,
+        "engine": "1.3L 4-Cyl 97 HP",
+        "engineEn": "1.3L 4-Cyl 97 HP",
+        "transmission": "CVT",
+        "transmissionEn": "CVT",
+        "features": [
+          "شاشة 7 إنش مع أبل كاربلاي",
+          "حساسات خلفية",
+          "جنوط 15 إنش"
+        ],
+        "featuresEn": [
+          "7 Inch Display with CarPlay",
+          "Rear Sensors",
+          "15 Inch Wheels"
+        ]
+      }
+    ]
+  },
   // ---------------- LEXUS LUXURY DIVISION ----------------
   {
     id: 'lexus-lx600-2026',
@@ -512,12 +761,12 @@ export const VEHICLES: Vehicle[] = [
     ]
   },
 
-  // ---------------- TOYOTA VEHICLES LINEUP ----------------
+  // ---------------- SOLINA VEHICLES LINEUP ----------------
   {
     id: 'prado-2026',
     brand: 'toyota',
-    nameAr: 'تويوتا لاند كروزر برادو 2026',
-    nameEn: 'Toyota Land Cruiser Prado 2026',
+    nameAr: 'سولينا لاند كروزر برادو 2026',
+    nameEn: 'Solina Land Cruiser Prado 2026',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'سيارة دفع رباعي عائلية',
@@ -559,8 +808,8 @@ export const VEHICLES: Vehicle[] = [
         transmission: 'أوتوماتيك 8 سرعات',
         transmissionEn: '8-Speed Automatic',
         image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/suv_mpv/prado-306x122.webp',
-        features: ['جنوط ألمنيوم 18 بوصة', 'أنظمة تويوتا للأمان TSS 3.0', 'شاشة وسائط 8 بوصة Apple CarPlay', 'نظام الدفع الرباعي المستمر مع قفل دفرنس مركزي'],
-        featuresEn: ['18" Alloy Wheels', 'Toyota Safety Sense 3.0', '8" Display with Wireless CarPlay', 'Full-Time 4WD with Center Differential Lock']
+        features: ['جنوط ألمنيوم 18 بوصة', 'أنظمة سولينا للأمان TSS 3.0', 'شاشة وسائط 8 بوصة Apple CarPlay', 'نظام الدفع الرباعي المستمر مع قفل دفرنس مركزي'],
+        featuresEn: ['18" Alloy Wheels', 'Solina Safety Sense 3.0', '8" Display with Wireless CarPlay', 'Full-Time 4WD with Center Differential Lock']
       },
       {
         name: 'TXL 2.4L Turbo First Edition',
@@ -578,8 +827,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'lc300-2026',
-    nameAr: 'تويوتا لاند كروزر LC300 2026',
-    nameEn: 'Toyota Land Cruiser LC300 2026',
+    nameAr: 'سولينا لاند كروزر LC300 2026',
+    nameEn: 'Solina Land Cruiser LC300 2026',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'فارهة دفع رباعي كاملة الحجم',
@@ -639,8 +888,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'camry-2026',
-    nameAr: 'تويوتا كامري 2026 هايبرد الجديد كلياً',
-    nameEn: 'All-New Toyota Camry 2026 Hybrid',
+    nameAr: 'سولينا كامري 2026 هايبرد الجديد كلياً',
+    nameEn: 'All-New Solina Camry 2026 Hybrid',
     year: 2026,
     category: 'sedan',
     bodyTypeAr: 'سيدان عائلية فاخرة',
@@ -684,7 +933,7 @@ export const VEHICLES: Vehicle[] = [
         transmissionEn: 'Electronic E-CVT',
         image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/passenger/camry-306x122.webp',
         features: ['شاشة لمس 8 بوصة Apple CarPlay اللاسلكي', 'أنظمة الأمان TSS 3.0', 'إضاءة أمامية وخلفية Full LED', 'جنوط ألمنيوم قياس 16 بوصة'],
-        featuresEn: ['8" Touchscreen with Wireless CarPlay', 'Toyota Safety Sense 3.0', 'Full LED Headlamps & Taillamps', '16" Alloy Wheels']
+        featuresEn: ['8" Touchscreen with Wireless CarPlay', 'Solina Safety Sense 3.0', 'Full LED Headlamps & Taillamps', '16" Alloy Wheels']
       },
       {
         name: 'LUMIERE HEV 2.5L (الفئة الفاخرة الأعلى)',
@@ -702,8 +951,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'rav4-2026',
-    nameAr: 'تويوتا راف فور 2026 RAV4',
-    nameEn: 'Toyota RAV4 2026 Hybrid AWD',
+    nameAr: 'سولينا راف فور 2026 RAV4',
+    nameEn: 'Solina RAV4 2026 Hybrid AWD',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'كروس أوفر عائلية مدمجة',
@@ -765,8 +1014,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'crown-2026',
-    nameAr: 'تويوتا كراون 2026 سيدان الفاخرة',
-    nameEn: 'Toyota Crown 2026 Luxury Crossover',
+    nameAr: 'سولينا كراون 2026 سيدان الفاخرة',
+    nameEn: 'Solina Crown 2026 Luxury Crossover',
     year: 2026,
     category: 'sedan',
     bodyTypeAr: 'كروس أوفر سيدان فاخرة فارهة',
@@ -807,8 +1056,8 @@ export const VEHICLES: Vehicle[] = [
         transmission: 'E-CVT إلكتروني تتابعي',
         transmissionEn: 'Electronic E-CVT',
         image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/vehicles/passenger/crown/grades/grade-selector/desktop-view/prestige.webp',
-        features: ['جنوط ألمنيوم قياس 19 بوصة', 'شاشة ملاحة 12.3 بوصة', 'مقاعد جلد فاخرة مع تهوية', 'أنظمة الأمان Toyota Safety Sense 3.0'],
-        featuresEn: ['19" Alloy Wheels', '12.3" Navigation Display', 'Ventilated Leather Seats', 'Toyota Safety Sense 3.0 Suite']
+        features: ['جنوط ألمنيوم قياس 19 بوصة', 'شاشة ملاحة 12.3 بوصة', 'مقاعد جلد فاخرة مع تهوية', 'أنظمة الأمان Solina Safety Sense 3.0'],
+        featuresEn: ['19" Alloy Wheels', '12.3" Navigation Display', 'Ventilated Leather Seats', 'Solina Safety Sense 3.0 Suite']
       },
       {
         name: 'MAJESTY 2.4L Turbo Dual Boost Hybrid Max',
@@ -826,8 +1075,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'corolla-2026',
-    nameAr: 'تويوتا كورولا 2026',
-    nameEn: 'Toyota Corolla 2026',
+    nameAr: 'سولينا كورولا 2026',
+    nameEn: 'Solina Corolla 2026',
     year: 2026,
     category: 'sedan',
     bodyTypeAr: 'سيدان مدمجة اقتصادية',
@@ -884,8 +1133,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'fortuner-2026',
-    nameAr: 'تويوتا فورتشنر 2026',
-    nameEn: 'Toyota Fortuner 2026',
+    nameAr: 'سولينا فورتشنر 2026',
+    nameEn: 'Solina Fortuner 2026',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'SUV عائلية دفع رباعي بـ 7 مقاعد',
@@ -942,8 +1191,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'highlander-2026',
-    nameAr: 'تويوتا هايلاندر 2026 هايبرد',
-    nameEn: 'Toyota Highlander 2026 Hybrid',
+    nameAr: 'سولينا هايلاندر 2026 هايبرد',
+    nameEn: 'Solina Highlander 2026 Hybrid',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'SUV عائلية فاخرة 7 مقاعد',
@@ -1001,8 +1250,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'innova-zenix-2026',
-    nameAr: 'تويوتا إنوفا زينكس 2026',
-    nameEn: 'Toyota Innova Zenix 2026 Hybrid',
+    nameAr: 'سولينا إنوفا زينكس 2026',
+    nameEn: 'Solina Innova Zenix 2026 Hybrid',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'ميني فان عائلية 7 ركاب فاخرة',
@@ -1054,14 +1303,14 @@ export const VEHICLES: Vehicle[] = [
         transmissionEn: 'Electronic E-CVT',
         image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/vehicles/suv/innova/grades/grade-selector/desktop-view/gl.webp',
         features: ['مقاعد عثمانية فاخرة كهربائية لمساند الأرجل', 'فتحة سقف بانورامية كاملة', 'شاشة ملاحة 10.1 بوصة', 'أنظمة الأمان TSS 3.0'],
-        featuresEn: ['Electric Ottoman Luxury Seats with Leg Rests', 'Panoramic Sunroof', '10.1" Navigation Screen', 'Toyota Safety Sense 3.0']
+        featuresEn: ['Electric Ottoman Luxury Seats with Leg Rests', 'Panoramic Sunroof', '10.1" Navigation Screen', 'Solina Safety Sense 3.0']
       }
     ]
   },
   {
     id: 'raize-2026',
-    nameAr: 'تويوتا رايز 2026',
-    nameEn: 'Toyota Raize 2026',
+    nameAr: 'سولينا رايز 2026',
+    nameEn: 'Solina Raize 2026',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'كروس أوفر شبابية مدمجة',
@@ -1118,8 +1367,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'veloz-2026',
-    nameAr: 'تويوتا فيلوز 2026 (7 مقاعد)',
-    nameEn: 'Toyota Veloz 2026 (7-Seater)',
+    nameAr: 'سولينا فيلوز 2026 (7 مقاعد)',
+    nameEn: 'Solina Veloz 2026 (7-Seater)',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'كروس أوفر عائلية مدمجة بـ 7 مقاعد',
@@ -1164,8 +1413,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'urban-cruiser-2026',
-    nameAr: 'تويوتا أوربان كروزر 2026',
-    nameEn: 'Toyota Urban Cruiser 2026',
+    nameAr: 'سولينا أوربان كروزر 2026',
+    nameEn: 'Solina Urban Cruiser 2026',
     year: 2026,
     category: 'suv',
     bodyTypeAr: 'كروس أوفر ذكية واقتصادية',
@@ -1222,8 +1471,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'hilux-dc-2026',
-    nameAr: 'تويوتا هايلكس غمارة ودبل 2026',
-    nameEn: 'Toyota Hilux Double Cab 2026 (4x4)',
+    nameAr: 'سولينا هايلكس غمارة ودبل 2026',
+    nameEn: 'Solina Hilux Double Cab 2026 (4x4)',
     year: 2026,
     category: 'commercial',
     bodyTypeAr: 'بيك آب الدفع الرباعي للمهام الشاقة',
@@ -1281,8 +1530,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'lc70-pickup-2026',
-    nameAr: 'تويوتا شاص ولاند كروزر 70 2026',
-    nameEn: 'Toyota Land Cruiser 70 Pickup 2026',
+    nameAr: 'سولينا شاص ولاند كروزر 70 2026',
+    nameEn: 'Solina Land Cruiser 70 Pickup 2026',
     year: 2026,
     category: 'commercial',
     bodyTypeAr: 'بيك آب الدفع الرباعي الأسطوري للصحراء',
@@ -1339,8 +1588,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'gr-supra-2026',
-    nameAr: 'تويوتا سوبرا GR الرياضية 2026',
-    nameEn: 'Toyota GR Supra 2026 Coupe',
+    nameAr: 'سولينا سوبرا GR الرياضية 2026',
+    nameEn: 'Solina GR Supra 2026 Coupe',
     year: 2026,
     category: 'gr',
     bodyTypeAr: 'سيارة كوبيه رياضية خارقة للحلبات',
@@ -1387,8 +1636,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'gr86-2026',
-    nameAr: 'تويوتا GR86 الرياضية',
-    nameEn: 'Toyota GR86 2026 Sport Coupe',
+    nameAr: 'سولينا GR86 الرياضية',
+    nameEn: 'Solina GR86 2026 Sport Coupe',
     year: 2026,
     category: 'gr',
     bodyTypeAr: 'كوبيه رياضية الدفع الخلفي',
@@ -1435,8 +1684,8 @@ export const VEHICLES: Vehicle[] = [
   },
   {
     id: 'hiace-2026',
-    nameAr: 'تويوتا هايس 2026 للركاب ونقل البضائع',
-    nameEn: 'Toyota Hiace 2026 Van / Bus',
+    nameAr: 'سولينا هايس 2026 للركاب ونقل البضائع',
+    nameEn: 'Solina Hiace 2026 Van / Bus',
     year: 2026,
     category: 'commercial',
     bodyTypeAr: 'حافلة ركاب وفان تجاري واسع',
@@ -1559,16 +1808,16 @@ export const MAINTENANCE_PACKAGES: MaintenancePackage[] = [
     estimatedPriceSUV: 1890,
     estimatedPriceCommercial: 1690,
     tasksAr: [
-      'تغيير زيت القير الأوتوماتيكي الأصلي Toyota WS Fluid',
+      'تغيير زيت القير الأوتوماتيكي الأصلي Solina WS Fluid',
       'استبدال شمعات الإشعال الإيريديوم الأصلية (البواجي)',
       'تغيير سائل تبريد المحرك عالي العمر Super Long Life Coolant',
       'فحص شامل لمنظومة نقل الحركة والدبل والعمود الكرداني',
       'فحص كمبيوتر شامل لجميع الحساسات وشهادة صيانة معتمدة'
     ],
     tasksEn: [
-      'Toyota Genuine Automatic Transmission Fluid (WS) Replacement',
+      'Solina Genuine Automatic Transmission Fluid (WS) Replacement',
       'Genuine Iridium Spark Plugs Replacement',
-      'Toyota Super Long Life Engine Coolant Replacement',
+      'Solina Super Long Life Engine Coolant Replacement',
       'Driveline, Transfer Case & Propeller Shaft Inspection',
       'Full ECU Diagnostic Scan & Certified Service Certificate'
     ]
@@ -1582,8 +1831,8 @@ export const GENUINE_PARTS: SparePart[] = [
   {
     id: 'oil-filter-camry',
     partNumber: '04152-YZZA1',
-    nameAr: 'فلتر زيت محرك أصلي تويوتا (سيفون أصلي)',
-    nameEn: 'Genuine Toyota Engine Oil Filter Element',
+    nameAr: 'فلتر زيت محرك أصلي سولينا (سيفون أصلي)',
+    nameEn: 'Genuine Solina Engine Oil Filter Element',
     category: 'مكابح وفلاتر',
     categoryEn: 'Brakes & Filters',
     price: 38,
@@ -1606,8 +1855,8 @@ export const GENUINE_PARTS: SparePart[] = [
   {
     id: 'oil-synthetic-0w20',
     partNumber: '08880-83886',
-    nameAr: 'زيت محرك تويوتا تخليقي بالكامل 0W-20 (جالون 4 لتر)',
-    nameEn: 'Toyota Genuine Motor Oil 0W-20 Full Synthetic (4L)',
+    nameAr: 'زيت محرك سولينا تخليقي بالكامل 0W-20 (جالون 4 لتر)',
+    nameEn: 'Solina Genuine Motor Oil 0W-20 Full Synthetic (4L)',
     category: 'زيوت وسوائل',
     categoryEn: 'Oils & Fluids',
     price: 195,
@@ -1619,11 +1868,11 @@ export const GENUINE_PARTS: SparePart[] = [
     id: 'gr-muffler-supra',
     partNumber: 'PZ400-W0120',
     nameAr: 'نظام عادم جازو ريسنج الرياضي المصنوع من التيتانيوم',
-    nameEn: 'Toyota Gazoo Racing (GR) Titanium Sport Exhaust',
+    nameEn: 'Solina Gazoo Racing (GR) Titanium Sport Exhaust',
     category: 'إكسسوارات GR',
     categoryEn: 'GR Sport Accessories',
     price: 4950,
-    compatibleModels: ['سوبرا GR', 'تويوتا GR86', 'هايلكس GR'],
+    compatibleModels: ['سوبرا GR', 'سولينا GR86', 'هايلكس GR'],
     image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/vehicles/passenger/thumbnail/supra-513x289.png',
     badge: 'أداء حلبات'
   },
@@ -1647,8 +1896,8 @@ export const GENUINE_PARTS: SparePart[] = [
 export const CERTIFIED_PRE_OWNED: PreOwnedVehicle[] = [
   {
     id: 'cpo-lc300-2024',
-    titleAr: 'تويوتا لاند كروزر VXR توين تيربو 2024 (معتمدة)',
-    titleEn: 'Certified Toyota Land Cruiser VXR Twin Turbo 2024',
+    titleAr: 'سولينا لاند كروزر VXR توين تيربو 2024 (معتمدة)',
+    titleEn: 'Certified Solina Land Cruiser VXR Twin Turbo 2024',
     year: 2024,
     mileage: 28400,
     price: 312000,
@@ -1663,8 +1912,8 @@ export const CERTIFIED_PRE_OWNED: PreOwnedVehicle[] = [
   },
   {
     id: 'cpo-camry-2024',
-    titleAr: 'تويوتا كامري جراندي 3.5L V6 فل كامل 2024',
-    titleEn: 'Certified Toyota Camry Grande 3.5L V6 Full 2024',
+    titleAr: 'سولينا كامري جراندي 3.5L V6 فل كامل 2024',
+    titleEn: 'Certified Solina Camry Grande 3.5L V6 Full 2024',
     year: 2024,
     mileage: 34100,
     price: 112000,
@@ -1679,8 +1928,8 @@ export const CERTIFIED_PRE_OWNED: PreOwnedVehicle[] = [
   },
   {
     id: 'cpo-rav4-2024',
-    titleAr: 'تويوتا راف فور LTD هايبرد دفع رباعي 2024',
-    titleEn: 'Certified Toyota RAV4 LTD Hybrid AWD 2024',
+    titleAr: 'سولينا راف فور LTD هايبرد دفع رباعي 2024',
+    titleEn: 'Certified Solina RAV4 LTD Hybrid AWD 2024',
     year: 2024,
     mileage: 22000,
     price: 129000,
@@ -1703,8 +1952,8 @@ export const OFFERS: Offer[] = [
     id: 'ramadan-2026-finance',
     title: 'عروض الموسم: 0% دفعة أولى و0% رسوم إدارية',
     titleEn: 'Seasonal Offer: 0% Down Payment & 0% Admin Fees',
-    subtitle: 'انطلق بسيارتك تويوتا الجديدة بأقساط ميسرة وشروط تمويلية استثنائية متوافقة مع الشريعة',
-    subtitleEn: 'Drive home your new Toyota with zero down payment and Sharia-compliant lease terms',
+    subtitle: 'انطلق بسيارتك سولينا الجديدة بأقساط ميسرة وشروط تمويلية استثنائية متوافقة مع الشريعة',
+    subtitleEn: 'Drive home your new Solina with zero down payment and Sharia-compliant lease terms',
     category: 'تمويل',
     categoryEn: 'Finance',
     image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/offers/veloz/offer-card/647x485/veloz-offer-card-647x485-arab.webp',
@@ -1731,8 +1980,8 @@ export const OFFERS: Offer[] = [
   },
   {
     id: 'free-service-crown',
-    title: 'باقة صيانة مجانية لمدة 3 سنوات مع تويوتا كراون',
-    titleEn: '3 Years Free Maintenance with Toyota Crown',
+    title: 'باقة صيانة مجانية لمدة 3 سنوات مع سولينا كراون',
+    titleEn: '3 Years Free Maintenance with Solina Crown',
     subtitle: 'عش تجربة الفخامة الملكية مع صيانة دورية مجانية شاملة الزيوت والفلاتر وقطع الغيار',
     subtitleEn: 'Experience royal luxury with 3-Year complimentary servicing including oils and parts',
     category: 'صيانة',
@@ -1742,8 +1991,8 @@ export const OFFERS: Offer[] = [
     validUntilEn: 'April 15, 2026',
     badge: 'باقة عناية فاخرة',
     badgeEn: 'Crown Care Package',
-    description: 'احصل على باقة صيانة دورية معتمدة مجانية لمدة 3 سنوات أو 60,000 كم عند شراء تويوتا كراون الجديدة.',
-    descriptionEn: 'Complimentary 3-Year / 60,000 KM maintenance package upon purchasing the all-new Toyota Crown.',
+    description: 'احصل على باقة صيانة دورية معتمدة مجانية لمدة 3 سنوات أو 60,000 كم عند شراء سولينا كراون الجديدة.',
+    descriptionEn: 'Complimentary 3-Year / 60,000 KM maintenance package upon purchasing the all-new Solina Crown.',
     features: [
       'صيانة دورية مجانية حتى 60,000 كم',
       'تغيير الزيوت والفلاتر الأصلية مجاناً',
@@ -1773,7 +2022,7 @@ export const OFFERS: Offer[] = [
     badge: 'مكافأة استبدال فورية',
     badgeEn: 'Instant Trade-In Bonus',
     description: 'نشتري سيارتك الحالية بأعلى سعر في السوق وندفع لك مكافأة قدرها 5,000 ر.س تضاف كدفعة أولى لسيارتك الجديدة.',
-    descriptionEn: 'We evaluate and purchase your current vehicle at best market rates plus a bonus SAR 5,000 toward your new Toyota.',
+    descriptionEn: 'We evaluate and purchase your current vehicle at best market rates plus a bonus SAR 5,000 toward your new Solina.',
     features: [
       'فحص وتقييم مجاني فوري في المعرض',
       'مكافأة إضافية 5,000 ر.س فوق قيمة التقييم',
@@ -1800,8 +2049,8 @@ export const SHOWROOMS: Showroom[] = [
     region: 'central',
     city: 'الرياض',
     cityEn: 'Riyadh',
-    name: 'مركز تويوتا عبد اللطيف جميل الرئيسي - طريق خريص',
-    nameEn: 'ALJ Toyota Flagship Center - Khurais Road',
+    name: 'مركز سولينا سولينا للسيارات الرئيسي - طريق خريص',
+    nameEn: 'ALJ Solina Flagship Center - Khurais Road',
     address: 'طريق خريص، تقاطع شارع الأحساء، حي الروضة، الرياض',
     addressEn: 'Khurais Road, Al Rawdah District, Riyadh',
     phone: '0112345678',
@@ -1812,15 +2061,15 @@ export const SHOWROOMS: Showroom[] = [
     services: ['صالة عرض السيارات الجديدة', 'صيانة سريعة 45 دقيقة', 'قطع غيار أصلية', 'تمويل وتأمين معتمد'],
     servicesEn: ['New Vehicle Showroom', '45-Min Express Maintenance', 'Genuine Spare Parts', 'Certified Finance & Insurance'],
     isMain: true,
-    mapQuery: 'Abdul Latif Jameel Toyota Khurais Road Riyadh'
+    mapQuery: 'Solina Motors Solina Khurais Road Riyadh'
   },
   {
     id: 'alj-olaya-riyadh',
     region: 'central',
     city: 'الرياض',
     cityEn: 'Riyadh',
-    name: 'صالة عرض تويوتا العليا الفاخرة',
-    nameEn: 'Toyota Olaya Premium Showroom',
+    name: 'صالة عرض سولينا العليا الفاخرة',
+    nameEn: 'Solina Olaya Premium Showroom',
     address: 'طريق الملك فهد، حي العليا، الرياض',
     addressEn: 'King Fahd Road, Al Olaya, Riyadh',
     phone: '0112345679',
@@ -1829,15 +2078,15 @@ export const SHOWROOMS: Showroom[] = [
     workingHoursEn: 'Sat - Thu: 9:00 AM - 9:30 PM',
     services: ['صالة عرض سيارات فاخرة و GR', 'مستشارو مبيعات كبار الشخصيات', 'عروض التمويل والتأجير'],
     servicesEn: ['Luxury & GR Showroom', 'VIP Sales Consultants', 'Lease & Finance Offers'],
-    mapQuery: 'Toyota Showroom King Fahd Road Olaya Riyadh'
+    mapQuery: 'Solina Showroom King Fahd Road Olaya Riyadh'
   },
   {
     id: 'alj-madinah-jeddah',
     region: 'western',
     city: 'جدة',
     cityEn: 'Jeddah',
-    name: 'مركز تويوتا عبد اللطيف جميل الرئيسي - طريق المدينة',
-    nameEn: 'ALJ Toyota Flagship Center - Madinah Road',
+    name: 'مركز سولينا سولينا للسيارات الرئيسي - طريق المدينة',
+    nameEn: 'ALJ Solina Flagship Center - Madinah Road',
     address: 'طريق المدينة المنورة، حي الفيصلية، جدة',
     addressEn: 'Madinah Road, Al Faisaliyah, Jeddah',
     phone: '0122345678',
@@ -1848,15 +2097,15 @@ export const SHOWROOMS: Showroom[] = [
     services: ['مجمع صالات العرض المتكامل', 'مركز الصيانة المتقدمة وسمكرة الهيكل', 'مستودع قطع الغيار الرئيسي', 'خدمات سيارات أوتوهب'],
     servicesEn: ['Integrated Showroom Complex', 'Advanced Maintenance & Body Shop', 'Central Genuine Parts Hub', 'AutoHub CPO Center'],
     isMain: true,
-    mapQuery: 'Abdul Latif Jameel Toyota Madinah Road Jeddah'
+    mapQuery: 'Solina Motors Solina Madinah Road Jeddah'
   },
   {
     id: 'alj-sultan-jeddah',
     region: 'western',
     city: 'جدة',
     cityEn: 'Jeddah',
-    name: 'صالة تويوتا الأمير سلطان',
-    nameEn: 'Toyota Prince Sultan Showroom',
+    name: 'صالة سولينا الأمير سلطان',
+    nameEn: 'Solina Prince Sultan Showroom',
     address: 'شارع الأمير سلطان، حي الروضة، جدة',
     addressEn: 'Prince Sultan Street, Al Rawdah, Jeddah',
     phone: '0122345680',
@@ -1865,15 +2114,15 @@ export const SHOWROOMS: Showroom[] = [
     workingHoursEn: 'Sat - Thu: 9:00 AM - 9:00 PM',
     services: ['صالة عرض السيارات الجديدة', 'مركز صيانة سريعة', 'استشارات التمويل'],
     servicesEn: ['New Car Showroom', 'Express Service', 'Finance Consultations'],
-    mapQuery: 'Toyota Prince Sultan Street Jeddah'
+    mapQuery: 'Solina Prince Sultan Street Jeddah'
   },
   {
     id: 'alj-dammam-khobar',
     region: 'eastern',
     city: 'الدمام والخبر',
     cityEn: 'Dammam & Khobar',
-    name: 'مركز تويوتا عبد اللطيف جميل الإقليمي - طريق الملك فهد',
-    nameEn: 'ALJ Toyota Regional Center - King Fahd Road',
+    name: 'مركز سولينا سولينا للسيارات الإقليمي - طريق الملك فهد',
+    nameEn: 'ALJ Solina Regional Center - King Fahd Road',
     address: 'طريق الملك فهد، حي القشلة، الظهران / الخبر',
     addressEn: 'King Fahd Road, Al Qushlah, Khobar / Dammam',
     phone: '0132345678',
@@ -1884,33 +2133,33 @@ export const SHOWROOMS: Showroom[] = [
     services: ['صالة عرض عملاقة', 'مركز خدمة سريع 45 دقيقة', 'قطع غيار وإكسسوارات', 'خدمات تمويل فوري'],
     servicesEn: ['Mega Showroom', '45-Min Express Service', 'Parts & Accessories', 'Instant Finance'],
     isMain: true,
-    mapQuery: 'Abdul Latif Jameel Toyota King Fahd Road Khobar Dammam'
+    mapQuery: 'Solina Motors Solina King Fahd Road Khobar Dammam'
   },
   {
     id: 'alj-khamis-southern',
     region: 'southern',
     city: 'خميس مشيط وأبها',
     cityEn: 'Khamis Mushait & Abha',
-    name: 'مركز تويوتا عبد اللطيف جميل - طريق الملك خالد',
-    nameEn: 'ALJ Toyota Center - King Khalid Road',
+    name: 'مركز سولينا سولينا للسيارات - طريق الملك خالد',
+    nameEn: 'ALJ Solina Center - King Khalid Road',
     address: 'طريق الملك خالد، حي الرونة، خميس مشيط',
     addressEn: 'King Khalid Road, Al Rawnah, Khamis Mushait',
     phone: '0172345678',
     coordinates: { lat: 18.2836, lng: 42.7325 },
     workingHours: 'السبت - الخميس: 8:00 ص - 8:30 م',
     workingHoursEn: 'Sat - Thu: 8:00 AM - 8:30 PM',
-    services: ['صالة عرض الدفع الرباعي 4x4', 'صيانة دورية وسريعة', 'قطع غيار تويوتا أصلية'],
-    servicesEn: ['4x4 Vehicle Showroom', 'Periodic Maintenance', 'Genuine Toyota Parts'],
+    services: ['صالة عرض الدفع الرباعي 4x4', 'صيانة دورية وسريعة', 'قطع غيار سولينا أصلية'],
+    servicesEn: ['4x4 Vehicle Showroom', 'Periodic Maintenance', 'Genuine Solina Parts'],
     isMain: true,
-    mapQuery: 'Abdul Latif Jameel Toyota Khamis Mushait'
+    mapQuery: 'Solina Motors Solina Khamis Mushait'
   },
   {
     id: 'alj-tabuk-northern',
     region: 'northern',
     city: 'تبوك',
     cityEn: 'Tabuk',
-    name: 'مركز تويوتا عبد اللطيف جميل - طريق الملك فهد',
-    nameEn: 'ALJ Toyota Center - King Fahd Road Tabuk',
+    name: 'مركز سولينا سولينا للسيارات - طريق الملك فهد',
+    nameEn: 'ALJ Solina Center - King Fahd Road Tabuk',
     address: 'طريق الملك فهد، حي المروج، تبوك',
     addressEn: 'King Fahd Road, Al Murooj, Tabuk',
     phone: '0142345678',
@@ -1920,7 +2169,7 @@ export const SHOWROOMS: Showroom[] = [
     services: ['صالة عرض كاملة', 'مركز صيانة وخدمة سريعة', 'مبيعات قطع الغيار'],
     servicesEn: ['Complete Showroom', 'Express Service Hub', 'Parts Counter'],
     isMain: true,
-    mapQuery: 'Abdul Latif Jameel Toyota Tabuk'
+    mapQuery: 'Solina Motors Solina Tabuk'
   }
 ];
 
@@ -1932,8 +2181,8 @@ export const QUICK_SERVICES = [
     id: 'test-drive',
     title: 'حجز تجربة قيادة مجانية',
     titleEn: 'Book Free Test Drive',
-    description: 'جرّب قيادة سيارتك المفضلة من تويوتا 2026 قبل الشراء عبر أقرب صالة عرض.',
-    descriptionEn: 'Experience driving your preferred 2026 Toyota model before purchasing.',
+    description: 'جرّب قيادة سيارتك المفضلة من سولينا 2026 قبل الشراء عبر أقرب صالة عرض.',
+    descriptionEn: 'Experience driving your preferred 2026 Solina model before purchasing.',
     icon: 'Car',
     badge: 'خدمة فورية',
     badgeEn: 'Instant Booking',
@@ -1975,9 +2224,9 @@ export const QUICK_SERVICES = [
 ];
 
 // -------------------------------------------------------------
-// 9. WHY TOYOTA TRUST PILLARS
+// 9. WHY SOLINA TRUST PILLARS
 // -------------------------------------------------------------
-export const WHY_TOYOTA_POINTS = [
+export const WHY_SOLINA_POINTS = [
   {
     icon: 'ShieldCheck',
     title: 'ضمان المصنع 5 سنوات / 150,000 كم',
@@ -1987,9 +2236,9 @@ export const WHY_TOYOTA_POINTS = [
   },
   {
     icon: 'Award',
-    title: 'قطع غيار تويوتا أصلية 100%',
-    titleEn: '100% Genuine Toyota Parts',
-    description: 'نضمن أعلى معايير الأمان والأداء الدائم والموثوق باستخدام قطع غيار تويوتا الأصلية المعتمدة عالمياً.',
+    title: 'قطع غيار سولينا أصلية 100%',
+    titleEn: '100% Genuine Solina Parts',
+    description: 'نضمن أعلى معايير الأمان والأداء الدائم والموثوق باستخدام قطع غيار سولينا الأصلية المعتمدة عالمياً.',
     descriptionEn: 'Guaranteed safety and enduring peak performance with factory certified genuine parts.'
   },
   {
@@ -2010,8 +2259,8 @@ export const WHY_TOYOTA_POINTS = [
     icon: 'TrendingUp',
     title: 'أعلى قيمة إعادة بيع في السوق',
     titleEn: 'Highest Resale Value Retention',
-    description: 'تحافظ سيارات تويوتا على قيمتها السوقية الاستثنائية بفضل اعتماديتها العالية وشعبيتها الكبيرة وثقة المستهلكين.',
-    descriptionEn: 'Toyota vehicles maintain superior market value retention powered by proven Japanese reliability.'
+    description: 'تحافظ سيارات سولينا على قيمتها السوقية الاستثنائية بفضل اعتماديتها العالية وشعبيتها الكبيرة وثقة المستهلكين.',
+    descriptionEn: 'Solina vehicles maintain superior market value retention powered by proven Japanese reliability.'
   },
   {
     icon: 'CheckCircle2',

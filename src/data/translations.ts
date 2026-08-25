@@ -10,7 +10,7 @@ export const TRANSLATIONS = {
     allModels: 'جميع الموديلات',
     latestOffers: 'أحدث العروض',
     financeCalc: 'حاسبة التمويل والأقساط',
-    whyToyota: 'لماذا الجبراني للسيارات',
+    whySolina: 'لماذا الجبراني للسيارات',
     compareVehicles: 'مقارنة المركبات',
     bookTestDrive: 'حجز تجربة قيادة',
     carMatcher: 'المستشار الذكي',
@@ -62,7 +62,7 @@ export const TRANSLATIONS = {
     // Footer
     needHelp: 'هل تحتاج إلى مساعدة أو استفسار فوري؟',
     customerSupport247: 'فريق رعاية الضيوف متواجد على مدار الساعة للرد على كافة استفساراتكم.',
-    aljBio: 'شركة الجبراني للسيارات — الموزع والوكيل المعتمد لسيارات تويوتا ولكزس في المملكة العربية السعودية.',
+    aljBio: 'شركة الجبراني للسيارات — الموزع والوكيل المعتمد لسيارات سولينا ولكزس في المملكة العربية السعودية.',
     allRightsReserved: 'جميع الحقوق محفوظة © 2026 شركة الجبراني للسيارات (Al Jabrani Motors).'
   },
   en: {
@@ -74,7 +74,7 @@ export const TRANSLATIONS = {
     allModels: 'All Models',
     latestOffers: 'Latest Offers',
     financeCalc: 'Finance Calculator',
-    whyToyota: 'Why Al Jabrani Motors',
+    whySolina: 'Why Al Jabrani Motors',
     compareVehicles: 'Compare Vehicles',
     bookTestDrive: 'Book Test Drive',
     carMatcher: 'Smart Car Matcher',
@@ -126,7 +126,7 @@ export const TRANSLATIONS = {
     // Footer
     needHelp: 'Need Immediate Help or Inquiry?',
     customerSupport247: 'Our guest care team is available 24/7 to assist you.',
-    aljBio: 'Al Jabrani Motors — Authorized Distributor of Toyota and Lexus vehicles in Saudi Arabia.',
+    aljBio: 'Al Jabrani Motors — Authorized Distributor of Solina and Lexus vehicles in Saudi Arabia.',
     allRightsReserved: 'All Rights Reserved © 2026 Al Jabrani Motors.'
   }
 };

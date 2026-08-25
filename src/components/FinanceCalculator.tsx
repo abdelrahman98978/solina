@@ -13,8 +13,9 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
   onOpenQuotation
 }) => {
   const { language, formatPrice } = useLanguage();
+  const toyotaVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('camry-2026');
-  const selectedVehicle = VEHICLES.find(v => v.id === selectedVehicleId) || VEHICLES[2];
+  const selectedVehicle = toyotaVehicles.find(v => v.id === selectedVehicleId) || toyotaVehicles[0];
 
   const [price, setPrice] = useState<number>(selectedVehicle.priceStartingFrom);
   const [downPaymentPercent, setDownPaymentPercent] = useState<number>(10);
@@ -24,7 +25,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
 
   const handleVehicleChange = (id: string) => {
     setSelectedVehicleId(id);
-    const v = VEHICLES.find(item => item.id === id);
+    const v = toyotaVehicles.find(item => item.id === id);
     if (v) setPrice(v.priceStartingFrom);
   };
 
@@ -49,15 +50,15 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
   };
 
   return (
-    <section id="finance" className="py-20 bg-gray-100/90 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 md:px-12">
+    <section id="finance" className="py-20 bg-gray-50 border-t border-gray-200 font-arabic">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-3 border border-blue-200">
-            <Calculator className="w-3.5 h-3.5 text-blue-600" />
-            <span>{language === 'ar' ? 'عبد اللطيف جميل للتمويل' : 'Abdul Latif Jameel Finance'}</span>
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-[#0056B3] text-xs font-bold mb-4 border border-red-100">
+            <Calculator className="w-4 h-4 text-[#0056B3]" />
+            <span>{language === 'ar' ? 'سولينا للسيارات للتمويل' : 'Solina Motors Finance'}</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3 font-display">
+          <h2 className="text-3xl md:text-4xl font-normal text-black mb-4 font-arabic tracking-tight">
             {language === 'ar' ? 'حاسبة التمويل والأقساط الشهرية' : 'Monthly Installment & Finance Calculator'}
           </h2>
           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
@@ -68,67 +69,59 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
         </div>
 
         {/* Calculator Main Box */}
-        <div className="bg-white rounded-3xl shadow-toyota border border-gray-200/90 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        <div className="bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           {/* Controls Column (7 Cols) */}
-          <div className="lg:col-span-7 p-6 md:p-10 space-y-7">
+          <div className="lg:col-span-7 p-6 md:p-10 space-y-6">
             {/* Vehicle Selector */}
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-2">
-                {language === 'ar' ? 'اختر موديل السيارة:' : 'Select Vehicle Model:'}
+                {language === 'ar' ? 'اختر موديل سولينا المطلوب:' : 'Select Solina Model:'}
               </label>
               <div className="relative">
                 <select
                   value={selectedVehicleId}
                   onChange={(e) => handleVehicleChange(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm font-bold rounded-2xl p-4 pl-10 focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none appearance-none transition-all cursor-pointer"
+                  className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm rounded-xl py-3.5 px-4 pr-10 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none cursor-pointer"
                 >
-                  {VEHICLES.map((v) => (
+                  {toyotaVehicles.map((v) => (
                     <option key={v.id} value={v.id}>
-                      {v.brand === 'lexus' ? '★ LEXUS: ' : 'TOYOTA: '}
-                      {language === 'ar' ? v.nameAr : v.nameEn} - {language === 'ar' ? 'يبدأ من' : 'starts from'} {formatPrice(v.priceStartingFrom)} ر.س
+                      {language === 'ar' ? v.nameAr : v.nameEn} ({formatPrice(v.priceStartingFrom)} ﷼)
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
-            {/* Price Slider */}
+            {/* Vehicle Base Price Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-gray-700">
-                  {language === 'ar' ? 'سعر المركبة (شامل الضريبة):' : 'Vehicle Price (VAT Included):'}
+                  {language === 'ar' ? 'سعر السيارة النقدي (شامل الضريبة):' : 'Vehicle Cash Price (Incl. VAT):'}
                 </label>
-                <span className="text-sm font-black text-gray-900 bg-gray-100 px-3 py-1 rounded-lg font-mono">
-                  {formatPrice(price)} ر.س
+                <span className="text-xs font-bold text-[#0056B3] font-mono">
+                  {formatPrice(price)} ﷼
                 </span>
               </div>
               <input
-                type="range"
-                min="60000"
-                max="600000"
-                step="5000"
+                type="number"
                 value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                onChange={(e) => setPrice(Math.max(10000, Number(e.target.value)))}
+                className="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm rounded-xl py-3 px-4 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none font-mono"
               />
-              <div className="flex justify-between text-[11px] text-gray-400 mt-1 font-mono">
-                <span>60,000 ر.س</span>
-                <span>600,000 ر.س</span>
-              </div>
             </div>
 
             {/* Down Payment % Slider */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-gray-700">
-                  {language === 'ar' ? 'الدفعة الأولى (%):' : 'Down Payment (%):'}
+                  {language === 'ar' ? 'الدفعة الأولى المقدمة (%):' : 'Down Payment (%):'}
                 </label>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500 font-semibold font-mono">
-                    ({formatPrice(downPaymentAmount)} ر.س)
+                    ({formatPrice(downPaymentAmount)} ﷼)
                   </span>
-                  <span className="text-sm font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md font-mono border border-blue-200">
+                  <span className="text-sm font-bold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md font-mono">
                     {downPaymentPercent}%
                   </span>
                 </div>
@@ -140,10 +133,10 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                 step="5"
                 value={downPaymentPercent}
                 onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0056B3]"
               />
               <div className="flex justify-between text-[11px] text-gray-400 mt-1 font-mono">
-                <span>0% ({language === 'ar' ? 'بدون دفعة' : 'Zero Down'})</span>
+                <span>0% (بدون دفعة أولى)</span>
                 <span>25%</span>
                 <span>50%</span>
               </div>
@@ -161,7 +154,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                     onClick={() => setTermMonths(months)}
                     className={`py-3 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                       termMonths === months
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                        ? 'bg-[#0056B3] text-white shadow-sm'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -179,7 +172,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                 </label>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500 font-semibold font-mono">
-                    ({formatPrice(balloonPaymentAmount)} ر.س)
+                    ({formatPrice(balloonPaymentAmount)} ﷼)
                   </span>
                   <span className="text-sm font-bold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md font-mono">
                     {balloonPaymentPercent}%
@@ -193,7 +186,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                 step="5"
                 value={balloonPaymentPercent}
                 onChange={(e) => setBalloonPaymentPercent(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0056B3]"
               />
               <div className="flex justify-between text-[11px] text-gray-400 mt-1 font-mono">
                 <span>0%</span>
@@ -204,30 +197,30 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
           </div>
 
           {/* Result Output Column (5 Cols) */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0A0E17] text-white p-6 md:p-10 flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-gradient-to-br from-[#111111] via-[#1C1C1C] to-[#0A0A0A] text-white p-6 md:p-10 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-6">
-                <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                <Sparkles className="w-4 h-4 text-[#0056B3]" />
                 <span className="text-xs font-bold text-gray-300">
                   {language === 'ar' ? 'عرض التمويل التأجيري المعتمد' : 'ALJ Lease Summary'}
                 </span>
               </div>
 
               {/* Monthly Amount Giant Display */}
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/15 mb-6 text-center shadow-inner">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/15 mb-6 text-center shadow-inner">
                 <span className="text-xs text-gray-300 block mb-1">
                   {language === 'ar' ? 'القسط الشهري التقديري:' : 'Estimated Monthly Payment:'}
                 </span>
-                <div className="flex items-baseline justify-center gap-1">
+                <div className="flex items-baseline justify-center gap-1.5">
                   <span className="text-4xl md:text-5xl font-black text-white font-mono tracking-tight">
                     {formatPrice(monthlyInstallment)}
                   </span>
-                  <span className="text-base font-bold text-[#D4AF37] font-arabic">
-                    {language === 'ar' ? 'ر.س' : 'SAR'}
+                  <span className="text-lg font-bold text-[#0056B3] font-arabic">
+                    {language === 'ar' ? '﷼ / شهر' : 'SAR/mo'}
                   </span>
                 </div>
-                <span className="text-[11px] text-gray-400 mt-1 block">
-                  {language === 'ar' ? `على مدار ${termMonths} شهراً • متوافق مع الشريعة` : `Over ${termMonths} Months • Sharia Compliant`}
+                <span className="text-[11px] text-gray-400 mt-2 block">
+                  {language === 'ar' ? `على مدار ${termMonths} شهراً • متوافق مع أحكام الشريعة الإسلامية` : `Over ${termMonths} Months • Sharia Compliant`}
                 </span>
               </div>
 
@@ -235,11 +228,11 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
               <div className="space-y-3 text-xs text-gray-300">
                 <div className="flex justify-between pb-2 border-b border-white/10">
                   <span>{language === 'ar' ? 'الدفعة الأولى النقدية:' : 'Down Payment:'}</span>
-                  <span className="font-bold text-white font-mono">{formatPrice(downPaymentAmount)} ر.س</span>
+                  <span className="font-bold text-white font-mono">{formatPrice(downPaymentAmount)} ﷼</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-white/10">
                   <span>{language === 'ar' ? 'الدفعة الأخيرة (التملك):' : 'Final Balloon Payment:'}</span>
-                  <span className="font-bold text-white font-mono">{formatPrice(balloonPaymentAmount)} ر.س</span>
+                  <span className="font-bold text-white font-mono">{formatPrice(balloonPaymentAmount)} ﷼</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-white/10">
                   <span>{language === 'ar' ? 'معدل النسبة السنوي (APR):' : 'Annual Profit Rate (APR):'}</span>
@@ -255,14 +248,14 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                   onClick={() => onOpenQuotation(selectedVehicle, selectedVehicle.grades[0], financeDetailsObj)}
                   className="w-full py-3.5 bg-white hover:bg-gray-100 text-gray-900 font-bold text-xs rounded-xl shadow transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Printer className="w-4 h-4 text-blue-600" />
+                  <Printer className="w-4 h-4 text-[#0056B3]" />
                   <span>{language === 'ar' ? 'طباعة / تحميل عرض سعر رسمي' : 'Print / Save Official Quotation'}</span>
                 </button>
               )}
 
               <button
-                onClick={() => onOpenTestDrive(`طلب تمويل: ${selectedVehicle.nameAr} بقسط ${monthlyInstallment} ر.س`)}
-                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                onClick={() => onOpenTestDrive(`طلب تمويل: ${selectedVehicle.nameAr} بقسط ${monthlyInstallment} ﷼`)}
+                className="w-full py-3.5 bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <FileText className="w-4 h-4" />
                 <span>{language === 'ar' ? 'تقديم طلب تمويل إلكتروني فوري' : 'Submit Finance Application'}</span>

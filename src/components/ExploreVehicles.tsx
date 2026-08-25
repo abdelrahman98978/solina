@@ -1,10 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { 
   ChevronLeft, 
-  ChevronRight, 
-  Layers, 
-  Heart,
-  ChevronDown
+  ChevronRight,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
@@ -29,29 +28,26 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
   onOpenQuotation,
   comparedVehicleIds
 }) => {
-  const { language, formatPrice, isRTL } = useLanguage();
+  const { language, isRTL } = useLanguage();
   const { vehicles } = useAdminData();
   const sliderRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<'sedan' | 'suv' | 'commercial'>('sedan');
 
-  // Tabs matching Toyota Saudi Arabia architecture
+  // Official 3 Tabs matching Solina Saudi Arabia
   const categories = [
     { id: 'sedan', label: language === 'ar' ? 'السيدان' : 'Sedan' },
     { id: 'suv', label: language === 'ar' ? 'السيارات متعددة الإستخدامات' : 'SUVs & Crossovers' },
-    { id: 'commercial', label: language === 'ar' ? 'السيارات التجارية' : 'Commercial' },
-    { id: 'hybrid', label: language === 'ar' ? 'الهايبرد' : 'Hybrids (HEV)' },
-    { id: 'gr', label: language === 'ar' ? 'الأداء الرياضي GR' : 'GR Performance' },
-    { id: 'all', label: language === 'ar' ? 'كافة المركبات' : 'All Models' }
+    { id: 'commercial', label: language === 'ar' ? 'السيارات التجارية' : 'Commercial Vehicles' }
   ];
 
-  const currentTab = selectedCategory === 'all' ? 'sedan' : selectedCategory;
+  // Only official Solina brand vehicles
+  const toyotaVehicles = vehicles.filter(v => v.brand !== 'lexus');
 
-  const filteredVehicles = vehicles.filter((vehicle) => {
-    if (currentTab === 'sedan') return vehicle.category === 'sedan';
-    if (currentTab === 'suv') return ['suv', 'crossover', 'family'].includes(vehicle.category);
-    if (currentTab === 'commercial') return vehicle.category === 'commercial';
-    if (currentTab === 'hybrid') return vehicle.isHybrid || vehicle.powertrain === 'هايبرد';
-    if (currentTab === 'gr') return vehicle.isGR || vehicle.category === 'gr';
+  const filteredVehicles = toyotaVehicles.filter((vehicle) => {
+    if (activeTab === 'sedan') return vehicle.category === 'sedan' || vehicle.category === 'gr';
+    if (activeTab === 'suv') return ['suv', 'crossover', 'family'].includes(vehicle.category);
+    if (activeTab === 'commercial') return vehicle.category === 'commercial';
     return true;
   });
 
@@ -68,47 +64,56 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
 
   const scrollSlider = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
-      const scrollAmount = 380;
+      const scrollAmount = 350;
       const factor = isRTL ? (direction === 'left' ? 1 : -1) : (direction === 'left' ? -1 : 1);
       sliderRef.current.scrollBy({ left: scrollAmount * factor, behavior: 'smooth' });
     }
   };
 
   return (
-    <section id="explore-vehicles" className="py-16 bg-white border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+    <section id="explore-vehicles" className="py-16 bg-white font-arabic">
+      <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center">
         
-        {/* Exact Toyota SA Centered Heading */}
-        <h2 className="text-3xl md:text-5xl font-black text-gray-900 font-display mb-10">
+        {/* Solina SA Official Centered Heading */}
+        <h2 className="text-3xl md:text-4xl font-normal text-black font-arabic mb-10 tracking-tight">
           {language === 'ar' ? 'استكشف جميع المركبات' : 'Explore All Vehicles'}
         </h2>
 
-        {/* Toyota SA Category Tabs with Underline Indicator */}
-        <div className="flex items-center justify-center gap-6 md:gap-12 border-b border-gray-200 mb-12 overflow-x-auto no-scrollbar pb-1">
+        {/* Solina SA Official Category Tabs with Red Active Underline */}
+        <div className="flex items-center justify-center gap-8 md:gap-14 border-b border-gray-200 mb-12 overflow-x-auto no-scrollbar">
           {categories.map((cat) => {
-            const isActive = (currentTab === cat.id);
+            const isActive = (activeTab === cat.id);
             return (
               <button
                 key={cat.id}
-                onClick={() => onSelectCategory(cat.id)}
-                className={`pb-4 text-base md:text-lg font-bold transition-all cursor-pointer whitespace-nowrap relative ${
+                onClick={() => {
+                  setActiveTab(cat.id as any);
+                  onSelectCategory(cat.id);
+                  if (sliderRef.current) {
+                    sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                  }
+                }}
+                className={`pb-4 text-base md:text-xl font-normal transition-all cursor-pointer whitespace-nowrap relative ${
                   isActive
-                    ? 'text-gray-900 border-b-4 border-blue-600 font-black'
-                    : 'text-gray-500 hover:text-gray-800'
+                    ? 'text-black font-bold'
+                    : 'text-gray-500 hover:text-black'
                 }`}
               >
                 {cat.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3]"></span>
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Vehicle Carousel Slider matching Toyota SA */}
+        {/* Vehicle Carousel Slider matching Solina SA */}
         <div className="relative group mb-10">
           {/* Left Arrow */}
           <button
             onClick={() => scrollSlider('left')}
-            className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/90 shadow-xl border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-blue-600 hover:text-white transition-all cursor-pointer hidden md:flex"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-[#0056B3] hover:text-white transition-all cursor-pointer hidden md:flex"
             aria-label="Previous Vehicles"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -117,7 +122,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
           {/* Right Arrow */}
           <button
             onClick={() => scrollSlider('right')}
-            className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/90 shadow-xl border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-blue-600 hover:text-white transition-all cursor-pointer hidden md:flex"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-[#0056B3] hover:text-white transition-all cursor-pointer hidden md:flex"
             aria-label="Next Vehicles"
           >
             <ChevronRight className="w-6 h-6" />
@@ -127,78 +132,83 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
           <div
             ref={sliderRef}
             onScroll={handleScroll}
-            className="flex gap-8 overflow-x-auto no-scrollbar py-4 px-2 scroll-smooth items-stretch"
+            className="flex gap-6 md:gap-8 overflow-x-auto no-scrollbar py-4 px-2 scroll-smooth items-stretch"
           >
-            {filteredVehicles.map((vehicle) => (
-              <div
-                key={vehicle.id}
-                className="w-[280px] sm:w-[320px] md:w-[340px] flex-shrink-0 bg-white rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 group text-center"
-              >
-                {/* Top Info: Model Name & Price */}
-                <div>
-                  <h3 className="text-xl md:text-2xl font-black text-gray-900 font-display mb-1 group-hover:text-blue-600 transition-colors">
-                    {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
-                  </h3>
-                  
-                  <div className="text-sm text-gray-600 font-bold mb-4 flex items-center justify-center gap-1">
-                    <span>{language === 'ar' ? 'تبدأ من' : 'Starts from'}</span>
-                    <span className="text-base font-black font-mono text-gray-900">
-                      {formatPrice(vehicle.priceStartingFrom)}
-                    </span>
-                    <span className="text-xs text-blue-600 font-bold">{language === 'ar' ? 'ر.س' : 'SAR'}</span>
+            {filteredVehicles.map((vehicle) => {
+              const cleanTitle = vehicle.nameAr.replace(/2026/g, '').replace(/سولينا/g, '').trim() + ' 2026';
+              return (
+                <div
+                  key={vehicle.id}
+                  className="w-[280px] sm:w-[300px] md:w-[310px] flex-shrink-0 bg-white rounded-xl p-4 flex flex-col justify-between hover:shadow-lg transition-all duration-300 border border-transparent hover:border-gray-100 group text-center"
+                >
+                  {/* Top Info: Model Name & Price */}
+                  <div>
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 font-arabic mb-1 group-hover:text-[#0056B3] transition-colors">
+                      {cleanTitle}
+                    </h3>
+                    
+                    <div className="text-sm text-gray-700 font-medium mb-4 flex items-center justify-center gap-1.5">
+                      <span>{language === 'ar' ? 'تبدأ من' : 'Starts from'}</span>
+                      <span className="text-base font-bold font-mono text-[#0056B3]">
+                        {vehicle.priceStartingFrom.toLocaleString()}
+                      </span>
+                      <span className="text-xs font-bold text-[#0056B3]">﷼</span>
+                    </div>
+
+                    {/* Vehicle Cutout Image Stage */}
+                    <div 
+                      onClick={() => onSelectVehicle(vehicle.id)}
+                      className="h-36 flex items-center justify-center cursor-pointer overflow-hidden my-3"
+                    >
+                      <img
+                        src={vehicle.cardImage}
+                        alt={vehicle.nameAr}
+                        className="max-h-32 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
 
-                  {/* Cutout Image Stage */}
-                  <div 
-                    onClick={() => onSelectVehicle(vehicle.id)}
-                    className="h-44 flex items-center justify-center cursor-pointer overflow-hidden my-3"
-                  >
-                    <img
-                      src={vehicle.cardImage}
-                      alt={language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
-                      className="max-h-36 w-auto object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-500"
-                    />
+                  {/* Bottom Dual Links matching Solina SA exact UX */}
+                  <div className="mt-4 pt-3 flex flex-col gap-2 text-sm font-semibold text-right">
+                    <button
+                      onClick={() => onSelectVehicle(vehicle.id)}
+                      className="text-gray-900 hover:text-[#0056B3] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>{language === 'ar' ? 'نظرة عامة' : 'Overview'}</span>
+                      <span className="text-[#0056B3] font-bold">›</span>
+                    </button>
+
+                    <button
+                      onClick={() => onOpenTestDrive(cleanTitle)}
+                      className="text-gray-900 hover:text-[#0056B3] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>{language === 'ar' ? 'خيارات الشراء' : 'Buying Options'}</span>
+                      <span className="text-[#0056B3] font-bold">›</span>
+                    </button>
                   </div>
                 </div>
-
-                {/* Bottom Dual Links matching Toyota SA exact UX */}
-                <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2.5 text-sm font-bold">
-                  <button
-                    onClick={() => onSelectVehicle(vehicle.id)}
-                    className="text-gray-900 hover:text-blue-600 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <span>{language === 'ar' ? 'نظرة عامة' : 'Overview'}</span>
-                    <span className="text-blue-600 font-bold">›</span>
-                  </button>
-
-                  <button
-                    onClick={() => onSelectVehicle(vehicle.id)}
-                    className="text-gray-900 hover:text-blue-600 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <span>{language === 'ar' ? 'خيارات الشراء' : 'Buying Options'}</span>
-                    <span className="text-blue-600 font-bold">›</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* Progress Bar Indicator matching Toyota SA */}
-        <div className="max-w-md mx-auto h-1.5 bg-gray-200 rounded-full mb-10 overflow-hidden">
+        {/* Red Progress Bar Indicator matching Solina SA */}
+        <div className="max-w-xs mx-auto h-1 bg-gray-200 rounded-full mb-10 overflow-hidden">
           <div
-            className="h-full bg-blue-600 rounded-full transition-all duration-300"
-            style={{ width: `${Math.max((scrollProgress * 100), 25)}%` }}
+            className="h-full bg-[#0056B3] rounded-full transition-all duration-200"
+            style={{ width: `${Math.max((scrollProgress * 100), 30)}%` }}
           />
         </div>
 
-        {/* Big Centered CTA Button matching Toyota SA */}
+        {/* Big Red Pill CTA Button matching Solina SA */}
         <div>
           <button
             onClick={() => {
-              onSelectCategory('all');
+              const megaBtn = document.querySelector('header nav button');
+              if (megaBtn) (megaBtn as HTMLButtonElement).click();
             }}
-            className="px-10 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-base shadow-lg shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 cursor-pointer"
+            className="px-10 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
           >
             {language === 'ar' ? 'عرض جميع المركبات' : 'View All Vehicles'}
           </button>

@@ -35,7 +35,7 @@ export const DiscoverSolinaSection: React.FC = () => {
   ];
 
   return (
-    <section id="discover-toyota" className="py-16 bg-white font-arabic">
+    <section id="discover-solina" className="py-16 bg-white font-arabic">
       <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center">
         {/* Exact Solina SA Centered Heading */}
         <h2 className="text-3xl md:text-4xl font-normal text-black font-arabic mb-2 tracking-tight">

@@ -112,9 +112,9 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           <div className="flex items-center justify-between pb-6 border-b-2 border-gray-900">
             <div className="flex items-center gap-4">
               <img
-                src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/Feature/alj/shared/header/toyota-logo.svg"
-                alt="Solina"
-                className="h-10 w-auto"
+                src="/solina-logo.png"
+                alt="Solina Motors"
+                className="h-10 w-auto object-contain"
               />
               <div>
                 <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight font-arabic">
@@ -251,8 +251,8 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
             </div>
 
             <div className="text-end font-mono">
-              <span className="block font-bold">ABDUL LATIF JAMEEL MOTORS</span>
-              <span>800 244 4400 • toyota.com.sa</span>
+              <span className="block font-bold">SOLINA MOTORS RETAIL CO.</span>
+              <span>800 244 4400 • solina.sa</span>
             </div>
           </div>
         </div>

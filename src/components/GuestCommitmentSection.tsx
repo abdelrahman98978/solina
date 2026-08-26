@@ -6,10 +6,10 @@ export const GuestCommitmentSection: React.FC = () => {
 
   return (
     <section id="guest-commitment" className="relative w-full min-h-[540px] flex items-center overflow-hidden bg-black font-arabic">
-      {/* Background Car Image (Solina RAV4 2026 Red) */}
+      {/* Background Car Image (Official Solina 2026 Banner) */}
       <img
-        src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/vehicles/suv/rav4/hero-banner/rav4-2026.webp?w=1920&q=75&f=webp"
-        alt="التزامنا نحو ضيوفنا"
+        src="/solina-quality-banner.png"
+        alt="التزامنا نحو ضيوفنا - شركة سولينا للسيارات"
         className="absolute inset-0 w-full h-full object-cover object-center"
         loading="lazy"
       />

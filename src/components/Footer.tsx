@@ -47,12 +47,12 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600 font-normal">
               <li>
-                <a href="https://carstore.toyota.com.sa/ar/" target="_blank" rel="noreferrer" className="hover:text-[#0056B3] transition-colors">
+                <a href="#b2b-cars" className="hover:text-[#0056B3] transition-colors">
                   {language === 'ar' ? 'مبيعات السيارات B2B' : 'B2B Car Sales'}
                 </a>
               </li>
               <li>
-                <a href="https://partstore.toyota.com.sa/ar/login" target="_blank" rel="noreferrer" className="hover:text-[#0056B3] transition-colors">
+                <a href="#b2b-parts" className="hover:text-[#0056B3] transition-colors">
                   {language === 'ar' ? 'مبيعات قطع الغيار B2B' : 'B2B Parts Sales'}
                 </a>
               </li>
@@ -115,14 +115,11 @@ export const Footer: React.FC = () => {
           {/* Column 5 (Left in RTL): Solina Logo & Social Icons */}
           <div className="space-y-4 flex flex-col items-start lg:items-end">
             <div className="flex items-center gap-2">
-              <svg className="w-7 h-7 text-[#0056B3] fill-current" viewBox="0 0 100 100">
-                <path d="M50 8C26.8 8 8 26.8 8 50s18.8 42 42 42 42-18.8 42-42S73.2 8 50 8zm0 76.5C30.3 84.5 14.5 69.1 14.5 50S30.3 15.5 50 15.5 85.5 30.9 85.5 50 69.7 84.5 50 84.5z"/>
-                <path d="M50 20c-15.5 0-28 7.6-28 17 0 9.2 12.1 16.7 27.2 17 15.6-.3 28.8-7.8 28.8-17 0-9.4-12.5-17-28-17zm0 28.5c-12.2 0-22.3-5.2-22.3-11.5S37.8 25.5 50 25.5s22.3 5.2 22.3 11.5S62.2 48.5 50 48.5z"/>
-                <path d="M50 20c-8 0-14.5 13.4-14.5 30s6.5 30 14.5 30 14.5-13.4 14.5-30-6.5-30-14.5-30zm0 53.5c-4.8 0-9-10.4-9-23.5s4.2-23.5 9-23.5 9 10.4 9 23.5-4.2 23.5-9 23.5z"/>
-              </svg>
-              <span className="font-extrabold text-xl tracking-tight text-[#0056B3]">
-                SOLINA
-              </span>
+              <img 
+                src="/solina-logo.png" 
+                alt="Solina Motors" 
+                className="h-9 w-auto object-contain"
+              />
             </div>
 
             {/* Social Icons */}

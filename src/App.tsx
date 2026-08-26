@@ -247,6 +247,7 @@ const MainAppContent: React.FC = () => {
 
       {/* Solina AI Smart Assistant Floating Widget & Chat Modal */}
       <SolinaAIAssistant
+        showFloatingTrigger={!isMobileScreen}
         onSelectVehicle={handleSelectVehicle}
         onOpenTestDrive={handleOpenTestDrive}
         onOpenServiceBooking={handleOpenServiceBooking}
@@ -360,8 +361,6 @@ const MainAppContent: React.FC = () => {
           onOpenTestDrive={handleOpenTestDrive}
           onOpenServiceBooking={handleOpenServiceBooking}
         />
-        {/* Solina 24/7 AI Smart Assistant */}
-        <SolinaAIAssistant />
         {renderModals()}
       </div>
     );

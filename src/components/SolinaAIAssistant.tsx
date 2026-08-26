@@ -14,6 +14,7 @@ import {
   PhoneCall,
   ExternalLink,
   MessageSquare,
+  ShieldCheck,
   ChevronDown
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -35,16 +36,30 @@ interface SolinaAIAssistantProps {
   onOpenTestDrive?: (modelName?: string) => void;
   onOpenServiceBooking?: () => void;
   onNavigate?: (route: string) => void;
+  isOpenExternal?: boolean;
+  onCloseExternal?: () => void;
+  showFloatingTrigger?: boolean;
 }
 
 export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
   onSelectVehicle,
   onOpenTestDrive,
   onOpenServiceBooking,
-  onNavigate
+  onNavigate,
+  isOpenExternal,
+  onCloseExternal,
+  showFloatingTrigger = true
 }) => {
   const { language } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isOpen = isOpenExternal !== undefined ? isOpenExternal : internalOpen;
+  const setIsOpen = (val: boolean) => {
+    if (isOpenExternal !== undefined && onCloseExternal && !val) {
+      onCloseExternal();
+    }
+    setInternalOpen(val);
+  };
+
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -52,8 +67,8 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
       id: 'welcome',
       sender: 'bot',
       text: language === 'ar'
-        ? 'مرحباً بك في سولينا للسيارات! 🚗 أنا مساعدك الذكي المعتمد، كيف يمكنني خدمتك اليوم بخصوص سيارات 2026، عروض التمويل، أو حجز الصيانة؟'
-        : 'Welcome to Solina Motors! 🚗 I am your certified AI assistant. How may I assist you with 2026 vehicles, financing offers, or service booking today?',
+        ? 'مرحباً بك في سولينا للسيارات! 🚗 أنا مساعدك الذكي المعتمد، كيف يمكنني خدمتك اليوم بخصوص أسطول 2026، عروض التمويل، أو حجز الصيانة؟'
+        : 'Welcome to Solina Motors! 🚗 I am your certified AI assistant. How may I assist you with 2026 vehicles, financing offers, or service bookings today?',
       timestamp: 'الآن'
     }
   ]);
@@ -93,14 +108,14 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
           : 'Solina Motors 2026 lineup features luxury sedans (Camry, Crown, Corolla) and premium 4x4 SUVs (Land Cruiser LC300, Prado, RAV4).';
         actions = [
           {
-            label: language === 'ar' ? 'عرض كامري 2026' : 'View Camry 2026',
+            label: language === 'ar' ? 'استعراض كامري 2026' : 'View Camry 2026',
             action: () => {
               if (onSelectVehicle) onSelectVehicle('camry-2026');
               setIsOpen(false);
             }
           },
           {
-            label: language === 'ar' ? 'عرض لاند كروزر 2026' : 'View Land Cruiser 2026',
+            label: language === 'ar' ? 'استعراض لاند كروزر 2026' : 'View Land Cruiser 2026',
             action: () => {
               if (onSelectVehicle) onSelectVehicle('lc300-2026');
               setIsOpen(false);
@@ -122,8 +137,8 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
         ];
       } else if (lower.includes('صيان') || lower.includes('خدم') || lower.includes('service') || lower.includes('oil')) {
         botResponse = language === 'ar'
-          ? 'يمكنك حجز موعد صيانة دورية سريعة خلال 45 دقيقة في أقرب مركز خدمة سولينا معتمد مع فحص شامل 20 نقطة مجاناً.'
-          : 'Book a 45-minute express maintenance slot at any authorized Solina service center with a free 20-point safety inspection.';
+          ? 'يمكنك حجز موعد صيانة دورية سريعة خلال 45 دقيقة في أقرب مركز خدمة سولينا معتمد مع فحص شامل مجاناً.'
+          : 'Book a 45-minute express maintenance slot at any authorized Solina service center with a free multi-point inspection.';
         actions = [
           {
             label: language === 'ar' ? 'حجز موعد صيانة الآن' : 'Book Maintenance Now',
@@ -135,7 +150,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
         ];
       } else if (lower.includes('تجرب') || lower.includes('قياد') || lower.includes('test drive')) {
         botResponse = language === 'ar'
-          ? 'يسعدنا استقبالك لتجربة قيادة سيارات سولينا 2026 مباشرة في الفرع المفضل لديك.'
+          ? 'يسعدنا استقبالك لتجربة قيادة سيارات سولينا 2026 مباشرة في صالة العرض الأقرب إليك.'
           : 'Experience the thrill of driving Solina 2026 models directly at your preferred showroom.';
         actions = [
           {
@@ -161,8 +176,8 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
         ];
       } else {
         botResponse = language === 'ar'
-          ? 'شكراً لاستفسارك! سأقوم بتوجيهك لأحد مستشاري مبيعات سولينا لتقديم المساعدة التامة، أو يمكنك اختيار أحد الموضوعات السريعة أدناه.'
-          : 'Thank you for reaching out! You can choose any of the quick services below or ask about any 2026 vehicle model.';
+          ? 'شكراً لتواصلك مع سولينا للسيارات! يسعدني خدمتك في أي وقت، يمكنك اختيار أحد الإجراءات السريعة أدناه.'
+          : 'Thank you for contacting Solina Motors! You can choose any of the quick actions below.';
         actions = [
           {
             label: language === 'ar' ? 'طلب تجربة قيادة' : 'Book Test Drive',
@@ -172,7 +187,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
             }
           },
           {
-            label: language === 'ar' ? 'حجز صيانة' : 'Book Service',
+            label: language === 'ar' ? 'حجز موعد صيانة' : 'Book Service',
             action: () => {
               if (onOpenServiceBooking) onOpenServiceBooking();
               setIsOpen(false);
@@ -190,62 +205,63 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
       };
 
       setMessages(prev => [...prev, botMsg]);
-    }, 500);
+    }, 450);
   };
 
   return (
     <>
-      {/* 1. Floating AI Assistant Launcher Button (Optimized position for both Mobile & Desktop) */}
-      <div className="fixed bottom-[74px] sm:bottom-6 right-3.5 sm:right-6 z-40 font-arabic select-none">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="relative group flex items-center gap-2 sm:gap-3 bg-gray-950/95 hover:bg-black text-white p-1.5 sm:p-2 pl-3 sm:pl-4 pr-1.5 sm:pr-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-red-500/80 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ring-2 ring-red-500/20"
-          title={language === 'ar' ? 'تحدث مع مساعد سولينا الذكي 24/7' : 'Chat with Solina AI Assistant 24/7'}
-        >
-          {/* Subtle Ambient Pulse */}
-          <span className="absolute -inset-1 rounded-full bg-red-600/25 animate-ping pointer-events-none" />
+      {/* 1. Floating AI Assistant Launcher Button (Positioned gracefully on the bottom-left on mobile so it never collides with navigation) */}
+      {showFloatingTrigger && (
+        <div className="fixed bottom-[74px] sm:bottom-6 left-3.5 sm:left-auto sm:right-6 z-40 font-arabic select-none">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="relative group flex items-center gap-2 sm:gap-2.5 bg-gray-950/95 hover:bg-black text-white p-1.5 sm:p-2 pl-3 sm:pl-3.5 pr-1.5 sm:pr-2 rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.45)] border border-red-500/80 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ring-2 ring-red-500/20"
+            title={language === 'ar' ? 'تحدث مع مساعد سولينا الذكي 24/7' : 'Chat with Solina AI Assistant 24/7'}
+          >
+            {/* Subtle Pulse */}
+            <span className="absolute -inset-1 rounded-full bg-red-600/25 animate-ping pointer-events-none" />
 
-          {/* Luxury AI Robot Avatar */}
-          <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden border-2 border-red-500 shadow-md bg-white shrink-0">
-            <img
-              src="/solina-ai-assistant.png"
-              alt="مساعد سولينا الذكي"
-              className="w-full h-full object-cover"
-            />
-            {/* Live Indicator */}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white" />
-          </div>
+            {/* AI Robot Avatar */}
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-red-500 shadow-md bg-white shrink-0">
+              <img
+                src="/solina-ai-assistant.png"
+                alt="مساعد سولينا الذكي"
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white" />
+            </div>
 
-          {/* Button Text Pill */}
-          <div className="text-start pr-1">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] sm:text-xs font-black text-white leading-none">
-                {language === 'ar' ? 'مساعد سولينا' : 'Solina AI'}
-              </span>
-              <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-[8px] sm:text-[9px] font-bold text-white uppercase tracking-wider">
-                24/7
+            {/* Button Label */}
+            <div className="text-start pr-1">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] sm:text-xs font-black text-white leading-none">
+                  {language === 'ar' ? 'مساعد سولينا' : 'Solina AI'}
+                </span>
+                <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-[8px] font-black text-white uppercase tracking-wider">
+                  24/7
+                </span>
+              </div>
+              <span className="text-[8px] sm:text-[9px] text-gray-300 font-light block leading-tight mt-0.5">
+                {language === 'ar' ? 'مساعدة فورية' : 'Instant Help'}
               </span>
             </div>
-            <span className="text-[9px] sm:text-[10px] text-gray-300 font-light block leading-tight mt-0.5 hidden xs:block">
-              {language === 'ar' ? 'مساعدتك الفورية' : 'Instant Help'}
-            </span>
-          </div>
-        </button>
-      </div>
+          </button>
+        </div>
+      )}
 
       {/* 2. Professional AI Assistant Bottom Sheet / Modal Dialog */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-end sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-end sm:p-6 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
           <div 
-            className="w-full sm:max-w-md h-[90vh] sm:h-[640px] bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 animate-in slide-in-from-bottom-8 duration-300 font-arabic"
+            className="w-full sm:max-w-md h-[88vh] sm:h-[630px] bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 animate-in slide-in-from-bottom-8 duration-300 font-arabic"
           >
             {/* Mobile Sheet Grab Handle */}
             <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2 sm:hidden" />
 
-            {/* Header with Solina Red & Chrome Luxury Styling */}
+            {/* Header with Solina Luxury Dark & Red Theme */}
             <div className="bg-gradient-to-r from-gray-950 via-slate-900 to-black text-white px-4 py-3 flex items-center justify-between border-b border-white/10 shadow-md">
               <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-red-500 bg-white shrink-0">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-red-500 bg-white shrink-0 shadow-sm">
                   <img
                     src="/solina-ai-assistant.png"
                     alt="Solina AI Assistant"
@@ -255,7 +271,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h3 className="text-xs sm:text-sm font-black">
+                    <h3 className="text-xs sm:text-sm font-black text-white">
                       {language === 'ar' ? 'مساعد سولينا الذكي 2026' : 'Solina AI Smart Assistant'}
                     </h3>
                     <span className="text-[9px] bg-red-600 text-white font-bold px-1.5 py-0.5 rounded-full">
@@ -263,7 +279,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                     </span>
                   </div>
                   <p className="text-[10px] text-gray-300 font-light">
-                    {language === 'ar' ? 'خدمة ضيوف سولينا على مدار الساعة' : '24/7 Solina Guest Assistance'}
+                    {language === 'ar' ? 'خدمة ضيوف سولينا على مدار الساعة' : '24/7 Solina Guest Support'}
                   </p>
                 </div>
               </div>

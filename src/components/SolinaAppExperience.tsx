@@ -6,11 +6,13 @@ import {
 } from 'lucide-react';
 import { VEHICLES, type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { SolinaAIAssistant } from './SolinaAIAssistant';
 
 interface SolinaAppExperienceProps {
   onSelectVehicle?: (vehicleId: string) => void;
   onOpenTestDrive?: (modelName?: string) => void;
   onOpenServiceBooking?: () => void;
+  onOpenAIAssistant?: () => void;
   onCloseModal?: () => void;
   isStandalone?: boolean;
   isNativeMobileView?: boolean;
@@ -20,11 +22,13 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   onSelectVehicle,
   onOpenTestDrive,
   onOpenServiceBooking,
+  onOpenAIAssistant,
   onCloseModal,
   isStandalone = false,
   isNativeMobileView = false
 }) => {
   const { language } = useLanguage();
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'offers' | 'garage' | 'favorites' | 'account'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -158,51 +162,18 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         
         {activeTab === 'home' && (
           <>
-            {/* Hero Banner Carousel */}
+            {/* Official High-Resolution Hero Banner (تجربة تتجاوز التوقعات) */}
             <div className="p-3.5">
-              <div className={`relative w-full rounded-2xl p-5 bg-gradient-to-r ${heroSlides[currentHeroSlide].bg} text-white shadow-xl overflow-hidden min-h-[165px] flex flex-col justify-between`}>
-                <div className="relative z-10 space-y-1 max-w-[70%] text-start">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-red-600/40 border border-red-500/50 text-[10px] font-bold text-red-300">
-                    سولينا 2026
-                  </span>
-                  <h3 className="text-base sm:text-lg font-black leading-tight text-white">
-                    {heroSlides[currentHeroSlide].titleAr}
-                  </h3>
-                  <p className="text-[11px] text-gray-300 font-light leading-snug">
-                    {heroSlides[currentHeroSlide].descAr}
-                  </p>
-                </div>
-
-                <div className="relative z-10 pt-3 flex items-center justify-between">
-                  <button 
-                    onClick={() => onOpenTestDrive && onOpenTestDrive('سولينا كامري 2026')}
-                    className="px-4 py-1.5 rounded-full bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs font-bold shadow-lg transition-all cursor-pointer"
-                  >
-                    {heroSlides[currentHeroSlide].btnAr}
-                  </button>
-
-                  {/* Carousel Dots */}
-                  <div className="flex items-center gap-1.5">
-                    {heroSlides.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentHeroSlide(idx)}
-                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                          currentHeroSlide === idx ? 'w-5 bg-red-600' : 'w-1.5 bg-white/40'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Subtle car cutout background */}
-                <div className="absolute -left-4 -bottom-1 w-40 h-28 opacity-90 pointer-events-none flex items-center justify-center">
-                  <img 
-                    src={heroSlides[currentHeroSlide].image} 
-                    alt="Solina 2026" 
-                    className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
-                  />
-                </div>
+              <div 
+                onClick={() => onOpenTestDrive && onOpenTestDrive('سولينا كامري 2026')}
+                className="relative w-full rounded-2xl overflow-hidden shadow-xl border border-gray-800 bg-gray-950 cursor-pointer active:scale-[0.98] transition-transform group"
+              >
+                <img 
+                  src="/solina-app-hero-card.png" 
+                  alt="تجربة تتجاوز التوقعات - سولينا 2026" 
+                  className="w-full h-auto object-contain block select-none rounded-2xl"
+                  loading="eager"
+                />
               </div>
             </div>
 
@@ -248,7 +219,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         else if (srv.id === 'all') setSelectedCategory('all');
                         else if (srv.id === 'showrooms') {
                           window.location.href = '/showrooms';
-                        } else alert(`خدمة سولينا: ${srv.nameAr}`);
+                        } else if (srv.id === 'support') {
+                          if (onOpenAIAssistant) onOpenAIAssistant();
+                          else setIsAssistantOpen(true);
+                        } else {
+                          alert(`خدمة سولينا: ${srv.nameAr}`);
+                        }
                       }}
                       className="flex flex-col items-center gap-1.5 min-w-[62px] p-2 rounded-2xl bg-white border border-gray-100 shadow-xs hover:shadow-md active:scale-95 transition-all cursor-pointer group"
                     >
@@ -377,25 +353,18 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               </div>
             </div>
 
-            {/* Quality & Reliability Guarantee Card */}
-            <div className="px-3.5 mb-2">
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-gray-950 via-slate-900 to-black text-white flex items-center justify-between gap-3 shadow-md border border-gray-800">
-                <div className="space-y-1 text-start">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-red-400">
-                    <Shield className="w-4 h-4 text-red-500" />
-                    <span>ضمان الجودة والموثوقية</span>
-                  </div>
-                  <p className="text-[10px] text-gray-300 font-light leading-relaxed max-w-[200px]">
-                    جميع سياراتنا فحصت بدقة وتأتي مع ضمان شامل 10 سنوات لراحة بالك.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => alert('ضمان سولينا يشمل 10 سنوات على المحرك والبطاريات!')}
-                  className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold border border-white/20 whitespace-nowrap cursor-pointer"
-                >
-                  اعرف المزيد
-                </button>
+            {/* Official Quality & Reliability Guarantee Card (ضمان الجودة والموثوقية) */}
+            <div className="px-3.5 mb-3">
+              <div 
+                onClick={() => alert('ضمان سولينا للسيارات 2026: ضمان شامل 10 سنوات أو 300,000 كم على المحرك ومكونات الهايبرد لراحة بالك المطلقة.')}
+                className="relative w-full rounded-2xl overflow-hidden shadow-md border border-gray-800 bg-gray-950 cursor-pointer active:scale-[0.98] transition-transform group"
+              >
+                <img 
+                  src="/solina-app-guarantee-card.png" 
+                  alt="ضمان الجودة والموثوقية - سولينا للسيارات" 
+                  className="w-full h-auto object-contain block select-none rounded-2xl"
+                  loading="lazy"
+                />
               </div>
             </div>
           </>
@@ -481,8 +450,8 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <span>📅 طلباتي ومواعيد الصيانة</span>
                 <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
-              <button onClick={() => alert('خدمة الدعم المباشر متوفرة 24/7 عبر الرقم 8002444400')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50">
-                <span>🎧 خدمة عملاء سولينا 24/7</span>
+              <button onClick={() => setIsAssistantOpen(true)} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50">
+                <span>🎧 خدمة عملاء ومساعد سولينا الذكي 24/7</span>
                 <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
               <button onClick={() => alert('إصدار تطبيق سولينا 2026.4.0')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50">
@@ -582,6 +551,9 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <button onClick={() => { onOpenTestDrive && onOpenTestDrive(); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2">
                   <Car className="w-4 h-4" /> <span>طلب تجربة قيادة</span>
                 </button>
+                <button onClick={() => { setIsAssistantOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl bg-red-50 text-red-600 font-bold flex items-center gap-2">
+                  <Headphones className="w-4 h-4" /> <span>مساعد سولينا الذكي 24/7</span>
+                </button>
               </nav>
             </div>
 
@@ -591,6 +563,16 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
           </div>
         </div>
       )}
+
+      {/* Embedded Intelligent Solina AI Assistant */}
+      <SolinaAIAssistant
+        isOpenExternal={isAssistantOpen}
+        onCloseExternal={() => setIsAssistantOpen(false)}
+        showFloatingTrigger={false}
+        onSelectVehicle={onSelectVehicle}
+        onOpenTestDrive={onOpenTestDrive}
+        onOpenServiceBooking={onOpenServiceBooking}
+      />
 
     </div>
   );

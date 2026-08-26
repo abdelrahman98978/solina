@@ -1,0 +1,24 @@
+{
+  "name": "سولينا للسيارات | Solina Motors",
+  "short_name": "سولينا",
+  "description": "تطبيق سولينا للسيارات الرسمي - استكشف أحدث سيارات وموديلات 2026، عروض التمويل، حجز الصيانة وتجربة القيادة.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#DC2626",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/solina-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/solina-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

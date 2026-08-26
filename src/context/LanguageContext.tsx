@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { TRANSLATIONS, type Language } from '../data/translations';
+import { autoTranslate as autoTranslateUtil, detectLanguage as detectLanguageUtil } from '../utils/autoTranslation';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
   t: (key: keyof typeof TRANSLATIONS.ar) => string;
+  autoTranslate: (text: string, targetLang?: Language) => string;
+  detectLanguage: (text: string) => 'ar' | 'en';
   isRTL: boolean;
   formatPrice: (amount: number) => string;
 }
@@ -43,6 +46,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return TRANSLATIONS[language][key] || TRANSLATIONS.ar[key] || '';
   };
 
+  const autoTranslate = (text: string, targetLang?: Language): string => {
+    const target = targetLang || language;
+    return autoTranslateUtil(text, target);
+  };
+
   const formatPrice = (amount: number): string => {
     if (language === 'ar') {
       return amount.toLocaleString('ar-SA');
@@ -57,6 +65,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLanguage,
         toggleLanguage,
         t,
+        autoTranslate,
+        detectLanguage: detectLanguageUtil,
         isRTL: language === 'ar',
         formatPrice
       }}

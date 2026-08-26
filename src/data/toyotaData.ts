@@ -2250,13 +2250,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrainEn: 'Full-Time Active AWD with Electronic Limited-Slip Diff (eLSD)',
     isNew: true,
     isFeatured: true,
-    cardImage: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/suv/cadillac-escalade-v',
     colors: [
-      { id: 'black-raven', name: 'أسود الغراب الملكي', nameEn: 'Black Raven Metallic', hex: '#0B0B0B', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&auto=format&fit=crop&q=80' },
-      { id: 'crystal-white', name: 'أبيض كريستالي ثلاثي الطبقات', nameEn: 'Crystal White Tricoat', hex: '#F4F5F6', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&auto=format&fit=crop&q=80' },
-      { id: 'dark-emerald', name: 'أخضر زمردي معدني عميق', nameEn: 'Dark Emerald Metallic', hex: '#0A2518', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&auto=format&fit=crop&q=80' }
+      { id: 'black-raven', name: 'أسود الغراب الملكي', nameEn: 'Black Raven Metallic', hex: '#0B0B0B', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=85' },
+      { id: 'crystal-white', name: 'أبيض كريستالي ثلاثي الطبقات', nameEn: 'Crystal White Tricoat', hex: '#F4F5F6', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=85' },
+      { id: 'dark-emerald', name: 'أخضر زمردي معدني عميق', nameEn: 'Dark Emerald Metallic', hex: '#0A2518', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2267,7 +2267,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: '6.2L Supercharged V8 - 682 HP',
         transmission: 'أوتوماتيك 10 سرعات مع V-Mode',
         transmissionEn: '10-Speed Automatic with V-Mode',
-        image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=85',
         features: ['شاشة OLED مقوسة عملاقة قياس 38 بوصة بدقة تفوق 4K مع نظام ملاحة بالواقع المعزز AR', 'مكابح بريمبو Brembo الرياضية الحصرية بـ 6 مكابس بلون أحمر إيدج', 'نظام تعليق Magnetic Ride Control 4.0 المتكيف مع نوابض هوائية Air Ride', 'نظام صوتي استوديو AKG Studio Reference بـ 36 سماعة مع 3 مضخمات صوتية'],
         featuresEn: ['38" Curved Diagonal OLED Display with Twice the Pixel Density of 4K', 'Brembo High-Performance Front Brakes with Edge Red 6-Piston Calipers', 'Magnetic Ride Control 4.0 with Air Ride Adaptive Suspension', '36-Speaker AKG Studio Reference Audio System with 3 Amplifiers']
       }
@@ -2300,13 +2300,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrainEn: 'Electronic 4WD with Hi-Lock Transfer Case & Torsen Front Diff',
     isNew: true,
     isFeatured: true,
-    cardImage: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1551830820-330a71b99659?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1551830820-330a71b99659?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/commercial/ford-raptor-r',
     colors: [
-      { id: 'code-orange', name: 'برتقالي كود رابتر الحصري', nameEn: 'Code Orange Metallic', hex: '#E04A1B', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' },
-      { id: 'shadow-black', name: 'أسود الظل القاتم', nameEn: 'Shadow Black', hex: '#0B0B0C', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' },
-      { id: 'oxford-white', name: 'أبيض أكسفورد ناصع', nameEn: 'Oxford White', hex: '#FFFFFF', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' }
+      { id: 'code-orange', name: 'برتقالي كود رابتر الحصري', nameEn: 'Code Orange Metallic', hex: '#E04A1B', image: 'https://images.unsplash.com/photo-1551830820-330a71b99659?w=800&auto=format&fit=crop&q=85' },
+      { id: 'shadow-black', name: 'أسود الظل القاتم', nameEn: 'Shadow Black', hex: '#0B0B0C', image: 'https://images.unsplash.com/photo-1551830820-330a71b99659?w=800&auto=format&fit=crop&q=85' },
+      { id: 'oxford-white', name: 'أبيض أكسفورد ناصع', nameEn: 'Oxford White', hex: '#FFFFFF', image: 'https://images.unsplash.com/photo-1551830820-330a71b99659?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2317,7 +2317,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: '5.2L Supercharged V8 - 720 HP',
         transmission: 'أوتوماتيك 10 سرعات',
         transmissionEn: '10-Speed Automatic',
-        image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1551830820-330a71b99659?w=800&auto=format&fit=crop&q=85',
         features: ['ممتصات صدمات FOX Live Valve الذكية قياس 3.1 بوصة للقفزات العالية والكثبان الرملية', 'إطارات BFGoodrich All-Terrain قياس 37 بوصة الأضخم في فئتها', 'مقاعد رياضية ريكارو Recaro بجلد ألكانتارا وتطريزات ألياف الكربون الأصلية', 'نظام عادم نشط مزدوج بـ 4 وضعيات من ضمنها وضعية Baja الصاخبة'],
         featuresEn: ['FOX 3.1 Dual Live Valve Shocks with Internal Bypass Technology', 'Massive 37" BFGoodrich All-Terrain KO2 Tires Standard', 'Recaro Performance Sport Seats in Leather/Alcantara with Real Carbon Fiber', 'Active Dual Exhaust with 4 Modes including Baja Roar']
       }
@@ -2349,13 +2349,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrain: 'دفع رباعي أوتوماتيكي ذكي 4WD مع دبل ثقيل وخفيف',
     drivetrainEn: 'Active 4WD with 2-Speed Autotrac Transfer Case',
     isNew: true,
-    cardImage: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/suv/gmc-yukon-denali',
     colors: [
-      { id: 'titanium-rush', name: 'تيتانيوم راش ميتاليك ملكي', nameEn: 'Titanium Rush Metallic', hex: '#3E424B', image: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?w=600&auto=format&fit=crop&q=80' },
-      { id: 'onyx-black', name: 'أسود أونيكس كلاسيكي', nameEn: 'Onyx Black', hex: '#0C0D0F', image: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?w=600&auto=format&fit=crop&q=80' },
-      { id: 'white-frost', name: 'أبيض فروست لؤلؤي ثلاثي الطبقات', nameEn: 'White Frost Tricoat', hex: '#F3F4F6', image: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?w=600&auto=format&fit=crop&q=80' }
+      { id: 'titanium-rush', name: 'تيتانيوم راش ميتاليك ملكي', nameEn: 'Titanium Rush Metallic', hex: '#3E424B', image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&auto=format&fit=crop&q=85' },
+      { id: 'onyx-black', name: 'أسود أونيكس كلاسيكي', nameEn: 'Onyx Black', hex: '#0C0D0F', image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&auto=format&fit=crop&q=85' },
+      { id: 'white-frost', name: 'أبيض فروست لؤلؤي ثلاثي الطبقات', nameEn: 'White Frost Tricoat', hex: '#F3F4F6', image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2366,7 +2366,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: '6.2L EcoTec3 V8 - 420 HP',
         transmission: 'أوتوماتيك 10 سرعات',
         transmissionEn: '10-Speed Automatic',
-        image: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&auto=format&fit=crop&q=85',
         features: ['مقاعد جلد فاخر كامل الحبوب بلون Alpine Umber مع مساج بـ 16 اتجاهاً ونقوش طوبوغرافية لجبل دينالي', 'نظام تعليق هوائي متكيف Four-Corner Air Ride مع نظام امتصاص الصدمات المغناطيسي Magnetic Ride Control', 'نظام صوتي Bose Performance Series بـ 18 سماعة مدمجة في مساند الرأس', 'كونسول وسطي متحرك كهربائياً للخلف لكشف خزنة سرية برقم سري'],
         featuresEn: ['Full-Grain Leather in Alpine Umber with 16-Way Massage & Denali Topographic Engravings', 'Four-Corner Air Ride Adaptive Suspension with Magnetic Ride Control', '18-Speaker Bose Performance Series Audio with Headrest Speakers', 'Power-Sliding Center Console with Hidden PIN-Protected Safe']
       }
@@ -2398,13 +2398,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrain: 'دفع كلي للعجلات HTRAC AWD ذكي مع وضعيات الرمال والثلج والوحل',
     drivetrainEn: 'HTRAC All-Wheel Drive with Multi-Terrain Modes',
     isNew: true,
-    cardImage: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/suv/hyundai-palisade',
     colors: [
-      { id: 'abyss-black', name: 'أسود أبيس لؤلؤي', nameEn: 'Abyss Black Pearl', hex: '#0D0E10', image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=600&auto=format&fit=crop&q=80' },
-      { id: 'creamy-white', name: 'أبيض كريمي لؤلؤي', nameEn: 'Creamy White Pearl', hex: '#F6F6F7', image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=600&auto=format&fit=crop&q=80' },
-      { id: 'robust-emerald', name: 'أخضر زمردي فاخر', nameEn: 'Robust Emerald Pearl', hex: '#1B3022', image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=600&auto=format&fit=crop&q=80' }
+      { id: 'abyss-black', name: 'أسود أبيس لؤلؤي', nameEn: 'Abyss Black Pearl', hex: '#0D0E10', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&auto=format&fit=crop&q=85' },
+      { id: 'creamy-white', name: 'أبيض كريمي لؤلؤي', nameEn: 'Creamy White Pearl', hex: '#F6F6F7', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&auto=format&fit=crop&q=85' },
+      { id: 'robust-emerald', name: 'أخضر زمردي فاخر', nameEn: 'Robust Emerald Pearl', hex: '#1B3022', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2415,7 +2415,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: '3.8L V6 GDI - 295 HP',
         transmission: 'أوتوماتيك 8 سرعات',
         transmissionEn: '8-Speed Automatic',
-        image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&auto=format&fit=crop&q=85',
         features: ['مقاعد جلد نابا فاخرة مبطنة مع تدفئة وتهوية للصف الأول والثاني ومقاعد الصف الثالث مدفأة كهربائياً', 'مرآة الرؤية الخلفية الرقمية بالكامل مع كاميرا مدمجة Full Display Mirror', 'شاشة عرض على الزجاج الأمامي HUD وشاشتي عدادات وملاحة مدمجة قياس 12.3 بوصة', 'نظام صوتي فاخر Harman Kardon بـ 12 سماعة مع تكنولوجيا QuantumLogic Surround'],
         featuresEn: ['Quilted Nappa Leather with Heated/Ventilated 1st & 2nd Rows and Heated 3rd Row', 'Full Display Digital Rearview Mirror with Integrated Camera', 'Head-Up Display & Dual 12.3" Panoramic Digital Displays', '12-Speaker Harman Kardon Premium Audio with QuantumLogic Surround']
       }
@@ -2448,13 +2448,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrainEn: 'Tri-Motor All-Wheel Drive with Individual Rear Torque Vectoring',
     isNew: true,
     isFeatured: true,
-    cardImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1563720223523-491ff04651de?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1563720223523-491ff04651de?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/sedan/lucid-air-sapphire',
     colors: [
-      { id: 'sapphire-blue', name: 'أزرق سافاير الياقوتي الحصري', nameEn: 'Sapphire Blue Metallic', hex: '#0B2046', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80' },
-      { id: 'stellar-white', name: 'أبيض نجمي ستيلر', nameEn: 'Stellar White', hex: '#FAFAFA', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80' },
-      { id: 'infinite-black', name: 'أسود لانهائي ميتاليك', nameEn: 'Infinite Black', hex: '#0A0A0B', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80' }
+      { id: 'sapphire-blue', name: 'أزرق سافاير الياقوتي الحصري', nameEn: 'Sapphire Blue Metallic', hex: '#0B2046', image: 'https://images.unsplash.com/photo-1563720223523-491ff04651de?w=800&auto=format&fit=crop&q=85' },
+      { id: 'stellar-white', name: 'أبيض نجمي ستيلر', nameEn: 'Stellar White', hex: '#FAFAFA', image: 'https://images.unsplash.com/photo-1563720223523-491ff04651de?w=800&auto=format&fit=crop&q=85' },
+      { id: 'infinite-black', name: 'أسود لانهائي ميتاليك', nameEn: 'Infinite Black', hex: '#0A0A0B', image: 'https://images.unsplash.com/photo-1563720223523-491ff04651de?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2465,7 +2465,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: 'Tri-Motor Electric - 1,234 HP',
         transmission: 'ناقل حركة مباشر ذكي',
         transmissionEn: 'Direct Drive',
-        image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1563720223523-491ff04651de?w=800&auto=format&fit=crop&q=85',
         features: ['تسارع قياسي خارق من 0 إلى 100 كم/س خلال 1.89 ثانية وسرعة قصوى 330 كم/س', 'بطارية بتقنية 900V+ تشحن مدى 320 كم في 12 دقيقة فقط', 'شاشة Glass Cockpit المنحنية بدقة 5K وقياس 34 بوصة ممتدة أمام السائق', 'مكابح كربون سيراميك حصرية بـ 10 مكابس مع عجلات ألمنيوم وإطارات ميشلان Pilot Sport 4S مخصصة'],
         featuresEn: ['World-Record 0-100 km/h in 1.89 Seconds & 330 km/h Top Speed', '900V+ Ultra-Fast Charging Architecture (Adds 320 km in 12 Mins)', '34" Curved 5K Glass Cockpit Display Floating Above Dashboard', 'Bespoke 10-Piston Carbon Ceramic Brakes with Custom Michelin Pilot Sport 4S']
       }
@@ -2498,13 +2498,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrainEn: 'ATTESA E-TS All-Wheel Drive with Mechanical 1.5-Way LSD',
     isNew: true,
     isFeatured: true,
-    cardImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/gr/nissan-gtr-nismo',
     colors: [
-      { id: 'stealth-grey', name: 'رمادي الشبح نيسمو الحصري', nameEn: 'NISMO Stealth Grey', hex: '#636569', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80' },
-      { id: 'super-silver', name: 'فضي سوبر ميتاليك لامع', nameEn: 'Super Silver Quad-Coat', hex: '#D1D3D4', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80' },
-      { id: 'pearl-black', name: 'أسود لؤلؤي مع ألياف الكربون', nameEn: 'Pearl Black with Exposed Carbon', hex: '#0B0B0C', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80' }
+      { id: 'stealth-grey', name: 'رمادي الشبح نيسمو الحصري', nameEn: 'NISMO Stealth Grey', hex: '#636569', image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=85' },
+      { id: 'super-silver', name: 'فضي سوبر ميتاليك لامع', nameEn: 'Super Silver Quad-Coat', hex: '#D1D3D4', image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=85' },
+      { id: 'pearl-black', name: 'أسود لؤلؤي مع ألياف الكربون', nameEn: 'Pearl Black with Exposed Carbon', hex: '#0B0B0C', image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2515,7 +2515,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: '3.8L Twin-Turbo V6 - 600 HP',
         transmission: 'أوتوماتيك 6 سرعات Dual-Clutch',
         transmissionEn: '6-Speed Dual-Clutch',
-        image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=85',
         features: ['تسارع جودزيلا الأسطوري من 0 إلى 100 كم/س خلال 2.8 ثوانٍ فقط', 'جناح خلفي وغطاء محرك وسقف من ألياف الكربون الصافية مع شواحن GT3 التوربينية', 'مكابح كربون سيراميك بريمبو قياس 410 ملم الأكبر في تاريخ السيارات اليابانية', 'مقاعد ريكارو كربونية خفيفة الوزن مع تنجيد ألكانتارا أحمر وأسود'],
         featuresEn: ['Legendary 0-100 km/h in 2.8 Seconds Launch Control', 'Full Carbon Fiber Aero Pack with GT3-Spec Turbochargers', 'Massive 410mm Brembo Carbon Ceramic Brakes', 'Lightweight Carbon-Backed Recaro Sport Bucket Seats']
       }
@@ -2547,13 +2547,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrain: 'دفع خلفي RWD مع ترس تفاضلي Torsen ومكابح انجراف إلكترونية Electronic Drift Brake',
     drivetrainEn: 'Rear-Wheel Drive with Torsen Diff & Electronic Drift Brake',
     isNew: true,
-    cardImage: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/gr/ford-mustang-darkhorse',
     colors: [
-      { id: 'blue-ember', name: 'أزرق بلو إمبر المعدني المتقلب مع الضوء', nameEn: 'Blue Ember Metallic', hex: '#1C2E4A', image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&auto=format&fit=crop&q=80' },
-      { id: 'vapor-blue', name: 'أزرق فابور ميتاليك فاتح', nameEn: 'Vapor Blue Metallic', hex: '#587A9E', image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&auto=format&fit=crop&q=80' },
-      { id: 'shadow-black', name: 'أسود الظل الهجومي', nameEn: 'Shadow Black', hex: '#0A0B0C', image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&auto=format&fit=crop&q=80' }
+      { id: 'blue-ember', name: 'أزرق بلو إمبر المعدني المتقلب مع الضوء', nameEn: 'Blue Ember Metallic', hex: '#1C2E4A', image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop&q=85' },
+      { id: 'vapor-blue', name: 'أزرق فابور ميتاليك فاتح', nameEn: 'Vapor Blue Metallic', hex: '#587A9E', image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop&q=85' },
+      { id: 'shadow-black', name: 'أسود الظل الهجومي', nameEn: 'Shadow Black', hex: '#0A0B0C', image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {
@@ -2564,7 +2564,7 @@ export const VEHICLES: Vehicle[] = [
         engineEn: '5.0L Coyote V8 - 500 HP',
         transmission: 'يدوي TREMEC 6 سرعات مع مطابقة دوران المحرك Rev-Match',
         transmissionEn: '6-Speed TREMEC Manual with Rev-Matching',
-        image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop&q=85',
         features: ['مكابح انجراف إلكترونية أولى من نوعها في العالم لممارسة الدريفت الاحترافي', 'نظام تعليق مغناطيسي متطور MagneRide Damping System', 'شاشة بانورامية مزدوجة منحنية قياس 13.2 بوصة بمحرك رسوميات Unreal Engine ثلاثي الأبعاد', 'مكابح بريمبو 6 مكابس بلون أزرق Notorious Blue مع أقراص مهواة قياس 390 ملم'],
         featuresEn: ['Segment-First Electronic Drift Brake for Controlled Slides', 'MagneRide Adaptive Damping System', '13.2" Center Display with Unreal Engine 3D Interactive Graphics', '390mm 6-Piston Front Brembo Brakes in Notorious Blue']
       }
@@ -2596,13 +2596,13 @@ export const VEHICLES: Vehicle[] = [
     drivetrain: 'دفع كلي للعجلات HTRAC AWD ذكي',
     drivetrainEn: 'HTRAC All-Wheel Drive AWD',
     isNew: true,
-    cardImage: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1920&auto=format&fit=crop&q=80',
+    cardImage: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800&auto=format&fit=crop&q=85',
+    heroImage: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1920&auto=format&fit=crop&q=85',
     overviewUrl: '/vehicles/suv/hyundai-santafe',
     colors: [
-      { id: 'terracotta-orange', name: 'برتقالي تيراكوتا صخري', nameEn: 'Terracotta Orange Metallic', hex: '#A34828', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' },
-      { id: 'cyber-sage', name: 'أخضر سيبر سيج غير لامع', nameEn: 'Cyber Sage Matte', hex: '#6A776A', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' },
-      { id: 'abyss-black', name: 'أسود أبيس لؤلؤي', nameEn: 'Abyss Black Pearl', hex: '#0C0D0E', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' }
+      { id: 'terracotta-orange', name: 'برتقالي تيراكوتا صخري', nameEn: 'Terracotta Orange Metallic', hex: '#A34828', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800&auto=format&fit=crop&q=85' },
+      { id: 'cyber-sage', name: 'أخضر سيبر سيج غير لامع', nameEn: 'Cyber Sage Matte', hex: '#6A776A', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800&auto=format&fit=crop&q=85' },
+      { id: 'abyss-black', name: 'أسود أبيس لؤلؤي', nameEn: 'Abyss Black Pearl', hex: '#0C0D0E', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800&auto=format&fit=crop&q=85' }
     ],
     grades: [
       {

@@ -4,7 +4,8 @@ import {
   Home, Tag, Car, User, Sparkles, MapPin, Wrench, Headphones, Check, X, Star, Share2,
   Calendar, Phone, Info, Battery, Wifi, Signal, Clock, ArrowLeft, ArrowRight,
   CheckCircle2, Plus, QrCode, FileText, Settings, Globe, AlertCircle, Percent,
-  Calculator, Gauge, Award, Fuel, Zap, Eye, PhoneCall, MessageCircle
+  Calculator, Gauge, Award, Fuel, Zap, Eye, PhoneCall, MessageCircle,
+  Key, Lock, Unlock, Power, Thermometer, Volume2, Camera, ScanLine, CreditCard, Wallet, RefreshCw, Download, Smartphone
 } from 'lucide-react';
 import { VEHICLES, type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
@@ -68,6 +69,39 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   const [showInstallAppModal, setShowInstallAppModal] = useState<boolean>(false);
   const [installPlatform, setInstallPlatform] = useState<'ios' | 'android'>('ios');
 
+  // Smart Digital Key State
+  const [showSmartKeyModal, setShowSmartKeyModal] = useState<boolean>(false);
+  const [smartKeyCar, setSmartKeyCar] = useState<any>(null);
+  const [isEngineRunning, setIsEngineRunning] = useState<boolean>(false);
+  const [isDoorsLocked, setIsDoorsLocked] = useState<boolean>(true);
+  const [isAcPrecooling, setIsAcPrecooling] = useState<boolean>(false);
+  const [targetAcTemp, setTargetAcTemp] = useState<number>(21.0);
+  const [isHazardFlashing, setIsHazardFlashing] = useState<boolean>(false);
+  const [keyActionFeedback, setKeyActionFeedback] = useState<string>('');
+
+  // VIN Scanner State
+  const [showVinScannerModal, setShowVinScannerModal] = useState<boolean>(false);
+  const [isScanningVin, setIsScanningVin] = useState<boolean>(false);
+  const [scannedVinRecord, setScannedVinRecord] = useState<any | null>(null);
+
+  // Trade-In Valuation State
+  const [showTradeInModal, setShowTradeInModal] = useState<boolean>(false);
+  const [tradeInForm, setTradeInForm] = useState({
+    brand: 'سولينا / تويوتا',
+    model: 'كامري هايبرد',
+    year: '2023',
+    mileage: '42,000 كم',
+    condition: 'ممتازة - صيانة وكالة منتظمة'
+  });
+  const [tradeInEstimatedValue, setTradeInEstimatedValue] = useState<number | null>(null);
+
+  // Deposit Checkout State
+  const [showDepositCheckoutModal, setShowDepositCheckoutModal] = useState<boolean>(false);
+  const [depositVehicle, setDepositVehicle] = useState<Vehicle | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'mada' | 'applepay' | 'visa' | 'tabby' | 'tamara'>('applepay');
+  const [depositSuccess, setDepositSuccess] = useState<boolean>(false);
+  const [depositReference, setDepositReference] = useState<string>('');
+
   // Offers Filter
   const [offersFilter, setOffersFilter] = useState<'all' | 'finance' | 'service' | 'cashback'>('all');
 
@@ -109,11 +143,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   };
 
   const quickServices = [
-    { id: 'all', nameAr: 'جميع السيارات', icon: Car, color: 'bg-red-50 text-red-600' },
-    { id: 'offers', nameAr: 'عروض خاصة', icon: Tag, color: 'bg-amber-50 text-amber-600' },
-    { id: 'showrooms', nameAr: 'معارضنا', icon: MapPin, color: 'bg-blue-50 text-blue-600' },
-    { id: 'aftersales', nameAr: 'خدمات ما بعد البيع', icon: Wrench, color: 'bg-emerald-50 text-emerald-600' },
-    { id: 'support', nameAr: 'الدعم والمساعدة', icon: Headphones, color: 'bg-purple-50 text-purple-600' }
+    { id: 'smartkey', nameAr: 'المفتاح الذكي', icon: Key, color: 'bg-blue-50 text-[#0056B3]' },
+    { id: 'vinscan', nameAr: 'ماسح الشاسيه', icon: ScanLine, color: 'bg-emerald-50 text-emerald-600' },
+    { id: 'tradein', nameAr: 'تثمين سيارتك', icon: RefreshCw, color: 'bg-purple-50 text-purple-600' },
+    { id: 'offers', nameAr: 'عروض 2026', icon: Tag, color: 'bg-amber-50 text-amber-600' },
+    { id: 'support', nameAr: 'مساعد سولينا', icon: Sparkles, color: 'bg-rose-50 text-rose-600' }
   ];
 
   const categories = [
@@ -316,11 +350,17 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     <button
                       key={srv.id}
                       onClick={() => {
-                        if (srv.id === 'offers') setActiveTab('offers');
-                        else if (srv.id === 'aftersales') setServiceBookingOpen(true);
-                        else if (srv.id === 'all') setSelectedCategory('all');
-                        else if (srv.id === 'showrooms') {
-                          window.location.href = '/showrooms';
+                        if (srv.id === 'smartkey') {
+                          setSmartKeyCar(userCars[0]);
+                          setShowSmartKeyModal(true);
+                        } else if (srv.id === 'vinscan') {
+                          setShowVinScannerModal(true);
+                          setIsScanningVin(true);
+                          setScannedVinRecord(null);
+                        } else if (srv.id === 'tradein') {
+                          setShowTradeInModal(true);
+                        } else if (srv.id === 'offers') {
+                          setActiveTab('offers');
                         } else if (srv.id === 'support') {
                           setIsAssistantOpen(true);
                         }
@@ -629,19 +669,29 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="grid grid-cols-3 gap-1.5 pt-1">
+                    <button 
+                      onClick={() => {
+                        setSmartKeyCar(car);
+                        setShowSmartKeyModal(true);
+                      }}
+                      className="py-2 rounded-xl bg-[#0056B3] hover:bg-blue-700 text-white text-[10px] font-bold text-center cursor-pointer flex items-center justify-center gap-1 active:scale-95 transition-all shadow-xs"
+                    >
+                      <Key className="w-3 h-3" />
+                      <span>المفتاح الذكي</span>
+                    </button>
                     <button 
                       onClick={() => {
                         setServiceForm(prev => ({ ...prev, car: car.model }));
                         setServiceBookingOpen(true);
                       }}
-                      className="flex-1 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold text-center cursor-pointer active:scale-95 transition-all"
+                      className="py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold text-center cursor-pointer active:scale-95 transition-all"
                     >
-                      📅 حجز موعد صيانة
+                      📅 حجز صيانة
                     </button>
                     <button 
                       onClick={() => alert(`كتيب الضمان الرقمي لسيارة ${car.model}\nرقم الضمان: SOL-2026-${car.id}\nالمدة: 10 سنوات شاملة المحرك والبطارية.`)}
-                      className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-bold cursor-pointer"
+                      className="py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-bold cursor-pointer text-center"
                     >
                       وثيقة الضمان
                     </button>
@@ -921,23 +971,38 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             </div>
 
             {/* Sticky Action Footer */}
-            <div className="p-3 bg-white border-t border-gray-200 flex items-center gap-2">
+            <div className="p-3 bg-white border-t border-gray-200 space-y-2">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setDepositVehicle(selectedVehicleDetail);
+                    setShowDepositCheckoutModal(true);
+                    setDepositSuccess(false);
+                    setSelectedVehicleDetail(null);
+                  }}
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md cursor-pointer text-center flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>حجز فوري بعربون (2,500 ريال)</span>
+                </button>
+                <button
+                  onClick={() => {
+                    toggleFavorite(selectedVehicleDetail.id, {} as any);
+                  }}
+                  className="p-2.5 rounded-xl border border-gray-200 text-gray-700 hover:text-red-600"
+                >
+                  <Heart className={`w-5 h-5 ${favorites.includes(selectedVehicleDetail.id) ? 'fill-red-600 text-red-600' : ''}`} />
+                </button>
+              </div>
+
               <button
                 onClick={() => {
                   setTestDriveModalVehicle(`سولينا ${selectedVehicleDetail.nameAr} 2026`);
                   setSelectedVehicleDetail(null);
                 }}
-                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer text-center"
+                className="w-full py-2 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold shadow-xs cursor-pointer text-center"
               >
-                طلب تجربة قيادة مجانية
-              </button>
-              <button
-                onClick={() => {
-                  toggleFavorite(selectedVehicleDetail.id, {} as any);
-                }}
-                className="p-2.5 rounded-xl border border-gray-200 text-gray-700 hover:text-red-600"
-              >
-                <Heart className={`w-5 h-5 ${favorites.includes(selectedVehicleDetail.id) ? 'fill-red-600 text-red-600' : ''}`} />
+                طلب تجربة قيادة مجانية 🚗
               </button>
             </div>
           </div>
@@ -1377,6 +1442,529 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             >
               فهمت، حسناً
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* J. Smart Digital Key Remote Control Modal */}
+      {showSmartKeyModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white rounded-[36px] p-6 text-start space-y-5 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
+            {/* Ambient Background Glow */}
+            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 blur-3xl rounded-full transition-all duration-500 pointer-events-none ${
+              isEngineRunning ? 'bg-emerald-500/30' : 'bg-blue-600/20'
+            }`} />
+
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 relative z-10">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-blue-400">
+                  <Key className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-white">مفتاح سولينا الذكي الرقمي</h4>
+                  <span className="text-[10px] text-gray-400 font-mono">
+                    {smartKeyCar?.plate || 'س ل ن 2026'}
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowSmartKeyModal(false)} 
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-300 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Selected Car Display */}
+            <div className="text-center relative z-10 space-y-1">
+              <span className="text-[10px] text-gray-400 font-bold block">{smartKeyCar?.model || 'سولينا كامري 2026 هايبرد'}</span>
+              <div className="flex items-center justify-center gap-2">
+                <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  isEngineRunning 
+                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 animate-pulse' 
+                    : 'bg-white/5 text-gray-400 border-white/10'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isEngineRunning ? 'bg-emerald-400' : 'bg-gray-500'}`} />
+                  {isEngineRunning ? 'المحرك يعمل (تشغيل عن بعد)' : 'المحرك متوقف'}
+                </span>
+                <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  isDoorsLocked 
+                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/40' 
+                    : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                }`}>
+                  {isDoorsLocked ? 'الأبواب مقفلة 🔒' : 'الأبواب مفتوحة 🔓'}
+                </span>
+              </div>
+            </div>
+
+            {/* Interactive Digital Keypad Controls */}
+            <div className="grid grid-cols-2 gap-3 relative z-10">
+              
+              {/* Engine Start/Stop Remote */}
+              <button
+                onClick={() => {
+                  try {
+                    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(isEngineRunning ? 120 : 60, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(isEngineRunning ? 40 : 180, ctx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                  } catch (e) {}
+
+                  setIsEngineRunning(!isEngineRunning);
+                  setKeyActionFeedback(isEngineRunning ? 'تم إيقاف تشغيل المحرك عن بعد' : 'تم تشغيل المحرك بنجاح (وضع الاستعداد)');
+                  setTimeout(() => setKeyActionFeedback(''), 3000);
+                }}
+                className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 ${
+                  isEngineRunning
+                    ? 'bg-emerald-600/30 border-emerald-500 shadow-lg shadow-emerald-600/30 text-emerald-300'
+                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'
+                }`}
+              >
+                <Power className={`w-7 h-7 ${isEngineRunning ? 'text-emerald-400 animate-spin' : 'text-gray-400'}`} />
+                <span className="text-xs font-black">
+                  {isEngineRunning ? 'إيقاف المحرك' : 'تشغيل المحرك'}
+                </span>
+              </button>
+
+              {/* Doors Lock / Unlock */}
+              <button
+                onClick={() => {
+                  try {
+                    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(isDoorsLocked ? 900 : 600, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+                  } catch (e) {}
+
+                  setIsDoorsLocked(!isDoorsLocked);
+                  setKeyActionFeedback(isDoorsLocked ? 'تم فتح أقفال جميع الأبواب' : 'تم قفل جميع الأبواب بإحكام');
+                  setTimeout(() => setKeyActionFeedback(''), 3000);
+                }}
+                className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 ${
+                  !isDoorsLocked
+                    ? 'bg-amber-600/30 border-amber-500 shadow-lg shadow-amber-600/30 text-amber-300'
+                    : 'bg-blue-600/30 border-blue-500 shadow-lg shadow-blue-600/30 text-blue-300'
+                }`}
+              >
+                {isDoorsLocked ? <Lock className="w-7 h-7 text-blue-400" /> : <Unlock className="w-7 h-7 text-amber-400" />}
+                <span className="text-xs font-black">
+                  {isDoorsLocked ? 'فتح الأبواب' : 'قفل الأبواب'}
+                </span>
+              </button>
+
+            </div>
+
+            {/* Smart Climate Pre-Cooling AC Widget */}
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2.5 relative z-10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Thermometer className="w-4 h-4 text-cyan-400" />
+                  <span className="text-xs font-bold text-gray-200">التكييف المسبق للمقصورة</span>
+                </div>
+                <button
+                  onClick={() => setIsAcPrecooling(!isAcPrecooling)}
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-all cursor-pointer ${
+                    isAcPrecooling
+                      ? 'bg-cyan-500 text-black border-cyan-400 font-black'
+                      : 'bg-white/10 text-gray-400 border-white/10'
+                  }`}
+                >
+                  {isAcPrecooling ? 'يعمل الآن (بارد)' : 'مغلق'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <span className="text-[10px] text-gray-400">درجة الحرارة المطلوبة:</span>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setTargetAcTemp(prev => Math.max(16, +(prev - 0.5).toFixed(1)))}
+                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs"
+                  >
+                    -
+                  </button>
+                  <span className="text-sm font-black font-mono text-cyan-300">{targetAcTemp}°C</span>
+                  <button 
+                    onClick={() => setTargetAcTemp(prev => Math.min(28, +(prev + 0.5).toFixed(1)))}
+                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Secondary Controls (Horn / Flash & Trunk) */}
+            <div className="grid grid-cols-2 gap-2 relative z-10">
+              <button
+                onClick={() => {
+                  setIsHazardFlashing(true);
+                  setKeyActionFeedback('تم تشغيل أضواء التحذير وتنبيه البوق 🚨');
+                  setTimeout(() => {
+                    setIsHazardFlashing(false);
+                    setKeyActionFeedback('');
+                  }, 2500);
+                }}
+                className={`py-2 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  isHazardFlashing ? 'bg-amber-500/40 text-amber-300 border-amber-400 animate-ping' : 'text-gray-300'
+                }`}
+              >
+                <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>إطلاق المنبه والأضواء</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setKeyActionFeedback('تم فتح الصندوق الخلفي آلياً 🚗');
+                  setTimeout(() => setKeyActionFeedback(''), 3000);
+                }}
+                className="py-2 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-bold text-gray-300 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              >
+                <Car className="w-3.5 h-3.5 text-blue-400" />
+                <span>فتح الصندوق الخلفي</span>
+              </button>
+            </div>
+
+            {/* Live Feedback Toast */}
+            {keyActionFeedback && (
+              <div className="p-2.5 rounded-xl bg-blue-500/20 border border-blue-400/40 text-blue-200 text-xs font-bold text-center animate-in fade-in">
+                {keyActionFeedback}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* K. VIN Chassis Camera Scanner Modal */}
+      {showVinScannerModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-gray-950 text-white rounded-[36px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <ScanLine className="w-5 h-5 text-emerald-400" />
+                <h4 className="text-xs font-black text-white">ماسح رقم الشاسيه (VIN) الذكي</h4>
+              </div>
+              <button onClick={() => setShowVinScannerModal(false)} className="p-1 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scanner Viewfinder Box */}
+            <div className="relative h-48 w-full rounded-2xl bg-black/60 border-2 border-dashed border-emerald-500/60 overflow-hidden flex flex-col items-center justify-center p-4">
+              {/* Corner HUD Markers */}
+              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-emerald-400" />
+              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-emerald-400" />
+              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-emerald-400" />
+              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-emerald-400" />
+
+              {/* Animated Laser Scanning Line */}
+              {isScanningVin && (
+                <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_12px_#34d399] animate-bounce" />
+              )}
+
+              <Camera className="w-8 h-8 text-emerald-400/80 mb-2 animate-pulse" />
+              <span className="text-[11px] text-gray-300 font-bold text-center">
+                {isScanningVin ? 'جاري قراءة رقم الشاسيه أو الباركود...' : 'وجه الكاميرا نحو رقم هيكل السيارة أو كتيب الصيانة'}
+              </span>
+              <span className="text-[9px] text-emerald-400 font-mono mt-1">VIN AI SCANNER v2.6</span>
+            </div>
+
+            {/* Trigger Simulation Button */}
+            {!scannedVinRecord && (
+              <button
+                onClick={() => {
+                  setIsScanningVin(true);
+                  setTimeout(() => {
+                    setIsScanningVin(false);
+                    setScannedVinRecord({
+                      vin: 'JTJHY7AX8P2039182',
+                      model: 'سولينا كامري 2026 جراندي هايبرد',
+                      year: '2026',
+                      engine: '2.5L 4-Cylinder Dual VVT-i HEV',
+                      warranty: 'ساري وموثق (حتى 2036)',
+                      lastService: 'صيانة 10,000 كم (معتمدة لدى وكالة سولينا)',
+                      fahasStatus: 'مجاز بالفحص الدوري السعودي ✓'
+                    });
+                  }, 1200);
+                }}
+                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
+              >
+                🔍 مسح باركود شاسيه افتراضي
+              </button>
+            )}
+
+            {/* Scanned Digital Passport Results */}
+            {scannedVinRecord && (
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-emerald-500/40 space-y-2 text-xs animate-in slide-in-from-bottom">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-[10px] text-gray-400">رقم الهيكل VIN:</span>
+                  <span className="font-mono text-emerald-400 font-bold">{scannedVinRecord.vin}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400 text-[11px]">الطراز:</span>
+                  <span className="text-white font-bold">{scannedVinRecord.model}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400 text-[11px]">حالة الضمان:</span>
+                  <span className="text-emerald-400 font-bold">{scannedVinRecord.warranty}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400 text-[11px]">الفحص الفني:</span>
+                  <span className="text-blue-300 font-bold">{scannedVinRecord.fahasStatus}</span>
+                </div>
+
+                <div className="pt-2 flex gap-2">
+                  <button
+                    onClick={() => {
+                      setServiceForm(prev => ({ ...prev, car: scannedVinRecord.model }));
+                      setShowVinScannerModal(false);
+                      setServiceBookingOpen(true);
+                    }}
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl text-center"
+                  >
+                    حجز صيانة لهذا الهيكل
+                  </button>
+                  <button
+                    onClick={() => setScannedVinRecord(null)}
+                    className="px-3 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-[10px] font-bold rounded-xl"
+                  >
+                    مسح آخر
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* L. Instant Trade-In Valuation Modal */}
+      {showTradeInModal && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <RefreshCw className="w-5 h-5 text-purple-600" />
+                <h4 className="text-xs font-black text-gray-900">تثمين واستبدال سيارتك المستعملة</h4>
+              </div>
+              <button onClick={() => { setShowTradeInModal(false); setTradeInEstimatedValue(null); }} className="p-1 text-gray-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {tradeInEstimatedValue !== null ? (
+              <div className="py-4 text-center space-y-3 animate-in zoom-in-95">
+                <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6 stroke-[3]" />
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-500 block">القيمة التقديرية المعتمدة لاستبدال سيارتك:</span>
+                  <strong className="text-2xl font-black text-purple-700 font-mono">
+                    {tradeInEstimatedValue.toLocaleString('ar-SA')} ريال
+                  </strong>
+                </div>
+                <p className="text-xs text-gray-600 bg-purple-50 p-2.5 rounded-xl border border-purple-100">
+                  كوبون خصم الاستبدال: <strong className="text-purple-700 font-mono">TRADE-SOLINA-2026</strong> يتم خصم هذا المبلغ فوراً من الدفعة الأولى لأي سيارة سولينا جديدة.
+                </p>
+                <button
+                  onClick={() => {
+                    setShowTradeInModal(false);
+                    setActiveTab('home');
+                  }}
+                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl cursor-pointer"
+                >
+                  استبدال وشراء سيارة جديدة الآن 🚗
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="text-[11px] font-bold text-gray-700 block mb-1">الشركة والموديل الحالي</label>
+                  <input
+                    type="text"
+                    value={tradeInForm.model}
+                    onChange={(e) => setTradeInForm(prev => ({ ...prev, model: e.target.value }))}
+                    placeholder="مثال: تويوتا كامري GLX"
+                    className="w-full p-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:outline-none text-xs"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-700 block mb-1">سنة الصنع</label>
+                    <select
+                      value={tradeInForm.year}
+                      onChange={(e) => setTradeInForm(prev => ({ ...prev, year: e.target.value }))}
+                      className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
+                    >
+                      <option>2024</option>
+                      <option>2023</option>
+                      <option>2022</option>
+                      <option>2021</option>
+                      <option>2020</option>
+                      <option>2019</option>
+                      <option>2018</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-700 block mb-1">الممشى التقديري</label>
+                    <input
+                      type="text"
+                      value={tradeInForm.mileage}
+                      onChange={(e) => setTradeInForm(prev => ({ ...prev, mileage: e.target.value }))}
+                      placeholder="مثال: 50,000 كم"
+                      className="w-full p-2.5 rounded-xl border border-gray-200 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-gray-700 block mb-1">حالة الهيكل والمحرك</label>
+                  <select
+                    value={tradeInForm.condition}
+                    onChange={(e) => setTradeInForm(prev => ({ ...prev, condition: e.target.value }))}
+                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
+                  >
+                    <option>ممتازة - صيانة وكالة منتظمة وبدون حوادث</option>
+                    <option>جيدة جداً - خدوش سطحية بسيطة</option>
+                    <option>جيدة - رش تجميلي</option>
+                  </select>
+                </div>
+
+                <button
+                  onClick={() => {
+                    const baseVal = tradeInForm.year === '2024' ? 95000 : tradeInForm.year === '2023' ? 82000 : 68000;
+                    setTradeInEstimatedValue(baseVal);
+                  }}
+                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
+                >
+                  حساب قيمة التثمين الفورية ⚡
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* M. Deposit & Reservation Checkout Modal */}
+      {showDepositCheckoutModal && depositVehicle && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div>
+                <h4 className="text-xs font-black text-gray-900">💳 حجز السيارة وتثبيت العربون</h4>
+                <span className="text-[10px] text-emerald-600 font-bold">عربون مسترد 100% خلال 14 يوماً</span>
+              </div>
+              <button onClick={() => { setShowDepositCheckoutModal(false); setDepositSuccess(false); }} className="p-1 text-gray-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {depositSuccess ? (
+              <div className="py-4 text-center space-y-3 animate-in zoom-in-95">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6 stroke-[3]" />
+                </div>
+                <div>
+                  <h4 className="text-base font-black text-gray-900">تم تأكيد حجز السيارة بنجاح!</h4>
+                  <span className="text-xs text-gray-500 block">رقم سند القبض الإلكتروني:</span>
+                  <strong className="text-emerald-600 font-mono text-sm">{depositReference}</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl border border-gray-100 text-xs text-start space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">السيارة المحجوزة:</span>
+                    <strong className="text-gray-900">{depositVehicle.nameAr} 2026</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">مبلغ العربون:</span>
+                    <strong className="text-emerald-600">2,500 ريال سعودي</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">طريقة الدفع:</span>
+                    <strong className="text-gray-900">{paymentMethod.toUpperCase()}</strong>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    alert(`تم حفظ سند الحجز رقم ${depositReference} في ملفاتك وتطبيق سولينا.`);
+                    setShowDepositCheckoutModal(false);
+                    setDepositSuccess(false);
+                  }}
+                  className="w-full py-2.5 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
+                >
+                  تحميل سند القبض (PDF) وإغلاق
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs">
+                {/* Vehicle Summary */}
+                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+                  <img src={depositVehicle.cardImage || depositVehicle.heroImage} alt={depositVehicle.nameAr} className="h-12 w-auto object-contain" />
+                  <div>
+                    <h5 className="text-xs font-black text-gray-900">{depositVehicle.nameAr} 2026</h5>
+                    <span className="text-[10px] text-gray-500">السعر الإجمالي: {depositVehicle.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
+                  </div>
+                </div>
+
+                {/* Amount Due */}
+                <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-900">عربون الحجز الفوري المسترد:</span>
+                  <strong className="text-base font-black text-emerald-700 font-mono">2,500 ريال</strong>
+                </div>
+
+                {/* Payment Methods */}
+                <div>
+                  <label className="text-[11px] font-bold text-gray-700 block mb-1.5">اختر وسيلة الدفع المعتمدة:</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'applepay', name: 'Apple Pay ', badge: 'دفع بلمسة واحدة' },
+                      { id: 'mada', name: 'بطاقة مدى Mada', badge: 'دفع محلي مباشر' },
+                      { id: 'visa', name: 'Visa / Mastercard', badge: 'بطاقات ائتمانية' },
+                      { id: 'tabby', name: 'Tabby تابي', badge: 'تقسيط 4 دفعات 0%' }
+                    ].map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => setPaymentMethod(p.id as any)}
+                        className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer ${
+                          paymentMethod === p.id
+                            ? 'bg-emerald-50/80 border-emerald-500 ring-1 ring-emerald-500'
+                            : 'bg-white border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <strong className="text-xs font-black text-gray-900 block">{p.name}</strong>
+                        <span className="text-[9px] text-gray-500 font-light">{p.badge}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    const ref = `SOL-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
+                    setDepositReference(ref);
+                    setDepositSuccess(true);
+                  }}
+                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md active:scale-95 transition-all"
+                >
+                  تأكيد ودفع 2,500 ريال عبر {paymentMethod.toUpperCase()} 🔒
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

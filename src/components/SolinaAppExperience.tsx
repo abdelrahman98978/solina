@@ -65,6 +65,8 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
   const [showVipQrModal, setShowVipQrModal] = useState<boolean>(false);
   const [showAddCarModal, setShowAddCarModal] = useState<boolean>(false);
+  const [showInstallAppModal, setShowInstallAppModal] = useState<boolean>(false);
+  const [installPlatform, setInstallPlatform] = useState<'ios' | 'android'>('ios');
 
   // Offers Filter
   const [offersFilter, setOffersFilter] = useState<'all' | 'finance' | 'service' | 'cashback'>('all');
@@ -729,6 +731,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
             {/* Quick Actions List */}
             <div className="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100 text-xs">
+              <button onClick={() => setShowInstallAppModal(true)} className="w-full p-3.5 flex items-center justify-between text-gray-900 bg-red-50/50 hover:bg-red-50 cursor-pointer">
+                <span className="flex items-center gap-2">📲 <strong className="text-red-600">تثبيت التطبيق على الهاتف (iOS & Android)</strong></span>
+                <span className="px-2 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-bold">PWA</span>
+              </button>
               <button onClick={() => setServiceBookingOpen(true)} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
                 <span className="flex items-center gap-2">📅 <strong>طلباتي ومواعيد الصيانة</strong></span>
                 <ChevronLeft className="w-4 h-4 text-gray-400" />
@@ -1276,8 +1282,85 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               <QrCode className="w-32 h-32 text-gray-900 mx-auto" />
             </div>
             <p className="text-[10px] text-gray-400">امسح الرمز في صالات العرض ومراكز الصيانة للحصول على خدمات VIP الفورية.</p>
-            <button onClick={() => setShowVipQrModal(false)} className="w-full py-2 bg-red-600 text-white text-xs font-bold rounded-xl">
+            <button onClick={() => setShowVipQrModal(false)} className="w-full py-2 bg-red-600 text-white text-xs font-bold rounded-xl cursor-pointer">
               إغلاق
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* I. Install App (iOS / Android) Guided Modal */}
+      {showInstallAppModal && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <img src="/solina-logo.png" alt="سولينا" className="h-6 w-auto" />
+                <h4 className="text-xs font-black text-gray-900">تثبيت تطبيق سولينا</h4>
+              </div>
+              <button onClick={() => setShowInstallAppModal(false)} className="p-1 text-gray-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Platform Selector Tabs */}
+            <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-2xl text-xs font-bold text-center">
+              <button
+                onClick={() => setInstallPlatform('ios')}
+                className={`py-2 rounded-xl transition-all cursor-pointer ${
+                  installPlatform === 'ios' ? 'bg-white text-black shadow-xs' : 'text-gray-500'
+                }`}
+              >
+                🍏 أجهزة آيفون (iOS)
+              </button>
+              <button
+                onClick={() => setInstallPlatform('android')}
+                className={`py-2 rounded-xl transition-all cursor-pointer ${
+                  installPlatform === 'android' ? 'bg-white text-black shadow-xs' : 'text-gray-500'
+                }`}
+              >
+                🤖 أجهزة أندرويد (Android)
+              </button>
+            </div>
+
+            {/* Guided Steps Body */}
+            {installPlatform === 'ios' ? (
+              <div className="space-y-2.5 text-xs text-gray-700 bg-slate-50 p-3.5 rounded-2xl border border-gray-100">
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                  <p>اضغط على زر <strong>المشاركة (Share ⎋)</strong> في أسفل متصفح Safari.</p>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                  <p>مرر للأسفل واختر <strong>«إضافة إلى الشاشة الرئيسية» (Add to Home Screen ⊞)</strong>.</p>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                  <p>اضغط على <strong>«إضافة» (Add)</strong> في الزاوية العلوية لتثبيت أيقونة التطبيق الرسمية فوراً.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2.5 text-xs text-gray-700 bg-slate-50 p-3.5 rounded-2xl border border-gray-100">
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                  <p>اضغط على أيقونة <strong>الخيارات (⋮)</strong> في الزاوية العلوية لمتصفح Chrome.</p>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                  <p>اختر <strong>«تثبيت التطبيق» أو «الإضافة إلى الشاشة الرئيسية» (Install app 📥)</strong>.</p>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                  <p>اضغط <strong>«تثبيت»</strong> وسيعمل التطبيق في نافذة مستقلة وبدون متصفح.</p>
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowInstallAppModal(false)}
+              className="w-full py-2.5 bg-gray-950 hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
+            >
+              فهمت، حسناً
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ import {
   Shield,
   Eye
 } from 'lucide-react';
-import type { Vehicle, VehicleGrade } from '../data/toyotaData';
+import { type Vehicle, type VehicleGrade, getBrandMeta } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 
 interface VehicleDetailModalProps {
@@ -60,6 +60,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
 
   if (!isOpen || !vehicle) return null;
 
+  const brandMeta = getBrandMeta(vehicle.brand);
   const currentGrade = vehicle.grades[selectedGradeIndex] || vehicle.grades[0];
   const currentColor = vehicle.colors[selectedColorIndex] || vehicle.colors[0];
 
@@ -82,12 +83,12 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
         {/* Top Sticky Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/90 backdrop-blur-sm flex-shrink-0">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-red-50 text-[#0056B3] border border-red-200 shadow-xs">
-              {language === 'ar' ? 'سولينا للسيارات • موديل ' : 'Solina Saudi Arabia • Model '} {vehicle.year}
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-[#0056B3] border border-blue-200 shadow-xs">
+              {language === 'ar' ? `${brandMeta.brandName} • موديل ` : `${brandMeta.brandNameEn} • Model `} {vehicle.year}
             </span>
 
             <span className="text-xs text-gray-600 font-medium hidden sm:inline-block">
-              {language === 'ar' ? vehicle.bodyTypeAr : vehicle.bodyTypeEn}
+              {language === 'ar' ? brandMeta.originCountry : brandMeta.originCountryEn}
             </span>
 
             {vehicle.isHybrid && (
@@ -336,15 +337,15 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                 </div>
 
                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                  <h4 className="font-bold text-xs text-gray-400 mb-2 uppercase tracking-wider">{language === 'ar' ? 'أنظمة الأمان' : 'Safety Systems'}</h4>
-                  <p className="font-bold text-sm text-gray-900">{language === 'ar' ? 'نظام الأمان النشط TSS 3.0 والوسائد الهوائية' : 'Active Safety Sense & Full Airbags'}</p>
-                  <p className="text-xs text-gray-500 mt-1">{language === 'ar' ? 'نظام التحذير من مغادرة المسار وفرامل الطوارئ' : 'Lane trace assist & PCS braking'}</p>
+                  <h4 className="font-bold text-xs text-gray-400 mb-2 uppercase tracking-wider">{language === 'ar' ? 'أنظمة الأمان والسلامة الرسمية' : 'Manufacturer Safety Suite'}</h4>
+                  <p className="font-bold text-sm text-gray-900">{language === 'ar' ? brandMeta.safetySuite : brandMeta.safetySuiteEn}</p>
+                  <p className="text-xs text-gray-500 mt-1">{language === 'ar' ? 'وسائد هوائية متكاملة وحساسات رادار متطورة' : 'Full multi-stage SRS airbags & radar sensors'}</p>
                 </div>
 
                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                  <h4 className="font-bold text-xs text-gray-400 mb-2 uppercase tracking-wider">{language === 'ar' ? 'الضمان وخدمات الضيوف' : 'Warranty & Care'}</h4>
-                  <p className="font-bold text-sm text-gray-900">{language === 'ar' ? 'ضمان 5 سنوات أو 150,000 كم' : '5 Years or 150,000 km Warranty'}</p>
-                  <p className="text-xs text-gray-500 mt-1">{language === 'ar' ? 'مساعدة على الطريق 24/7' : '24/7 Roadside Assistance'}</p>
+                  <h4 className="font-bold text-xs text-gray-400 mb-2 uppercase tracking-wider">{language === 'ar' ? 'الضمان المصنعي وخدمة العملاء' : 'Official Warranty & Care'}</h4>
+                  <p className="font-bold text-sm text-gray-900">{language === 'ar' ? brandMeta.warranty : brandMeta.warrantyEn}</p>
+                  <p className="text-xs text-gray-500 mt-1">{language === 'ar' ? brandMeta.carePackage : brandMeta.carePackageEn}</p>
                 </div>
               </div>
             </div>

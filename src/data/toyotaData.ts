@@ -3163,3 +3163,227 @@ export const WHY_SOLINA_POINTS = [
     descriptionEn: 'Over 100 modern showrooms and express service centers ready to serve you anywhere in Saudi Arabia.'
   }
 ];
+
+// -------------------------------------------------------------
+// 10. MULTI-BRAND MANUFACTURER METADATA & SPECS HELPER
+// -------------------------------------------------------------
+export interface BrandMeta {
+  brandName: string;
+  brandNameEn: string;
+  originCountry: string;
+  originCountryEn: string;
+  safetySuite: string;
+  safetySuiteEn: string;
+  warranty: string;
+  warrantyEn: string;
+  carePackage: string;
+  carePackageEn: string;
+  taglineAr: string;
+  taglineEn: string;
+}
+
+export const BRAND_METAS: Record<string, BrandMeta> = {
+  mercedes: {
+    brandName: 'مرسيدس-بنز',
+    brandNameEn: 'Mercedes-Benz',
+    originCountry: 'ألمانيا (شتوتغارت)',
+    originCountryEn: 'Germany (Stuttgart)',
+    safetySuite: 'باقة أنظمة المساعدة على القيادة الذكية PRE-SAFE® Plus مع 11 وسادة هوائية',
+    safetySuiteEn: 'Mercedes-Benz PRE-SAFE® Plus & Driving Assistance Package',
+    warranty: 'ضمان المصنع الشامل 4 سنوات غير محدود الكيلومترات',
+    warrantyEn: '4-Year / Unlimited KM Full Factory Warranty',
+    carePackage: 'باقة الخدمة المتميزة مع المساعدة على الطريق وخدمة استلام وتسليم السيارة VIP',
+    carePackageEn: 'VIP Service Concierge with 24/7 Roadside Assistance & Vehicle Pick-up',
+    taglineAr: 'الأفضل أو لا شيء • الفخامة والريادة الألمانية',
+    taglineEn: 'The Best or Nothing • German Luxury Leadership'
+  },
+  porsche: {
+    brandName: 'بورشه',
+    brandNameEn: 'Porsche',
+    originCountry: 'ألمانيا (شتوتغارت-تزوفنهاوزن)',
+    originCountryEn: 'Germany (Zuffenhausen)',
+    safetySuite: 'نظام Porsche InnoDrive مع مكابح كربون سيراميك PCCB ونظام التوجيه الخلفي',
+    safetySuiteEn: 'Porsche InnoDrive with PCCB Ceramic Brakes & Rear-Axle Steering',
+    warranty: 'ضمان بورشه المعتمد سنتان قابل للتمديد حتى 15 سنة من تاريخ التسجيل',
+    warrantyEn: 'Porsche Approved Warranty extendable up to 15 years',
+    carePackage: 'باقة صيانة Porsche Scheduled Care وعضوية نادي ملاك بورشه الحصري',
+    carePackageEn: 'Porsche Scheduled Maintenance Care & Exclusive Owners Club',
+    taglineAr: 'قمة الأداء الرياضي والهندسة الميكانيكية الخارقة',
+    taglineEn: 'Peak Motorsport Performance & Mechanical Perfection'
+  },
+  bmw: {
+    brandName: 'بي إم دبليو',
+    brandNameEn: 'BMW',
+    originCountry: 'ألمانيا (ميونخ - بافاريا)',
+    originCountryEn: 'Germany (Munich)',
+    safetySuite: 'نظام Driving Assistant Professional مع الركن الذاتي عن بعد وحساسات 360°',
+    safetySuiteEn: 'BMW Driving Assistant Professional with Remote 3D Parking',
+    warranty: 'باقة الصيانة الشاملة BMW Service Inclusive لمدة 5 سنوات أو 100,000 كم',
+    warrantyEn: 'BMW Service Inclusive Package for 5 Years / 100,000 KM',
+    carePackage: 'ضمان ممتد مع خدمة المساعدة على الطريق BMW Mobile Care على مدار الساعة',
+    carePackageEn: 'BMW Mobile Care 24/7 Roadside & Concierge Program',
+    taglineAr: 'متعة القيادة المطلقة • الفخامة الرقمية المستقبلية',
+    taglineEn: 'The Ultimate Driving Machine • Futuristic Digital Luxury'
+  },
+  lexus: {
+    brandName: 'لكزس',
+    brandNameEn: 'Lexus',
+    originCountry: 'اليابان (ناغويا - تويوتا سيتي)',
+    originCountryEn: 'Japan (Toyota City)',
+    safetySuite: 'نظام السلامة النشط المتطور لكزس LSS+ 3.0 مع رادار أمامي عالي الدقة',
+    safetySuiteEn: 'Lexus Safety System+ 3.0 (LSS+ 3.0) with High-Res Millimeter Radar',
+    warranty: 'ضمان لكزس المعتمد 5 سنوات أو 150,000 كم مع صيانة دورية مجانية',
+    warrantyEn: '5-Year / 150,000 KM Lexus Certified Warranty with Free Scheduled Service',
+    carePackage: 'عضوية لكزس كبار الشخصيات مع خدمة المساعدة على الطريق 24/7 وسيارة بديلة',
+    carePackageEn: 'Lexus VIP Membership with 24/7 Roadside Assistance & Courtesy Car',
+    taglineAr: 'الفخامة اليابانية الاستثنائية وإتقان حرفيي تاكومي',
+    taglineEn: 'Experience Amazing • Japanese Takumi Master Craftsmanship'
+  },
+  genesis: {
+    brandName: 'جينيسيس',
+    brandNameEn: 'Genesis',
+    originCountry: 'كوريا الجنوبية (سيول)',
+    originCountryEn: 'South Korea (Seoul)',
+    safetySuite: 'درع الأمان المتكامل Genesis Active Safety Shield مع نظام القيادة على الطرق السريعة HDA 2',
+    safetySuiteEn: 'Genesis Active Safety Shield with Highway Driving Assist 2 (HDA 2)',
+    warranty: 'ضمان المصنع الملكي 5 سنوات غير محدود الكيلومترات مع صيانة مجانية شاملة 5 سنوات',
+    warrantyEn: '5-Year / Unlimited KM Royal Warranty with 5 Years Free Scheduled Maintenance',
+    carePackage: 'خدمة Genesis Concierge الحصرية مع خدمة استلام وتسليم السيارة من باب المنزل',
+    carePackageEn: 'Genesis VIP Home Concierge Pick-up & Delivery Service',
+    taglineAr: 'الفخامة الملكية العصرية والابتكار الراقي',
+    taglineEn: 'Athletic Elegance • Contemporary Royal Prestige'
+  },
+  landrover: {
+    brandName: 'لاند روفر رينج روفر',
+    brandNameEn: 'Land Rover Range Rover',
+    originCountry: 'بريطانيا (جاغوار لاند روفر - سوليهال)',
+    originCountryEn: 'United Kingdom (Solihull)',
+    safetySuite: 'نظام Terrain Response 2 التفاعلي مع 3D Surround Camera ونظام تحكم الثبات التكيفي',
+    safetySuiteEn: 'Terrain Response 2 with 3D Surround Camera & Adaptive Dynamics',
+    warranty: 'ضمان لاند روفر المعتمد 5 سنوات أو 150,000 كم مع باقة الخدمة الشاملة',
+    warrantyEn: '5-Year / 150,000 KM Range Rover Warranty with Comprehensive Service Pack',
+    carePackage: 'خدمة المساعدة على الطريق الأوروبية والشرق الأوسط على مدار الساعة',
+    carePackageEn: '24/7 Premium Roadside Assistance across Saudi Arabia & GCC',
+    taglineAr: 'قمة الفخامة البريطانية والريادة على كافة التضاريس',
+    taglineEn: 'Peerless British Luxury & Supreme All-Terrain Capability'
+  },
+  audi: {
+    brandName: 'أودي',
+    brandNameEn: 'Audi',
+    originCountry: 'ألمانيا (إنغولشتات)',
+    originCountryEn: 'Germany (Ingolstadt)',
+    safetySuite: 'نظام Audi Pre Sense 360 مع نظام الرؤية الليلية بالأشعة تحت الحمراء ونظام دفع كواترو الرياضي',
+    safetySuiteEn: 'Audi Pre Sense 360 with Night Vision Assist & quattro Sport Differential',
+    warranty: 'ضمان أودي المعتمد 5 سنوات أو 150,000 كم مع باقة الصيانة الدورية 5 سنوات',
+    warrantyEn: '5-Year / 150,000 KM Audi Warranty & 5-Year Service Plan',
+    carePackage: 'خدمة عملاء أودي الحصرية VIP مع سيارة بديلة فورية وخدمة نقل المطار',
+    carePackageEn: 'Audi VIP Service with Immediate Courtesy Vehicle & Airport Transfer',
+    taglineAr: 'الريادة والتقدم عبر التكنولوجيا • Vorsprung durch Technik',
+    taglineEn: 'Vorsprung durch Technik • Innovation and quattro Superiority'
+  },
+  nissan: {
+    brandName: 'نيسان نيسمو',
+    brandNameEn: 'Nissan NISMO',
+    originCountry: 'اليابان (يوكوهاما - قسم رياضة السيارات NISMO)',
+    originCountryEn: 'Japan (Yokohama NISMO Motorsport)',
+    safetySuite: 'درع الأمان نيسان 360 (Safety Shield 360) مع مساعد ProPILOT ونظام التخميد بيلشتين',
+    safetySuiteEn: 'Nissan Safety Shield 360 with ProPILOT Assist & Bilstein Damping System',
+    warranty: 'ضمان نيسان بطل الدروب 5 سنوات أو 150,000 كم',
+    warrantyEn: '5-Year / 150,000 KM Nissan Factory Warranty',
+    carePackage: 'باقة صيانة بطل الدروب الصحراوية الشاملة مع فحص دوري مجاني للزيوت والمساعدات',
+    carePackageEn: 'Desert Hero Care Package with Free Scheduled Inspections & Off-road Support',
+    taglineAr: 'بطل الدروب وأسطورة حلبات السباق جودزيلا',
+    taglineEn: 'Hero of All Terrains & Legendary Godzilla Track Power'
+  },
+  cadillac: {
+    brandName: 'كاديلاك',
+    brandNameEn: 'Cadillac',
+    originCountry: 'الولايات المتحدة الأمريكية (ديترويت - ميشيغان)',
+    originCountryEn: 'United States (Detroit, Michigan)',
+    safetySuite: 'نظام القيادة الذاتية Super Cruise مع رؤية ليلية حرارية وفرامل طوارئ أوتوماتيكية متطورة',
+    safetySuiteEn: 'Cadillac Super Cruise Hands-Free Driving with Night Vision & Full Auto Braking',
+    warranty: 'ضمان كاديلاك بريميوم كير 5 سنوات أو 100,000 كم مع صيانة شاملة مجانية',
+    warrantyEn: '5-Year / 100,000 KM Cadillac Premium Care with Complimentary Maintenance',
+    carePackage: 'خدمة المساعدة على الطريق ونقل السيارة للصيانة مجاناً لكبار الشخصيات',
+    carePackageEn: 'Cadillac Premium Roadside Assistance & Valet Service Concierge',
+    taglineAr: 'الفخامة الأمريكية الرئاسية وأعلى درجات الهيبة والقوة',
+    taglineEn: 'Iconic American Presidential Luxury & V-Series Supercharged Power'
+  },
+  ford: {
+    brandName: 'فورد بيرفورمانس',
+    brandNameEn: 'Ford Performance',
+    originCountry: 'الولايات المتحدة الأمريكية (ديربورن - ميشيغان)',
+    originCountryEn: 'United States (Dearborn, Michigan)',
+    safetySuite: 'باقة Ford Co-Pilot360 مع ممتصات صدمات FOX Live Valve الذكية ونظام مكابح دريفت إلكتروني',
+    safetySuiteEn: 'Ford Co-Pilot360 with FOX Live Valve Electronic Shocks & Electronic Drift Brake',
+    warranty: 'ضمان فورد المعتمد 5 سنوات أو 100,000 كم للقطار المحرك وأنظمة التيربو/السوبرتشارج',
+    warrantyEn: '5-Year / 100,000 KM Ford Performance Factory Powertrain Warranty',
+    carePackage: 'دعم صحراوي وميداني 24/7 مع فحص مجاني للتعليق وعلبة التروس بعد الرحلات الرملية',
+    carePackageEn: '24/7 Dune & Roadside Assistance with Post-Desert Suspension Checkups',
+    taglineAr: 'أساطير القوة الأمريكية • رابتر قاهر الصحراء وموستنج دارك هورس',
+    taglineEn: 'Born to Perform • Desert Trophy Dominance & Muscle Heritage'
+  },
+  gmc: {
+    brandName: 'جي إم سي دينالي',
+    brandNameEn: 'GMC Denali',
+    originCountry: 'الولايات المتحدة الأمريكية (ديترويت - ميشيغان)',
+    originCountryEn: 'United States (Detroit, Michigan)',
+    safetySuite: 'نظام GMC Pro Safety Plus مع كاميرات عالية الدقة بـ 14 زاوية رؤية ونظام تنبيه المشاة الخلفي',
+    safetySuiteEn: 'GMC Pro Safety Plus with 14-Camera High Definition HD Surround View',
+    warranty: 'ضمان جي إم سي الشامل 5 سنوات أو 100,000 كم',
+    warrantyEn: '5-Year / 100,000 KM GMC Factory Comprehensive Warranty',
+    carePackage: 'باقة صيانة دينالي التيمت الفاخرة مع خدمة صيانة سريعة VIP',
+    carePackageEn: 'Denali Ultimate VIP Express Care & Saudi Arabia Roadside Support',
+    taglineAr: 'الهيبة الأمريكية المطلقة والمعايير الاحترافية الفاخرة',
+    taglineEn: 'Professional Grade Luxury • Commanding Full-Size Dominance'
+  },
+  hyundai: {
+    brandName: 'هيونداي',
+    brandNameEn: 'Hyundai',
+    originCountry: 'كوريا الجنوبية (أولسان - أكبر مجمع تصنيع سيارات بالعالم)',
+    originCountryEn: 'South Korea (Ulsan)',
+    safetySuite: 'باقة الأمان المتقدمة Hyundai SmartSense مع مساعد تتبع المسار وفرامل الطوارئ الذكية',
+    safetySuiteEn: 'Hyundai SmartSense Advanced Safety Suite with Lane Following & Smart Cruise',
+    warranty: 'ضمان هيونداي المعتمد 5 سنوات أو 100,000 كم من الوكيل الرسمي',
+    warrantyEn: '5-Year / 100,000 KM Hyundai Authorized Manufacturer Warranty',
+    carePackage: 'المساعدة على الطريق 24/7 وصيانة سريعة في كافة مدن المملكة',
+    carePackageEn: '24/7 Roadside Assistance & Nationwide Express Maintenance Centers',
+    taglineAr: 'التصميم المستقبلي الجريء والابتكار الهندسي الذكي',
+    taglineEn: 'Futuristic Design & Human-Centric Smart Mobility'
+  },
+  lucid: {
+    brandName: 'لوسيد موتورز (صنع في السعودية)',
+    brandNameEn: 'Lucid Motors (Made in KSA)',
+    originCountry: 'المملكة العربية السعودية (مصنع رابغ - مدينة الملك عبد الله الاقتصادية)',
+    originCountryEn: 'Kingdom of Saudi Arabia (King Abdullah Economic City - KAEC, Rabigh)',
+    safetySuite: 'منظومة DreamDrive™ Pro المزودة بـ 32 مستشعراً وحساس ليدار LiDAR عالي الدقة',
+    safetySuiteEn: 'DreamDrive™ Pro with 32 Onboard Sensors, HD Cameras & High-Res LiDAR',
+    warranty: 'ضمان مصنعي للبطارية والمحركات الكهربائية 8 سنوات أو 160,000 كم',
+    warrantyEn: '8-Year / 160,000 KM High-Voltage Battery & Electric Drive Unit Warranty',
+    carePackage: 'خدمة الصيانة المتنقلة Lucid Mobile Service وشبكة الشحن فائق السرعة المجانية بالمملكة',
+    carePackageEn: 'Lucid Mobile Service Van & Free High-Speed EV Supercharging in KSA',
+    taglineAr: 'فخر الصناعة والتجميع في المملكة العربية السعودية • قمة السرعة والمدى الكهربائي',
+    taglineEn: 'Proudly Assembled in Saudi Arabia • World-Record Electric Range & Speed'
+  },
+  solina: {
+    brandName: 'سولينا للسيارات',
+    brandNameEn: 'Solina Motors',
+    originCountry: 'المملكة العربية السعودية',
+    originCountryEn: 'Saudi Arabia',
+    safetySuite: 'منظومة الأمان والسلامة النشطة المتكاملة مع 8 وسائد هوائية وحساسات محيطية',
+    safetySuiteEn: 'Solina Integrated Active Safety Shield with 8 Airbags & 360 Sensors',
+    warranty: 'ضمان المصنع 5 سنوات أو 150,000 كم',
+    warrantyEn: '5-Year / 150,000 KM Certified Warranty',
+    carePackage: 'المساعدة على الطريق 24/7 وشبكة صيانة معتمدة بأكثر من 100 فرع بالمملكة',
+    carePackageEn: '24/7 Roadside Assistance with 100+ Authorized Service Centers in KSA',
+    taglineAr: 'الاعتمادية العالية وراحة البال الدائمة على طرقات المملكة',
+    taglineEn: 'Unrivaled Reliability & Enduring Peace of Mind across Saudi Arabia'
+  }
+};
+
+export const getBrandMeta = (brand?: string): BrandMeta => {
+  if (!brand) return BRAND_METAS.solina;
+  const key = brand.toLowerCase();
+  return BRAND_METAS[key] || BRAND_METAS.solina;
+};
+

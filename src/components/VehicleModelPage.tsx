@@ -19,7 +19,7 @@ import {
   Calendar,
   X
 } from 'lucide-react';
-import { type Vehicle, type VehicleGrade, VEHICLES } from '../data/toyotaData';
+import { type Vehicle, type VehicleGrade, VEHICLES, getBrandMeta } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -48,6 +48,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
   comparisonCount
 }) => {
   const { language, isRTL, formatPrice } = useLanguage();
+  const brandMeta = getBrandMeta(vehicle.brand);
   const [activeSection, setActiveSection] = useState<'overview' | 'features' | 'grades' | 'colors' | 'gallery' | 'offers'>('overview');
   const [featureTab, setFeatureTab] = useState<'exterior' | 'interior' | 'performance' | 'comfort'>('exterior');
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
@@ -62,7 +63,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
   const activeGrade = vehicle.grades[selectedGradeIndex] || vehicle.grades[0];
 
   const similarVehicles = VEHICLES.filter(v => 
-    v.brand !== 'lexus' && v.id !== vehicle.id && (v.category === vehicle.category || ['suv', 'crossover'].includes(v.category))
+    v.id !== vehicle.id && (v.category === vehicle.category || ['suv', 'crossover'].includes(v.category))
   ).slice(0, 4);
 
   // Model Specific Hero Background Banner
@@ -205,8 +206,10 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
         <nav className="sticky top-0 z-40 bg-black text-white border-b border-white/10 shadow-md">
           <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 flex items-center justify-between h-14 overflow-x-auto no-scrollbar">
             {/* Model Name Badge */}
-            <div className="text-lg md:text-xl font-bold tracking-wider font-mono text-white flex-shrink-0">
-              {vehicle.nameEn.split(' ')[vehicle.nameEn.split(' ').length - 1].toUpperCase() || 'RAIZE'}
+            <div className="text-sm md:text-base font-bold tracking-wider font-mono text-white flex-shrink-0 flex items-center gap-2">
+              <span className="text-[#0056B3] font-black">{language === 'ar' ? brandMeta.brandName : brandMeta.brandNameEn}</span>
+              <span className="text-gray-400">|</span>
+              <span>{vehicle.nameEn.replace('2026', '').trim()}</span>
             </div>
 
             {/* Navigation Anchor Links with Red Active Underline */}
@@ -247,8 +250,16 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
           <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-6 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-[#0056B3] text-xs font-bold">
-                  <span>{vehicle.bodyTypeAr} • موديل {vehicle.year}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-3 py-1 rounded-full bg-blue-50 text-[#0056B3] text-xs font-bold border border-blue-200">
+                    {language === 'ar' ? brandMeta.brandName : brandMeta.brandNameEn}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-bold">
+                    {language === 'ar' ? brandMeta.originCountry : brandMeta.originCountryEn}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-gray-50 text-gray-600 text-xs font-medium">
+                    {vehicle.bodyTypeAr} • موديل {vehicle.year}
+                  </span>
                 </div>
 
                 <h1 className="text-3xl md:text-5xl font-black text-black font-arabic tracking-tight">
@@ -257,9 +268,15 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
 
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                   {language === 'ar'
-                    ? `تجمع ${vehicle.nameAr} بين الأناقة العصرية، والرحابة العملية، واستهلاك الوقود الاقتصادي المثالي. صممت لتلبي تطلعاتك اليومية في المدينة والرحلات مع أعلى درجات الاعتمادية اليابانية.`
-                    : `${vehicle.nameEn} combines striking modern styling, versatile interior space, and benchmark efficiency, built for daily city adventures and long drives.`}
+                    ? `تجسد ${vehicle.nameAr} قمة الهندسة والابتكار من ${brandMeta.brandName}، وتوفر تجربة قيادة استثنائية تجمع بين الفخامة، والقوة، وأحدث التقنيات مع الضمان المصنعي الرسمي المعتمد.`
+                    : `${vehicle.nameEn} represents the pinnacle of engineering from ${brandMeta.brandNameEn}, delivering an exceptional blend of luxury, power, and state-of-the-art technology.`}
                 </p>
+
+                {/* Brand Tagline Badge */}
+                <div className="p-3 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-xl border border-gray-200/80 text-xs font-semibold text-gray-700 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#0056B3] flex-shrink-0" />
+                  <span>{language === 'ar' ? brandMeta.taglineAr : brandMeta.taglineEn}</span>
+                </div>
 
                 {/* Key Specs Pill Matrix */}
                 <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 font-mono">
@@ -516,6 +533,68 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 alt={activeColor.name}
                 className="max-h-full max-w-full object-contain filter drop-shadow-2xl transition-all duration-300"
               />
+            </div>
+          </div>
+        </section>
+
+        {/* 7.5. Official Manufacturer Fact Sheet & Warranty */}
+        <section className="py-14 bg-gradient-to-br from-gray-900 to-black text-white border-b border-gray-800">
+          <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-md">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div className="space-y-4 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0056B3]/30 border border-[#0056B3]/50 text-blue-300 text-xs font-bold">
+                    <ShieldCheck className="w-4 h-4 text-[#0056B3]" />
+                    <span>{language === 'ar' ? `شهادة المصنع الرسمية • ${brandMeta.brandName}` : `Official Manufacturer Certificate • ${brandMeta.brandNameEn}`}</span>
+                  </div>
+
+                  <h3 className="text-2xl md:text-3xl font-black text-white font-arabic">
+                    {language === 'ar' ? 'الضمان المصنعي وباقة الأمان المعتمدة' : 'Official Warranty & Safety Systems'}
+                  </h3>
+
+                  <div className="space-y-3 pt-2 text-sm text-gray-300">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white font-bold block mb-0.5">{language === 'ar' ? 'الضمان الرسمي المعتمد:' : 'Certified Factory Warranty:'}</strong>
+                        <span>{language === 'ar' ? brandMeta.warranty : brandMeta.warrantyEn}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white font-bold block mb-0.5">{language === 'ar' ? 'باقة أنظمة الأمان المتطورة:' : 'Active Safety Suite:'}</strong>
+                        <span>{language === 'ar' ? brandMeta.safetySuite : brandMeta.safetySuiteEn}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white font-bold block mb-0.5">{language === 'ar' ? 'باقة خدمة كبار الشخصيات والدعم:' : 'VIP Service & Roadside Care:'}</strong>
+                        <span>{language === 'ar' ? brandMeta.carePackage : brandMeta.carePackageEn}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto flex-shrink-0">
+                  <button
+                    onClick={() => onOpenTestDrive(vehicle.nameAr)}
+                    className="px-8 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm shadow-lg transition-all text-center cursor-pointer"
+                  >
+                    {language === 'ar' ? 'حجز تجربة قيادة رسمية' : 'Book Official Test Drive'}
+                  </button>
+
+                  <button
+                    onClick={() => onOpenQuotation(vehicle, activeGrade)}
+                    className="px-8 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition-all text-center cursor-pointer"
+                  >
+                    {language === 'ar' ? 'طلب عرض سعر وتمويل فوري' : 'Request Instant Quotation'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </section>

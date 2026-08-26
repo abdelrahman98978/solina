@@ -102,15 +102,42 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
       let actions: { label: string; action: () => void }[] = [];
       const lower = query.toLowerCase();
 
-      if (lower.includes('موديل') || lower.includes('سيار') || lower.includes('طراز') || lower.includes('model') || lower.includes('car')) {
+      if (lower.includes('مرسيدس') || lower.includes('mercedes') || lower.includes('لكزس') || lower.includes('lexus') || lower.includes('بورش') || lower.includes('porsche') || lower.includes('بي ام') || lower.includes('bmw') || lower.includes('جينيسيس') || lower.includes('genesis') || lower.includes('رينج') || lower.includes('range') || lower.includes('فاخر')) {
         botResponse = language === 'ar'
-          ? 'تضم تشكيلة سولينا 2026 أحدث سيارات السيدان مثل (كامري 2026، كراون 2026، كورولا 2026) وسيارات الدفع الرباعي الفاخرة مثل (لاند كروزر LC300، برادو 2026، راف فور 2026).'
-          : 'Solina Motors 2026 lineup features luxury sedans (Camry, Crown, Corolla) and premium 4x4 SUVs (Land Cruiser LC300, Prado, RAV4).';
+          ? 'نقدم تشكيلة فائقة الفخامة من كبرى العلامات العالمية المعتمدة: مرسيدس S500 و G63 AMG، لكزس LX600 VIP و ES300h، بورشه كايين توربو E-Hybrid بقوة 729 حصان، بي إم دبليو 735i بشاشة السينما 8K، جينيسيس G90 رويال، ورينج روفر SV أوتوبيوغرافي.'
+          : 'We offer an ultra-luxury multi-brand portfolio: Mercedes-Benz S500 & G63 AMG, Lexus LX600 VIP & ES300h, Porsche Cayenne Turbo E-Hybrid (729 HP), BMW 735i (8K Theatre Screen), Genesis G90 Royal, and Range Rover SV Autobiography.';
         actions = [
           {
-            label: language === 'ar' ? 'استعراض كامري 2026' : 'View Camry 2026',
+            label: language === 'ar' ? 'استعراض مرسيدس S500' : 'View Mercedes S500',
             action: () => {
-              if (onSelectVehicle) onSelectVehicle('camry-2026');
+              if (onSelectVehicle) onSelectVehicle('mercedes-s500-2026');
+              setIsOpen(false);
+            }
+          },
+          {
+            label: language === 'ar' ? 'استعراض لكزس LX600' : 'View Lexus LX600',
+            action: () => {
+              if (onSelectVehicle) onSelectVehicle('lexus-lx600-2026');
+              setIsOpen(false);
+            }
+          },
+          {
+            label: language === 'ar' ? 'استعراض بورشه كايين توربو' : 'View Porsche Cayenne Turbo',
+            action: () => {
+              if (onSelectVehicle) onSelectVehicle('porsche-cayenne-turbo-2026');
+              setIsOpen(false);
+            }
+          }
+        ];
+      } else if (lower.includes('موديل') || lower.includes('سيار') || lower.includes('طراز') || lower.includes('model') || lower.includes('car')) {
+        botResponse = language === 'ar'
+          ? 'تضم تشكيلة سولينا 2026 أسطولاً شاملاً يجمع بين الاعتمادية العالية وسيارات السيدان الفاخرة (كامري، كراون، مرسيدس S500، بي إم دبليو 735i) وسيارات الدفع الرباعي الخارقة (لاند كروزر LC300، لكزس LX600، مرسيدس G63 AMG، رينج روفر SV).'
+          : 'Our 2026 multi-brand fleet features executive sedans (Camry, Crown, Mercedes S500, BMW 735i) and high-performance luxury 4x4s (Land Cruiser LC300, Lexus LX600, Mercedes G63 AMG, Range Rover SV).';
+        actions = [
+          {
+            label: language === 'ar' ? 'استعراض مرسيدس S500' : 'View Mercedes S500',
+            action: () => {
+              if (onSelectVehicle) onSelectVehicle('mercedes-s500-2026');
               setIsOpen(false);
             }
           },

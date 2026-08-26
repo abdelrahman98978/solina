@@ -32,21 +32,24 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
   const { vehicles } = useAdminData();
   const sliderRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [activeTab, setActiveTab] = useState<'sedan' | 'suv' | 'commercial'>('sedan');
+  const [activeTab, setActiveTab] = useState<'all' | 'luxury' | 'sedan' | 'suv' | 'hybrid' | 'commercial'>('all');
 
-  // Official 3 Tabs matching Solina Saudi Arabia
+  // Comprehensive multi-brand luxury fleet categories
   const categories = [
+    { id: 'all', label: language === 'ar' ? 'جميع المركبات' : 'All Vehicles' },
+    { id: 'luxury', label: language === 'ar' ? 'الفاخرة والرئاسية VIP' : 'Ultra Luxury & VIP' },
     { id: 'sedan', label: language === 'ar' ? 'السيدان' : 'Sedan' },
-    { id: 'suv', label: language === 'ar' ? 'السيارات متعددة الإستخدامات' : 'SUVs & Crossovers' },
+    { id: 'suv', label: language === 'ar' ? 'الدفع الرباعي والـ SUV' : 'SUVs & Crossovers' },
+    { id: 'hybrid', label: language === 'ar' ? 'الهايبرد' : 'Hybrid' },
     { id: 'commercial', label: language === 'ar' ? 'السيارات التجارية' : 'Commercial Vehicles' }
   ];
 
-  // Only official Solina brand vehicles
-  const toyotaVehicles = vehicles.filter(v => v.brand !== 'lexus');
-
-  const filteredVehicles = toyotaVehicles.filter((vehicle) => {
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'luxury') return ['lexus', 'mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes(vehicle.brand || '') || vehicle.priceStartingFrom >= 300000;
     if (activeTab === 'sedan') return vehicle.category === 'sedan' || vehicle.category === 'gr';
     if (activeTab === 'suv') return ['suv', 'crossover', 'family'].includes(vehicle.category);
+    if (activeTab === 'hybrid') return vehicle.category === 'hybrid' || vehicle.isHybrid || vehicle.powertrain === 'هايبرد';
     if (activeTab === 'commercial') return vehicle.category === 'commercial';
     return true;
   });

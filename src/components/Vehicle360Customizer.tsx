@@ -38,13 +38,27 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
 }) => {
   const { language, formatPrice, isRTL } = useLanguage();
   
-  // Showcase Fleet (Flagship Solina & Lexus models)
+  // Showcase Fleet (Flagship Solina, Lexus, Mercedes, Porsche, BMW, Genesis, Range Rover)
   const showcaseModels = VEHICLES.filter(v => 
-    ['lexus-lx600-2026', 'prado-2026', 'lc300-2026', 'lexus-gx550-2026', 'camry-2026', 'lexus-rx350h-2026', 'crown-2026', 'lexus-lc500-2026', 'gr86-2026'].includes(v.id)
+    [
+      'mercedes-s500-2026', 
+      'lexus-lx600-2026', 
+      'mercedes-g63-2026', 
+      'porsche-cayenne-turbo-2026', 
+      'range-rover-sv-2026', 
+      'bmw-735i-2026', 
+      'genesis-g90-2026', 
+      'lexus-es300h-2026',
+      'lc300-2026', 
+      'prado-2026', 
+      'camry-2026', 
+      'crown-2026', 
+      'gr86-2026'
+    ].includes(v.id)
   );
 
-  const [activeBrandTab, setActiveBrandTab] = useState<'all' | 'toyota' | 'lexus'>('all');
-  const [activeModelId, setActiveModelId] = useState<string>('lexus-lx600-2026');
+  const [activeBrandTab, setActiveBrandTab] = useState<string>('all');
+  const [activeModelId, setActiveModelId] = useState<string>('mercedes-s500-2026');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'grades'>('exterior');
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
   const [selectedGradeIndex, setSelectedGradeIndex] = useState<number>(0);
@@ -59,7 +73,8 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
 
   const filteredShowcase = showcaseModels.filter(m => {
     if (activeBrandTab === 'all') return true;
-    return (m.brand || 'toyota') === activeBrandTab;
+    if (activeBrandTab === 'toyota' || activeBrandTab === 'solina') return !m.brand || m.brand === 'toyota' || m.brand === 'solina';
+    return m.brand === activeBrandTab;
   });
 
   const handlePlayEngineSound = () => {
@@ -104,18 +119,18 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
           </div>
 
           {/* Brand Filter Switcher */}
-          <div className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md self-start lg:self-end">
+          <div className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md self-start lg:self-end overflow-x-auto max-w-full">
             <button
               onClick={() => setActiveBrandTab('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeBrandTab === 'all' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
-              {language === 'ar' ? 'كافة الطرازات' : 'All Models'}
+              {language === 'ar' ? 'الكل' : 'All'}
             </button>
             <button
               onClick={() => setActiveBrandTab('toyota')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeBrandTab === 'toyota' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -123,12 +138,52 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             </button>
             <button
               onClick={() => setActiveBrandTab('lexus')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
                 activeBrandTab === 'lexus' ? 'bg-gradient-to-r from-amber-600 to-amber-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               <Crown className="w-3 h-3 text-[#D4AF37]" />
               <span>LEXUS</span>
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('mercedes')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'mercedes' ? 'bg-slate-700 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              MERCEDES
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('porsche')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'porsche' ? 'bg-red-700 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              PORSCHE
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('bmw')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'bmw' ? 'bg-blue-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              BMW
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('genesis')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'genesis' ? 'bg-zinc-700 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              GENESIS
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('landrover')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'landrover' ? 'bg-emerald-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              RANGE ROVER
             </button>
           </div>
         </div>

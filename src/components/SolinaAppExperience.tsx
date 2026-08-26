@@ -145,13 +145,18 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
   const filteredVehicles = VEHICLES.filter(v => {
     const hasValidImage = Boolean(v.cardImage && v.cardImage.startsWith('http'));
-    const matchesCategory = selectedCategory === 'all' || v.category === selectedCategory || (selectedCategory === 'luxury' && (v.id.includes('crown') || v.id.includes('land-cruiser') || v.id.includes('lexus')));
-    const matchesSearch = v.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) || v.nameEn.toLowerCase().includes(searchQuery.toLowerCase());
+    const isLuxuryBrand = ['lexus', 'mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes(v.brand || '') || v.priceStartingFrom >= 300000;
+    const matchesCategory = selectedCategory === 'all' 
+      || v.category === selectedCategory 
+      || (selectedCategory === 'luxury' && isLuxuryBrand);
+    const matchesSearch = v.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) 
+      || v.nameEn.toLowerCase().includes(searchQuery.toLowerCase())
+      || (v.brand && v.brand.toLowerCase().includes(searchQuery.toLowerCase()));
     return hasValidImage && matchesCategory && matchesSearch;
   }).sort((a, b) => {
-    const priority = ['camry', 'lc300', 'crown', 'rav4', 'prado', 'gr86', 'corolla', 'fortuner'];
-    const aIndex = priority.findIndex(p => a.id.includes(p));
-    const bIndex = priority.findIndex(p => b.id.includes(p));
+    const priority = ['mercedes', 'porsche', 'lexus', 'range-rover', 'bmw', 'genesis', 'lc300', 'camry', 'crown', 'prado', 'gr86'];
+    const aIndex = priority.findIndex(p => a.id.includes(p) || (a.brand && a.brand.includes(p)));
+    const bIndex = priority.findIndex(p => b.id.includes(p) || (b.brand && b.brand.includes(p)));
     if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
     if (aIndex !== -1) return -1;
     if (bIndex !== -1) return 1;
@@ -429,7 +434,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       {/* Vehicle Meta Title */}
                       <div className="text-start space-y-0.5 mt-1">
                         <h5 className="text-[11px] font-black text-gray-900 line-clamp-1">
-                          سولينا {vehicle.nameAr} 2026
+                          {vehicle.nameAr.includes('2026') ? vehicle.nameAr : `${vehicle.nameAr} 2026`}
                         </h5>
                         
                         {/* Price Display */}

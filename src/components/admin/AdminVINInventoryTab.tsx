@@ -92,6 +92,48 @@ export const AdminVINInventoryTab: React.FC = () => {
       price: 199870,
       daysInInventory: 0,
       arrivalDate: '2026-08-29'
+    },
+    {
+      id: 'stk-5',
+      vin: 'W1KZF8HB3PA109283',
+      model: 'مرسيدس-بنز S-Class S500 4MATIC',
+      category: 'سيدان فاخرة',
+      trim: 'Long Wheelbase VIP 2026',
+      color: 'أسود أوبسيديان ميتاليك',
+      engine: '3.0L Turbo EQ Boost (429 HP)',
+      location: 'صالة الرياض - صالة كبار الشخصيات VIP',
+      status: 'in_stock',
+      price: 685000,
+      daysInInventory: 3,
+      arrivalDate: '2026-08-23'
+    },
+    {
+      id: 'stk-6',
+      vin: 'JTJHY7AX8P2039182',
+      model: 'لكزس LX600 VIP 2026',
+      category: 'دفع رباعي فاخرة',
+      trim: 'VIP 4-Seater Executive Lounge',
+      color: 'تيتانيوم سونيك فاخر',
+      engine: '3.5L V6 Twin-Turbo (409 HP)',
+      location: 'صالة جدة - طريق الملك عبد العزيز',
+      status: 'in_stock',
+      price: 575000,
+      daysInInventory: 5,
+      arrivalDate: '2026-08-21'
+    },
+    {
+      id: 'stk-7',
+      vin: 'WP1AA2AY5PDA02918',
+      model: 'بورشه كايين توربو E-Hybrid',
+      category: 'هايبرد فائقة الأداء',
+      trim: 'GT Package 729 HP 2026',
+      color: 'أحمر كارماين بورش',
+      engine: '4.0L V8 Turbo Hybrid (729 HP)',
+      location: 'صالة الخبر - المعرض الإقليمي',
+      status: 'reserved',
+      price: 745000,
+      daysInInventory: 1,
+      arrivalDate: '2026-08-25'
     }
   ]);
 

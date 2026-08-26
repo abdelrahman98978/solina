@@ -31,12 +31,15 @@ import { AdminOffersTab } from './AdminOffersTab';
 import { AdminCPOTab } from './AdminCPOTab';
 import { AdminPartsTab } from './AdminPartsTab';
 import { AdminShowroomsTab } from './AdminShowroomsTab';
+import { AdminZatcaInvoicingTab } from './AdminZatcaInvoicingTab';
+import { AdminWorkshopJobCardsTab } from './AdminWorkshopJobCardsTab';
+import { AdminVINInventoryTab } from './AdminVINInventoryTab';
 
 interface AdminDashboardProps {
   onClose: () => void;
 }
 
-export type AdminTabType = 'overview' | 'fleet' | 'leads' | 'offers' | 'cpo' | 'parts' | 'showrooms';
+export type AdminTabType = 'overview' | 'fleet' | 'vin_inventory' | 'leads' | 'workshop' | 'zatca' | 'offers' | 'cpo' | 'parts' | 'showrooms';
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const { stats, resetToDefaultData } = useAdminData();
@@ -54,10 +57,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     },
     {
       id: 'fleet' as const,
-      labelAr: 'إدارة الأسطول والمخزون 2026',
+      labelAr: 'إدارة الأسطول والموديلات 2026',
       labelEn: 'Fleet & Pricing Management',
       icon: Car,
       badge: `${stats.totalFleetCount} موديل`
+    },
+    {
+      id: 'vin_inventory' as const,
+      labelAr: 'مخزون الشاسيه وسلاسل الإمداد (VIN)',
+      labelEn: 'VIN Stock & Warehouses',
+      icon: Layers,
+      badge: 'ERP مباشر'
     },
     {
       id: 'leads' as const,
@@ -68,6 +78,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         ? `${stats.newTestDrivesCount + stats.pendingServicesCount} جديد` 
         : undefined,
       badgeColor: 'bg-red-600'
+    },
+    {
+      id: 'workshop' as const,
+      labelAr: 'ورش الصيانة وأوامر العمل (Job Cards)',
+      labelEn: 'Workshop & Express Bay',
+      icon: Wrench,
+      badge: '45 دقيقة'
+    },
+    {
+      id: 'zatca' as const,
+      labelAr: 'الفوترة الإلكترونية والضرائب (ZATCA)',
+      labelEn: 'ZATCA e-Invoicing Phase 2',
+      icon: FileText,
+      badge: 'معتمد 100%',
+      badgeColor: 'bg-emerald-600'
     },
     {
       id: 'offers' as const,
@@ -87,7 +112,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       id: 'parts' as const,
       labelAr: 'قطع الغيار الأصلية والإكسسوارات',
       labelEn: 'Genuine Parts & Accessories',
-      icon: Wrench,
+      icon: PackageCheck,
       badge: `${stats.totalPartsCount}`
     },
     {
@@ -245,8 +270,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <AdminFleetTab />
           )}
 
+          {activeTab === 'vin_inventory' && (
+            <AdminVINInventoryTab />
+          )}
+
           {activeTab === 'leads' && (
             <AdminLeadsTab />
+          )}
+
+          {activeTab === 'workshop' && (
+            <AdminWorkshopJobCardsTab />
+          )}
+
+          {activeTab === 'zatca' && (
+            <AdminZatcaInvoicingTab />
           )}
 
           {activeTab === 'offers' && (

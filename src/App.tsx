@@ -48,7 +48,7 @@ import { QuotationModal } from './components/QuotationModal';
 
 import { type Vehicle, type VehicleGrade, VEHICLES } from './data/toyotaData';
 
-type AppRoute = 'home' | 'offers' | 'owners' | 'discover' | 'showrooms' | 'vehicle' | 'app' | 'mobile-app';
+type AppRoute = 'home' | 'offers' | 'owners' | 'discover' | 'showrooms' | 'vehicle' | 'app' | 'mobile-app' | 'erp' | 'admin';
 
 const MainAppContent: React.FC = () => {
   const { language } = useLanguage();
@@ -98,7 +98,10 @@ const MainAppContent: React.FC = () => {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
 
-      if (path.includes('/offers') || hash.includes('offers')) {
+      if (path.includes('/erp') || path.includes('/admin') || hash.includes('erp') || hash.includes('admin')) {
+        setCurrentRoute('erp');
+        setDedicatedVehicle(null);
+      } else if (path.includes('/offers') || hash.includes('offers')) {
         setCurrentRoute('offers');
         setDedicatedVehicle(null);
       } else if (path.includes('/owners') || hash.includes('owners')) {
@@ -255,6 +258,18 @@ const MainAppContent: React.FC = () => {
       />
     </>
   );
+
+  // 0. ERP & DEALERSHIP MANAGEMENT DASHBOARD (DMS & ZATCA 2)
+  if (adminViewOpen || currentRoute === 'erp' || currentRoute === 'admin') {
+    return (
+      <div className="min-h-screen bg-[#F8F9FA] text-gray-900 flex flex-col font-arabic">
+        <AdminDashboard onClose={() => {
+          setAdminViewOpen(false);
+          handleBackToHome();
+        }} />
+      </div>
+    );
+  }
 
   // 1. DEDICATED VEHICLE MODEL PAGE
   if (currentRoute === 'vehicle' && dedicatedVehicle) {

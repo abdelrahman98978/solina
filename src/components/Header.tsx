@@ -297,9 +297,12 @@ export const Header: React.FC<HeaderProps> = ({
                     <span>{language === 'ar' ? 'تطبيق سولينا التفاعلي' : 'Solina Interactive App'}</span>
                   </button>
                   {onOpenAdmin && (
-                    <button onClick={() => { onOpenAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors text-right">
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>{language === 'ar' ? 'لوحة تحكم الوكالة' : 'Dealership Admin'}</span>
+                    <button onClick={() => { onOpenAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 transition-colors text-right rounded-xl my-1 cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-blue-600" />
+                        <span>{language === 'ar' ? 'نظام إدارة الوكالة والـ ERP' : 'Dealership ERP & DMS'}</span>
+                      </div>
+                      <span className="px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[9px] font-mono">ZATCA 2</span>
                     </button>
                   )}
                 </div>
@@ -961,6 +964,19 @@ export const Header: React.FC<HeaderProps> = ({
             >
               حجز خدمة صيانة
             </button>
+            {onOpenAdmin && (
+              <button
+                onClick={() => {
+                  onOpenAdmin();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full bg-slate-900 border border-blue-500/30 text-white py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-blue-400" />
+                <span>نظام إدارة الوكالة والـ ERP</span>
+                <span className="px-1.5 py-0.2 rounded bg-blue-600 text-[10px]">ZATCA 2</span>
+              </button>
+            )}
           </div>
         </div>
       )}

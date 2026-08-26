@@ -735,6 +735,16 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <span className="flex items-center gap-2">📲 <strong className="text-red-600">تثبيت التطبيق على الهاتف (iOS & Android)</strong></span>
                 <span className="px-2 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-bold">PWA</span>
               </button>
+              <button 
+                onClick={() => {
+                  window.location.hash = 'erp';
+                  window.location.reload();
+                }} 
+                className="w-full p-3.5 flex items-center justify-between text-blue-700 bg-blue-50/50 hover:bg-blue-50 cursor-pointer border-y border-blue-100"
+              >
+                <span className="flex items-center gap-2">💼 <strong className="text-blue-700">نظام إدارة الوكالة والـ ERP المتكامل</strong></span>
+                <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[9px] font-bold">ZATCA & DMS</span>
+              </button>
               <button onClick={() => setServiceBookingOpen(true)} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
                 <span className="flex items-center gap-2">📅 <strong>طلباتي ومواعيد الصيانة</strong></span>
                 <ChevronLeft className="w-4 h-4 text-gray-400" />

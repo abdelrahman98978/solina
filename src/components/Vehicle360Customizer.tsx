@@ -38,7 +38,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
 }) => {
   const { language, formatPrice, isRTL } = useLanguage();
   
-  // Showcase Fleet (Flagship Solina, Lexus, Mercedes, Porsche, BMW, Genesis, Range Rover)
+  // Showcase Fleet (Flagship Multi-Brand Global Fleet)
   const showcaseModels = VEHICLES.filter(v => 
     [
       'mercedes-s500-2026', 
@@ -46,8 +46,18 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
       'mercedes-g63-2026', 
       'porsche-cayenne-turbo-2026', 
       'range-rover-sv-2026', 
+      'lucid-air-sapphire-2026',
+      'audi-rsq8-2026',
+      'nissan-patrol-nismo-2026',
+      'cadillac-escalade-v-2026',
+      'ford-raptor-r-2026',
+      'gmc-yukon-denali-2026',
       'bmw-735i-2026', 
       'genesis-g90-2026', 
+      'nissan-gtr-nismo-2026',
+      'ford-mustang-darkhorse-2026',
+      'hyundai-palisade-2026',
+      'hyundai-santafe-2026',
       'lexus-es300h-2026',
       'lc300-2026', 
       'prado-2026', 
@@ -80,7 +90,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
   const handlePlayEngineSound = () => {
     setIsPlayingAudio(true);
     let soundType = 'v6';
-    if (activeVehicle.id.includes('lc500') || activeVehicle.isGR) soundType = 'gr';
+    if (activeVehicle.id.includes('lc500') || activeVehicle.isGR || activeVehicle.id.includes('mustang') || activeVehicle.id.includes('gtr')) soundType = 'gr';
     else if (activeVehicle.isHybrid || activeVehicle.powertrain === 'هايبرد') soundType = 'hybrid';
     else if (activeVehicle.powertrain === 'ديزل') soundType = 'diesel';
 
@@ -119,7 +129,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
           </div>
 
           {/* Brand Filter Switcher */}
-          <div className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md self-start lg:self-end overflow-x-auto max-w-full">
+          <div className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md self-start lg:self-end overflow-x-auto max-w-full no-scrollbar">
             <button
               onClick={() => setActiveBrandTab('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
@@ -160,6 +170,62 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               }`}
             >
               PORSCHE
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('audi')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'audi' ? 'bg-neutral-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              AUDI
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('nissan')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'nissan' ? 'bg-rose-900 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              NISSAN
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('cadillac')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'cadillac' ? 'bg-amber-900 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              CADILLAC
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('ford')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'ford' ? 'bg-blue-900 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              FORD
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('gmc')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'gmc' ? 'bg-red-900 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              GMC
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('hyundai')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'hyundai' ? 'bg-sky-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              HYUNDAI
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('lucid')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'lucid' ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              LUCID KSA
             </button>
             <button
               onClick={() => setActiveBrandTab('bmw')}

@@ -134,6 +134,76 @@ export const AdminVINInventoryTab: React.FC = () => {
       price: 745000,
       daysInInventory: 1,
       arrivalDate: '2026-08-25'
+    },
+    {
+      id: 'stk-8',
+      vin: 'WAUZZZF28PD039121',
+      model: 'أودي RS Q8 بيرفورمانس',
+      category: 'دفع رباعي كوبيه',
+      trim: 'Dynamic Package Plus 640 HP',
+      color: 'رمادي ناردو الرياضي',
+      engine: '4.0L Twin-Turbo V8 (640 HP)',
+      location: 'صالة الرياض - صالة كبار الشخصيات VIP',
+      status: 'in_stock',
+      price: 720000,
+      daysInInventory: 3,
+      arrivalDate: '2026-08-23'
+    },
+    {
+      id: 'stk-9',
+      vin: 'JN8AY2NC7P9012844',
+      model: 'نيسان باترول نيسمو بطل الدروب',
+      category: 'دفع رباعي',
+      trim: 'NISMO Takumi Edition 2026',
+      color: 'أبيض لؤلؤي مع خطوط نيسمو',
+      engine: '5.6L V8 (428 HP)',
+      location: 'صالة جدة - طريق الملك عبد العزيز',
+      status: 'in_stock',
+      price: 412000,
+      daysInInventory: 6,
+      arrivalDate: '2026-08-20'
+    },
+    {
+      id: 'stk-10',
+      vin: '7PDSGABA8PA001298',
+      model: 'لوسيد إير سافاير (فخر الصناعة بالسعودية)',
+      category: 'سيدان كهربائية خارقة',
+      trim: 'Tri-Motor 1234 HP Edition (رابغ KSA)',
+      color: 'أزرق سافاير الياقوتي',
+      engine: 'Tri-Motor Electric (1,234 HP)',
+      location: 'صالة الرياض - صالة كبار الشخصيات VIP',
+      status: 'in_stock',
+      price: 960000,
+      daysInInventory: 2,
+      arrivalDate: '2026-08-24'
+    },
+    {
+      id: 'stk-11',
+      vin: '1GYS4HKJ9PR102948',
+      model: 'كاديلاك إسكاليد V سوبرتشارج',
+      category: 'دفع رباعي رئاسية',
+      trim: 'V-Series 682 HP 2026',
+      color: 'أسود الغراب الملكي',
+      engine: '6.2L Supercharged V8 (682 HP)',
+      location: 'المستودع المركزي - الرياض',
+      status: 'in_stock',
+      price: 820000,
+      daysInInventory: 4,
+      arrivalDate: '2026-08-22'
+    },
+    {
+      id: 'stk-12',
+      vin: '1FTFW1RJ7PFC09214',
+      model: 'فورد F-150 رابتر R سوبرتشارج',
+      category: 'بيك أب خارقة',
+      trim: 'Raptor R 720 HP 2026',
+      color: 'برتقالي كود رابتر',
+      engine: '5.2L Supercharged V8 (720 HP)',
+      location: 'صالة الخبر - المعرض الإقليمي',
+      status: 'in_stock',
+      price: 525000,
+      daysInInventory: 7,
+      arrivalDate: '2026-08-19'
     }
   ]);
 

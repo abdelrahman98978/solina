@@ -46,10 +46,10 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     if (activeTab === 'all') return true;
-    if (activeTab === 'luxury') return ['lexus', 'mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes(vehicle.brand || '') || vehicle.priceStartingFrom >= 300000;
+    if (activeTab === 'luxury') return ['lexus', 'mercedes', 'porsche', 'bmw', 'genesis', 'landrover', 'audi', 'cadillac', 'lucid', 'gmc'].includes(vehicle.brand || '') || vehicle.priceStartingFrom >= 300000;
     if (activeTab === 'sedan') return vehicle.category === 'sedan' || vehicle.category === 'gr';
     if (activeTab === 'suv') return ['suv', 'crossover', 'family'].includes(vehicle.category);
-    if (activeTab === 'hybrid') return vehicle.category === 'hybrid' || vehicle.isHybrid || vehicle.powertrain === 'هايبرد';
+    if (activeTab === 'hybrid') return vehicle.category === 'hybrid' || vehicle.isHybrid || vehicle.powertrain === 'هايبرد' || vehicle.powertrain === 'كهربائي';
     if (activeTab === 'commercial') return vehicle.category === 'commercial';
     return true;
   });

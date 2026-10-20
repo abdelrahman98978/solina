@@ -12,6 +12,7 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { NavigationControls } from '../components/NavigationControls';
@@ -30,95 +31,22 @@ export const ShowroomsPage: React.FC<ShowroomsPageProps> = ({
   onSelectVehicle
 }) => {
   const { language } = useLanguage();
+  const { showrooms } = useAdminData();
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const branches = [
-    {
-      id: 'riyadh-khurais',
-      region: 'central',
-      cityAr: 'الرياض',
-      nameAr: 'صالة عرض ومركز صيانة خريص الرئيسي',
-      nameEn: 'Khurais Flagship Showroom & Service Center',
-      addressAr: 'طريق خريص، تقاطع شارع الأحساء، الرياض',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 8:00 ص - 8:00 م',
-      servicesAr: ['صالة عرض سيارات جديدة', 'مركز صيانة معتمد', 'قطع غيار أصلية', 'مبيعات الشركات'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Khurais+Riyadh'
-    },
-    {
-      id: 'riyadh-olaya',
-      region: 'central',
-      cityAr: 'الرياض',
-      nameAr: 'صالة عرض العليا الفاخرة',
-      nameEn: 'Olaya Premium Showroom',
-      addressAr: 'طريق الملك فهد، حي العليا، الرياض',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 9:00 ص - 9:00 م',
-      servicesAr: ['صالة عرض سيارات جديدة', 'استشارات تمويل', 'تسليم فوري'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Olaya+Riyadh'
-    },
-    {
-      id: 'jeddah-palestine',
-      region: 'western',
-      cityAr: 'جدة',
-      nameAr: 'مجمع فلسطين الرئيسي المتكامل',
-      nameEn: 'Palestine Integrated Auto Complex',
-      addressAr: 'شارع فلسطين، حي الرويس، جدة',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 8:00 ص - 8:30 م',
-      servicesAr: ['صالة عرض سيارات جديدة', 'صيانة سريعة 45 دقيقة', 'سمكرة ودهان', 'قطع غيار أصلية'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Palestine+Jeddah'
-    },
-    {
-      id: 'jeddah-madinah-road',
-      region: 'western',
-      cityAr: 'جدة',
-      nameAr: 'صالة طريق المدينة المنورة الكبرى',
-      nameEn: 'Madinah Road Mega Showroom',
-      addressAr: 'طريق المدينة المنورة، كيلو 11، جدة',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 8:30 ص - 9:00 م',
-      servicesAr: ['صالة عرض سيارات جديدة', 'أوتوهب المستعمل المعتمد', 'تسليم سيارات'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Madinah+Road+Jeddah'
-    },
-    {
-      id: 'dammam-khobar-hwy',
-      region: 'eastern',
-      cityAr: 'الدمام والخبر',
-      nameAr: 'مركز طريق الخبر السريع المتكامل',
-      nameEn: 'Khobar Highway Integrated Center',
-      addressAr: 'طريق الملك فهد السريع بين الدمام والخبر',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 8:00 ص - 8:00 م',
-      servicesAr: ['صالة عرض كبرى', 'مركز صيانة دورية', 'مبيعات جملة وأساطيل'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Dammam+Khobar'
-    },
-    {
-      id: 'makkah-kakiyyah',
-      region: 'western',
-      cityAr: 'مكة المكرمة',
-      nameAr: 'مركز الكعكية المعتمد',
-      nameEn: 'Kakiyyah Authorized Center',
-      addressAr: 'حي الكعكية، الطريق الدائري الرابع، مكة المكرمة',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 8:00 ص - 8:00 م',
-      servicesAr: ['صالة عرض', 'صيانة سريعة', 'قطع غيار أصلية'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Makkah'
-    },
-    {
-      id: 'abha-khamis',
-      region: 'southern',
-      cityAr: 'أبها وخميس مشيط',
-      nameAr: 'مجمع طريق الملك فهد بالجنوب',
-      nameEn: 'King Fahd Road Southern Complex',
-      addressAr: 'طريق الملك فهد، بين أبها وخميس مشيط',
-      phone: '8004400055',
-      hoursAr: 'السبت - الخميس: 8:00 ص - 7:30 م',
-      servicesAr: ['صالة عرض سيارات الدفع الرباعي', 'صيانة معتمدة', 'خدمات تمويل'],
-      mapUrl: 'https://maps.google.com/?q=Solina+Khamis+Mushait'
-    }
-  ];
+  const branches = showrooms.map(s => ({
+    id: s.id,
+    region: s.region,
+    cityAr: s.city,
+    nameAr: s.name,
+    nameEn: s.nameEn,
+    addressAr: s.address,
+    phone: s.phone,
+    hoursAr: s.workingHours,
+    servicesAr: s.services,
+    mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.mapQuery || s.name)}`
+  }));
 
   const filteredBranches = branches.filter(b => {
     const matchesRegion = selectedRegion === 'all' || b.region === selectedRegion;

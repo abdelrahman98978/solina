@@ -24,8 +24,9 @@ import {
   Scale,
   Smartphone
 } from 'lucide-react';
-import { VEHICLES, type Vehicle } from '../data/toyotaData';
+import { type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 
 interface HeaderProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -49,6 +50,16 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate
 }) => {
   const { language, toggleLanguage, isRTL } = useLanguage();
+  const { vehicles } = useAdminData();
+  const handleTriggerAdmin = () => {
+    if (onOpenAdmin) {
+      onOpenAdmin();
+    } else if (onNavigate) {
+      onNavigate('admin');
+    } else {
+      window.location.href = '/admin';
+    }
+  };
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -59,9 +70,10 @@ export const Header: React.FC<HeaderProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   // Mega Menu Filters
+  const [filterBrand, setFilterBrand] = useState<string>('all');
   const [filterBodyType, setFilterBodyType] = useState<string>('all');
   const [filterPowertrain, setFilterPowertrain] = useState<string>('all');
-  const [maxPrice, setMaxPrice] = useState<number>(350000);
+  const [maxPrice, setMaxPrice] = useState<number>(1500000);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   const headerRef = useRef<HTMLDivElement>(null);
@@ -87,17 +99,21 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   // Filter vehicles for the mega menu
-  // Filter Solina models for fleet mega menu
-  const toyotaOnlyVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
-
-  const filteredMegaVehicles = toyotaOnlyVehicles.filter(v => {
+  const filteredMegaVehicles = vehicles.filter(v => {
+    if (filterBrand !== 'all') {
+      if (filterBrand === 'toyota' && v.brand && v.brand !== 'toyota') return false;
+      if (filterBrand === 'jetour' && v.brand !== 'jetour') return false;
+      if (filterBrand === 'byd' && v.brand !== 'byd') return false;
+      if (filterBrand === 'hyundai' && v.brand !== 'hyundai') return false;
+      if (filterBrand === 'lexus' && v.brand !== 'lexus') return false;
+    }
     if (filterBodyType !== 'all') {
       if (filterBodyType === 'sedan' && v.category !== 'sedan' && v.category !== 'gr') return false;
-      if (filterBodyType === 'suv' && v.category !== 'suv') return false;
+      if (filterBodyType === 'suv' && !['suv', 'crossover', 'family'].includes(v.category)) return false;
       if (filterBodyType === 'commercial' && v.category !== 'commercial') return false;
     }
     if (filterPowertrain !== 'all') {
-      if (filterPowertrain === 'hybrid' && !v.isHybrid && v.powertrain !== 'هايبرد') return false;
+      if (filterPowertrain === 'hybrid' && !v.isHybrid && v.powertrain !== 'هايبرد' && v.powertrain !== 'كهربائي') return false;
       if (filterPowertrain === 'petrol' && v.powertrain !== 'بنزين') return false;
       if (filterPowertrain === 'diesel' && v.powertrain !== 'ديزل') return false;
     }
@@ -106,6 +122,9 @@ export const Header: React.FC<HeaderProps> = ({
   });
 
   const getModelTitle = (v: any) => {
+    if (language === 'ar') {
+      return v.nameAr.replace(/سولينا /g, '');
+    }
     if (v.id.includes('yaris')) return `Yaris ${v.year}`;
     if (v.id.includes('corolla-cross')) return `Corolla Cross ${v.year}`;
     if (v.id.includes('corolla')) return `Corolla ${v.year}`;
@@ -142,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
     });
 
   const suvVehicles = filteredMegaVehicles
-    .filter(v => v.category === 'suv')
+    .filter(v => ['suv', 'crossover', 'family', 'hybrid'].includes(v.category))
     .sort((a, b) => {
       const idxA = suvOrder.indexOf(a.id);
       const idxB = suvOrder.indexOf(b.id);
@@ -296,15 +315,13 @@ export const Header: React.FC<HeaderProps> = ({
                     <Smartphone className="w-4 h-4 text-red-600" />
                     <span>{language === 'ar' ? 'تطبيق سولينا التفاعلي' : 'Solina Interactive App'}</span>
                   </button>
-                  {onOpenAdmin && (
-                    <button onClick={() => { onOpenAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 transition-colors text-right rounded-xl my-1 cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-blue-600" />
-                        <span>{language === 'ar' ? 'نظام إدارة الوكالة والـ ERP' : 'Dealership ERP & DMS'}</span>
-                      </div>
-                      <span className="px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[9px] font-mono">ZATCA 2</span>
-                    </button>
-                  )}
+                  <button onClick={() => { handleTriggerAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 transition-colors text-right rounded-xl my-1 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-blue-600" />
+                      <span>{language === 'ar' ? 'نظام إدارة الوكالة والـ ERP' : 'Dealership ERP & DMS'}</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[9px] font-mono">ZATCA 2</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -491,6 +508,35 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Filter Sidebar on Right (3 columns) */}
               <div className="lg:col-span-3 bg-[#F8F9FA] rounded-2xl p-6 border border-gray-200/60 space-y-6 order-1 lg:order-2 h-fit text-right">
                 
+                {/* 0. العلامة التجارية (Brand) */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 mb-3">
+                    {language === 'ar' ? 'العلامة التجارية' : 'Brand'}
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'all', label: 'الجميع' },
+                      { id: 'toyota', label: 'سولينا' },
+                      { id: 'jetour', label: 'جيتور' },
+                      { id: 'byd', label: 'بي واي دي' },
+                      { id: 'hyundai', label: 'هيونداي' },
+                      { id: 'lexus', label: 'لكزس' }
+                    ].map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setFilterBrand(tab.id)}
+                        className={`text-xs px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer ${
+                          filterBrand === tab.id
+                            ? 'bg-[#0056B3] text-white shadow-sm'
+                            : 'bg-white text-gray-800 border border-gray-300 hover:border-black'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* 1. نوع الهيكل (Body Type) */}
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-3">
@@ -527,7 +573,7 @@ export const Header: React.FC<HeaderProps> = ({
                     {[
                       { id: 'all', label: 'الجميع' },
                       { id: 'petrol', label: 'بنزين' },
-                      { id: 'hybrid', label: 'هجين' },
+                      { id: 'hybrid', label: 'هجين / كهربائي' },
                       { id: 'diesel', label: 'ديزل' }
                     ].map(tab => (
                       <button
@@ -558,15 +604,15 @@ export const Header: React.FC<HeaderProps> = ({
                   <input
                     type="range"
                     min="65000"
-                    max="350000"
-                    step="5000"
+                    max="1500000"
+                    step="10000"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(Number(e.target.value))}
                     className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0056B3]"
                   />
                   <div className="flex justify-between text-[11px] text-gray-500 mt-1 font-mono">
                     <span>66,987 ﷼</span>
-                    <span>334,535 ﷼</span>
+                    <span>1,500,000 ﷼</span>
                   </div>
                 </div>
 
@@ -964,19 +1010,17 @@ export const Header: React.FC<HeaderProps> = ({
             >
               حجز خدمة صيانة
             </button>
-            {onOpenAdmin && (
-              <button
-                onClick={() => {
-                  onOpenAdmin();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full bg-slate-900 border border-blue-500/30 text-white py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4 text-blue-400" />
-                <span>نظام إدارة الوكالة والـ ERP</span>
-                <span className="px-1.5 py-0.2 rounded bg-blue-600 text-[10px]">ZATCA 2</span>
-              </button>
-            )}
+            <button
+              onClick={() => {
+                handleTriggerAdmin();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full bg-slate-900 border border-blue-500/30 text-white py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <span>نظام إدارة الوكالة والـ ERP</span>
+              <span className="px-1.5 py-0.2 rounded bg-blue-600 text-[10px]">ZATCA 2</span>
+            </button>
           </div>
         </div>
       )}

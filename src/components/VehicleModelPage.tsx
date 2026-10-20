@@ -17,7 +17,10 @@ import {
   Share2,
   CheckCircle2,
   Calendar,
-  X
+  X,
+  BookOpen,
+  Printer,
+  Camera
 } from 'lucide-react';
 import { type Vehicle, type VehicleGrade, VEHICLES, getBrandMeta } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
@@ -25,6 +28,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { NavigationControls } from './NavigationControls';
 import { SectionDivider } from './SectionDivider';
+import { VehicleCatalogModal } from './VehicleCatalogModal';
 
 interface VehicleModelPageProps {
   vehicle: Vehicle;
@@ -54,16 +58,30 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
   const [selectedGradeIndex, setSelectedGradeIndex] = useState<number>(0);
   const [gradeFilter, setGradeFilter] = useState<'all' | 'petrol' | 'hybrid' | 'diesel'>('all');
+  const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false);
+  const [selectedInteriorShotIndex, setSelectedInteriorShotIndex] = useState<number>(0);
+  const [galleryTab, setGalleryTab] = useState<'interior' | 'exterior'>('interior');
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    setSelectedColorIndex(0);
+    setSelectedGradeIndex(0);
+    setSelectedInteriorShotIndex(0);
   }, [vehicle.id]);
 
   const activeColor = vehicle.colors[selectedColorIndex] || vehicle.colors[0];
   const activeGrade = vehicle.grades[selectedGradeIndex] || vehicle.grades[0];
+  const interiorShots = vehicle.interiorGallery && vehicle.interiorGallery.length > 0
+    ? vehicle.interiorGallery
+    : [
+        { id: 'cockpit', image: vehicle.interiorImage || vehicle.cardImage, titleAr: 'قمرة القيادة والشاشة الرقمية', titleEn: 'Digital Cockpit & Infotainment', descAr: '', descEn: '' },
+        { id: 'seats', image: vehicle.interiorImage || vehicle.cardImage, titleAr: 'المقاعد الأمامية الفاخرة', titleEn: 'Luxury Front Seats', descAr: '', descEn: '' },
+        { id: 'rear', image: vehicle.interiorImage || vehicle.cardImage, titleAr: 'مقصورة الركاب الخلفية', titleEn: 'Rear Passenger Lounge', descAr: '', descEn: '' },
+        { id: 'console', image: vehicle.interiorImage || vehicle.cardImage, titleAr: 'الكونسول الوسطي والإضاءة المحيطية', titleEn: 'Center Console & Ambient Lighting', descAr: '', descEn: '' }
+      ];
 
   const similarVehicles = VEHICLES.filter(v => 
-    v.id !== vehicle.id && (v.category === vehicle.category || ['suv', 'crossover'].includes(v.category))
+    v.id !== vehicle.id && (v.brand === vehicle.brand || v.category === vehicle.category || ['suv', 'crossover'].includes(v.category))
   ).slice(0, 4);
 
   // Model Specific Hero Background Banner
@@ -82,45 +100,36 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
       {
         titleAr: 'جنوط ألمنيوم مصقولة رياضية',
         titleEn: 'Polished Sport Alloy Wheels',
-        descAr: 'جنوط بتصميم ديناميكي هوائي قياس 17 بوصة تعزز الثبات والجاذبية على الطرقات.',
-        descEn: '17-inch aerodynamic dual-tone alloy wheels delivering peak stability and road presence.',
-        image: vehicle.cardImage
+        descAr: 'جنوط بتصميم ديناميكي هوائي تعزز الثبات والجاذبية على الطرقات.',
+        descEn: 'Aerodynamic dual-tone alloy wheels delivering peak stability and road presence.',
+        image: vehicle.colors?.[1]?.image || vehicle.cardImage
       },
       {
         titleAr: 'أنوار خلفية LED عريضة متصلة',
         titleEn: 'Connected Signature LED Taillamps',
         descAr: 'إضاءة خلفية مميزة ثلاثية الأبعاد تمنح السيارة هوية عصرية لافتة للأنظار.',
         descEn: 'Distinctive 3D rear light signature giving the vehicle an unmistakable modern presence.',
-        image: vehicle.cardImage
+        image: vehicle.colors?.[2]?.image || vehicle.cardImage
       }
     ],
-    interior: [
-      {
-        titleAr: 'شاشة وسائط متعددة متطورة تدعم Apple CarPlay',
-        titleEn: 'Advanced Multimedia Screen with Wireless Apple CarPlay',
-        descAr: 'شاشة لمس عالية الدقة قياس 8 بوصة مع نظام ملاحة متكامل وربط ذكي فوري.',
-        descEn: 'HD 8-inch touchscreen with full smartphone integration and smart navigation.',
-        image: vehicle.interiorImage || vehicle.cardImage
-      },
-      {
-        titleAr: 'مقصورة ذكية متعددة الاستخدامات مع سعة تخزين مرنة',
-        titleEn: 'Versatile Smart Cabin with Flexible Cargo Floor',
-        descAr: 'مقاعد مريحة مع إمكانية طي الصف الثاني بنسبة 60:40 لتوفير مساحة أمتعة رحبة.',
-        descEn: 'Ergonomic seating with 60:40 split-fold rear seats maximizing cargo versatility.',
-        image: vehicle.interiorImage || vehicle.cardImage
-      }
-    ],
+    interior: interiorShots.slice(0, 3).map((shot) => ({
+      titleAr: shot.titleAr,
+      titleEn: shot.titleEn,
+      descAr: shot.descAr || 'تصميم داخلي فاخر يجمع بين الجلود الطبيعية والشاشات الذكية والرحابة الفائقة.',
+      descEn: shot.descEn || 'Bespoke luxury cabin combining fine leather upholstery, smart displays, and generous space.',
+      image: shot.image
+    })),
     performance: [
       {
-        titleAr: 'كفاءة استهلاك وقود استثنائية مع ناقل CVT التتابعي',
-        titleEn: 'Benchmark Fuel Efficiency with Direct Shift CVT',
+        titleAr: 'كفاءة استهلاك وقود استثنائية ومنظومة دفع ذكية',
+        titleEn: 'Benchmark Fuel Efficiency & Smart Powertrain',
         descAr: `استهلاك وقود رائد يصل إلى ${vehicle.fuelEconomy} لتجربة قيادة اقتصادية وحيوية.`,
         descEn: `Exceptional fuel economy up to ${vehicle.fuelEconomy} delivering responsive and economical drive.`,
         image: vehicle.cardImage
       },
       {
-        titleAr: 'محرك مدمج نشط وقوي',
-        titleEn: 'Responsive Compact Powertrain',
+        titleAr: 'محرك نشط وقوة استثنائية على كافة الطرق',
+        titleEn: 'Responsive Powertrain & All-Road Confidence',
         descAr: `${vehicle.engineSpec} يولد ${vehicle.horsepower} وعزم دوران ${vehicle.torque} لانطلاقة واثقة.`,
         descEn: `${vehicle.engineSpec} generating ${vehicle.horsepower} and ${vehicle.torque} for confident acceleration.`,
         image: vehicle.cardImage
@@ -130,15 +139,15 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
       {
         titleAr: 'نظام دخول وتشغيل ذكي بضغطة زر (Smart Keyless Entry)',
         titleEn: 'Push Button Smart Start & Keyless Entry',
-        descAr: 'سهولة الدخول والتشغيل دون الحاجة لإخراج المفتاح من جيبك.',
+        descAr: 'سهولة الدخول والتشغيل دون الحاجة لإخراج المفتاح من جيبك مع تحكم ذكي بالمناخ.',
         descEn: 'Seamless entry and ignition without ever taking the smart key out of your pocket.',
-        image: vehicle.cardImage
+        image: interiorShots[0]?.image || vehicle.interiorImage || vehicle.cardImage
       },
       {
         titleAr: 'أنظمة الأمان النشطة والوسائد الهوائية المتعددة',
         titleEn: 'Active Safety Shield & Multiple Airbags',
-        descAr: 'كاميرا رؤية خلفية مع حساسات ركن ونظام التحكم في ثبات المركبة VSC ونظام المساعدة على صعود المرتفعات HAC.',
-        descEn: 'Rear camera with parking sensors, Vehicle Stability Control (VSC), and Hill-start Assist Control (HAC).',
+        descAr: `${brandMeta.safetySuite} مع كاميرا 360 درجة وحساسات ركن ذكية.`,
+        descEn: `${brandMeta.safetySuiteEn} with 360 surround camera and smart parking sensors.`,
         image: vehicle.cardImage
       }
     ]
@@ -194,10 +203,18 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
             </button>
 
             <button
+              onClick={() => setIsCatalogOpen(true)}
+              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-gray-100 text-gray-900 font-bold text-base shadow-lg transition-all duration-200 cursor-pointer text-center flex items-center justify-center gap-2"
+            >
+              <BookOpen className="w-5 h-5 text-[#0056B3]" />
+              <span>{language === 'ar' ? 'الكتالوج الرسمي والداخلية PDF' : 'Official Catalog & Interior PDF'}</span>
+            </button>
+
+            <button
               onClick={() => onOpenTestDrive(vehicle.nameAr)}
               className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-black/70 hover:bg-black text-white font-bold text-base border border-white/40 hover:border-white transition-all duration-200 cursor-pointer text-center"
             >
-              {language === 'ar' ? 'طلب اتصال' : 'Request a Callback'}
+              {language === 'ar' ? 'طلب اتصال / تجربة قيادة' : 'Request Callback / Test Drive'}
             </button>
           </div>
         </section>
@@ -219,8 +236,8 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 { id: 'features', label: language === 'ar' ? 'المميزات' : 'Features' },
                 { id: 'grades', label: language === 'ar' ? 'الفئات' : 'Grades' },
                 { id: 'colors', label: language === 'ar' ? 'الألوان' : 'Colors' },
-                { id: 'gallery', label: language === 'ar' ? 'معرض الصور' : 'Gallery' },
-                { id: 'offers', label: language === 'ar' ? 'عروض' : 'Offers' }
+                { id: 'gallery', label: language === 'ar' ? 'معرض الصور والداخلية' : 'Interior & Gallery' },
+                { id: 'offers', label: language === 'ar' ? 'الضمان والعروض' : 'Warranty & Offers' }
               ].map((item) => {
                 const isActive = activeSection === item.id;
                 return (
@@ -295,6 +312,24 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     <span className="text-[10px] text-gray-500 font-arabic block mb-1">القوة القصوى</span>
                     <span className="text-base font-bold text-gray-900">{vehicle.horsepower}</span>
                   </div>
+                </div>
+
+                {/* Quick Catalog & Interior Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    onClick={() => setIsCatalogOpen(true)}
+                    className="px-6 py-3 rounded-xl bg-[#0056B3] hover:bg-[#004085] text-white text-xs md:text-sm font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    <span>{language === 'ar' ? 'استعراض الكتالوج الرقمي الكامل والداخلية' : 'Open Interactive Digital Catalog & Interior'}</span>
+                  </button>
+                  <button
+                    onClick={() => scrollToAnchor('gallery')}
+                    className="px-5 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs md:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4 text-[#0056B3]" />
+                    <span>{language === 'ar' ? `معرض المقصورة الداخلية (${interiorShots.length} زوايا)` : `Interior Cabin Gallery (${interiorShots.length} Views)`}</span>
+                  </button>
                 </div>
               </div>
 
@@ -498,10 +533,10 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
         <section id="colors" className="py-16 bg-gray-50 border-b border-gray-200">
           <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center">
             <h2 className="text-3xl md:text-4xl font-normal text-black font-arabic mb-2 tracking-tight">
-              {language === 'ar' ? 'استكشف وخصص' : 'Explore & Customize'}
+              {language === 'ar' ? 'استكشف وخصص الألوان الخارجية' : 'Explore & Customize Exterior Colors'}
             </h2>
             <p className="text-sm text-gray-500 mb-8">
-              {language === 'ar' ? 'اختر لون الطلاء المفضل لاستعراض مظهر السيارة' : 'Select paint color to preview vehicle exterior'}
+              {language === 'ar' ? 'اختر لون الطلاء المصنعي لاستعراض مظهر السيارة مع الكود اللوني الرسمي' : 'Select factory paint color to preview vehicle exterior'}
             </p>
 
             {/* Color Swatches Palette */}
@@ -512,9 +547,9 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                   onClick={() => setSelectedColorIndex(idx)}
                   title={col.name}
                   style={{ backgroundColor: col.hex }}
-                  className={`w-9 h-9 rounded-full border-2 transition-all cursor-pointer shadow-sm ${
+                  className={`w-10 h-10 rounded-full border-2 transition-all cursor-pointer shadow-sm ${
                     selectedColorIndex === idx
-                      ? 'scale-125 border-[#0056B3] ring-2 ring-red-400'
+                      ? 'scale-125 border-[#0056B3] ring-2 ring-blue-300'
                       : 'border-white hover:scale-110'
                   }`}
                 />
@@ -522,23 +557,157 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
             </div>
 
             {/* Selected Color Name */}
-            <div className="text-base font-bold text-gray-900 mb-8">
-              {activeColor.name}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gray-200 shadow-xs text-sm font-bold text-gray-900 mb-8">
+              <span className="w-3.5 h-3.5 rounded-full border border-gray-300" style={{ backgroundColor: activeColor.hex }} />
+              <span>{language === 'ar' ? activeColor.name : activeColor.nameEn}</span>
+              <span className="text-xs font-mono text-gray-400">({activeColor.hex})</span>
             </div>
 
             {/* Full Width Car Visual Stage */}
-            <div className="max-w-4xl mx-auto h-72 sm:h-96 flex items-center justify-center p-6 bg-white rounded-3xl border border-gray-200 shadow-sm">
+            <div className="max-w-4xl mx-auto h-72 sm:h-96 flex items-center justify-center p-6 bg-white rounded-3xl border border-gray-200 shadow-sm relative overflow-hidden">
+              <div
+                className="absolute w-72 h-72 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-500"
+                style={{ backgroundColor: activeColor.hex }}
+              />
               <img
                 src={activeColor.image || vehicle.cardImage}
                 alt={activeColor.name}
-                className="max-h-full max-w-full object-contain filter drop-shadow-2xl transition-all duration-300"
+                className="relative z-10 max-h-full max-w-full object-contain filter drop-shadow-2xl transition-all duration-300"
               />
             </div>
           </div>
         </section>
 
+        {/* 7.2. Interactive Interior & Exterior Gallery Section ("معرض الصور والمقصورة الداخلية") */}
+        <section id="gallery" className="py-16 bg-white border-b border-gray-200">
+          <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-black font-arabic mb-2 tracking-tight">
+                  {language === 'ar' ? 'معرض المقصورة الداخلية والصور التفصيلية' : 'Interior Cabin & Exterior Gallery'}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {language === 'ar'
+                    ? `استكشف أدق تفاصيل المقصورة الداخلية الفاخرة والشاشات الرقمية والمقاعد في ${vehicle.nameAr}`
+                    : `Explore every detail of the luxury cabin, digital displays, and seating inside ${vehicle.nameEn}`}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 bg-gray-100 p-1.5 rounded-2xl">
+                <button
+                  onClick={() => setGalleryTab('interior')}
+                  className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                    galleryTab === 'interior' ? 'bg-[#0056B3] text-white shadow-sm' : 'text-gray-700 hover:text-black'
+                  }`}
+                >
+                  {language === 'ar' ? `المقصورة الداخلية (${interiorShots.length})` : `Interior Cabin (${interiorShots.length})`}
+                </button>
+                <button
+                  onClick={() => setGalleryTab('exterior')}
+                  className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                    galleryTab === 'exterior' ? 'bg-[#0056B3] text-white shadow-sm' : 'text-gray-700 hover:text-black'
+                  }`}
+                >
+                  {language === 'ar' ? `الصور والألوان الخارجية (${vehicle.colors.length})` : `Exterior Gallery (${vehicle.colors.length})`}
+                </button>
+                <button
+                  onClick={() => setIsCatalogOpen(true)}
+                  className="px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-gray-900 text-white hover:bg-black transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>{language === 'ar' ? 'الكتالوج الكامل PDF' : 'Full PDF Catalog'}</span>
+                </button>
+              </div>
+            </div>
+
+            {galleryTab === 'interior' ? (
+              <div className="space-y-6">
+                {/* Main Active Interior Stage */}
+                <div className="relative h-[360px] sm:h-[480px] rounded-3xl overflow-hidden bg-gray-950 border border-gray-200 shadow-lg">
+                  <img
+                    src={interiorShots[selectedInteriorShotIndex]?.image || vehicle.interiorImage || vehicle.cardImage}
+                    alt={interiorShots[selectedInteriorShotIndex]?.titleAr || vehicle.nameAr}
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="absolute bottom-6 right-6 left-6 text-white flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <div>
+                      <span className="inline-block px-3 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold mb-2">
+                        {language === 'ar'
+                          ? `زاوية المقصورة ${selectedInteriorShotIndex + 1} من ${interiorShots.length}`
+                          : `Cabin View ${selectedInteriorShotIndex + 1} of ${interiorShots.length}`}
+                      </span>
+                      <h3 className="text-xl md:text-2xl font-black">
+                        {language === 'ar'
+                          ? interiorShots[selectedInteriorShotIndex]?.titleAr
+                          : interiorShots[selectedInteriorShotIndex]?.titleEn}
+                      </h3>
+                      <p className="text-xs md:text-sm text-gray-300 mt-1 max-w-2xl">
+                        {language === 'ar'
+                          ? (interiorShots[selectedInteriorShotIndex]?.descAr || vehicle.catalogSpecs?.infotainmentAndAudioAr)
+                          : (interiorShots[selectedInteriorShotIndex]?.descEn || vehicle.catalogSpecs?.infotainmentAndAudioEn)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4-Angle Interior Thumbnails */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {interiorShots.map((shot, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedInteriorShotIndex(idx)}
+                      className={`group rounded-2xl overflow-hidden border-2 text-start transition-all cursor-pointer bg-gray-50 ${
+                        selectedInteriorShotIndex === idx
+                          ? 'border-[#0056B3] ring-2 ring-blue-300 shadow-md'
+                          : 'border-gray-200 opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      <div className="h-28 sm:h-36 overflow-hidden">
+                        <img
+                          src={shot.image}
+                          alt={shot.titleAr}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-3 bg-white">
+                        <p className="text-xs font-bold text-gray-900 truncate">
+                          {language === 'ar' ? shot.titleAr : shot.titleEn}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {vehicle.colors.map((col, idx) => (
+                  <div
+                    key={col.id}
+                    onClick={() => setSelectedColorIndex(idx)}
+                    className={`rounded-2xl p-5 border transition-all cursor-pointer bg-gray-50 hover:bg-white ${
+                      selectedColorIndex === idx ? 'border-[#0056B3] shadow-md' : 'border-gray-200'
+                    }`}
+                  >
+                    <div className="h-44 flex items-center justify-center mb-4">
+                      <img src={col.image || vehicle.cardImage} alt={col.name} className="max-h-40 object-contain drop-shadow-md" />
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-200/80">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full border border-gray-300" style={{ backgroundColor: col.hex }} />
+                        <span className="text-xs font-bold text-gray-900">{language === 'ar' ? col.name : col.nameEn}</span>
+                      </div>
+                      <span className="text-[11px] font-mono text-gray-400">{col.hex}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* 7.5. Official Manufacturer Fact Sheet & Warranty */}
-        <section className="py-14 bg-gradient-to-br from-gray-900 to-black text-white border-b border-gray-800">
+        <section id="offers" className="py-14 bg-gradient-to-br from-gray-900 to-black text-white border-b border-gray-800">
           <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
             <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-md">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
@@ -580,6 +749,14 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 </div>
 
                 <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto flex-shrink-0">
+                  <button
+                    onClick={() => setIsCatalogOpen(true)}
+                    className="px-8 py-3.5 rounded-full bg-white text-gray-900 hover:bg-gray-100 font-bold text-sm shadow-lg transition-all text-center cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <BookOpen className="w-4 h-4 text-[#0056B3]" />
+                    <span>{language === 'ar' ? 'فتح الكتالوج الرسمي والداخلية PDF' : 'Open Official Catalog PDF'}</span>
+                  </button>
+
                   <button
                     onClick={() => onOpenTestDrive(vehicle.nameAr)}
                     className="px-8 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm shadow-lg transition-all text-center cursor-pointer"
@@ -646,6 +823,14 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
           </div>
         </section>
       </main>
+
+      {/* Digital Catalog & Interior Modal */}
+      <VehicleCatalogModal
+        vehicle={vehicle}
+        isOpen={isCatalogOpen}
+        onClose={() => setIsCatalogOpen(false)}
+        onOpenTestDrive={onOpenTestDrive}
+      />
 
       {/* 9. Official Footer */}
       <Footer />

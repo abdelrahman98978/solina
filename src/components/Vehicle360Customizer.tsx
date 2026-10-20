@@ -38,40 +38,15 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
 }) => {
   const { language, formatPrice, isRTL } = useLanguage();
   
-  // Showcase Fleet (Flagship Multi-Brand Global Fleet)
-  const showcaseModels = VEHICLES.filter(v => 
-    [
-      'mercedes-s500-2026', 
-      'lexus-lx600-2026', 
-      'mercedes-g63-2026', 
-      'porsche-cayenne-turbo-2026', 
-      'range-rover-sv-2026', 
-      'lucid-air-sapphire-2026',
-      'audi-rsq8-2026',
-      'nissan-patrol-nismo-2026',
-      'cadillac-escalade-v-2026',
-      'ford-raptor-r-2026',
-      'gmc-yukon-denali-2026',
-      'bmw-735i-2026', 
-      'genesis-g90-2026', 
-      'nissan-gtr-nismo-2026',
-      'ford-mustang-darkhorse-2026',
-      'hyundai-palisade-2026',
-      'hyundai-santafe-2026',
-      'lexus-es300h-2026',
-      'lc300-2026', 
-      'prado-2026', 
-      'camry-2026', 
-      'crown-2026', 
-      'gr86-2026'
-    ].includes(v.id)
-  );
+  // Showcase Fleet (Complete Multi-Brand Global Fleet including Jetour, BYD, Hyundai, Solina, Lexus)
+  const showcaseModels = VEHICLES;
 
   const [activeBrandTab, setActiveBrandTab] = useState<string>('all');
-  const [activeModelId, setActiveModelId] = useState<string>('mercedes-s500-2026');
+  const [activeModelId, setActiveModelId] = useState<string>('jetour-t2-2026');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'grades'>('exterior');
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
   const [selectedGradeIndex, setSelectedGradeIndex] = useState<number>(0);
+  const [selectedInteriorShotIdx, setSelectedInteriorShotIdx] = useState<number>(0);
   const [interiorTheme, setInteriorTheme] = useState<'tan' | 'black' | 'red' | 'saddle'>('tan');
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const [angleOffset, setAngleOffset] = useState<number>(0);
@@ -80,6 +55,9 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
   const isLexus = activeVehicle.brand === 'lexus';
   const activeColor = activeVehicle.colors[selectedColorIndex] || activeVehicle.colors[0];
   const activeGrade = activeVehicle.grades?.[selectedGradeIndex] || activeVehicle.grades?.[0];
+  const interiorShots = activeVehicle.interiorGallery && activeVehicle.interiorGallery.length > 0
+    ? activeVehicle.interiorGallery
+    : [{ id: 'default', image: activeVehicle.interiorImage || activeVehicle.cardImage, titleAr: 'المقصورة الداخلية', titleEn: 'Interior Cabin', descAr: '', descEn: '' }];
 
   const filteredShowcase = showcaseModels.filter(m => {
     if (activeBrandTab === 'all') return true;
@@ -137,6 +115,30 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               }`}
             >
               {language === 'ar' ? 'الكل' : 'All'}
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('jetour')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'jetour' ? 'bg-orange-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {language === 'ar' ? 'جيتور JETOUR' : 'JETOUR'}
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('byd')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'byd' ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {language === 'ar' ? 'بي واي دي BYD' : 'BYD'}
+            </button>
+            <button
+              onClick={() => setActiveBrandTab('hyundai')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeBrandTab === 'hyundai' ? 'bg-sky-700 text-white shadow-md' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {language === 'ar' ? 'هيونداي HYUNDAI' : 'HYUNDAI'}
             </button>
             <button
               onClick={() => setActiveBrandTab('toyota')}
@@ -212,14 +214,6 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               GMC
             </button>
             <button
-              onClick={() => setActiveBrandTab('hyundai')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'hyundai' ? 'bg-sky-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              HYUNDAI
-            </button>
-            <button
               onClick={() => setActiveBrandTab('lucid')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeBrandTab === 'lucid' ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
@@ -266,6 +260,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                   setActiveModelId(m.id);
                   setSelectedColorIndex(0);
                   setSelectedGradeIndex(0);
+                  setSelectedInteriorShotIdx(0);
                 }}
                 className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
                   isSelected
@@ -365,50 +360,41 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               )}
 
               {viewMode === 'interior' && (
-                <div className="w-full max-w-xl bg-black/80 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/15 text-center space-y-5 animate-in fade-in">
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-xs text-gray-300 font-bold">
-                      {language === 'ar' ? 'اختر خامة ولون مقاعد الجلد:' : 'Select Bespoke Leather Trim:'}
-                    </span>
-                    {[
-                      { id: 'tan', label: 'جملي فاخر Saddle Tan', hex: '#8B5A2B' },
-                      { id: 'black', label: 'أسود ميكا Obsidian Black', hex: '#1A1A1A' },
-                      { id: 'red', label: 'أحمر رياضي Flare Red', hex: '#8B0000' },
-                      { id: 'saddle', label: 'شامبين عاجي Ivory Cream', hex: '#D2B48C' }
-                    ].map(c => (
-                      <button
-                        key={c.id}
-                        onClick={() => setInteriorTheme(c.id as any)}
-                        title={c.label}
-                        style={{ backgroundColor: c.hex }}
-                        className={`w-7 h-7 rounded-full border border-white/40 transition-transform cursor-pointer ${
-                          interiorTheme === c.id 
-                            ? 'ring-2 ring-blue-400 ring-offset-2 ring-offset-black scale-125 shadow-lg' 
-                            : 'hover:scale-110 opacity-80'
-                        }`}
-                      />
-                    ))}
+                <div className="w-full max-w-2xl bg-black/80 backdrop-blur-xl rounded-3xl p-5 md:p-6 border border-white/15 text-center space-y-4 animate-in fade-in">
+                  <div className="relative h-56 sm:h-64 rounded-2xl overflow-hidden border border-white/15">
+                    <img
+                      src={interiorShots[selectedInteriorShotIdx]?.image || activeVehicle.interiorImage || activeVehicle.cardImage}
+                      alt={activeVehicle.nameAr}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                    <div className="absolute bottom-3 right-4 left-4 text-start">
+                      <span className="text-sm font-black text-white block">
+                        {language === 'ar'
+                          ? interiorShots[selectedInteriorShotIdx]?.titleAr
+                          : interiorShots[selectedInteriorShotIdx]?.titleEn}
+                      </span>
+                      <span className="text-[11px] text-gray-300">
+                        {language === 'ar'
+                          ? (interiorShots[selectedInteriorShotIdx]?.descAr || activeVehicle.catalogSpecs?.infotainmentAndAudioAr)
+                          : (interiorShots[selectedInteriorShotIdx]?.descEn || activeVehicle.catalogSpecs?.infotainmentAndAudioEn)}
+                      </span>
+                    </div>
                   </div>
 
-                  <div 
-                    className="h-52 rounded-2xl border border-white/10 flex flex-col items-center justify-center p-6 transition-colors duration-500 relative overflow-hidden shadow-inner"
-                    style={{
-                      backgroundColor: interiorTheme === 'tan' ? '#2B1A0E' : interiorTheme === 'red' ? '#2E0B10' : interiorTheme === 'saddle' ? '#2A241C' : '#141414'
-                    }}
-                  >
-                    <Crown className="w-6 h-6 text-[#D4AF37] mb-2 animate-pulse" />
-                    <span className="text-base font-black text-white mb-1 font-display">
-                      {language === 'ar' ? `مقصورة ${activeVehicle.nameAr} الحصرية` : `${activeVehicle.nameEn} Executive Cabin`}
-                    </span>
-                    <span className="text-xs text-gray-300 max-w-md">
-                      {language === 'ar' 
-                        ? 'جلد نابا طبيعي مخرم مع خاصية التبريد والتدليك، شاشات رقمية مزدوجة، ونظام صوتي محيطي متقدم.' 
-                        : 'Handcrafted Semi-Aniline Leather with Climate Control & Massage, Dual HD Panoramic Displays & Surround Sound.'}
-                    </span>
-                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[11px] font-mono text-gray-200 border border-white/10">
-                      <Sparkles className="w-3 h-3 text-yellow-400" />
-                      <span>{language === 'ar' ? 'إضاءة محيطية تفاعلية بـ 64 لوناً' : '64-Color Dynamic Ambient Light'}</span>
-                    </div>
+                  {/* 4-Angle Interior Selector */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {interiorShots.map((shot, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedInteriorShotIdx(idx)}
+                        className={`rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                          selectedInteriorShotIdx === idx ? 'border-blue-500 scale-105 shadow-md' : 'border-white/10 opacity-70 hover:opacity-100'
+                        }`}
+                      >
+                        <img src={shot.image} alt={shot.titleAr} className="w-full h-14 object-cover" />
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}

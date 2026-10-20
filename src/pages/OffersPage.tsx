@@ -13,6 +13,7 @@ import {
   CheckCircle2 
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { NavigationControls } from '../components/NavigationControls';
@@ -31,9 +32,29 @@ export const OffersPage: React.FC<OffersPageProps> = ({
   onSelectVehicle
 }) => {
   const { language, isRTL } = useLanguage();
+  const { offers: adminOffers } = useAdminData();
   const [selectedTab, setSelectedTab] = useState<'all' | 'service' | 'finance' | 'owners'>('all');
 
+  const mappedAdminOffers = adminOffers.map(o => ({
+    id: o.id,
+    category: o.category === 'صيانة' ? 'service' : o.category === 'تمويل' ? 'finance' : 'owners',
+    titleAr: o.title,
+    titleEn: o.titleEn,
+    subtitleAr: o.subtitle,
+    subtitleEn: o.subtitleEn,
+    badgeAr: o.badge,
+    badgeEn: o.badgeEn,
+    image: o.image,
+    expiryAr: o.validUntil,
+    expiryEn: o.validUntilEn,
+    actionType: o.category === 'صيانة' ? 'service' : 'testDrive',
+    modelName: o.title,
+    actionLabelAr: o.ctaText || 'احجز العرض الآن',
+    actionLabelEn: o.ctaTextEn || 'Claim Offer'
+  }));
+
   const offers = [
+    ...mappedAdminOffers,
     {
       id: 'hev-10years',
       category: 'owners',
@@ -41,12 +62,13 @@ export const OffersPage: React.FC<OffersPageProps> = ({
       titleEn: 'HEV Peace of Mind Up to 10 Years',
       subtitleAr: 'برنامج حماية بطارية الهايبرد الممتد حتى 10 سنوات أو 240,000 كم',
       subtitleEn: 'Extended Hybrid Battery Protection up to 10 Years or 240,000 km',
-      badgeAr: 'برنامج جميل كير',
-      badgeEn: 'Jameel Care Program',
+      badgeAr: 'برنامج سولينا كير',
+      badgeEn: 'Solina Care Program',
       image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/offers/hewvew/offer-card-arab-eng/offer-card-647x485-arab-eng/offer-card-647x485-arab.webp?w=1920&q=75&f=webp',
       expiryAr: 'يسري حتى نهاية 2026',
       expiryEn: 'Valid through end of 2026',
       actionType: 'service',
+      modelName: 'سولينا هايبرد HEV',
       actionLabelAr: 'حجز موعد خدمة',
       actionLabelEn: 'Book Service'
     },
@@ -66,73 +88,6 @@ export const OffersPage: React.FC<OffersPageProps> = ({
       modelName: 'سولينا فيلوز 2026',
       actionLabelAr: 'طلب تجربة قيادة',
       actionLabelEn: 'Book Test Drive'
-    },
-    {
-      id: 'camry-finance',
-      category: 'finance',
-      titleAr: 'عرض التمويل التأجيري على كامري 2026',
-      titleEn: 'Camry 2026 Lease Financing Campaign',
-      subtitleAr: 'قسط شهري ميسر يبدأ من 1,199 ﷼ بدون دفعة أولى وبدون رسوم إدارية',
-      subtitleEn: 'Monthly installment starting from SAR 1,199 with 0% down payment and 0% admin fees',
-      badgeAr: 'تمويل إسلامي معتمد',
-      badgeEn: 'Sharia Compliant',
-      image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/discover-toyota/camry-478x717.webp?w=1920&q=75&f=webp',
-      expiryAr: 'ساري حتى نفاد الكمية',
-      expiryEn: 'While stocks last',
-      actionType: 'testDrive',
-      modelName: 'سولينا كامري 2026',
-      actionLabelAr: 'طلب عرض سعر',
-      actionLabelEn: 'Request Quote'
-    },
-    {
-      id: 'express-service-offer',
-      category: 'service',
-      titleAr: 'خدمة الصيانة السريعة خلال 45 دقيقة',
-      titleEn: '45-Minute Express Maintenance Package',
-      subtitleAr: 'فحص 24 نقطة حيوية + تغيير زيت وفلتر سولينا الأصلي مع غسيل مجاني',
-      subtitleEn: '24-point vehicle inspection + Genuine Solina oil & filter replacement with complimentary wash',
-      badgeAr: 'خدمة سريعة معتمدة',
-      badgeEn: 'Certified Express',
-      image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/backtoschool/btsurben-cruiser--velozwebsite-bannersdt1870x850ar.webp?w=1920&q=75&f=webp',
-      expiryAr: 'مستمر في جميع الفروع',
-      expiryEn: 'Available across all branches',
-      actionType: 'service',
-      actionLabelAr: 'حجز صيانة سريعة',
-      actionLabelEn: 'Book Express Service'
-    },
-    {
-      id: 'trade-in-autohub',
-      category: 'finance',
-      titleAr: 'برنامج استبدال سيارتك المستعملة مع أوتوهب',
-      titleEn: 'Used Vehicle Trade-In Program via AutoHub',
-      subtitleAr: 'احصل على أعلى تثمين معتمد لسيارتك القديمة مع مكافأة استبدال تصل إلى 5,000 ﷼',
-      subtitleEn: 'Get the highest certified valuation for your old car with trade-in bonus up to SAR 5,000',
-      badgeAr: 'تثمين فوري معتمد',
-      badgeEn: 'Certified Instant Appraisal',
-      image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/offers/auto-hub-750x540.jpg',
-      expiryAr: 'ساري طوال العام',
-      expiryEn: 'Valid all year',
-      actionType: 'testDrive',
-      modelName: 'استبدال سيارة مستعملة',
-      actionLabelAr: 'طلب تثمين واستبدال',
-      actionLabelEn: 'Request Valuation'
-    },
-    {
-      id: 'fleet-corporate-offers',
-      category: 'owners',
-      titleAr: 'حلول أساطيل الشركات وعروض قطاع الأعمال',
-      titleEn: 'Corporate Fleet Solutions & B2B Packages',
-      subtitleAr: 'باقات صيانة مخصصة وعقود تأجير تشغيلي لأسطول هايلوكس، لاندكروزر، وهاي إيس',
-      subtitleEn: 'Customized maintenance packages and operational leasing for Hilux, Land Cruiser, and Hiace fleets',
-      badgeAr: 'قطاع الأعمال B2B',
-      badgeEn: 'Corporate Solutions',
-      image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/commercial/hilux-306x122.webp',
-      expiryAr: 'عروض سنوية مخصصة',
-      expiryEn: 'Custom Annual Contracts',
-      actionType: 'testDrive',
-      modelName: 'أسطول شركات',
-      actionLabelAr: 'طلب استشارة أسطول',
-      actionLabelEn: 'Corporate Inquiry'
     }
   ];
 

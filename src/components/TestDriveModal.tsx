@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, Car, Calendar, Clock, MapPin, CheckCircle2, User, Phone, Sparkles, Shield, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { VEHICLES, SHOWROOMS } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
 
@@ -17,10 +16,10 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
   defaultModelName
 }) => {
   const { language } = useLanguage();
-  const { addTestDrive } = useAdminData();
-  const toyotaVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
-  const [selectedVehicle, setSelectedVehicle] = useState<string>(defaultModelName || toyotaVehicles[0].nameAr);
-  const [selectedShowroom, setSelectedShowroom] = useState<string>(SHOWROOMS[0].id);
+  const { addTestDrive, vehicles, showrooms } = useAdminData();
+  const toyotaVehicles = vehicles.filter(v => v.brand !== 'lexus');
+  const [selectedVehicle, setSelectedVehicle] = useState<string>(defaultModelName || toyotaVehicles[0]?.nameAr || 'كامري');
+  const [selectedShowroom, setSelectedShowroom] = useState<string>(showrooms[0]?.id || 'riyadh-khurais');
   const [driveDate, setDriveDate] = useState<string>('');
   const [timeSlot, setTimeSlot] = useState<string>('morning');
   const [fullName, setFullName] = useState<string>('');
@@ -31,7 +30,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
 
   if (!isOpen) return null;
 
-  const activeBranch = SHOWROOMS.find(s => s.id === selectedShowroom) || SHOWROOMS[0];
+  const activeBranch = showrooms.find(s => s.id === selectedShowroom) || showrooms[0];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +38,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
       alert(language === 'ar' ? 'يشترط وجود رخصة قيادة سارية لتجربة القيادة' : 'A valid driving license is required');
       return;
     }
-    const ref = `TD-ALJ-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+    const ref = `TD-SOL-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     setBookingRef(ref);
 
     // Save to Admin Data store
@@ -159,7 +158,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                 onChange={(e) => setSelectedShowroom(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-3.5 text-xs text-gray-900 font-bold focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
               >
-                {SHOWROOMS.map((s) => (
+                {showrooms.map((s) => (
                   <option key={s.id} value={s.id}>
                     {language === 'ar' ? `${s.city} - ${s.name}` : `${s.cityEn} - ${s.nameEn}`}
                   </option>

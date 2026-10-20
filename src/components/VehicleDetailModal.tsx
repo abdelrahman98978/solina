@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { type Vehicle, type VehicleGrade, getBrandMeta } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { VehicleCatalogModal } from './VehicleCatalogModal';
 
 interface VehicleDetailModalProps {
   vehicle: Vehicle | null;
@@ -50,8 +51,10 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
   const { language, formatPrice, isRTL } = useLanguage();
   const [selectedGradeIndex, setSelectedGradeIndex] = useState<number>(0);
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
+  const [selectedInteriorIndex, setSelectedInteriorIndex] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'overview' | 'specs' | 'grades' | 'finance'>('overview');
   const [interiorMode, setInteriorMode] = useState<boolean>(false);
+  const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false);
 
   // Local Finance Calculator State
   const [downPaymentPercent, setDownPaymentPercent] = useState<number>(10);
@@ -63,6 +66,10 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
   const brandMeta = getBrandMeta(vehicle.brand);
   const currentGrade = vehicle.grades[selectedGradeIndex] || vehicle.grades[0];
   const currentColor = vehicle.colors[selectedColorIndex] || vehicle.colors[0];
+  const interiorShots = vehicle.interiorGallery && vehicle.interiorGallery.length > 0
+    ? vehicle.interiorGallery
+    : [{ id: 'default', image: vehicle.interiorImage || vehicle.cardImage, titleAr: 'المقصورة الداخلية', titleEn: 'Interior Cabin', descAr: '', descEn: '' }];
+  const currentInterior = interiorShots[selectedInteriorIndex] || interiorShots[0];
 
   const carPrice = currentGrade.price;
   const downPaymentAmount = Math.round(carPrice * (downPaymentPercent / 100));
@@ -73,7 +80,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
   const monthlyInstallment = Math.round(totalFinanceAmount / financeTenureMonths);
 
   const handleDownloadBrochure = () => {
-    window.open('/1.pdf', '_blank');
+    setIsCatalogOpen(true);
   };
 
   return (
@@ -173,11 +180,38 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                   </div>
 
                   <img
-                    src={interiorMode ? (vehicle.interiorImage || currentGrade?.image || vehicle.cardImage) : (currentColor?.image || currentGrade?.image || vehicle.cardImage)}
+                    src={interiorMode ? (currentInterior?.image || vehicle.interiorImage || currentGrade?.image || vehicle.cardImage) : (currentColor?.image || currentGrade?.image || vehicle.cardImage)}
                     alt={vehicle.nameAr}
-                    className="max-h-full max-w-full object-contain filter drop-shadow-xl transition-all duration-300"
+                    className={`max-h-full max-w-full ${interiorMode ? 'w-full h-full object-cover rounded-2xl' : 'object-contain'} filter drop-shadow-xl transition-all duration-300`}
                   />
                 </div>
+
+                {/* Interior 4-Angle Selector */}
+                {interiorMode && interiorShots.length > 0 && (
+                  <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200/80 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-gray-700">
+                        {language === 'ar' ? 'زوايا المقصورة الداخلية:' : 'Interior Cabin Views:'}
+                      </span>
+                      <span className="text-xs font-semibold text-[#0056B3]">
+                        {language === 'ar' ? currentInterior.titleAr : currentInterior.titleEn}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {interiorShots.map((shot, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedInteriorIndex(idx)}
+                          className={`rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                            selectedInteriorIndex === idx ? 'border-[#0056B3] shadow-sm scale-[1.03]' : 'border-transparent opacity-70 hover:opacity-100'
+                          }`}
+                        >
+                          <img src={shot.image} alt={shot.titleAr} className="w-full h-14 object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Color Selector */}
                 {!interiorMode && vehicle.colors && vehicle.colors.length > 0 && (
@@ -191,7 +225,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       {vehicle.colors.map((color, idx) => (
                         <button
                           key={color.id}
@@ -199,7 +233,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                           title={language === 'ar' ? color.name : color.nameEn}
                           style={{ backgroundColor: color.hex }}
                           className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer shadow-xs ${
-                            selectedColorIndex === idx ? 'scale-125 border-[#0056B3] ring-2 ring-red-400' : 'border-white hover:scale-110'
+                            selectedColorIndex === idx ? 'scale-125 border-[#0056B3] ring-2 ring-blue-300' : 'border-white hover:scale-110'
                           }`}
                         />
                       ))}
@@ -460,10 +494,10 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
         <div className="p-4 md:px-8 border-t border-gray-100 bg-white flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
           <button
             onClick={handleDownloadBrochure}
-            className="px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors"
+            className="px-4 py-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-[#0056B3] hover:text-white text-[#0056B3] text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors"
           >
-            <Download className="w-4 h-4 text-[#0056B3]" />
-            <span>{language === 'ar' ? 'تحميل الكتالوج الرقمي' : 'Download Brochure'}</span>
+            <Download className="w-4 h-4" />
+            <span>{language === 'ar' ? 'الكتالوج الرسمي والداخلية PDF' : 'Official Catalog & Interior PDF'}</span>
           </button>
 
           <div className="flex items-center gap-2">
@@ -488,6 +522,13 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
         </div>
 
       </div>
+
+      <VehicleCatalogModal
+        vehicle={vehicle}
+        isOpen={isCatalogOpen}
+        onClose={() => setIsCatalogOpen(false)}
+        onOpenTestDrive={onOpenTestDrive}
+      />
     </div>
   );
 };

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Clock, Navigation, CheckCircle, Search, Building2, MessageCircle } from 'lucide-react';
-import { SHOWROOMS } from '../data/toyotaData';
+import { type Showroom } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 
 export const ShowroomsSection: React.FC = () => {
   const { language } = useLanguage();
+  const { showrooms } = useAdminData();
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -17,7 +19,7 @@ export const ShowroomsSection: React.FC = () => {
     { id: 'northern', labelAr: 'المنطقة الشمالية (تبوك)', labelEn: 'Northern (Tabuk)' }
   ];
 
-  const filteredShowrooms = SHOWROOMS.filter((showroom) => {
+  const filteredShowrooms = showrooms.filter((showroom) => {
     if (selectedRegion !== 'all' && showroom.region !== selectedRegion) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -31,7 +33,7 @@ export const ShowroomsSection: React.FC = () => {
     return true;
   });
 
-  const handleOpenNavigation = (showroom: typeof SHOWROOMS[0]) => {
+  const handleOpenNavigation = (showroom: Showroom) => {
     const query = showroom.mapQuery || `${showroom.name} ${showroom.city}`;
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
   };

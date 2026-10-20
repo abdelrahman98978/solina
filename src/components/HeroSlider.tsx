@@ -26,7 +26,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
       title: 'راف فور 2026 الجديدة كلياً',
       subtitle: 'تنبض حياة',
       ctaText: 'اكتشف المزيد',
-      targetId: 'rav4',
+      targetId: 'rav4-2026',
       desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/rav4campaign/webp/alj-toyota_rav4-launch-2026_web-banners_1870x850-ar.webp?w=1920&q=75&f=webp',
       mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/rav4campaign/webp/alj-toyota_rav4-launch-2026_web-banners_375x666_ar.webp?w=1920&q=75&f=webp'
     },
@@ -35,7 +35,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
       title: 'لاندكروزر 300 هايبرد ماكس',
       subtitle: 'قمة القوة والأداء الهجين',
       ctaText: 'اكتشف المزيد',
-      targetId: 'lc300-hev-max',
+      targetId: 'lc300-2026',
       desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/lc300-hev/website-banner-1870x850-arab.webp?w=1920&q=75&f=webp',
       mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/lc300-hev/website-banner-375x666-arab.webp?w=1920&q=75&f=webp'
     },
@@ -44,7 +44,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
       title: 'عروض العودة إلى المدارس',
       subtitle: 'فيلوز وأوربان كروزر بأقساط ميسرة',
       ctaText: 'اكتشف المزيد',
-      targetId: 'veloz',
+      targetId: 'veloz-2026',
       desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/backtoschool/btsurben-cruiser--velozwebsite-bannersdt1870x850ar.webp?w=1920&q=75&f=webp',
       mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/backtoschool/btsurben-cruiser--velozwebsite-bannersmob375x666ar.webp?w=1920&q=75&f=webp'
     },
@@ -53,7 +53,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
       title: 'سولينا GR86 و سوبرا',
       subtitle: 'اشترِ سيارتك أونلاين بضغطة زر',
       ctaText: 'اكتشف المزيد',
-      targetId: 'gr86',
+      targetId: 'gr86-2026',
       desktopImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/herobanner/gr86/1870x850-ar.webp?w=1920&q=75&f=webp',
       mobileImage: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/hero-slider/ar/mobile/buy-it-online-mobile-375x666-arab.webp?w=1920&q=75&f=webp'
     }

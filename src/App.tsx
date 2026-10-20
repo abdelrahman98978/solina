@@ -141,14 +141,22 @@ const MainAppContent: React.FC = () => {
 
   // Route Navigation Handlers
   const navigateTo = (route: string, customPath?: string) => {
-    setCurrentRoute((['home', 'offers', 'owners', 'discover', 'showrooms', 'vehicle', 'app', 'mobile-app'].includes(route) ? route : 'home') as AppRoute);
+    if (route === 'admin' || route === 'erp') {
+      setAdminViewOpen(true);
+    }
+    setCurrentRoute((['home', 'offers', 'owners', 'discover', 'showrooms', 'vehicle', 'app', 'mobile-app', 'erp', 'admin'].includes(route) ? route : 'home') as AppRoute);
     setDedicatedVehicle(null);
     window.history.pushState({}, '', customPath || (route === 'home' ? '/' : `/${route}`));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectVehicle = (vehicleId: string) => {
-    const v = vehicles.find(item => item.id === vehicleId);
+    const v = vehicles.find(
+      item =>
+        item.id === vehicleId ||
+        item.id.startsWith(vehicleId) ||
+        vehicleId.startsWith(item.id.replace(/-202[0-9]$/, ''))
+    );
     if (v) {
       setDedicatedVehicle(v);
       setCurrentRoute('vehicle');

@@ -9,7 +9,9 @@ import {
 } from 'lucide-react';
 import { VEHICLES, type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 import { SolinaAIAssistant } from './SolinaAIAssistant';
+import { VehicleCatalogModal } from './VehicleCatalogModal';
 
 interface SolinaAppExperienceProps {
   onSelectVehicle?: (vehicleId: string) => void;
@@ -31,12 +33,56 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   isNativeMobileView = false
 }) => {
   const { language, setLanguage } = useLanguage();
+  const {
+    vehicles: liveVehicles,
+    offers: liveOffers,
+    showrooms: liveShowrooms,
+    addTestDrive,
+    addServiceAppointment,
+    addQuotation,
+    addZatcaInvoice
+  } = useAdminData();
+
+  const allVehicles = liveVehicles && liveVehicles.length > 0 ? liveVehicles : VEHICLES;
+  const modalOverlayPos = isNativeMobileView ? 'fixed' : 'absolute';
+
+  // Helper to format vehicle name cleanly without duplicate 'سولينا' or '2026'
+  const formatVehicleTitle = (v: Vehicle | { nameAr: string; brand?: string; year?: number }) => {
+    const raw = v.nameAr.trim();
+    const withYear = raw.includes('2026') || raw.includes('2025') ? raw : `${raw} ${v.year || 2026}`;
+    return withYear;
+  };
+
+  // In-App Dynamic Island Toast Banner (Replaces browser alert())
+  const [appToast, setAppToast] = useState<{ title: string; subtitle?: string; type?: 'success' | 'info' | 'warning' } | null>(null);
+  const showAppToast = (title: string, subtitle?: string, type: 'success' | 'info' | 'warning' = 'success') => {
+    setAppToast({ title, subtitle, type });
+    setTimeout(() => {
+      setAppToast(prev => (prev?.title === title ? null : prev));
+    }, 3800);
+  };
   
   // Navigation & View State
   const [activeTab, setActiveTab] = useState<'home' | 'offers' | 'garage' | 'favorites' | 'account'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedBrandFilter, setSelectedBrandFilter] = useState<string>('all');
+  const [cardPreviewMode, setCardPreviewMode] = useState<'exterior' | 'interior'>('exterior');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [favorites, setFavorites] = useState<string[]>(['camry-2026', 'lc300-2026']);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('solina_app_favorites_v1');
+      return saved ? JSON.parse(saved) : ['jetour-t2-2026', 'byd-song-plus-2026', 'camry-2026', 'lc300-2026'];
+    } catch {
+      return ['jetour-t2-2026', 'byd-song-plus-2026', 'camry-2026', 'lc300-2026'];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('solina_app_favorites_v1', JSON.stringify(favorites));
+    } catch {}
+  }, [favorites]);
+
   const [showSideMenu, setShowSideMenu] = useState<boolean>(false);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState<boolean>(false);
@@ -44,6 +90,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   // Vehicle Details Bottom Sheet State
   const [selectedVehicleDetail, setSelectedVehicleDetail] = useState<Vehicle | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>('أبيض لؤلؤي كريستالي');
+  const [detailColorIndex, setDetailColorIndex] = useState<number>(0);
+  const [detailInteriorAngleIndex, setDetailInteriorAngleIndex] = useState<number>(0);
+  const [detailInteriorColorIndex, setDetailInteriorColorIndex] = useState<number>(0);
+  const [detailGradeIndex, setDetailGradeIndex] = useState<number>(0);
+  const [detailViewMode, setDetailViewMode] = useState<'exterior' | 'interior'>('exterior');
+  const [catalogModalVehicle, setCatalogModalVehicle] = useState<Vehicle | null>(null);
 
   // Comparison State
   const [comparisonList, setComparisonList] = useState<string[]>([]);
@@ -57,15 +109,26 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
   const [serviceBookingOpen, setServiceBookingOpen] = useState<boolean>(false);
   const [serviceStep, setServiceStep] = useState<number>(1);
-  const [serviceForm, setServiceForm] = useState({ car: 'سولينا كامري 2026', type: 'صيانة دورية 10,000 كم', city: 'الرياض - مركز الصيانة السريعة', date: '2026-09-02' });
+  const [serviceForm, setServiceForm] = useState({ name: 'ضيف سولينا المتميز', phone: '0501234567', plate: 'س ل ن 2026', car: 'سولينا كامري 2026 هايبرد', type: 'صيانة دورية 10,000 كم', city: 'الرياض - مركز الصيانة السريعة', date: '2026-09-02' });
   const [serviceSuccess, setServiceSuccess] = useState<boolean>(false);
+  const [lastServiceBookingRef, setLastServiceBookingRef] = useState<string>('SOL-SRV-8942');
 
   const [financeCalcVehicle, setFinanceCalcVehicle] = useState<Vehicle | null>(null);
   const [downPaymentPercent, setDownPaymentPercent] = useState<number>(10);
   const [loanYears, setLoanYears] = useState<number>(5);
+  const [financeApplicantName, setFinanceApplicantName] = useState<string>('');
+  const [financeApplicantPhone, setFinanceApplicantPhone] = useState<string>('');
 
   const [showVipQrModal, setShowVipQrModal] = useState<boolean>(false);
   const [showAddCarModal, setShowAddCarModal] = useState<boolean>(false);
+  const [newGarageCarForm, setNewGarageCarForm] = useState({
+    vehicleId: 'jetour-t2-2026',
+    plate: 'ج ت ر 2026',
+    mileage: '1200'
+  });
+  const [warrantyModalCar, setWarrantyModalCar] = useState<any | null>(null);
+  const [showRoadsideSosModal, setShowRoadsideSosModal] = useState<boolean>(false);
+  const [sosDispatched, setSosDispatched] = useState<boolean>(false);
   const [showInstallAppModal, setShowInstallAppModal] = useState<boolean>(false);
   const [installPlatform, setInstallPlatform] = useState<'ios' | 'android'>('ios');
 
@@ -98,6 +161,8 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   // Deposit Checkout State
   const [showDepositCheckoutModal, setShowDepositCheckoutModal] = useState<boolean>(false);
   const [depositVehicle, setDepositVehicle] = useState<Vehicle | null>(null);
+  const [depositCustomerName, setDepositCustomerName] = useState<string>('ضيف سولينا المتميز');
+  const [depositCustomerPhone, setDepositCustomerPhone] = useState<string>('0501234567');
   const [paymentMethod, setPaymentMethod] = useState<'mada' | 'applepay' | 'visa' | 'tabby' | 'tamara'>('applepay');
   const [depositSuccess, setDepositSuccess] = useState<boolean>(false);
   const [depositReference, setDepositReference] = useState<string>('');
@@ -105,33 +170,60 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   // Offers Filter
   const [offersFilter, setOffersFilter] = useState<'all' | 'finance' | 'service' | 'cashback'>('all');
 
-  // Garage Cars
-  const [userCars, setUserCars] = useState([
-    {
-      id: 'car-1',
-      model: 'سولينا كامري 2026 هايبرد',
-      plate: 'س ل ن 2026',
-      mileage: 8450,
-      nextServiceKm: 10000,
-      nextServiceDate: '25 سبتمبر 2026',
-      warrantyExpiry: '2036 (ساري 10 سنوات)',
-      image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/passenger/camry-306x122.webp'
-    },
-    {
-      id: 'car-2',
-      model: 'سولينا لاند كروزر LC300 2026',
-      plate: 'ر ي ض 300',
-      mileage: 22100,
-      nextServiceKm: 30000,
-      nextServiceDate: '15 نوفمبر 2026',
-      warrantyExpiry: '2036 (ساري 10 سنوات)',
-      image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/suv_mpv/lc300-306x122.webp'
+  // Garage Cars with localStorage persistence
+  const [userCars, setUserCars] = useState(() => {
+    const defaultCars = [
+      {
+        id: 'car-1',
+        model: 'سولينا كامري 2026 هايبرد',
+        plate: 'س ل ن 2026',
+        vin: 'JTNB11HK9P3012948',
+        mileage: 8450,
+        nextServiceKm: 10000,
+        nextServiceDate: '25 سبتمبر 2026',
+        warrantyExpiry: '2036 (ساري 10 سنوات / 300 ألف كم)',
+        image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/passenger/camry-306x122.webp'
+      },
+      {
+        id: 'car-2',
+        model: 'جيتور T2 الدفع الرباعي 2026',
+        plate: 'ج ت ر 2026',
+        vin: 'LVTDD24B7R0084921',
+        mileage: 4200,
+        nextServiceKm: 10000,
+        nextServiceDate: '12 أكتوبر 2026',
+        warrantyExpiry: '2036 (ضمان المصنع 10 سنوات / مليون كم)',
+        image: '/vehicles/jetour-t2-ext-1.jpg?v=2026'
+      },
+      {
+        id: 'car-3',
+        model: 'سولينا لاند كروزر LC300 2026',
+        plate: 'ر ي ض 300',
+        vin: 'JTMAA7BJ0P4058210',
+        mileage: 22100,
+        nextServiceKm: 30000,
+        nextServiceDate: '15 نوفمبر 2026',
+        warrantyExpiry: '2036 (ساري 10 سنوات / 300 ألف كم)',
+        image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/suv_mpv/lc300-306x122.webp'
+      }
+    ];
+    try {
+      const saved = localStorage.getItem('solina_app_garage_v3');
+      return saved ? JSON.parse(saved) : defaultCars;
+    } catch {
+      return defaultCars;
     }
-  ]);
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('solina_app_garage_v3', JSON.stringify(userCars));
+    } catch {}
+  }, [userCars]);
 
   // Notifications State
   const [notifications, setNotifications] = useState([
-    { id: 1, title: 'وصول أسطول 2026 الجديد!', desc: 'سيارات كامري وكراون ولاندكروزر 2026 متوفرة الآن في صالات العرض.', time: 'منذ ساعتين', unread: true, tag: 'جديد' },
+    { id: 1, title: 'وصول أسطول جيتور وبي واي دي وهونداي 2026!', desc: 'تصفح جيتور T2 وداشينج وبي واي دي سونغ بلس وهونداي أزرق وسنتافي مع داخليات 360°.', time: 'الآن', unread: true, tag: 'جديد' },
     { id: 2, title: 'تذكير بموعد الصيانة الدورية', desc: 'اقترب موعد صيانة 10,000 كم لسيارتك كامري 2026.', time: 'أمس', unread: true, tag: 'صيانة' },
     { id: 3, title: 'عرض تمويلي حصري 0% دفعة أولى', desc: 'استفد من أقساط ميسرة بدون رسوم إدارية حتى نهاية الشهر.', time: 'منذ يومين', unread: false, tag: 'عروض' }
   ]);
@@ -157,11 +249,20 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
     { id: 'sedan', nameAr: 'سيدان', image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/home-page/explore-vehicle/passenger/camry-306x122.webp' }
   ];
 
-  const toggleFavorite = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleFavorite = (id: string, e?: React.MouseEvent) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const exists = favorites.includes(id);
     setFavorites(prev => 
-      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+      exists ? prev.filter(item => item !== id) : [...prev, id]
     );
+    const car = allVehicles.find(v => v.id === id);
+    if (car) {
+      showAppToast(
+        exists ? 'تمت الإزالة من المفضلة' : 'تمت الإضافة إلى المفضلة ❤️',
+        car.nameAr,
+        exists ? 'info' : 'success'
+      );
+    }
   };
 
   const toggleComparison = (id: string, e: React.MouseEvent) => {
@@ -170,25 +271,36 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       setComparisonList(prev => prev.filter(item => item !== id));
     } else {
       if (comparisonList.length >= 2) {
-        alert('يمكنك مقارنة سيارتين فقط في نفس الوقت.');
+        showAppToast('الحد الأقصى للمقارنة سيارتان', 'انقر على "قارن الآن" أو أزل سيارة أولاً', 'warning');
+        setShowComparisonModal(true);
         return;
       }
-      setComparisonList(prev => [...prev, id]);
+      const next = [...comparisonList, id];
+      setComparisonList(next);
+      showAppToast('أضيفت للمقارنة المباشرة ⚖️', next.length === 2 ? 'جاهز للمقارنة! اضغط لعرض الجدول' : 'اختر سيارة ثانية للمقارنة', 'info');
+      if (next.length === 2) {
+        setShowComparisonModal(true);
+      }
     }
   };
 
-  const filteredVehicles = VEHICLES.filter(v => {
-    const hasValidImage = Boolean(v.cardImage && v.cardImage.startsWith('http'));
-    const isLuxuryBrand = ['lexus', 'mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes(v.brand || '') || v.priceStartingFrom >= 300000;
+  const filteredVehicles = allVehicles.filter(v => {
+    const imgPath = v.cardImage || v.heroImage || '';
+    const hasValidImage = Boolean(imgPath && (imgPath.startsWith('http') || imgPath.startsWith('/')));
+    const isLuxuryBrand = ['lexus', 'mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes((v.brand || '').toLowerCase()) || v.priceStartingFrom >= 300000;
     const matchesCategory = selectedCategory === 'all' 
       || v.category === selectedCategory 
       || (selectedCategory === 'luxury' && isLuxuryBrand);
+    const vBrand = (v.brand || 'toyota').toLowerCase();
+    const matchesBrand = selectedBrandFilter === 'all'
+      || vBrand === selectedBrandFilter
+      || (selectedBrandFilter === 'luxury_elite' && ['mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes(vBrand));
     const matchesSearch = v.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) 
       || v.nameEn.toLowerCase().includes(searchQuery.toLowerCase())
       || (v.brand && v.brand.toLowerCase().includes(searchQuery.toLowerCase()));
-    return hasValidImage && matchesCategory && matchesSearch;
+    return hasValidImage && matchesCategory && matchesBrand && matchesSearch;
   }).sort((a, b) => {
-    const priority = ['mercedes', 'porsche', 'lexus', 'range-rover', 'bmw', 'genesis', 'lc300', 'camry', 'crown', 'prado', 'gr86'];
+    const priority = ['jetour', 'byd', 'hyundai', 'lc300', 'camry', 'crown', 'prado', 'lexus', 'mercedes', 'porsche', 'range-rover', 'bmw', 'genesis', 'gr86'];
     const aIndex = priority.findIndex(p => a.id.includes(p) || (a.brand && a.brand.includes(p)));
     const bIndex = priority.findIndex(p => b.id.includes(p) || (b.brand && b.brand.includes(p)));
     if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
@@ -210,12 +322,34 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       vehicle: 'camry-2026'
     },
     {
+      id: 'offer-jetour',
+      category: 'finance',
+      title: 'عرض جيتور T2 وداشينج 2026',
+      badge: 'ضمان 10 سنوات / مليون كم',
+      discount: 'قسط يبدأ من 1,450 ريال/شهر',
+      desc: 'امتلك جيتور T2 الدفع الرباعي أو داشينج تيربو بدون دفعة أولى مع تظليل عازل حراري مجاناً.',
+      daysLeft: 9,
+      bg: 'from-emerald-700 via-teal-800 to-slate-950',
+      vehicle: 'jetour-t2-2026'
+    },
+    {
+      id: 'offer-byd',
+      category: 'finance',
+      title: 'باقة BYD الكهربائية والهجينة 2026',
+      badge: 'شاحن منزلي مجاني 7kW',
+      discount: 'ضمان بطارية Blade لـ 8 سنوات',
+      desc: 'اقتنِ بي واي دي سونغ بلس DM-i أو هان EV أو سيل مع شاحن جداري مجاني وصيانة سنتين.',
+      daysLeft: 11,
+      bg: 'from-cyan-700 via-blue-800 to-slate-950',
+      vehicle: 'byd-song-plus-2026'
+    },
+    {
       id: 'offer-2',
       category: 'service',
       title: 'باقة الصيانة الذهبية المجانية',
       badge: 'سنتان صيانة مجانية',
       discount: 'شاملة الزيوت والفلاتر',
-      desc: 'عند شراء أي سيارة دفع رباعي (لاندكروزر، برادو، راف فور) استمتع بـ 4 صيانات دورية مجانية.',
+      desc: 'عند شراء أي سيارة دفع رباعي (لاندكروزر، برادو، سنتافي، باليسيد) استمتع بـ 4 صيانات دورية مجانية.',
       daysLeft: 12,
       bg: 'from-gray-900 via-slate-900 to-black',
       vehicle: 'lc300-2026'
@@ -235,10 +369,43 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
   const filteredOffers = offersData.filter(o => offersFilter === 'all' || o.category === offersFilter);
 
+  const brandPills = [
+    { id: 'all', label: 'الكل', count: allVehicles.length },
+    { id: 'toyota', label: 'سولينا', count: allVehicles.filter(v => !v.brand || v.brand === 'toyota').length },
+    { id: 'jetour', label: 'جيتور JETOUR', count: allVehicles.filter(v => v.brand === 'jetour').length },
+    { id: 'byd', label: 'بي واي دي BYD', count: allVehicles.filter(v => v.brand === 'byd').length },
+    { id: 'hyundai', label: 'هيونداي HYUNDAI', count: allVehicles.filter(v => v.brand === 'hyundai').length },
+    { id: 'lexus', label: 'لكزس LEXUS', count: allVehicles.filter(v => v.brand === 'lexus').length },
+    { id: 'luxury_elite', label: 'النخبة الفاخرة', count: allVehicles.filter(v => ['mercedes', 'porsche', 'bmw', 'genesis', 'landrover'].includes((v.brand || '').toLowerCase())).length }
+  ];
+
   // Render Inner App UI
   const renderAppContent = () => (
     <div className={`relative w-full bg-slate-50 overflow-hidden flex flex-col font-arabic text-gray-900 ${isNativeMobileView ? 'min-h-screen pb-20' : 'h-[780px] rounded-[38px]'}`}>
       
+      {/* Dynamic Island In-App Notification Toast */}
+      {appToast && (
+        <div
+          onClick={() => setAppToast(null)}
+          className="absolute top-10 left-3 right-3 z-[70] bg-gray-950/95 backdrop-blur-md text-white px-3.5 py-2.5 rounded-2xl shadow-2xl border border-white/15 flex items-center justify-between gap-2.5 animate-in slide-in-from-top duration-200 cursor-pointer"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
+              appToast.type === 'warning' ? 'bg-amber-500/20 text-amber-400' : appToast.type === 'info' ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
+            }`}>
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <div className="text-start">
+              <div className="text-[11px] font-black leading-tight">{appToast.title}</div>
+              {appToast.subtitle && (
+                <div className="text-[9px] text-gray-300 font-light mt-0.5 line-clamp-1">{appToast.subtitle}</div>
+              )}
+            </div>
+          </div>
+          <X className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+        </div>
+      )}
+
       {/* 1. Mobile Status Bar (Rendered on mockup view) */}
       {!isNativeMobileView && (
         <div className="w-full bg-white/95 backdrop-blur-md pt-2 px-6 pb-1 flex items-center justify-between z-30 border-b border-gray-100 text-black select-none">
@@ -321,7 +488,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ابحث عن سيارة، موديل، أو فئة..."
+                    placeholder="ابحث عن جيتور، بي واي دي، هيونداي، كامري..."
                     className="w-full py-2.5 pr-9 pl-4 rounded-2xl bg-white border border-gray-200 text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 shadow-xs transition-all text-start"
                   />
                   <Search className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -332,9 +499,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   )}
                 </div>
                 <button 
-                  onClick={() => setSelectedCategory('all')}
+                  onClick={() => {
+                    setSelectedCategory('all');
+                    setSelectedBrandFilter('all');
+                    setSearchQuery('');
+                    showAppToast('تم إعادة ضبط الفلاتر', 'عرض جميع طرازات 2026', 'info');
+                  }}
                   className="p-2.5 rounded-2xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 active:scale-95 shadow-xs transition-all cursor-pointer"
-                  title="تصفية"
+                  title="إعادة ضبط الفلاتر"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                 </button>
@@ -424,11 +596,55 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
             {/* Latest 2026 Vehicles 2-Column Grid */}
             <div className="px-3.5 mb-4">
-              <div className="flex items-center justify-between mb-2.5">
-                <h4 className="text-xs font-black text-gray-900">أحدث سيارات 2026</h4>
-                <span className="text-[10px] text-gray-400 font-medium">
-                  {filteredVehicles.length} طراز
-                </span>
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h4 className="text-xs font-black text-gray-900">أحدث سيارات ووكالات 2026</h4>
+                  <span className="text-[10px] text-gray-400 font-medium">
+                    {filteredVehicles.length} طراز متوفر للحجز الفوري
+                  </span>
+                </div>
+
+                {/* Exterior / Interior Card View Toggle */}
+                <div className="flex items-center bg-gray-100 p-0.5 rounded-xl border border-gray-200">
+                  <button
+                    onClick={() => setCardPreviewMode('exterior')}
+                    className={`px-2 py-1 rounded-lg text-[9px] font-black transition-all cursor-pointer ${
+                      cardPreviewMode === 'exterior' ? 'bg-gray-900 text-white shadow-2xs' : 'text-gray-600'
+                    }`}
+                  >
+                    الخارجية
+                  </button>
+                  <button
+                    onClick={() => setCardPreviewMode('interior')}
+                    className={`px-2 py-1 rounded-lg text-[9px] font-black transition-all cursor-pointer ${
+                      cardPreviewMode === 'interior' ? 'bg-red-600 text-white shadow-2xs' : 'text-gray-600'
+                    }`}
+                  >
+                    المقصورة 360°
+                  </button>
+                </div>
+              </div>
+
+              {/* Brand Filter Pills (الكل، سولينا، جيتور، بي واي دي، هيونداي، لكزس، النخبة) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2.5">
+                {brandPills.map((brandPill) => (
+                  <button
+                    key={brandPill.id}
+                    onClick={() => setSelectedBrandFilter(brandPill.id)}
+                    className={`px-2.5 py-1.5 rounded-xl text-[10px] font-black whitespace-nowrap transition-all cursor-pointer flex items-center gap-1 ${
+                      selectedBrandFilter === brandPill.id
+                        ? 'bg-red-600 text-white shadow-xs'
+                        : 'bg-white text-gray-700 border border-gray-200 hover:border-red-300'
+                    }`}
+                  >
+                    <span>{brandPill.label}</span>
+                    <span className={`px-1.5 py-0.2 rounded-full text-[8px] ${
+                      selectedBrandFilter === brandPill.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      {brandPill.count}
+                    </span>
+                  </button>
+                ))}
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
@@ -437,14 +653,34 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   const isCompared = comparisonList.includes(vehicle.id);
                   const displayPrice = vehicle.priceStartingFrom.toLocaleString('ar-SA');
                   const monthlyInstallment = Math.round(vehicle.priceStartingFrom / 70).toLocaleString('ar-SA');
+                  const brandLabelAr: Record<string, string> = {
+                    jetour: 'جيتور',
+                    byd: 'بي واي دي',
+                    hyundai: 'هيونداي',
+                    lexus: 'لكزس',
+                    mercedes: 'مرسيدس',
+                    porsche: 'بورش',
+                    bmw: 'بي إم دبليو',
+                    genesis: 'جينيسيس',
+                    landrover: 'رينج روفر',
+                    toyota: 'سولينا'
+                  };
+                  const vBrandKey = (vehicle.brand || 'toyota').toLowerCase();
 
                   return (
                     <div
                       key={vehicle.id}
-                      onClick={() => setSelectedVehicleDetail(vehicle)}
+                      onClick={() => {
+                        setSelectedVehicleDetail(vehicle);
+                        setDetailColorIndex(0);
+                        setDetailInteriorAngleIndex(0);
+                        setDetailInteriorColorIndex(0);
+                        setDetailGradeIndex(0);
+                        setDetailViewMode(cardPreviewMode);
+                      }}
                       className="bg-white rounded-2xl p-2.5 border border-gray-100 shadow-xs hover:shadow-md transition-all flex flex-col justify-between relative group cursor-pointer active:scale-[0.98]"
                     >
-                      {/* Top Badges: Favorite & New/Hybrid */}
+                      {/* Top Badges: Favorite & Brand/Powertrain */}
                       <div className="flex items-center justify-between w-full mb-1 z-10">
                         <button
                           onClick={(e) => toggleFavorite(vehicle.id, e)}
@@ -456,25 +692,65 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                           />
                         </button>
 
-                        <span className="px-2 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-black">
-                          {vehicle.isHybrid ? 'هايبرد 2026' : 'جديد'}
-                        </span>
+                        <div className="flex items-center gap-1">
+                          {vBrandKey !== 'toyota' && (
+                            <span className="px-1.5 py-0.5 rounded-md bg-gray-900 text-white text-[8px] font-black">
+                              {brandLabelAr[vBrandKey] || vehicle.brand}
+                            </span>
+                          )}
+                          <span className="px-1.5 py-0.5 rounded-md bg-red-600 text-white text-[8px] font-black">
+                            {vehicle.powertrain === 'كهربائي' ? 'كهربائية EV' : vehicle.isHybrid ? 'هايبرد 2026' : '2026'}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Vehicle Real PNG Cutout */}
-                      <div className="h-20 sm:h-24 w-full flex items-center justify-center my-1 relative">
-                        <img
-                          src={vehicle.cardImage || vehicle.heroImage}
-                          alt={vehicle.nameAr}
-                          className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                          loading="lazy"
-                        />
+                      {/* Vehicle Exterior or Interior Cabin Preview */}
+                      <div className="h-20 sm:h-24 w-full flex items-center justify-center my-1 relative overflow-hidden rounded-xl">
+                        {cardPreviewMode === 'interior' && vehicle.interiorImage ? (
+                          <img
+                            src={vehicle.interiorImage}
+                            alt={`مقصورة ${vehicle.nameAr}`}
+                            className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <img
+                            src={vehicle.cardImage || vehicle.heroImage}
+                            alt={vehicle.nameAr}
+                            className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        )}
                       </div>
+
+                      {/* Color Swatches Preview */}
+                      {vehicle.colors && vehicle.colors.length > 0 && (
+                        <div className="flex items-center justify-between my-1">
+                          <div className="flex items-center gap-1">
+                            {vehicle.colors.slice(0, 5).map((c) => (
+                              <span
+                                key={c.id}
+                                className="w-2.5 h-2.5 rounded-full border border-gray-300 shadow-2xs"
+                                style={{ backgroundColor: c.hex }}
+                                title={c.name}
+                              />
+                            ))}
+                            {vehicle.colors.length > 5 && (
+                              <span className="text-[8px] font-bold text-gray-400">+{vehicle.colors.length - 5}</span>
+                            )}
+                          </div>
+                          {vehicle.interiorGallery && vehicle.interiorGallery.length > 0 && (
+                            <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                              داخليات 360°
+                            </span>
+                          )}
+                        </div>
+                      )}
 
                       {/* Vehicle Meta Title */}
-                      <div className="text-start space-y-0.5 mt-1">
+                      <div className="text-start space-y-0.5 mt-0.5">
                         <h5 className="text-[11px] font-black text-gray-900 line-clamp-1">
-                          {vehicle.nameAr.includes('2026') ? vehicle.nameAr : `${vehicle.nameAr} 2026`}
+                          {formatVehicleTitle(vehicle)}
                         </h5>
                         
                         {/* Price Display */}
@@ -492,16 +768,31 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         </p>
                       </div>
 
-                      {/* Action Button: Book / Details */}
-                      <div className="pt-2 flex items-center gap-1.5">
+                      {/* Action Button: Book / Details / Catalog */}
+                      <div className="pt-2 flex items-center gap-1">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedVehicleDetail(vehicle);
+                            setDetailColorIndex(0);
+                            setDetailInteriorAngleIndex(0);
+                            setDetailInteriorColorIndex(0);
+                            setDetailGradeIndex(0);
+                            setDetailViewMode('exterior');
                           }}
                           className="flex-1 py-1.5 rounded-xl bg-gray-950 hover:bg-red-600 text-white text-[10px] font-black shadow-xs transition-colors cursor-pointer"
                         >
                           تفاصيل وحجز
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCatalogModalVehicle(vehicle);
+                          }}
+                          className="p-1.5 rounded-xl bg-red-50 text-red-600 border border-red-200 text-[9px] font-black transition-all cursor-pointer"
+                          title="الكتالوج والداخليات"
+                        >
+                          كتالوج
                         </button>
                         <button
                           onClick={(e) => toggleComparison(vehicle.id, e)}
@@ -522,7 +813,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             {/* Official Quality & Reliability Guarantee Card (ضمان الجودة والموثوقية) */}
             <div className="px-3.5 mb-3">
               <div 
-                onClick={() => alert('ضمان سولينا للسيارات 2026: ضمان شامل 10 سنوات أو 300,000 كم على المحرك ومكونات الهايبرد لراحة بالك المطلقة.')}
+                onClick={() => setWarrantyModalCar(userCars[0])}
                 className="relative w-full rounded-2xl overflow-hidden shadow-md border border-gray-800 bg-gray-950 cursor-pointer active:scale-[0.98] transition-transform group"
               >
                 <img 
@@ -602,8 +893,13 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       الاستفادة من العرض الآن
                     </button>
                     <button 
-                      onClick={() => alert(`تم نسخ رابط العرض: ${offer.title}`)}
-                      className="p-1.5 text-white/80 hover:text-white"
+                      onClick={() => {
+                        try {
+                          navigator.clipboard?.writeText(`${window.location.origin}/#offers`);
+                        } catch {}
+                        showAppToast('تم نسخ رابط العرض بنجاح 🔗', offer.title, 'info');
+                      }}
+                      className="p-1.5 text-white/80 hover:text-white cursor-pointer"
                       title="مشاركة العرض"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -625,7 +921,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               </div>
               <button 
                 onClick={() => setShowAddCarModal(true)}
-                className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl flex items-center gap-1 cursor-pointer"
+                className="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl flex items-center gap-1 cursor-pointer shadow-xs active:scale-95 transition-all"
               >
                 <Plus className="w-3 h-3" />
                 <span>إضافة سيارة</span>
@@ -634,7 +930,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
             {/* User Cars List */}
             <div className="space-y-3">
-              {userCars.map((car) => (
+              {userCars.map((car: any) => (
                 <div key={car.id} className="p-4 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -652,19 +948,19 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   </div>
 
                   {/* Car Image Preview */}
-                  <div className="h-16 w-full flex items-center justify-center bg-gray-50 rounded-xl p-2">
-                    <img src={car.image} alt={car.model} className="h-full object-contain" />
+                  <div className="h-20 w-full flex items-center justify-center bg-gray-50 rounded-xl p-2 overflow-hidden">
+                    <img src={car.image} alt={car.model} className="h-full object-contain rounded-lg" />
                   </div>
 
                   {/* Live Odometer & Maintenance Status */}
                   <div className="grid grid-cols-2 gap-2 text-[10px] bg-slate-50 p-2.5 rounded-xl border border-gray-100">
                     <div>
                       <span className="text-gray-400 block">عداد الكيلومترات</span>
-                      <strong className="text-gray-800 font-bold text-xs">{car.mileage.toLocaleString('ar-SA')} كم</strong>
+                      <strong className="text-gray-800 font-bold text-xs">{Number(car.mileage).toLocaleString('ar-SA')} كم</strong>
                     </div>
                     <div>
                       <span className="text-gray-400 block">الصيانة القادمة</span>
-                      <strong className="text-red-600 font-bold text-xs">{car.nextServiceKm.toLocaleString('ar-SA')} كم</strong>
+                      <strong className="text-red-600 font-bold text-xs">{Number(car.nextServiceKm).toLocaleString('ar-SA')} كم</strong>
                     </div>
                   </div>
 
@@ -682,7 +978,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     </button>
                     <button 
                       onClick={() => {
-                        setServiceForm(prev => ({ ...prev, car: car.model }));
+                        setServiceForm(prev => ({ ...prev, car: car.model, plate: car.plate }));
                         setServiceBookingOpen(true);
                       }}
                       className="py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold text-center cursor-pointer active:scale-95 transition-all"
@@ -690,7 +986,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       📅 حجز صيانة
                     </button>
                     <button 
-                      onClick={() => alert(`كتيب الضمان الرقمي لسيارة ${car.model}\nرقم الضمان: SOL-2026-${car.id}\nالمدة: 10 سنوات شاملة المحرك والبطارية.`)}
+                      onClick={() => setWarrantyModalCar(car)}
                       className="py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-bold cursor-pointer text-center"
                     >
                       وثيقة الضمان
@@ -724,34 +1020,49 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               <div className="p-8 text-center bg-white rounded-2xl border border-gray-200 space-y-2">
                 <Heart className="w-8 h-8 text-gray-300 mx-auto" />
                 <p className="text-xs font-bold text-gray-700">لم تقم بإضافة سيارات للمفضلة بعد</p>
-                <button onClick={() => setActiveTab('home')} className="px-3 py-1 bg-red-600 text-white text-xs rounded-xl">
+                <button onClick={() => setActiveTab('home')} className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-xl cursor-pointer">
                   تصفح السيارات الآن
                 </button>
               </div>
             ) : (
               <div className="space-y-2.5">
-                {VEHICLES.filter(v => favorites.includes(v.id)).map(v => (
+                {allVehicles.filter(v => favorites.includes(v.id)).map(v => (
                   <div 
                     key={v.id} 
-                    onClick={() => setSelectedVehicleDetail(v)}
+                    onClick={() => {
+                      setSelectedVehicleDetail(v);
+                      setDetailColorIndex(0);
+                      setDetailInteriorAngleIndex(0);
+                      setDetailGradeIndex(0);
+                      setDetailViewMode('exterior');
+                    }}
                     className="p-3 rounded-2xl bg-white border border-gray-200 flex items-center justify-between gap-3 shadow-xs cursor-pointer hover:border-red-300 transition-all"
                   >
-                    <img src={v.cardImage || v.heroImage || ''} alt={v.nameAr} className="h-12 w-16 object-contain" />
+                    <img src={v.cardImage || v.heroImage || ''} alt={v.nameAr} className="h-12 w-16 object-contain rounded-lg" />
                     <div className="flex-1 text-start">
-                      <h5 className="text-xs font-black text-gray-900">سولينا {v.nameAr} 2026</h5>
+                      <h5 className="text-xs font-black text-gray-900">{formatVehicleTitle(v)}</h5>
                       <span className="text-xs font-black text-red-600">{v.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          setTestDriveModalVehicle(`سولينا ${v.nameAr} 2026`);
+                          setCatalogModalVehicle(v);
                         }}
-                        className="px-2.5 py-1 bg-gray-900 text-white text-[9px] font-bold rounded-lg"
+                        className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 text-[9px] font-black rounded-lg cursor-pointer"
+                      >
+                        كتالوج
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTestDriveModalVehicle(formatVehicleTitle(v));
+                        }}
+                        className="px-2.5 py-1 bg-gray-900 text-white text-[9px] font-bold rounded-lg cursor-pointer"
                       >
                         تجربة
                       </button>
-                      <button onClick={(e) => toggleFavorite(v.id, e)} className="p-1.5 text-red-600">
+                      <button onClick={(e) => toggleFavorite(v.id, e)} className="p-1.5 text-red-600 cursor-pointer">
                         <Heart className="w-4 h-4 fill-red-600" />
                       </button>
                     </div>
@@ -808,15 +1119,15 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <span className="flex items-center gap-2">🎧 <strong>خدمة عملاء ومساعد سولينا الذكي 24/7</strong></span>
                 <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
-              <button onClick={() => alert('خدمة المساعدة على الطريق متوفرة فوراً على الرقم المجاني 8002444400')} className="w-full p-3.5 flex items-center justify-between text-red-600 hover:bg-red-50 cursor-pointer font-bold">
-                <span className="flex items-center gap-2">🚨 <strong>طوارئ المساعدة على الطريق 24/7</strong></span>
+              <button onClick={() => { setShowRoadsideSosModal(true); setSosDispatched(false); }} className="w-full p-3.5 flex items-center justify-between text-red-600 hover:bg-red-50 cursor-pointer font-bold">
+                <span className="flex items-center gap-2">🚨 <strong>طوارئ المساعدة على الطريق 24/7 (SOS)</strong></span>
                 <ChevronLeft className="w-4 h-4 text-red-400" />
               </button>
               <button onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
                 <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-gray-500" /> <strong>لغة التطبيق / Language</strong></span>
                 <span className="text-[11px] font-bold text-red-600">{language === 'ar' ? 'العربية (AR)' : 'English (EN)'}</span>
               </button>
-              <button onClick={() => alert('تطبيق سولينا للسيارات - الإصدار 2026.5.0\nكافة الحقوق محفوظة لشركة سولينا موتورز.')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
+              <button onClick={() => showAppToast('تطبيق سولينا موتورز - الإصدار 2026.5.0', 'مرتبط مباشرة بنظام الـ ERP والفوترة الإلكترونية ZATCA', 'info')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
                 <span className="flex items-center gap-2">⚙️ <strong>عن التطبيق والشروط</strong></span>
                 <span className="text-[10px] text-gray-400">v2026.5</span>
               </button>
@@ -826,8 +1137,8 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       </div>
 
-      {/* 4. Bottom Tab Bar Navigation (Fixed Bottom) */}
-      <div className="fixed sm:absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-3 py-2 flex items-center justify-around z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+      {/* 4. Bottom Tab Bar Navigation */}
+      <div className={`${modalOverlayPos} bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-3 py-2 flex items-center justify-around z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]`}>
         {[
           { id: 'home', label: 'الرئيسية', icon: Home },
           { id: 'offers', label: 'العروض', icon: Tag },
@@ -865,160 +1176,303 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {/* ======================= MODALS & SHEETS ======================= */}
 
       {/* A. Mobile Vehicle Details Bottom Sheet */}
-      {selectedVehicleDetail && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end justify-center animate-in fade-in duration-200">
-          <div className="w-full sm:max-w-md max-h-[92vh] bg-white rounded-t-[32px] overflow-hidden flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300 text-start">
-            {/* Grab Handle & Close */}
-            <div className="p-3 bg-gray-50 flex items-center justify-between border-b border-gray-100">
-              <span className="text-xs font-black text-gray-900">مواصفات سولينا {selectedVehicleDetail.nameAr} 2026</span>
-              <button 
-                onClick={() => setSelectedVehicleDetail(null)}
-                className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-700 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+      {selectedVehicleDetail && (() => {
+        const activeGrade = selectedVehicleDetail.grades?.[detailGradeIndex] || selectedVehicleDetail.grades?.[0];
+        const currentPrice = activeGrade ? activeGrade.price : selectedVehicleDetail.priceStartingFrom;
+        const interiorShots = selectedVehicleDetail.interiorGallery && selectedVehicleDetail.interiorGallery.length > 0
+          ? selectedVehicleDetail.interiorGallery
+          : [
+              { id: 'cabin-main', titleAr: 'قمرة القيادة والشاشات', titleEn: 'Cockpit & Displays', image: selectedVehicleDetail.interiorImage || selectedVehicleDetail.cardImage },
+              { id: 'cabin-seats', titleAr: 'المقاعد الأمامية الفاخرة', titleEn: 'Front Luxury Seats', image: selectedVehicleDetail.interiorImage || selectedVehicleDetail.cardImage }
+            ];
+        const activeInteriorShot = interiorShots[detailInteriorAngleIndex] || interiorShots[0];
+        const upholsterySwatches = [
+          { id: 'tan', nameAr: 'جلد نابا جملي فاخر', hex: '#A0522D' },
+          { id: 'black', nameAr: 'جلد نابا أسود ملكي', hex: '#1C1C1E' },
+          { id: 'ivory', nameAr: 'جلد بيج عاجي', hex: '#E6DCC8' },
+          { id: 'crimson', nameAr: 'جلد أحمر رياضي', hex: '#7F1D1D' }
+        ];
 
-            {/* Sheet Scroll Body */}
-            <div className="overflow-y-auto p-4 space-y-4 flex-1">
-              {/* Car Image Stage */}
-              <div className="relative h-44 w-full bg-gradient-to-b from-gray-100 to-white rounded-2xl p-4 flex items-center justify-center border border-gray-100">
-                <img 
-                  src={selectedVehicleDetail.cardImage || selectedVehicleDetail.heroImage} 
-                  alt={selectedVehicleDetail.nameAr} 
-                  className="max-h-full object-contain"
-                />
-                <span className="absolute top-2 right-2 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">
-                  موديل 2026
-                </span>
-              </div>
-
-              {/* Color Selector */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <strong className="text-gray-900 font-bold">اللون المختار:</strong>
-                  <span className="text-red-600 font-bold">{selectedColor}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {[
-                    { name: 'أبيض لؤلؤي كريستالي', color: 'bg-slate-100 border-gray-300' },
-                    { name: 'أسود ملكي فاخر', color: 'bg-black border-gray-800' },
-                    { name: 'فضي تيتانيوم معدني', color: 'bg-zinc-400 border-zinc-500' },
-                    { name: 'أحمر قرمزي رياضي', color: 'bg-red-600 border-red-700' }
-                  ].map((c) => (
-                    <button
-                      key={c.name}
-                      onClick={() => setSelectedColor(c.name)}
-                      className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${c.color} ${
-                        selectedColor === c.name ? 'ring-2 ring-red-500 ring-offset-2 scale-110' : ''
-                      }`}
-                      title={c.name}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Key Specs Grid */}
-              <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-2xl border border-gray-100">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-500" />
-                  <div>
-                    <span className="text-gray-400 text-[10px] block">القوة الحصانية</span>
-                    <strong className="text-gray-900 font-black">{selectedVehicleDetail.horsepower || '225 حصان'}</strong>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Fuel className="w-4 h-4 text-emerald-500" />
-                  <div>
-                    <span className="text-gray-400 text-[10px] block">استهلاك الوقود</span>
-                    <strong className="text-gray-900 font-black">{selectedVehicleDetail.fuelEconomy || '27.7 كم/لتر'}</strong>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Gauge className="w-4 h-4 text-blue-500" />
-                  <div>
-                    <span className="text-gray-400 text-[10px] block">ناقل الحركة</span>
-                    <strong className="text-gray-900 font-black">{selectedVehicleDetail.transmissionAr || 'CVT إلكتروني'}</strong>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-red-500" />
-                  <div>
-                    <span className="text-gray-400 text-[10px] block">الضمان الشامل</span>
-                    <strong className="text-gray-900 font-black">10 سنوات / 300 ألف كم</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Pricing & Installment Box */}
-              <div className="p-3 bg-red-50 rounded-2xl border border-red-200 flex items-center justify-between">
+        return (
+          <div className={`${modalOverlayPos} inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end justify-center animate-in fade-in duration-200`}>
+            <div className="w-full max-h-[90%] bg-white rounded-t-[32px] overflow-hidden flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300 text-start">
+              {/* Grab Handle & Close */}
+              <div className="p-3 bg-gray-50 flex items-center justify-between border-b border-gray-100">
                 <div>
-                  <span className="text-[10px] text-gray-500 block">السعر النقدي (شامل الضريبة)</span>
-                  <strong className="text-base font-black text-red-600">
-                    {selectedVehicleDetail.priceStartingFrom.toLocaleString('ar-SA')} ريال
-                  </strong>
+                  <span className="text-xs font-black text-gray-900 block">مواصفات {formatVehicleTitle(selectedVehicleDetail)}</span>
+                  <span className="text-[10px] text-gray-500">{selectedVehicleDetail.bodyTypeAr} • {selectedVehicleDetail.engineSpec}</span>
                 </div>
-                <button
-                  onClick={() => {
-                    setFinanceCalcVehicle(selectedVehicleDetail);
-                    setSelectedVehicleDetail(null);
-                  }}
-                  className="px-3 py-1.5 bg-white text-red-600 border border-red-300 rounded-xl text-xs font-black shadow-xs cursor-pointer"
+                <button 
+                  onClick={() => setSelectedVehicleDetail(null)}
+                  className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-700 cursor-pointer"
                 >
-                  حاسبة التمويل
-                </button>
-              </div>
-            </div>
-
-            {/* Sticky Action Footer */}
-            <div className="p-3 bg-white border-t border-gray-200 space-y-2">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    setDepositVehicle(selectedVehicleDetail);
-                    setShowDepositCheckoutModal(true);
-                    setDepositSuccess(false);
-                    setSelectedVehicleDetail(null);
-                  }}
-                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md cursor-pointer text-center flex items-center justify-center gap-1.5 active:scale-95 transition-all"
-                >
-                  <CreditCard className="w-4 h-4" />
-                  <span>حجز فوري بعربون (2,500 ريال)</span>
-                </button>
-                <button
-                  onClick={() => {
-                    toggleFavorite(selectedVehicleDetail.id, {} as any);
-                  }}
-                  className="p-2.5 rounded-xl border border-gray-200 text-gray-700 hover:text-red-600"
-                >
-                  <Heart className={`w-5 h-5 ${favorites.includes(selectedVehicleDetail.id) ? 'fill-red-600 text-red-600' : ''}`} />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <button
-                onClick={() => {
-                  setTestDriveModalVehicle(`سولينا ${selectedVehicleDetail.nameAr} 2026`);
-                  setSelectedVehicleDetail(null);
-                }}
-                className="w-full py-2 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold shadow-xs cursor-pointer text-center"
-              >
-                طلب تجربة قيادة مجانية 🚗
-              </button>
+              {/* Sheet Scroll Body */}
+              <div className="overflow-y-auto p-3.5 space-y-3.5 flex-1">
+                {/* Car Image Stage with Exterior / Interior Switcher */}
+                <div className="relative h-48 w-full bg-gradient-to-b from-gray-100 to-white rounded-2xl p-2 flex items-center justify-center border border-gray-100 overflow-hidden">
+                  {detailViewMode === 'interior' ? (
+                    <div className="relative w-full h-full rounded-xl overflow-hidden">
+                      <img
+                        src={activeInteriorShot?.image || selectedVehicleDetail.interiorImage || selectedVehicleDetail.cardImage}
+                        alt={`${selectedVehicleDetail.nameAr} - ${activeInteriorShot?.titleAr || 'داخلية'}`}
+                        className="w-full h-full object-cover rounded-xl transition-all duration-300"
+                      />
+                      <div className="absolute bottom-2 right-2 left-2 bg-black/65 backdrop-blur-xs text-white px-2.5 py-1 rounded-lg flex items-center justify-between text-[10px]">
+                        <span className="font-bold">{activeInteriorShot?.titleAr || 'المقصورة الداخلية 360°'}</span>
+                        <span className="text-emerald-300 font-mono">{detailInteriorAngleIndex + 1} / {interiorShots.length}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <img 
+                      src={selectedVehicleDetail.colors?.[detailColorIndex]?.image || selectedVehicleDetail.cardImage || selectedVehicleDetail.heroImage} 
+                      alt={selectedVehicleDetail.nameAr} 
+                      className="max-h-full object-contain transition-all duration-300"
+                    />
+                  )}
+                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-xl border border-gray-200 shadow-xs">
+                    <button
+                      onClick={() => setDetailViewMode('exterior')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black cursor-pointer transition-all ${
+                        detailViewMode === 'exterior' ? 'bg-gray-900 text-white' : 'text-gray-600 hover:text-black'
+                      }`}
+                    >
+                      الخارجية
+                    </button>
+                    <button
+                      onClick={() => setDetailViewMode('interior')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black cursor-pointer transition-all ${
+                        detailViewMode === 'interior' ? 'bg-red-600 text-white' : 'text-gray-600 hover:text-black'
+                      }`}
+                    >
+                      الداخلية 360° ({interiorShots.length})
+                    </button>
+                  </div>
+                  <span className="absolute top-2 right-2 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">
+                    موديل {selectedVehicleDetail.year}
+                  </span>
+                </div>
+
+                {/* Interior 4-Angle Switcher & Upholstery Colors (when in Interior mode) */}
+                {detailViewMode === 'interior' ? (
+                  <div className="space-y-2.5 bg-slate-50 p-2.5 rounded-2xl border border-gray-200">
+                    <div className="text-[10px] font-black text-gray-800 flex items-center justify-between">
+                      <span>زوايا المقصورة الداخلية ({interiorShots.length} زوايا):</span>
+                      <span className="text-red-600">{activeInteriorShot?.titleAr}</span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {interiorShots.map((shot, idx) => (
+                        <button
+                          key={shot.id || idx}
+                          onClick={() => setDetailInteriorAngleIndex(idx)}
+                          className={`p-1 rounded-xl border text-center transition-all cursor-pointer overflow-hidden ${
+                            detailInteriorAngleIndex === idx
+                              ? 'border-red-600 bg-red-50/70 ring-1 ring-red-600'
+                              : 'border-gray-200 bg-white'
+                          }`}
+                        >
+                          <img src={shot.image} alt={shot.titleAr} className="w-full h-10 object-cover rounded-lg mb-1" />
+                          <span className="text-[8px] font-bold text-gray-800 line-clamp-1 block">{shot.titleAr}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="pt-1 border-t border-gray-200 flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-gray-700">
+                        لون الفرش: <strong className="text-red-600">{upholsterySwatches[detailInteriorColorIndex]?.nameAr}</strong>
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {upholsterySwatches.map((ic, idx) => (
+                          <button
+                            key={ic.id}
+                            onClick={() => setDetailInteriorColorIndex(idx)}
+                            className={`w-5 h-5 rounded-full border border-gray-300 cursor-pointer ${
+                              detailInteriorColorIndex === idx ? 'ring-2 ring-red-600 ring-offset-1 scale-110' : ''
+                            }`}
+                            style={{ backgroundColor: ic.hex }}
+                            title={ic.nameAr}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Dynamic Exterior Color Selector */
+                  selectedVehicleDetail.colors && selectedVehicleDetail.colors.length > 0 && (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <strong className="text-gray-900 font-bold">اللون الخارجي ({selectedVehicleDetail.colors.length} ألوان):</strong>
+                        <span className="text-red-600 font-bold">{selectedVehicleDetail.colors[detailColorIndex]?.name || selectedColor}</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {selectedVehicleDetail.colors.map((c, idx) => (
+                          <button
+                            key={c.id || idx}
+                            onClick={() => {
+                              setDetailColorIndex(idx);
+                              setSelectedColor(c.name);
+                              setDetailViewMode('exterior');
+                            }}
+                            className={`w-6 h-6 rounded-full border-2 border-gray-300 transition-all cursor-pointer ${
+                              detailColorIndex === idx ? 'ring-2 ring-red-500 ring-offset-2 scale-110' : ''
+                            }`}
+                            style={{ backgroundColor: c.hex }}
+                            title={c.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+
+                {/* Trim / Grade Selector Pills */}
+                {selectedVehicleDetail.grades && selectedVehicleDetail.grades.length > 0 && (
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-black text-gray-800 block">اختر الفئة ({selectedVehicleDetail.grades.length} فئات متوفرة):</span>
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                      {selectedVehicleDetail.grades.map((grade, gIdx) => (
+                        <button
+                          key={gIdx}
+                          onClick={() => setDetailGradeIndex(gIdx)}
+                          className={`px-2.5 py-1.5 rounded-xl border text-start shrink-0 transition-all cursor-pointer ${
+                            detailGradeIndex === gIdx
+                              ? 'bg-red-600 text-white border-red-600 shadow-xs'
+                              : 'bg-white text-gray-800 border-gray-200 hover:border-red-300'
+                          }`}
+                        >
+                          <div className="text-[10px] font-black">{grade.name}</div>
+                          <div className={`text-[9px] font-bold ${detailGradeIndex === gIdx ? 'text-red-100' : 'text-red-600'}`}>
+                            {grade.price.toLocaleString('ar-SA')} ريال
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Official Catalog & Interior Gallery Trigger */}
+                <button
+                  onClick={() => {
+                    const v = selectedVehicleDetail;
+                    setSelectedVehicleDetail(null);
+                    setCatalogModalVehicle(v);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-gray-900 hover:bg-red-600 text-white text-xs font-black flex items-center justify-between shadow-sm transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-red-400" />
+                    <span>استعراض الكتالوج الرسمي والداخليات (PDF)</span>
+                  </span>
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Key Specs Grid */}
+                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-2xl border border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-amber-500" />
+                    <div>
+                      <span className="text-gray-400 text-[10px] block">المحرك والقوة</span>
+                      <strong className="text-gray-900 font-black text-[11px]">{activeGrade?.engine || selectedVehicleDetail.horsepower || '225 حصان'}</strong>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Fuel className="w-4 h-4 text-emerald-500" />
+                    <div>
+                      <span className="text-gray-400 text-[10px] block">كفاءة الاستهلاك</span>
+                      <strong className="text-gray-900 font-black text-[11px]">{selectedVehicleDetail.fuelEconomy || '27.7 كم/لتر'}</strong>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Gauge className="w-4 h-4 text-blue-500" />
+                    <div>
+                      <span className="text-gray-400 text-[10px] block">ناقل الحركة</span>
+                      <strong className="text-gray-900 font-black text-[11px]">{activeGrade?.transmission || selectedVehicleDetail.transmissionAr || 'أوتوماتيكي ذكي'}</strong>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-red-500" />
+                    <div>
+                      <span className="text-gray-400 text-[10px] block">الضمان المعتمد</span>
+                      <strong className="text-gray-900 font-black text-[11px]">
+                        {selectedVehicleDetail.brand === 'jetour' ? '10 سنوات / مليون كم' : '10 سنوات / 300 ألف كم'}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing & Installment Box */}
+                <div className="p-3 bg-red-50 rounded-2xl border border-red-200 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-gray-500 block">
+                      سعر فئة ({activeGrade?.name || 'القياسية'}) شامل الضريبة
+                    </span>
+                    <strong className="text-base font-black text-red-600">
+                      {currentPrice.toLocaleString('ar-SA')} ريال
+                    </strong>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setFinanceCalcVehicle(selectedVehicleDetail);
+                      setSelectedVehicleDetail(null);
+                    }}
+                    className="px-3 py-1.5 bg-white text-red-600 border border-red-300 rounded-xl text-xs font-black shadow-xs cursor-pointer"
+                  >
+                    حاسبة التمويل
+                  </button>
+                </div>
+              </div>
+
+              {/* Sticky Action Footer */}
+              <div className="p-3 bg-white border-t border-gray-200 space-y-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setDepositVehicle(selectedVehicleDetail);
+                      setShowDepositCheckoutModal(true);
+                      setDepositSuccess(false);
+                      setSelectedVehicleDetail(null);
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md cursor-pointer text-center flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    <span>حجز فوري بعربون (2,500 ريال)</span>
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(selectedVehicleDetail.id)}
+                    className="p-2.5 rounded-xl border border-gray-200 text-gray-700 hover:text-red-600 cursor-pointer"
+                  >
+                    <Heart className={`w-5 h-5 ${favorites.includes(selectedVehicleDetail.id) ? 'fill-red-600 text-red-600' : ''}`} />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setTestDriveModalVehicle(formatVehicleTitle(selectedVehicleDetail));
+                    setSelectedVehicleDetail(null);
+                  }}
+                  className="w-full py-2 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold shadow-xs cursor-pointer text-center"
+                >
+                  طلب تجربة قيادة مجانية 🚗
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
-      {/* B. In-App Test Drive Wizard */}
+      {/* B. In-App Test Drive Wizard (Synced with AdminDataContext) */}
       {testDriveModalVehicle && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="w-full sm:max-w-md bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3`}>
+          <div className="w-full bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="text-sm font-black text-gray-900">🚗 حجز تجربة قيادة سريعة</h3>
                 <span className="text-[10px] text-red-600 font-bold">{testDriveModalVehicle}</span>
               </div>
-              <button onClick={() => { setTestDriveModalVehicle(null); setTestDriveSuccess(false); }} className="p-1 text-gray-400">
+              <button onClick={() => { setTestDriveModalVehicle(null); setTestDriveSuccess(false); }} className="p-1 text-gray-400 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1030,11 +1484,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 </div>
                 <h4 className="text-base font-black text-gray-900">تم تأكيد طلب تجربة القيادة!</h4>
                 <p className="text-xs text-gray-500 max-w-xs mx-auto">
-                  تم إرسال تفاصيل الموعد إلى هاتفك. سيتواصل معك مستشار سولينا لتأكيد التجربة.
+                  تم تسجيل طلبك مباشرة في نظام الوكالة (ERP) وإرسال تفاصيل الموعد إلى جوالك.
                 </p>
                 <button
                   onClick={() => { setTestDriveModalVehicle(null); setTestDriveSuccess(false); }}
-                  className="px-6 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold"
+                  className="px-6 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold cursor-pointer"
                 >
                   العودة للرئيسية
                 </button>
@@ -1068,19 +1522,40 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     onChange={(e) => setTestDriveForm(prev => ({ ...prev, city: e.target.value }))}
                     className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none bg-white"
                   >
-                    <option>الرياض - المعرض الرئيسي (طريق خريص)</option>
-                    <option>جدة - صالة طريق الملك عبد العزيز</option>
-                    <option>الدمام - صالة طريق الظهران</option>
-                    <option>مكة المكرمة - صالة الكعكية</option>
+                    {liveShowrooms && liveShowrooms.length > 0 ? (
+                      liveShowrooms.map(s => (
+                        <option key={s.id} value={`${s.city} - ${s.name}`}>{s.city} - {s.name}</option>
+                      ))
+                    ) : (
+                      <>
+                        <option>الرياض - المعرض الرئيسي (طريق خريص)</option>
+                        <option>جدة - صالة طريق الملك عبد العزيز</option>
+                        <option>الدمام - صالة طريق الظهران</option>
+                        <option>مكة المكرمة - صالة الكعكية</option>
+                      </>
+                    )}
                   </select>
                 </div>
                 <button
                   onClick={() => {
-                    if (!testDriveForm.phone) {
-                      alert('يرجى كتابة رقم الجوال');
+                    if (!testDriveForm.phone.trim()) {
+                      showAppToast('يرجى إدخال رقم الجوال', 'لتأكيد موعد تجربة القيادة عبر الرسائل القصيرة', 'warning');
                       return;
                     }
+                    const matchedCar = allVehicles.find(v => testDriveModalVehicle.includes(v.nameAr));
+                    addTestDrive({
+                      fullName: testDriveForm.name.trim() || 'ضيف تطبيق سولينا',
+                      phone: testDriveForm.phone.trim(),
+                      city: testDriveForm.city.split(' - ')[0] || 'الرياض',
+                      preferredShowroom: testDriveForm.city,
+                      modelId: matchedCar?.id || 'camry-2026',
+                      modelName: testDriveModalVehicle,
+                      preferredDate: testDriveForm.date,
+                      preferredTimeSlot: testDriveForm.time,
+                      notes: 'تم الحجز عبر تطبيق الهاتف الذكي'
+                    });
                     setTestDriveSuccess(true);
+                    showAppToast('تم تسجيل حجز تجربة القيادة ✓', `${testDriveModalVehicle} — ${testDriveForm.city}`, 'success');
                   }}
                   className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer"
                 >
@@ -1092,16 +1567,16 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         </div>
       )}
 
-      {/* C. In-App Service Booking Wizard */}
+      {/* C. In-App Service Booking Wizard (Synced with AdminDataContext) */}
       {serviceBookingOpen && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="w-full sm:max-w-md bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3`}>
+          <div className="w-full bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="text-sm font-black text-gray-900">🛠️ حجز موعد صيانة سولينا الفورية</h3>
-                <span className="text-[10px] text-gray-400">خدمة سريعة خلال 45 دقيقة</span>
+                <span className="text-[10px] text-gray-400">خدمة سريعة خلال 45 دقيقة ومعتمدة في الـ ERP</span>
               </div>
-              <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="p-1 text-gray-400">
+              <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="p-1 text-gray-400 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1112,8 +1587,8 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   <Check className="w-6 h-6 stroke-[3]" />
                 </div>
                 <h4 className="text-base font-black text-gray-900">تم تأكيد موعد الصيانة بنجاح!</h4>
-                <p className="text-xs text-gray-500">رقم الحجز: <strong className="text-red-600 font-mono">SOL-SRV-8942</strong></p>
-                <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl">
+                <p className="text-xs text-gray-500">رقم الحجز: <strong className="text-red-600 font-mono">{lastServiceBookingRef}</strong></p>
+                <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl cursor-pointer">
                   إغلاق
                 </button>
               </div>
@@ -1126,8 +1601,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     onChange={(e) => setServiceForm(prev => ({ ...prev, car: e.target.value }))}
                     className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
                   >
-                    <option>سولينا كامري 2026 هايبرد</option>
-                    <option>سولينا لاند كروزر LC300 2026</option>
+                    {userCars.map((c: any) => (
+                      <option key={c.id} value={c.model}>{c.model} ({c.plate})</option>
+                    ))}
+                    <option>جيتور داشينج 2026</option>
+                    <option>بي واي دي سونغ بلس 2026</option>
+                    <option>هيونداي أزرق 2026</option>
                     <option>سولينا كراون 2026</option>
                   </select>
                 </div>
@@ -1140,7 +1619,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   >
                     <option>صيانة دورية سريعة 10,000 كم (45 دقيقة)</option>
                     <option>صيانة شاملة 20,000 كم</option>
-                    <option>فحص الفرامل والمكيف</option>
+                    <option>فحص الفرامل والمكيف والبطارية الهجينة</option>
                     <option>تغيير زيوت وفلاتر أصلية</option>
                   </select>
                 </div>
@@ -1154,7 +1633,26 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   />
                 </div>
                 <button
-                  onClick={() => setServiceSuccess(true)}
+                  onClick={() => {
+                    const ref = `SOL-SRV-${Math.floor(1000 + Math.random() * 9000)}`;
+                    setLastServiceBookingRef(ref);
+                    addServiceAppointment({
+                      fullName: serviceForm.name || 'ضيف تطبيق سولينا',
+                      phone: serviceForm.phone || '0501234567',
+                      city: 'الرياض',
+                      showroom: serviceForm.city,
+                      vehicleModel: serviceForm.car,
+                      plateNumber: serviceForm.plate || 'س ل ن 2026',
+                      currentMileage: 9500,
+                      packageMileage: serviceForm.type.includes('20,000') ? 20000 : 10000,
+                      serviceType: serviceForm.type,
+                      preferredDate: serviceForm.date,
+                      preferredTime: '10:30 ص',
+                      estimatedCost: serviceForm.type.includes('20,000') ? 980 : 540
+                    });
+                    setServiceSuccess(true);
+                    showAppToast('تم حجز موعد الصيانة بنجاح 🛠️', `رقم الموعد: ${ref}`, 'success');
+                  }}
                   className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer"
                 >
                   تأكيد موعد الصيانة
@@ -1165,21 +1663,21 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         </div>
       )}
 
-      {/* D. In-App Mini Finance Calculator */}
+      {/* D. In-App Mini Finance Calculator (Synced with AdminDataContext) */}
       {financeCalcVehicle && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="w-full sm:max-w-md bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3`}>
+          <div className="w-full bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-3.5 text-start font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
               <div>
                 <h3 className="text-sm font-black text-gray-900">💰 حاسبة التمويل والأقساط 2026</h3>
-                <span className="text-[10px] text-red-600 font-bold">سولينا {financeCalcVehicle.nameAr}</span>
+                <span className="text-[10px] text-red-600 font-bold">{formatVehicleTitle(financeCalcVehicle)}</span>
               </div>
-              <button onClick={() => setFinanceCalcVehicle(null)} className="p-1 text-gray-400">
+              <button onClick={() => setFinanceCalcVehicle(null)} className="p-1 text-gray-400 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
                 <div className="flex justify-between text-xs mb-1 font-bold">
                   <span>الدفعة الأولى ({downPaymentPercent}%)</span>
@@ -1212,8 +1710,25 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={financeApplicantName}
+                  onChange={(e) => setFinanceApplicantName(e.target.value)}
+                  placeholder="الاسم الكامل"
+                  className="p-2 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                />
+                <input
+                  type="tel"
+                  value={financeApplicantPhone}
+                  onChange={(e) => setFinanceApplicantPhone(e.target.value)}
+                  placeholder="رقم الجوال 05XXXX"
+                  className="p-2 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                />
+              </div>
+
               {/* Calculated Result Box */}
-              <div className="p-4 bg-gradient-to-r from-gray-950 to-black rounded-2xl text-white text-center space-y-1">
+              <div className="p-3.5 bg-gradient-to-r from-gray-950 to-black rounded-2xl text-white text-center space-y-1">
                 <span className="text-[10px] text-gray-400">القسط الشهري التقديري (شامل التأمين)</span>
                 <div className="text-xl font-black text-red-500">
                   {Math.round(((financeCalcVehicle.priceStartingFrom * (1 - downPaymentPercent / 100)) * 1.15) / (loanYears * 12)).toLocaleString('ar-SA')} ريال / شهر
@@ -1223,12 +1738,34 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
               <button
                 onClick={() => {
-                  alert('تم إرسال طلب عرض التمويل وسيتواصل معك مستشار التمويل المعتمد خلال دقائق.');
+                  const basePrice = financeCalcVehicle.priceStartingFrom;
+                  const vatAmount = Math.round(basePrice * 0.15);
+                  const downPaymentAmount = Math.round((basePrice * downPaymentPercent) / 100);
+                  const monthlyInstallment = Math.round(((basePrice * (1 - downPaymentPercent / 100)) * 1.15) / (loanYears * 12));
+                  const qNum = addQuotation({
+                    fullName: financeApplicantName.trim() || 'ضيف تطبيق سولينا',
+                    phone: financeApplicantPhone.trim() || '0501234567',
+                    city: 'الرياض',
+                    vehicleId: financeCalcVehicle.id,
+                    vehicleName: formatVehicleTitle(financeCalcVehicle),
+                    gradeName: financeCalcVehicle.grades?.[0]?.name || 'القياسية',
+                    vehiclePrice: basePrice,
+                    vatAmount,
+                    totalWithVat: basePrice + vatAmount,
+                    financeType: 'lease',
+                    downPaymentPercent,
+                    downPaymentAmount,
+                    durationMonths: loanYears * 12,
+                    monthlyInstallment,
+                    bankName: 'تمويل سولينا المعتمد',
+                    status: 'sent'
+                  });
+                  showAppToast('تم إصدار عرض السعر والتمويل بنجاح 💰', `رقم عرض السعر: ${qNum}`, 'success');
                   setFinanceCalcVehicle(null);
                 }}
                 className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer"
               >
-                تقديم طلب تمويل فوري
+                تقديم طلب تمويل فوري وإصدار عرض سعر
               </button>
             </div>
           </div>
@@ -1237,7 +1774,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* E. Notifications Center Dropdown Sheet */}
       {showNotifications && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-3 animate-in fade-in duration-200">
+        <div className={`${modalOverlayPos} inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-3 animate-in fade-in duration-200`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-4 shadow-2xl space-y-3 text-start mt-12 animate-in slide-in-from-top duration-300">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <div className="flex items-center gap-1.5">
@@ -1245,10 +1782,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <h3 className="text-xs font-black text-gray-900">مركز الإشعارات والتنبيهات</h3>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={markAllNotificationsRead} className="text-[10px] font-bold text-red-600 hover:underline">
+                <button onClick={markAllNotificationsRead} className="text-[10px] font-bold text-red-600 hover:underline cursor-pointer">
                   قراءة الكل
                 </button>
-                <button onClick={() => setShowNotifications(false)} className="p-1 text-gray-400">
+                <button onClick={() => setShowNotifications(false)} className="p-1 text-gray-400 cursor-pointer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -1272,29 +1809,32 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* F. Side Drawer Menu */}
       {showSideMenu && (
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-stretch justify-start animate-in fade-in duration-200">
+        <div className={`${modalOverlayPos} inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-stretch justify-start animate-in fade-in duration-200`}>
           <div className="w-64 bg-white h-full p-5 shadow-2xl flex flex-col justify-between text-start font-arabic">
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <img src="/solina-logo.png" alt="سولينا" className="h-7 w-auto" />
-                <button onClick={() => setShowSideMenu(false)} className="p-1 text-gray-400 hover:text-black">
+                <button onClick={() => setShowSideMenu(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
               <nav className="space-y-1 text-xs font-bold text-gray-700">
-                <button onClick={() => { setActiveTab('home'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2">
+                <button onClick={() => { setActiveTab('home'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
                   <Home className="w-4 h-4" /> <span>الرئيسية</span>
                 </button>
-                <button onClick={() => { setActiveTab('offers'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2">
+                <button onClick={() => { setActiveTab('offers'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
                   <Tag className="w-4 h-4" /> <span>أحدث العروض</span>
                 </button>
-                <button onClick={() => { setServiceBookingOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2">
+                <button onClick={() => { setActiveTab('garage'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
+                  <Car className="w-4 h-4" /> <span>مرآبي وسياراتي ({userCars.length})</span>
+                </button>
+                <button onClick={() => { setServiceBookingOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
                   <Wrench className="w-4 h-4" /> <span>حجز موعد صيانة</span>
                 </button>
-                <button onClick={() => { setTestDriveModalVehicle('سولينا 2026'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2">
-                  <Car className="w-4 h-4" /> <span>طلب تجربة قيادة</span>
+                <button onClick={() => { setTestDriveModalVehicle('جيتور T2 الدفع الرباعي 2026'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
+                  <Calendar className="w-4 h-4" /> <span>طلب تجربة قيادة</span>
                 </button>
-                <button onClick={() => { setIsAssistantOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl bg-red-50 text-red-600 font-bold flex items-center gap-2">
+                <button onClick={() => { setIsAssistantOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl bg-red-50 text-red-600 font-bold flex items-center gap-2 cursor-pointer">
                   <Headphones className="w-4 h-4" /> <span>مساعد سولينا الذكي 24/7</span>
                 </button>
               </nav>
@@ -1309,28 +1849,28 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* G. Side-by-Side Direct Comparison Modal */}
       {showComparisonModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-4 shadow-2xl space-y-3 text-start font-arabic">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <h3 className="text-xs font-black text-gray-900">⚖️ مقارنة المواصفات المباشرة</h3>
-              <button onClick={() => setShowComparisonModal(false)} className="p-1 text-gray-400">
+              <button onClick={() => setShowComparisonModal(false)} className="p-1 text-gray-400 cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-center">
               {comparisonList.slice(0, 2).map((carId) => {
-                const carObj = VEHICLES.find(v => v.id === carId);
+                const carObj = allVehicles.find(v => v.id === carId);
                 if (!carObj) return null;
                 return (
-                  <div key={carId} className="p-2 bg-slate-50 rounded-2xl border border-gray-200 space-y-2">
-                    <img src={carObj.cardImage || carObj.heroImage} alt={carObj.nameAr} className="h-14 object-contain mx-auto" />
-                    <h5 className="text-[11px] font-black text-gray-900">{carObj.nameAr}</h5>
+                  <div key={carId} className="p-2.5 bg-slate-50 rounded-2xl border border-gray-200 space-y-2">
+                    <img src={carObj.cardImage || carObj.heroImage} alt={carObj.nameAr} className="h-14 object-contain mx-auto rounded-lg" />
+                    <h5 className="text-[11px] font-black text-gray-900 line-clamp-1">{formatVehicleTitle(carObj)}</h5>
                     <div className="text-xs font-black text-red-600">{carObj.priceStartingFrom.toLocaleString('ar-SA')} ريال</div>
                     <div className="text-[10px] space-y-1 text-gray-600 border-t border-gray-200 pt-1">
                       <div>⚡ {carObj.horsepower || '225 حصان'}</div>
                       <div>⛽ {carObj.fuelEconomy || '24.5 كم/لتر'}</div>
-                      <div>🛡️ ضمان 10 سنوات</div>
+                      <div>🛡️ {carObj.brand === 'jetour' ? 'ضمان مليون كم' : 'ضمان 10 سنوات'}</div>
                     </div>
                   </div>
                 );
@@ -1342,7 +1882,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 setComparisonList([]);
                 setShowComparisonModal(false);
               }}
-              className="w-full py-2 bg-gray-900 text-white text-xs font-bold rounded-xl"
+              className="w-full py-2 bg-gray-900 text-white text-xs font-bold rounded-xl cursor-pointer"
             >
               إفراغ المقارنة
             </button>
@@ -1352,7 +1892,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* H. VIP QR Code Modal */}
       {showVipQrModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4`}>
           <div className="w-full max-w-xs bg-white rounded-3xl p-6 text-center space-y-4 shadow-2xl">
             <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
               <Award className="w-6 h-6" />
@@ -1371,14 +1911,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* I. Install App (iOS / Android) Guided Modal */}
       {showInstallAppModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
                 <img src="/solina-logo.png" alt="سولينا" className="h-6 w-auto" />
                 <h4 className="text-xs font-black text-gray-900">تثبيت تطبيق سولينا</h4>
               </div>
-              <button onClick={() => setShowInstallAppModal(false)} className="p-1 text-gray-400 hover:text-black">
+              <button onClick={() => setShowInstallAppModal(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1448,8 +1988,8 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* J. Smart Digital Key Remote Control Modal */}
       {showSmartKeyModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white rounded-[36px] p-6 text-start space-y-5 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
+        <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 animate-in fade-in`}>
+          <div className="w-full max-w-sm bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white rounded-[32px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
             {/* Ambient Background Glow */}
             <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 blur-3xl rounded-full transition-all duration-500 pointer-events-none ${
               isEngineRunning ? 'bg-emerald-500/30' : 'bg-blue-600/20'
@@ -1594,14 +2134,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setTargetAcTemp(prev => Math.max(16, +(prev - 0.5).toFixed(1)))}
-                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs"
+                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs cursor-pointer"
                   >
                     -
                   </button>
                   <span className="text-sm font-black font-mono text-cyan-300">{targetAcTemp}°C</span>
                   <button 
                     onClick={() => setTargetAcTemp(prev => Math.min(28, +(prev + 0.5).toFixed(1)))}
-                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs"
+                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs cursor-pointer"
                   >
                     +
                   </button>
@@ -1652,28 +2192,26 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* K. VIN Chassis Camera Scanner Modal */}
       {showVinScannerModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-gray-950 text-white rounded-[36px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
+        <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 animate-in fade-in`}>
+          <div className="w-full max-w-sm bg-gray-950 text-white rounded-[32px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
                 <ScanLine className="w-5 h-5 text-emerald-400" />
                 <h4 className="text-xs font-black text-white">ماسح رقم الشاسيه (VIN) الذكي</h4>
               </div>
-              <button onClick={() => setShowVinScannerModal(false)} className="p-1 text-gray-400 hover:text-white">
+              <button onClick={() => setShowVinScannerModal(false)} className="p-1 text-gray-400 hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Scanner Viewfinder Box */}
-            <div className="relative h-48 w-full rounded-2xl bg-black/60 border-2 border-dashed border-emerald-500/60 overflow-hidden flex flex-col items-center justify-center p-4">
-              {/* Corner HUD Markers */}
+            <div className="relative h-44 w-full rounded-2xl bg-black/60 border-2 border-dashed border-emerald-500/60 overflow-hidden flex flex-col items-center justify-center p-4">
               <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-emerald-400" />
               <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-emerald-400" />
               <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-emerald-400" />
               <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-emerald-400" />
 
-              {/* Animated Laser Scanning Line */}
               {isScanningVin && (
                 <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_12px_#34d399] animate-bounce" />
               )}
@@ -1685,7 +2223,6 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               <span className="text-[9px] text-emerald-400 font-mono mt-1">VIN AI SCANNER v2.6</span>
             </div>
 
-            {/* Trigger Simulation Button */}
             {!scannedVinRecord && (
               <button
                 onClick={() => {
@@ -1693,15 +2230,15 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   setTimeout(() => {
                     setIsScanningVin(false);
                     setScannedVinRecord({
-                      vin: 'JTJHY7AX8P2039182',
-                      model: 'سولينا كامري 2026 جراندي هايبرد',
+                      vin: 'LVTDD24B7R0084921',
+                      model: 'جيتور T2 الدفع الرباعي 2026 Luxury',
                       year: '2026',
-                      engine: '2.5L 4-Cylinder Dual VVT-i HEV',
-                      warranty: 'ساري وموثق (حتى 2036)',
-                      lastService: 'صيانة 10,000 كم (معتمدة لدى وكالة سولينا)',
+                      engine: '2.0L Turbo TGDI — 254 HP (XWD)',
+                      warranty: 'ساري وموثق (10 سنوات / مليون كم)',
+                      lastService: 'صيانة 5,000 كم (معتمدة لدى وكالة سولينا)',
                       fahasStatus: 'مجاز بالفحص الدوري السعودي ✓'
                     });
-                  }, 1200);
+                  }, 1000);
                 }}
                 className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
               >
@@ -1709,7 +2246,6 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               </button>
             )}
 
-            {/* Scanned Digital Passport Results */}
             {scannedVinRecord && (
               <div className="p-3.5 rounded-2xl bg-white/5 border border-emerald-500/40 space-y-2 text-xs animate-in slide-in-from-bottom">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
@@ -1736,13 +2272,13 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       setShowVinScannerModal(false);
                       setServiceBookingOpen(true);
                     }}
-                    className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl text-center"
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl text-center cursor-pointer"
                   >
                     حجز صيانة لهذا الهيكل
                   </button>
                   <button
                     onClick={() => setScannedVinRecord(null)}
-                    className="px-3 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-[10px] font-bold rounded-xl"
+                    className="px-3 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-[10px] font-bold rounded-xl cursor-pointer"
                   >
                     مسح آخر
                   </button>
@@ -1755,14 +2291,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
       {/* L. Instant Trade-In Valuation Modal */}
       {showTradeInModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
                 <RefreshCw className="w-5 h-5 text-purple-600" />
                 <h4 className="text-xs font-black text-gray-900">تثمين واستبدال سيارتك المستعملة</h4>
               </div>
-              <button onClick={() => { setShowTradeInModal(false); setTradeInEstimatedValue(null); }} className="p-1 text-gray-400 hover:text-black">
+              <button onClick={() => { setShowTradeInModal(false); setTradeInEstimatedValue(null); }} className="p-1 text-gray-400 hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1779,12 +2315,13 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   </strong>
                 </div>
                 <p className="text-xs text-gray-600 bg-purple-50 p-2.5 rounded-xl border border-purple-100">
-                  كوبون خصم الاستبدال: <strong className="text-purple-700 font-mono">TRADE-SOLINA-2026</strong> يتم خصم هذا المبلغ فوراً من الدفعة الأولى لأي سيارة سولينا جديدة.
+                  كوبون خصم الاستبدال: <strong className="text-purple-700 font-mono">TRADE-SOLINA-2026</strong> يتم خصم هذا المبلغ فوراً من الدفعة الأولى لأي سيارة جديدة.
                 </p>
                 <button
                   onClick={() => {
                     setShowTradeInModal(false);
                     setActiveTab('home');
+                    showAppToast('تم تفعيل كوبون الاستبدال TRADE-SOLINA-2026', 'اختر سيارتك الجديدة الآن', 'success');
                   }}
                   className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl cursor-pointer"
                 >
@@ -1812,13 +2349,13 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       onChange={(e) => setTradeInForm(prev => ({ ...prev, year: e.target.value }))}
                       className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
                     >
+                      <option>2025</option>
                       <option>2024</option>
                       <option>2023</option>
                       <option>2022</option>
                       <option>2021</option>
                       <option>2020</option>
                       <option>2019</option>
-                      <option>2018</option>
                     </select>
                   </div>
                   <div>
@@ -1848,7 +2385,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
                 <button
                   onClick={() => {
-                    const baseVal = tradeInForm.year === '2024' ? 95000 : tradeInForm.year === '2023' ? 82000 : 68000;
+                    const baseVal = tradeInForm.year === '2025' ? 104000 : tradeInForm.year === '2024' ? 95000 : tradeInForm.year === '2023' ? 82000 : 68000;
                     setTradeInEstimatedValue(baseVal);
                   }}
                   className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
@@ -1861,37 +2398,37 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         </div>
       )}
 
-      {/* M. Deposit & Reservation Checkout Modal */}
+      {/* M. Deposit & Reservation Checkout Modal (Synced with AdminDataContext & ZATCA) */}
       {showDepositCheckoutModal && depositVehicle && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-3.5 shadow-2xl font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
               <div>
                 <h4 className="text-xs font-black text-gray-900">💳 حجز السيارة وتثبيت العربون</h4>
-                <span className="text-[10px] text-emerald-600 font-bold">عربون مسترد 100% خلال 14 يوماً</span>
+                <span className="text-[10px] text-emerald-600 font-bold">عربون مسترد 100% وموثق بفاتورة ZATCA</span>
               </div>
-              <button onClick={() => { setShowDepositCheckoutModal(false); setDepositSuccess(false); }} className="p-1 text-gray-400 hover:text-black">
+              <button onClick={() => { setShowDepositCheckoutModal(false); setDepositSuccess(false); }} className="p-1 text-gray-400 hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {depositSuccess ? (
-              <div className="py-4 text-center space-y-3 animate-in zoom-in-95">
+              <div className="py-3 text-center space-y-3 animate-in zoom-in-95">
                 <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <Check className="w-6 h-6 stroke-[3]" />
                 </div>
                 <div>
                   <h4 className="text-base font-black text-gray-900">تم تأكيد حجز السيارة بنجاح!</h4>
-                  <span className="text-xs text-gray-500 block">رقم سند القبض الإلكتروني:</span>
+                  <span className="text-xs text-gray-500 block">رقم سند القبض والفاتورة الضريبية:</span>
                   <strong className="text-emerald-600 font-mono text-sm">{depositReference}</strong>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-2xl border border-gray-100 text-xs text-start space-y-1">
                   <div className="flex justify-between">
                     <span className="text-gray-500">السيارة المحجوزة:</span>
-                    <strong className="text-gray-900">{depositVehicle.nameAr} 2026</strong>
+                    <strong className="text-gray-900">{formatVehicleTitle(depositVehicle)}</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">مبلغ العربون:</span>
+                    <span className="text-gray-500">مبلغ العربون المدفوع:</span>
                     <strong className="text-emerald-600">2,500 ريال سعودي</strong>
                   </div>
                   <div className="flex justify-between">
@@ -1901,24 +2438,41 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 </div>
                 <button
                   onClick={() => {
-                    alert(`تم حفظ سند الحجز رقم ${depositReference} في ملفاتك وتطبيق سولينا.`);
+                    showAppToast(`تم حفظ سند القبض ${depositReference} 📄`, 'وتم تسجيل الفاتورة الضريبية في نظام ZATCA', 'success');
                     setShowDepositCheckoutModal(false);
                     setDepositSuccess(false);
                   }}
                   className="w-full py-2.5 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
                 >
-                  تحميل سند القبض (PDF) وإغلاق
+                  حفظ سند القبض الإلكتروني وإغلاق
                 </button>
               </div>
             ) : (
               <div className="space-y-3 text-xs">
                 {/* Vehicle Summary */}
-                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
-                  <img src={depositVehicle.cardImage || depositVehicle.heroImage} alt={depositVehicle.nameAr} className="h-12 w-auto object-contain" />
+                <div className="p-2.5 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+                  <img src={depositVehicle.cardImage || depositVehicle.heroImage} alt={depositVehicle.nameAr} className="h-12 w-auto object-contain rounded-lg" />
                   <div>
-                    <h5 className="text-xs font-black text-gray-900">{depositVehicle.nameAr} 2026</h5>
+                    <h5 className="text-xs font-black text-gray-900">{formatVehicleTitle(depositVehicle)}</h5>
                     <span className="text-[10px] text-gray-500">السعر الإجمالي: {depositVehicle.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    value={depositCustomerName}
+                    onChange={(e) => setDepositCustomerName(e.target.value)}
+                    placeholder="اسم المشتري"
+                    className="p-2 rounded-xl border border-gray-200 text-xs focus:border-emerald-500 focus:outline-none"
+                  />
+                  <input
+                    type="tel"
+                    value={depositCustomerPhone}
+                    onChange={(e) => setDepositCustomerPhone(e.target.value)}
+                    placeholder="رقم الجوال"
+                    className="p-2 rounded-xl border border-gray-200 text-xs focus:border-emerald-500 focus:outline-none"
+                  />
                 </div>
 
                 {/* Amount Due */}
@@ -1940,7 +2494,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       <button
                         key={p.id}
                         onClick={() => setPaymentMethod(p.id as any)}
-                        className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer ${
+                        className={`p-2 rounded-xl border text-start transition-all cursor-pointer ${
                           paymentMethod === p.id
                             ? 'bg-emerald-50/80 border-emerald-500 ring-1 ring-emerald-500'
                             : 'bg-white border-gray-200 hover:bg-gray-50'
@@ -1955,14 +2509,242 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
                 <button
                   onClick={() => {
-                    const ref = `SOL-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
+                    const inv = addZatcaInvoice({
+                      customerName: depositCustomerName.trim() || 'ضيف تطبيق سولينا',
+                      customerPhone: depositCustomerPhone.trim() || '0501234567',
+                      vehicleModel: `عربون حجز ${formatVehicleTitle(depositVehicle)}`,
+                      vinNumber: `SOL-VIN-${Math.floor(100000 + Math.random() * 900000)}`,
+                      totalAmount: 2500,
+                      type: 'simplified_invoice',
+                      status: 'cleared'
+                    });
+                    const ref = inv?.invoiceNumber || `SOL-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
                     setDepositReference(ref);
                     setDepositSuccess(true);
+                    showAppToast('تم سداد العربون وتوثيق الفاتورة ✓', `رقم السند: ${ref}`, 'success');
                   }}
                   className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md active:scale-95 transition-all"
                 >
                   تأكيد ودفع 2,500 ريال عبر {paymentMethod.toUpperCase()} 🔒
                 </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* N. Add New Car to Garage Modal */}
+      {showAddCarModal && (
+        <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Car className="w-5 h-5 text-red-600" />
+                <h4 className="text-xs font-black text-gray-900">إضافة سيارة جديدة إلى مرآبي</h4>
+              </div>
+              <button onClick={() => setShowAddCarModal(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-[11px] font-bold text-gray-700 block mb-1">اختر طراز السيارة من أسطول 2026</label>
+                <select
+                  value={newGarageCarForm.vehicleId}
+                  onChange={(e) => setNewGarageCarForm(prev => ({ ...prev, vehicleId: e.target.value }))}
+                  className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:border-red-500 focus:outline-none"
+                >
+                  {allVehicles.map((v) => (
+                    <option key={v.id} value={v.id}>{formatVehicleTitle(v)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] font-bold text-gray-700 block mb-1">رقم اللوحة</label>
+                  <input
+                    type="text"
+                    value={newGarageCarForm.plate}
+                    onChange={(e) => setNewGarageCarForm(prev => ({ ...prev, plate: e.target.value }))}
+                    placeholder="مثال: أ ب ج 2026"
+                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-gray-700 block mb-1">الممشى الحالي (كم)</label>
+                  <input
+                    type="number"
+                    value={newGarageCarForm.mileage}
+                    onChange={(e) => setNewGarageCarForm(prev => ({ ...prev, mileage: e.target.value }))}
+                    placeholder="1200"
+                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  const chosen = allVehicles.find(v => v.id === newGarageCarForm.vehicleId) || allVehicles[0];
+                  const km = Math.max(0, Number(newGarageCarForm.mileage) || 1200);
+                  const nextKm = Math.ceil((km + 1000) / 10000) * 10000;
+                  const newCar = {
+                    id: `car-${Date.now()}`,
+                    model: formatVehicleTitle(chosen),
+                    plate: newGarageCarForm.plate.trim() || 'س ل ن 2026',
+                    vin: `SOL2026${Math.floor(10000000 + Math.random() * 90000000)}`,
+                    mileage: km,
+                    nextServiceKm: nextKm,
+                    nextServiceDate: '15 ديسمبر 2026',
+                    warrantyExpiry: chosen.brand === 'jetour' ? '2036 (ضمان 10 سنوات / مليون كم)' : '2036 (ساري 10 سنوات / 300 ألف كم)',
+                    image: chosen.cardImage || chosen.heroImage
+                  };
+                  setUserCars((prev: any[]) => [newCar, ...prev]);
+                  setShowAddCarModal(false);
+                  showAppToast('تمت إضافة السيارة إلى مرآبك 🚗', `${newCar.model} — لوحة (${newCar.plate})`, 'success');
+                }}
+                className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
+              >
+                حفظ السيارة وتفعيل المفتاح الذكي ✓
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* O. Digital Warranty Certificate Modal */}
+      {warrantyModalCar && (
+        <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
+          <div className="w-full max-w-sm bg-gradient-to-b from-slate-900 via-gray-950 to-black text-white rounded-3xl p-5 text-start space-y-4 shadow-2xl border border-amber-500/30 font-arabic">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-amber-400" />
+                <div>
+                  <h4 className="text-xs font-black text-amber-400">شهادة الضمان الرقمية المعتمدة</h4>
+                  <span className="text-[9px] text-gray-400">موثقة لدى شركة سولينا موتورز ووزارة التجارة</span>
+                </div>
+              </div>
+              <button onClick={() => setWarrantyModalCar(null)} className="p-1 text-gray-400 hover:text-white cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 text-[10px]">الطراز المضمون:</span>
+                <strong className="text-white font-black">{warrantyModalCar.model}</strong>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 text-[10px]">رقم اللوحة:</span>
+                <strong className="text-amber-300 font-bold">{warrantyModalCar.plate}</strong>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 text-[10px]">رقم الهيكل (VIN):</span>
+                <strong className="text-emerald-400 font-mono text-[11px]">{warrantyModalCar.vin || 'JTNB11HK9P3012948'}</strong>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 text-[10px]">تغطية الضمان:</span>
+                <strong className="text-white font-bold">{warrantyModalCar.warrantyExpiry || '10 سنوات / 300 ألف كم'}</strong>
+              </div>
+              <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+                <div className="text-[10px] text-gray-300 space-y-0.5">
+                  <div>✓ يشمل المحرك وناقل الحركة والبطارية الهجينة</div>
+                  <div>✓ مساعدة مجانية على الطريق 24/7 في جميع مناطق المملكة</div>
+                </div>
+                <QrCode className="w-10 h-10 text-amber-400 shrink-0" />
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setWarrantyModalCar(null);
+                showAppToast('تم حفظ شهادة الضمان الرقمية 🛡️', 'متاحة للعرض في جميع مراكز صيانة سولينا', 'success');
+              }}
+              className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-black rounded-xl cursor-pointer"
+            >
+              حفظ الشهادة في المحفظة الرقمية
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* P. 24/7 Roadside Assistance SOS Modal */}
+      {showRoadsideSosModal && (
+        <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-gray-900">طوارئ المساعدة على الطريق 24/7</h4>
+                  <span className="text-[10px] text-red-600 font-bold">استجابة سريعة خلال 25 دقيقة — 8002444400</span>
+                </div>
+              </div>
+              <button onClick={() => setShowRoadsideSosModal(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {sosDispatched ? (
+              <div className="py-4 text-center space-y-3 animate-in zoom-in-95">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
+                  <Check className="w-6 h-6 stroke-[3]" />
+                </div>
+                <h4 className="text-sm font-black text-gray-900">تم توجيه وحدة الإنقاذ إلى موقعك!</h4>
+                <p className="text-xs text-gray-500">
+                  فني سولينا المتنقل في طريقه إليك الآن (الوقت المتوقع للوصول: <strong className="text-red-600">18 دقيقة</strong>).
+                </p>
+                <button
+                  onClick={() => setShowRoadsideSosModal(false)}
+                  className="w-full py-2.5 bg-gray-900 text-white text-xs font-bold rounded-xl cursor-pointer"
+                >
+                  حسناً، متابعة
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs">
+                <div className="p-3 bg-red-50 rounded-2xl border border-red-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-red-600" />
+                    <div>
+                      <span className="text-[10px] text-gray-500 block">موقعك الحالي (GPS مفعل):</span>
+                      <strong className="text-gray-900 text-xs">الرياض — طريق الملك فهد الفرعي</strong>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full">متصل</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { label: '🚛 طلب سطحة نقل فورية', desc: 'نقل لأقرب مركز صيانة' },
+                    { label: '🔋 شحن أو استبدال البطارية', desc: 'خدمة متنقلة في موقعك' },
+                    { label: '🛞 إصلاح وتبديل الإطارات', desc: 'إطار احتياطي وضغط هواء' },
+                    { label: '⛽ تزويد وقود / شحن EV', desc: 'إنقاذ طارئ على الطريق' }
+                  ].map((item, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setSosDispatched(true);
+                        showAppToast('تم إرسال بلاغ الطوارئ SOS 🚨', item.label, 'warning');
+                      }}
+                      className="p-2.5 rounded-2xl border border-gray-200 hover:border-red-500 hover:bg-red-50/40 text-start transition-all cursor-pointer"
+                    >
+                      <strong className="text-[11px] font-black text-gray-900 block">{item.label}</strong>
+                      <span className="text-[9px] text-gray-500">{item.desc}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <a
+                  href="tel:8002444400"
+                  className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl flex items-center justify-center gap-2 shadow-md"
+                >
+                  <PhoneCall className="w-4 h-4" />
+                  <span>اتصال مباشر بطوارئ سولينا (8002444400)</span>
+                </a>
               </div>
             )}
           </div>
@@ -1977,6 +2759,17 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         onSelectVehicle={onSelectVehicle}
         onOpenTestDrive={(m) => setTestDriveModalVehicle(m || 'سولينا 2026')}
         onOpenServiceBooking={() => setServiceBookingOpen(true)}
+      />
+
+      {/* Official Vehicle Catalog & Interior Cabin Modal */}
+      <VehicleCatalogModal
+        vehicle={catalogModalVehicle}
+        isOpen={!!catalogModalVehicle}
+        onClose={() => setCatalogModalVehicle(null)}
+        onOpenTestDrive={(name) => {
+          setCatalogModalVehicle(null);
+          setTestDriveModalVehicle(name || catalogModalVehicle?.nameAr || 'سولينا 2026');
+        }}
       />
 
     </div>

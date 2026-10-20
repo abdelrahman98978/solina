@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Wrench, ShieldCheck, CheckCircle2, Search, ShoppingBag, ArrowLeft, Tag, Layers } from 'lucide-react';
-import { GENUINE_PARTS, type SparePart } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 
 interface PartsAccessoriesSectionProps {
   onOpenTestDrive: (partTitle?: string) => void;
@@ -11,6 +11,7 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
   onOpenTestDrive
 }) => {
   const { language, formatPrice } = useLanguage();
+  const { spareParts } = useAdminData();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -22,7 +23,7 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
     { id: 'زيوت وسوائل', labelAr: 'الزيوت التخليقية والسوائل', labelEn: 'Oils & Fluids' }
   ];
 
-  const filteredParts = GENUINE_PARTS.filter(p => {
+  const filteredParts = spareParts.filter(p => {
     if (activeCategory !== 'all' && p.category !== activeCategory) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();

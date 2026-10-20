@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, CheckCircle2, Car, MapPin, Gauge, Calendar, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
-import { CERTIFIED_PRE_OWNED, type PreOwnedVehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 
 interface CertifiedPreOwnedSectionProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -11,9 +11,10 @@ export const CertifiedPreOwnedSection: React.FC<CertifiedPreOwnedSectionProps> =
   onOpenTestDrive
 }) => {
   const { language, formatPrice } = useLanguage();
+  const { cpoVehicles } = useAdminData();
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
 
-  const filteredCPO = CERTIFIED_PRE_OWNED.filter(car => {
+  const filteredCPO = cpoVehicles.filter(car => {
     if (selectedLocation === 'all') return true;
     return car.location.includes(selectedLocation);
   });

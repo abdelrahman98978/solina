@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Wrench, Calendar, Clock, MapPin, CheckCircle2, User, Phone, Car, Sparkles, Shield, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { VEHICLES, SHOWROOMS, MAINTENANCE_PACKAGES } from '../data/toyotaData';
+import { MAINTENANCE_PACKAGES } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
 
@@ -17,12 +17,12 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
   defaultModelName
 }) => {
   const { language, formatPrice } = useLanguage();
-  const { addServiceAppointment } = useAdminData();
-  const toyotaVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
+  const { addServiceAppointment, vehicles, showrooms } = useAdminData();
+  const toyotaVehicles = vehicles.filter(v => v.brand !== 'lexus');
   const [step, setStep] = useState<'details' | 'booking' | 'success'>('details');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>(toyotaVehicles[2]?.id || toyotaVehicles[0]?.id); // Camry
   const [selectedMileage, setSelectedMileage] = useState<number>(10000);
-  const [selectedBranchId, setSelectedBranchId] = useState<string>(SHOWROOMS[0].id);
+  const [selectedBranchId, setSelectedBranchId] = useState<string>(showrooms[0]?.id || 'riyadh-khurais');
   const [bookingDate, setBookingDate] = useState<string>('');
   const [timeSlot, setTimeSlot] = useState<string>('09:00 ص - 09:45 ص (صيانة سريعة)');
   const [customerName, setCustomerName] = useState<string>('');
@@ -34,7 +34,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 
   const currentVehicle = toyotaVehicles.find(v => v.id === selectedVehicleId) || toyotaVehicles[0];
   const currentPackage = MAINTENANCE_PACKAGES.find(p => p.mileage === selectedMileage) || MAINTENANCE_PACKAGES[0];
-  const currentBranch = SHOWROOMS.find(s => s.id === selectedBranchId) || SHOWROOMS[0];
+  const currentBranch = showrooms.find(s => s.id === selectedBranchId) || showrooms[0];
 
   // Price estimate based on vehicle category
   const estimatedCost = currentVehicle.category === 'suv'
@@ -59,7 +59,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
       alert(language === 'ar' ? 'يرجى تعبئة الاسم ورقم الجوال للمتابعة' : 'Please provide your full name and phone number');
       return;
     }
-    const ref = `SRV-ALJ-${Math.floor(100000 + Math.random() * 900000)}`;
+    const ref = `SRV-SOL-${Math.floor(100000 + Math.random() * 900000)}`;
     setBookingRef(ref);
 
     // Save to Admin Data store
@@ -209,7 +209,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
                 onChange={(e) => setSelectedBranchId(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold rounded-xl p-3 focus:ring-2 focus:ring-[#0056B3] outline-none cursor-pointer"
               >
-                {SHOWROOMS.map(s => (
+                {showrooms.map(s => (
                   <option key={s.id} value={s.id}>
                     {s.city} - {language === 'ar' ? s.name : s.nameEn}
                   </option>

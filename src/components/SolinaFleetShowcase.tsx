@@ -31,8 +31,8 @@ export const SolinaFleetShowcase: React.FC<SolinaFleetShowcaseProps> = ({
             </h2>
             <p className="text-gray-600 text-sm md:text-base max-w-2xl font-normal">
               {language === 'ar'
-                ? 'استكشف أحدث طرازات لاند كروزر 300، كامري الهايبرد، راف فور، وكراون الفاخرة داخل صالات عرض سولينا بتجهيزات كاملة وضمان ممتد.'
-                : 'Experience the all-new Land Cruiser 300, Camry Hybrid, RAV4, and Crown inside Solina showrooms with full specs and extended warranties.'}
+                ? 'استكشف أحدث طرازات سولينا 2026، وجيتور (T2 وداشينغ)، وبي واي دي (هان وتانغ وسيل)، وهيونداي (أزيرا وباليسيد وسانتافي) ولكزس داخل صالات عرض سولينا بتجهيزات كاملة وكتالوجات رسمية وضمان ممتد.'
+                : 'Experience the all-new 2026 Solina, Jetour (T2 & Dashing), BYD (Han, Tang & Seal), Hyundai (Azera, Palisade & Santa Fe), and Lexus lineups inside Solina showrooms with official catalogs and extended warranties.'}
             </p>
           </div>
 
@@ -65,14 +65,17 @@ export const SolinaFleetShowcase: React.FC<SolinaFleetShowcaseProps> = ({
                 {language === 'ar' ? 'صالة العرض الرئيسية' : 'Flagship Floor'}
               </span>
               <h4 className="text-xl md:text-2xl font-bold">
-                {language === 'ar' ? 'تشكيلة متكاملة من فئات الهايبرد والدفع الرباعي' : 'Complete Hybrid & 4WD Lineup'}
+                {language === 'ar' ? 'تشكيلة متكاملة من فئات الهايبرد، الكهرباء، والدفع الرباعي' : 'Complete Hybrid, EV & 4WD Lineup'}
               </h4>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {[
                 { name: 'كامري 2026', id: 'camry-2026' },
-                { name: 'لاند كروزر 2026', id: 'land-cruiser-2026' },
+                { name: 'لاند كروزر 300', id: 'lc300-2026' },
+                { name: 'جيتور T2 2026', id: 'jetour-t2-2026' },
+                { name: 'بي واي دي هان EV', id: 'byd-han-2026' },
+                { name: 'هيونداي أزيرا 2026', id: 'hyundai-azera-2026' },
                 { name: 'راف فور 2026', id: 'rav4-2026' }
               ].map((m, idx) => (
                 <button

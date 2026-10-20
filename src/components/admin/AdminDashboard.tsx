@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
   Car, 
@@ -15,13 +15,39 @@ import {
   ShieldCheck, 
   Menu, 
   X,
-  Sparkles,
   Layers,
-  ChevronRight,
-  PackageCheck
+  PackageCheck,
+  Eye,
+  History,
+  Monitor,
+  Smartphone,
+  CheckCircle2,
+  Clock,
+  Trash2,
+  ExternalLink,
+  Search,
+  Settings,
+  Undo2,
+  UserCheck,
+  Command,
+  Download,
+  FileSpreadsheet,
+  FileCode,
+  FileJson,
+  Printer,
+  PanelRightClose,
+  PanelRightOpen,
+  Maximize2
 } from 'lucide-react';
-import { useAdminData } from '../../context/AdminDataContext';
+import { 
+  useAdminData, 
+  ADMIN_ROLES_META, 
+  AdminRoleType, 
+  ExportDatasetType, 
+  ExportFormatType 
+} from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
+import './mobbin-admin.css';
 
 // Tabs
 import { AdminOverviewTab } from './AdminOverviewTab';
@@ -34,18 +60,180 @@ import { AdminShowroomsTab } from './AdminShowroomsTab';
 import { AdminZatcaInvoicingTab } from './AdminZatcaInvoicingTab';
 import { AdminWorkshopJobCardsTab } from './AdminWorkshopJobCardsTab';
 import { AdminVINInventoryTab } from './AdminVINInventoryTab';
+import { AdminSettingsTab } from './AdminSettingsTab';
 
 interface AdminDashboardProps {
   onClose: () => void;
 }
 
-export type AdminTabType = 'overview' | 'fleet' | 'vin_inventory' | 'leads' | 'workshop' | 'zatca' | 'offers' | 'cpo' | 'parts' | 'showrooms';
+export type AdminTabType =
+  | 'overview'
+  | 'fleet'
+  | 'vin_inventory'
+  | 'leads'
+  | 'workshop'
+  | 'zatca'
+  | 'offers'
+  | 'cpo'
+  | 'parts'
+  | 'showrooms'
+  | 'settings';
+
+export type LeadsSubTabType = 'test_drives' | 'services' | 'quotations';
+
+const EXPORT_DATASETS_LIST: Array<{ id: ExportDatasetType; labelAr: string; descAr: string }> = [
+  { id: 'all_erp', labelAr: 'كافة بيانات وسجلات الوكالة الشاملة (Master ERP)', descAr: 'تصدير موحد لجميع الأقسام والعمليات والمخزون والفواتير' },
+  { id: 'fleet', labelAr: 'كتالوج أسطول سولينا 2026 والأسعار', descAr: 'جميع الموديلات والفئات والأسعار والأقساط الشهرية' },
+  { id: 'vin_stock', labelAr: 'مخزون الشاسيه والمستودعات (VIN Inventory)', descAr: 'أرقام الشاسيه، مواقع الفروع، حالات التوريد وأيام التخزين' },
+  { id: 'test_drives', labelAr: 'طلبات تجربة القيادة (Test Drives)', descAr: 'بيانات العملاء، المواعيد، الفروع، ومستشاري المبيعات' },
+  { id: 'services', labelAr: 'حجوزات مواعيد الصيانة الدورية', descAr: 'مواعيد الصيانة، اللوحات، قراءات العداد والتكلفة التقديرية' },
+  { id: 'quotations', labelAr: 'عروض الأسعار وطلبات التمويل', descAr: 'عروض الأسعار الرسمية، مبالغ الضريبة، والتمويل التأجيري' },
+  { id: 'job_cards', labelAr: 'أوامر العمل بالورشة والمسار السريع', descAr: 'كروت العمل، الفنيين، قطع الغيار المصروفة والتكاليف' },
+  { id: 'zatca_invoices', labelAr: 'الفواتير الضريبية الإلكترونية (ZATCA Phase 2)', descAr: 'الفواتير الضريبية والمبسطة والإشعارات الدائنة' },
+  { id: 'parts', labelAr: 'قطع الغيار الأصلية والأرصدة المخزنية', descAr: 'أرقام القطع OEM، الأسعار، والكميات المتوفرة بالمستودع' },
+  { id: 'offers', labelAr: 'العروض الترويجية والحملات التسويقية', descAr: 'حملات التمويل والصيانة والعروض الموسمية' },
+  { id: 'cpo', labelAr: 'السيارات المستعملة المعتمدة (AutoHub CPO)', descAr: 'السيارات المفحوصة، الممشى، الضمان والأسعار' },
+  { id: 'showrooms', labelAr: 'الفروع وصالات العرض ومراكز الصيانة', descAr: 'العناوين، أرقام التواصل، وساعات العمل' },
+  { id: 'audit_logs', labelAr: 'سجل المراجعة والتدقيق الإداري (Audit Log)', descAr: 'توثيق كافة التعديلات والفوارق الزمنية والمسؤولين' }
+];
+
+const EXPORT_FORMATS_LIST: Array<{
+  id: ExportFormatType;
+  ext: string;
+  titleAr: string;
+  descAr: string;
+  badge: string;
+}> = [
+  {
+    id: 'excel',
+    ext: '.XLS',
+    titleAr: 'ملف إكسل منسق (Microsoft Excel)',
+    descAr: 'جدول إكسل عربي منسق بالأعمدة والترويسة الرسمية جاهز للتحليل المحاسبي',
+    badge: 'الأكثر استخداماً'
+  },
+  {
+    id: 'csv',
+    ext: '.CSV',
+    titleAr: 'ملف قيم مفصولة بفواصل (UTF-8 CSV)',
+    descAr: 'متوافق 100% مع Excel وGoogle Sheets وكافة أنظمة ERP المحاسبية',
+    badge: 'قياسي'
+  },
+  {
+    id: 'pdf_print',
+    ext: '.PDF',
+    titleAr: 'تقرير PDF رسمي / طباعة فورية',
+    descAr: 'يفتح وثيقة رسمية بترويسة شركة سولينا للسيارات جاهزة للحفظ كـ PDF أو الطباعة',
+    badge: 'رسمي للطباعة'
+  },
+  {
+    id: 'json',
+    ext: '.JSON',
+    titleAr: 'بيانات مهيكلة برمجياً (JSON Data)',
+    descAr: 'صيغة JSON كاملة مع البيانات الوصفية للربط البرمجي والنسخ الاحتياطي',
+    badge: 'للمطورين والربط'
+  },
+  {
+    id: 'xml',
+    ext: '.XML',
+    titleAr: 'ملف XML قياسي (Enterprise & ZATCA XML)',
+    descAr: 'مهيكل وفق المعايير القياسية لتبادل البيانات المالية والضريبية',
+    badge: 'ZATCA / ERP'
+  },
+  {
+    id: 'html',
+    ext: '.HTML',
+    titleAr: 'تقرير ويب تفاعلي مستقل (HTML5 Report)',
+    descAr: 'ملف ويب مستقل يعمل بدون إنترنت في أي متصفح مع تنسيق كامل',
+    badge: 'تفاعلي'
+  },
+  {
+    id: 'txt',
+    ext: '.TXT',
+    titleAr: 'ملف نصي جدولي (Plain Text / TSV)',
+    descAr: 'ملف نصي خفيف مفصول بمسافات جدولية متوافق مع جميع الأنظمة',
+    badge: 'نصي'
+  }
+];
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
-  const { stats, resetToDefaultData } = useAdminData();
-  const { language, setLanguage, isRTL } = useLanguage();
+  const { 
+    stats, 
+    resetToDefaultData, 
+    vehicles, 
+    vinStock,
+    offers, 
+    cpoVehicles, 
+    spareParts, 
+    showrooms,
+    testDrives,
+    serviceAppointments,
+    quotations,
+    jobCards,
+    zatcaInvoices,
+    auditLogs,
+    undoAuditLog,
+    clearAuditLogs,
+    adminRole,
+    setAdminRole,
+    exportDataInFormat,
+    exportModalRequest,
+    setExportModalRequest
+  } = useAdminData();
+  const { language, setLanguage, isRTL, formatPrice } = useLanguage();
   const [activeTab, setActiveTab] = useState<AdminTabType>('overview');
+  const [leadsSubTab, setLeadsSubTab] = useState<LeadsSubTabType>('test_drives');
   const [sidebarOpenMobile, setSidebarOpenMobile] = useState(false);
+  const [sidebarCollapsedDesktop, setSidebarCollapsedDesktop] = useState(false);
+
+  // Command Palette (Ctrl+K / ⌘K) State
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState('');
+
+  // Universal Multi-Format Export Modal State
+  const [selectedExportDataset, setSelectedExportDataset] = useState<ExportDatasetType>('all_erp');
+
+  useEffect(() => {
+    if (exportModalRequest) {
+      setSelectedExportDataset(exportModalRequest);
+    }
+  }, [exportModalRequest]);
+
+  // Notifications & Live Preview / Review Modals
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [previewDrawerOpen, setPreviewDrawerOpen] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'live_preview' | 'audit_log'>('live_preview');
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
+  const [previewSection, setPreviewSection] = useState<'fleet' | 'offers' | 'cpo' | 'parts' | 'showrooms'>('fleet');
+
+  // Keyboard shortcut Ctrl+K / Cmd+K for Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandOpen(prev => !prev);
+      } else if (e.key === 'Escape') {
+        setCommandOpen(false);
+        setExportModalRequest(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setExportModalRequest]);
+
+  const handleNavigateTab = (tab: AdminTabType | LeadsSubTabType) => {
+    if (tab === 'test_drives' || tab === 'services' || tab === 'quotations') {
+      setLeadsSubTab(tab);
+      setActiveTab('leads');
+    } else {
+      setActiveTab(tab);
+    }
+    setSidebarOpenMobile(false);
+    setNotificationsOpen(false);
+    setCommandOpen(false);
+  };
+
+  const unreadAlertsCount = stats.newTestDrivesCount + stats.pendingServicesCount + stats.readyJobCardsCount;
+  const hasNewLeads = (stats.newTestDrivesCount + stats.pendingServicesCount) > 0;
 
   const navItems = [
     {
@@ -53,192 +241,565 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       labelAr: 'لوحة المؤشرات والتحليلات',
       labelEn: 'Overview & Analytics',
       icon: LayoutDashboard,
-      badge: undefined
+      badge: undefined,
+      isPopularSignal: false
     },
     {
       id: 'fleet' as const,
-      labelAr: 'إدارة الأسطول والموديلات 2026',
-      labelEn: 'Fleet & Pricing Management',
+      labelAr: 'إدارة أسطول سولينا 2026',
+      labelEn: 'Solina Fleet & Pricing',
       icon: Car,
-      badge: `${stats.totalFleetCount} موديل`
+      badge: `${stats.totalFleetCount} موديل`,
+      isPopularSignal: false
     },
     {
       id: 'vin_inventory' as const,
-      labelAr: 'مخزون الشاسيه وسلاسل الإمداد (VIN)',
+      labelAr: 'مخزون الشاسيه والمستودعات (VIN)',
       labelEn: 'VIN Stock & Warehouses',
       icon: Layers,
-      badge: 'ERP مباشر'
+      badge: stats.agingVinCount > 0 ? `${stats.agingVinCount} راكد` : `${stats.totalVinStockCount} VIN`,
+      isPopularSignal: stats.agingVinCount > 0
     },
     {
       id: 'leads' as const,
       labelAr: 'الطلبات والحجوزات والمبيعات',
       labelEn: 'Leads & Appointments',
       icon: Users,
-      badge: (stats.newTestDrivesCount + stats.pendingServicesCount) > 0 
+      badge: hasNewLeads
         ? `${stats.newTestDrivesCount + stats.pendingServicesCount} جديد` 
-        : undefined,
-      badgeColor: 'bg-red-600'
+        : `${stats.totalTestDrives + stats.totalServices + stats.totalQuotations}`,
+      isPopularSignal: hasNewLeads
     },
     {
       id: 'workshop' as const,
-      labelAr: 'ورش الصيانة وأوامر العمل (Job Cards)',
+      labelAr: 'ورش الصيانة وأوامر العمل',
       labelEn: 'Workshop & Express Bay',
       icon: Wrench,
-      badge: '45 دقيقة'
+      badge: `${stats.activeJobCardsCount + stats.readyJobCardsCount} نشط`,
+      isPopularSignal: false
     },
     {
       id: 'zatca' as const,
-      labelAr: 'الفوترة الإلكترونية والضرائب (ZATCA)',
+      labelAr: 'الفوترة الإلكترونية (ZATCA)',
       labelEn: 'ZATCA e-Invoicing Phase 2',
       icon: FileText,
-      badge: 'معتمد 100%',
-      badgeColor: 'bg-emerald-600'
+      badge: `${stats.totalInvoicesCount} فاتورة`,
+      isPopularSignal: false
     },
     {
       id: 'offers' as const,
       labelAr: 'العروض الترويجية والحملات',
       labelEn: 'Campaigns & Offers',
       icon: Tag,
-      badge: `${stats.totalOffersCount}`
+      badge: `${stats.totalOffersCount}`,
+      isPopularSignal: false
     },
     {
       id: 'cpo' as const,
       labelAr: 'المستعمل المعتمد AutoHub',
       labelEn: 'Certified Pre-Owned',
       icon: ShieldCheck,
-      badge: `${stats.totalCPOCount}`
+      badge: `${stats.totalCPOCount}`,
+      isPopularSignal: false
     },
     {
       id: 'parts' as const,
       labelAr: 'قطع الغيار الأصلية والإكسسوارات',
       labelEn: 'Genuine Parts & Accessories',
       icon: PackageCheck,
-      badge: `${stats.totalPartsCount}`
+      badge: stats.lowStockPartsCount > 0 ? `${stats.lowStockPartsCount} نقص` : `${stats.totalPartsCount}`,
+      isPopularSignal: stats.lowStockPartsCount > 0
     },
     {
       id: 'showrooms' as const,
-      labelAr: 'الفروع وصالات العرض والصيانة',
-      labelEn: 'Showrooms & Service Network',
+      labelAr: 'الفروع وصالات عرض سولينا',
+      labelEn: 'Solina Showrooms Network',
       icon: MapPin,
-      badge: `${stats.totalShowroomsCount}`
+      badge: `${stats.totalShowroomsCount}`,
+      isPopularSignal: false
+    },
+    {
+      id: 'settings' as const,
+      labelAr: 'إعدادات الوكالة والتمويل والنسخ',
+      labelEn: 'Settings, Finance & Backup',
+      icon: Settings,
+      badge: 'ERP',
+      isPopularSignal: false
     }
   ];
 
+  // Role-based filtering of sidebar modules
+  const ROLE_ALLOWED_TABS: Record<AdminRoleType, AdminTabType[]> = {
+    gm: ['overview', 'fleet', 'vin_inventory', 'leads', 'workshop', 'zatca', 'offers', 'cpo', 'parts', 'showrooms', 'settings'],
+    sales: ['overview', 'fleet', 'vin_inventory', 'leads', 'offers', 'cpo', 'showrooms'],
+    workshop: ['overview', 'workshop', 'parts', 'leads'],
+    finance: ['overview', 'zatca', 'vin_inventory', 'leads', 'settings']
+  };
+  const allowedTabsForRole = ROLE_ALLOWED_TABS[adminRole];
+  const visibleNavItems = navItems.filter(item => allowedTabsForRole.includes(item.id));
+
+  // Global Command Palette Search Results
+  const commandResults = useMemo(() => {
+    const q = commandQuery.trim().toLowerCase();
+    const results: Array<{
+      id: string;
+      categoryAr: string;
+      titleAr: string;
+      subtitleAr: string;
+      targetTab: AdminTabType | LeadsSubTabType;
+      badgeAr?: string;
+    }> = [];
+
+    if (!q) {
+      return [
+        { id: 'qa-overview', categoryAr: 'تنقل سريع', titleAr: 'لوحة المؤشرات والتحليلات التنفيذية', subtitleAr: 'عرض قمع المبيعات، الإيرادات، وأداء الفروع', targetTab: 'overview' as const, badgeAr: 'Overview' },
+        { id: 'qa-leads', categoryAr: 'تنقل سريع', titleAr: 'إدارة الطلبات والحجوزات (Kanban / جدول)', subtitleAr: `${testDrives.length} تجربة قيادة • ${serviceAppointments.length} صيانة`, targetTab: 'leads' as const, badgeAr: 'CRM' },
+        { id: 'qa-vin', categoryAr: 'تنقل سريع', titleAr: 'مخزون الشاسيه والمستودعات (VIN)', subtitleAr: `${vinStock.length} مركبة مسجلة بالـ VIN`, targetTab: 'vin_inventory' as const, badgeAr: 'VIN' },
+        { id: 'qa-workshop', categoryAr: 'تنقل سريع', titleAr: 'أوامر العمل والمسار السريع 45 دقيقة', subtitleAr: `${jobCards.length} كرت عمل بالورشة`, targetTab: 'workshop' as const, badgeAr: 'Workshop' },
+        { id: 'qa-zatca', categoryAr: 'تنقل سريع', titleAr: 'الفوترة الإلكترونية ZATCA وإشعارات الدائن', subtitleAr: `${zatcaInvoices.length} فاتورة ضريبية ومبسطة`, targetTab: 'zatca' as const, badgeAr: 'ZATCA' },
+        { id: 'qa-settings', categoryAr: 'تنقل سريع', titleAr: 'إعدادات الوكالة ومحرك التمويل والنسخ الاحتياطي', subtitleAr: 'تعديل نسب المرابحة APR وتصدير قاعدة البيانات JSON', targetTab: 'settings' as const, badgeAr: 'ERP' }
+      ];
+    }
+
+    vehicles.forEach(v => {
+      if (v.nameAr.toLowerCase().includes(q) || v.nameEn.toLowerCase().includes(q)) {
+        results.push({
+          id: `veh-${v.id}`,
+          categoryAr: 'أسطول سولينا 2026',
+          titleAr: `سولينا ${v.nameAr} (${v.year})`,
+          subtitleAr: `السعر يبدأ من ${v.priceStartingFrom.toLocaleString('ar-SA')} ر.س • ${v.engineSpec}`,
+          targetTab: 'fleet',
+          badgeAr: v.bodyTypeAr
+        });
+      }
+    });
+
+    vinStock.forEach(s => {
+      if (s.vin.toLowerCase().includes(q) || s.model.toLowerCase().includes(q) || s.location.toLowerCase().includes(q)) {
+        results.push({
+          id: `vin-${s.id}`,
+          categoryAr: 'مخزون الشاسيه VIN',
+          titleAr: `${s.vin} — ${s.model}`,
+          subtitleAr: `${s.location} • ${s.price.toLocaleString('ar-SA')} ر.س`,
+          targetTab: 'vin_inventory',
+          badgeAr: s.status
+        });
+      }
+    });
+
+    testDrives.forEach(td => {
+      if (td.fullName.toLowerCase().includes(q) || td.phone.includes(q) || td.modelName.toLowerCase().includes(q)) {
+        results.push({
+          id: `td-${td.id}`,
+          categoryAr: 'طلبات تجربة القيادة',
+          titleAr: `${td.fullName} (${td.phone})`,
+          subtitleAr: `${td.modelName} • ${td.preferredShowroom}`,
+          targetTab: 'test_drives',
+          badgeAr: td.status
+        });
+      }
+    });
+
+    serviceAppointments.forEach(srv => {
+      if (srv.fullName.toLowerCase().includes(q) || srv.phone.includes(q) || srv.plateNumber.toLowerCase().includes(q)) {
+        results.push({
+          id: `srv-${srv.id}`,
+          categoryAr: 'مواعيد الصيانة',
+          titleAr: `${srv.fullName} — لوحة ${srv.plateNumber}`,
+          subtitleAr: `${srv.serviceType} • ${srv.preferredDate}`,
+          targetTab: 'services',
+          badgeAr: srv.status
+        });
+      }
+    });
+
+    quotations.forEach(qt => {
+      if (qt.fullName.toLowerCase().includes(q) || qt.quotationNumber.toLowerCase().includes(q)) {
+        results.push({
+          id: `qt-${qt.id}`,
+          categoryAr: 'عروض الأسعار والتمويل',
+          titleAr: `${qt.quotationNumber} — ${qt.fullName}`,
+          subtitleAr: `${qt.vehicleName} • ${qt.totalWithVat.toLocaleString('ar-SA')} ر.س`,
+          targetTab: 'quotations',
+          badgeAr: qt.financeType === 'lease' ? 'تمويل' : 'نقدي'
+        });
+      }
+    });
+
+    jobCards.forEach(jc => {
+      if (jc.cardNumber.toLowerCase().includes(q) || jc.customerName.toLowerCase().includes(q) || jc.plateNumber.toLowerCase().includes(q)) {
+        results.push({
+          id: `jc-${jc.id}`,
+          categoryAr: 'أوامر العمل بالورشة',
+          titleAr: `${jc.cardNumber} — ${jc.vehicleModel}`,
+          subtitleAr: `العميل: ${jc.customerName} • الفني: ${jc.technicianName}`,
+          targetTab: 'workshop',
+          badgeAr: jc.status
+        });
+      }
+    });
+
+    zatcaInvoices.forEach(inv => {
+      if (inv.invoiceNumber.toLowerCase().includes(q) || inv.customerName.toLowerCase().includes(q) || inv.vinNumber.toLowerCase().includes(q)) {
+        results.push({
+          id: `inv-${inv.id}`,
+          categoryAr: 'فواتير ZATCA الضريبية',
+          titleAr: `${inv.invoiceNumber} — ${inv.customerName}`,
+          subtitleAr: `${inv.vehicleModel} • الإجمالي: ${inv.totalAmount.toLocaleString('ar-SA')} ر.س`,
+          targetTab: 'zatca',
+          badgeAr: inv.status
+        });
+      }
+    });
+
+    spareParts.forEach(p => {
+      if (p.nameAr.toLowerCase().includes(q) || p.partNumber.toLowerCase().includes(q)) {
+        results.push({
+          id: `part-${p.id}`,
+          categoryAr: 'قطع الغيار الأصلية',
+          titleAr: `${p.nameAr} (${p.partNumber})`,
+          subtitleAr: `${p.category} • ${p.price} ر.س`,
+          targetTab: 'parts',
+          badgeAr: 'OEM'
+        });
+      }
+    });
+
+    return results.slice(0, 12);
+  }, [commandQuery, vehicles, vinStock, testDrives, serviceAppointments, quotations, jobCards, zatcaInvoices, spareParts]);
+
+  const handleDownloadAllFormats = (dataset: ExportDatasetType) => {
+    const downloadableFormats: ExportFormatType[] = ['excel', 'csv', 'json', 'xml', 'html', 'txt'];
+    downloadableFormats.forEach((fmt, idx) => {
+      setTimeout(() => {
+        exportDataInFormat(dataset, fmt);
+      }, idx * 180);
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-gray-900 flex flex-col font-arabic select-none">
-      {/* 1. Admin Top Global Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-[#0F172A] text-white border-b border-white/10 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+    <div className="mobbin-admin-shell w-full min-h-screen bg-[#ffffff] text-[#141414] flex flex-col justify-between select-none">
+      {/* 1. Full-Screen Responsive Floating Stadium Header (nav-pill) */}
+      <header className="sticky top-0 z-40 pt-3 pb-2 px-3 sm:px-5 lg:px-7 bg-[#ffffff]/95 backdrop-blur-md w-full">
+        <div className="w-full max-w-none bg-[#f3f3f3] rounded-full px-3 md:px-5 py-2 flex items-center justify-between gap-2">
           
-          {/* Brand Logo & Switcher */}
-          <div className="flex items-center gap-4">
+          {/* Brand Lockup + Desktop Sidebar Collapse Toggle */}
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setSidebarOpenMobile(!sidebarOpenMobile)}
-              className="lg:hidden p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 cursor-pointer"
+              className="lg:hidden p-2 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] hover:bg-[#e0e0e0] cursor-pointer"
+              title="القائمة الجانبية"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-black text-white shadow-md shadow-blue-600/30">
-                G
+            <button
+              onClick={() => setSidebarCollapsedDesktop(!sidebarCollapsedDesktop)}
+              className="hidden lg:flex p-2 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] hover:bg-[#e0e0e0] cursor-pointer"
+              title={sidebarCollapsedDesktop ? 'توسيع القائمة الجانبية' : 'طي القائمة الجانبية (ملء الشاشة الكامل)'}
+            >
+              {sidebarCollapsedDesktop ? <PanelRightOpen className="w-4 h-4" /> : <PanelRightClose className="w-4 h-4" />}
+            </button>
+
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 px-1.5 bg-[#ffffff] border border-[#e0e0e0] mobbin-squircle flex items-center justify-center shrink-0">
+                <img src="/solina-logo.png" alt="سولينا للسيارات" className="h-6 w-auto object-contain" />
               </div>
-              <div>
-                <span className="font-bold text-sm md:text-base tracking-wide flex items-center gap-1.5 font-display text-white">
-                  GIBRANI <span className="text-blue-400 font-normal text-xs">Motors Operations</span>
+              <div className="flex items-baseline gap-2">
+                <span className="mobbin-heading text-base md:text-lg text-[#141414]">
+                  {language === 'ar' ? 'سولينا.' : 'Solina.'}
                 </span>
-                <span className="text-[10px] text-gray-400 block -mt-1 font-sans">
-                  {language === 'ar' ? 'لوحة تحكم عمليات جبراني للسيارات' : 'Gibrani Motors Operations Portal'}
+                <span className="hidden sm:inline-block text-xs text-[#707070] font-normal">
+                  {language === 'ar' ? 'منصة إدارة الوكالة الشاملة' : 'Full-Screen Dealership ERP'}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Right Action Bar */}
-          <div className="flex items-center gap-3">
+          {/* Center Global Search Trigger (Command Palette Ctrl+K) + Quick Nav */}
+          <div className="hidden xl:flex items-center gap-2 flex-1 justify-center max-w-4xl">
+            <button
+              onClick={() => setCommandOpen(true)}
+              className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#eaeaea] text-[#707070] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer min-w-[250px] justify-between"
+              title="البحث الشامل في النظام (Ctrl+K)"
+            >
+              <span className="flex items-center gap-1.5">
+                <Search className="w-3.5 h-3.5 text-[#141414]" />
+                <span>{language === 'ar' ? 'بحث شامل (VIN، عميل، فاتورة)...' : 'Search VIN, Lead, Invoice...'}</span>
+              </span>
+              <kbd className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-mono text-[10px]">Ctrl+K</kbd>
+            </button>
+
+            <nav className="flex items-center gap-1">
+              {[
+                { id: 'overview' as const, ar: 'المؤشرات', en: 'Overview' },
+                { id: 'fleet' as const, ar: 'الأسطول', en: 'Fleet' },
+                { id: 'vin_inventory' as const, ar: 'الشاسيه VIN', en: 'VIN' },
+                { id: 'leads' as const, ar: 'المبيعات', en: 'Leads' },
+                { id: 'workshop' as const, ar: 'الصيانة', en: 'Workshop' },
+                { id: 'zatca' as const, ar: 'ZATCA', en: 'ZATCA' },
+                { id: 'settings' as const, ar: 'الإعدادات', en: 'Settings' }
+              ]
+                .filter(link => allowedTabsForRole.includes(link.id))
+                .map(link => {
+                  const active = activeTab === link.id;
+                  return (
+                    <button
+                      key={link.id}
+                      onClick={() => handleNavigateTab(link.id)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                        active
+                          ? 'bg-[#ffffff] text-[#141414]'
+                          : 'text-[#707070] hover:text-[#141414]'
+                      }`}
+                    >
+                      {language === 'ar' ? link.ar : link.en}
+                    </button>
+                  );
+                })}
+            </nav>
+          </div>
+
+          {/* Right Pill Action Bar */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Mobile/Tablet Search Button */}
+            <button
+              onClick={() => setCommandOpen(true)}
+              className="xl:hidden p-2 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
+              title="بحث شامل (Ctrl+K)"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+
+            {/* Universal Multi-Format Export Button (تصدير بكل الصيغ) */}
+            <button
+              onClick={() => setExportModalRequest('all_erp')}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer"
+              title="تصدير الملفات والتقارير بجميع الصيغ (Excel, CSV, PDF, JSON, XML, HTML, TXT)"
+            >
+              <Download className="w-3.5 h-3.5 text-[#141414]" />
+              <span className="hidden sm:inline">{language === 'ar' ? 'تصدير بكل الصيغ' : 'Multi-Format Export'}</span>
+              <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">7 صيغ</span>
+            </button>
+
+            {/* Live Preview & Audit Review Trigger */}
+            <button
+              onClick={() => {
+                setPreviewMode('live_preview');
+                setPreviewDrawerOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer"
+              title="المعاينة الحية وسجل المراجعة"
+            >
+              <Eye className="w-3.5 h-3.5 text-[#141414]" />
+              <span className="hidden md:inline">{language === 'ar' ? 'المعاينة والمراجعة' : 'Preview & Review'}</span>
+              {auditLogs.length > 0 && (
+                <span className="mobbin-badge-popular px-2 py-0.5 text-[11px] font-mono">
+                  {auditLogs.length}
+                </span>
+              )}
+            </button>
+
+            {/* Notifications Bell Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className="relative p-2 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
+                title={language === 'ar' ? 'التنبيهات اللحظية' : 'Live Notifications'}
+              >
+                <Bell className="w-4 h-4" />
+                {unreadAlertsCount > 0 && (
+                  <span className="mobbin-badge-popular absolute -top-1 -right-1 w-4 h-4 text-[9px] flex items-center justify-center">
+                    {unreadAlertsCount}
+                  </span>
+                )}
+              </button>
+
+              {notificationsOpen && (
+                <div className="mobbin-modal-card absolute left-0 mt-3 w-80 bg-[#ffffff] text-[#141414] p-4 z-50 space-y-3">
+                  <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2.5">
+                    <span className="font-semibold text-xs text-[#141414] flex items-center gap-1.5">
+                      <Bell className="w-3.5 h-3.5 text-[#141414]" />
+                      <span>{language === 'ar' ? 'تنبيهات عمليات سولينا.' : 'Solina Live Alerts.'}</span>
+                    </span>
+                    <button onClick={() => setNotificationsOpen(false)} className="text-[#707070] hover:text-[#141414] p-1">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 max-h-64 overflow-y-auto text-xs">
+                    {testDrives.filter(t => t.status === 'new').map(td => (
+                      <div
+                        key={td.id}
+                        onClick={() => handleNavigateTab('test_drives')}
+                        className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] cursor-pointer transition-colors"
+                      >
+                        <div className="font-semibold text-[#141414]">طلب تجربة قيادة جديد: {td.fullName}</div>
+                        <div className="text-[11px] text-[#707070] mt-0.5">{td.modelName} • {td.preferredShowroom}</div>
+                      </div>
+                    ))}
+                    {serviceAppointments.filter(s => s.status === 'pending').map(srv => (
+                      <div
+                        key={srv.id}
+                        onClick={() => handleNavigateTab('services')}
+                        className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] cursor-pointer transition-colors"
+                      >
+                        <div className="font-semibold text-[#141414]">حجز صيانة بانتظار التأكيد: {srv.fullName}</div>
+                        <div className="text-[11px] text-[#707070] mt-0.5">{srv.vehicleModel} ({srv.plateNumber})</div>
+                      </div>
+                    ))}
+                    {stats.readyJobCardsCount > 0 && (
+                      <div
+                        onClick={() => handleNavigateTab('workshop')}
+                        className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] cursor-pointer transition-colors"
+                      >
+                        <div className="font-semibold text-[#141414]">{stats.readyJobCardsCount} سيارات جاهزة للتسليم بالورشة</div>
+                        <div className="text-[11px] text-[#707070] mt-0.5">اضغط لإصدار الفاتورة وتسليم العميل</div>
+                      </div>
+                    )}
+                    {unreadAlertsCount === 0 && (
+                      <div className="text-center py-4 text-[#adadad] text-xs">
+                        لا توجد تنبيهات معلقة حالياً
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Reset Demo Data Button */}
             <button
               onClick={() => {
-                if (confirm(language === 'ar' ? 'هل تريد استعادة البيانات الافتراضية الأولية؟' : 'Reset to default seed data?')) {
+                if (confirm(language === 'ar' ? 'هل تريد استعادة البيانات الافتراضية الأولية لوكالة سولينا؟' : 'Reset to default Solina seed data?')) {
                   resetToDefaultData();
-                  alert(language === 'ar' ? 'تمت استعادة البيانات بنجاح' : 'Data reset successfully');
                 }
               }}
               title={language === 'ar' ? 'استعادة البيانات الافتراضية' : 'Reset Demo Data'}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer border border-white/10"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'استعادة الافتراضي' : 'Reset Data'}</span>
+              <RotateCcw className="w-3.5 h-3.5 text-[#707070]" />
+              <span className="hidden 2xl:inline">{language === 'ar' ? 'استعادة الافتراضي' : 'Reset'}</span>
             </button>
 
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-colors cursor-pointer border border-white/10"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
             >
-              <Globe className="w-3.5 h-3.5 text-gray-300" />
-              <span>{language === 'ar' ? 'English (EN)' : 'العربية (AR)'}</span>
+              <Globe className="w-3.5 h-3.5 text-[#707070]" />
+              <span className="hidden sm:inline">{language === 'ar' ? 'EN' : 'AR'}</span>
             </button>
 
-            {/* Return to Customer Portal / Public Showroom */}
+            {/* Return to Public Showroom */}
             <button
               onClick={onClose}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs md:text-sm px-4 py-2 rounded-xl shadow-md shadow-blue-600/30 transition-all cursor-pointer transform hover:scale-105 active:scale-100"
+              className="mobbin-ink-pill flex items-center gap-2 bg-[#141414] hover:bg-[#262626] text-[#ffffff] font-semibold text-xs md:text-sm px-4 py-2 rounded-full transition-colors cursor-pointer"
             >
-              <span>{language === 'ar' ? 'العودة للموقع العام' : 'Public Showroom'}</span>
-              {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+              <span>{language === 'ar' ? 'الموقع العام' : 'Showroom'}</span>
+              {isRTL ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
             </button>
           </div>
 
         </div>
       </header>
 
-      {/* 2. Main Admin Layout (Sidebar + Content Stage) */}
-      <div className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* 2. Full-Screen Adaptive Workspace (100% Viewport Width with Collapsible Sidebar) */}
+      <div className="flex-1 w-full max-w-none px-3 sm:px-5 lg:px-7 py-4 md:py-6 flex flex-col lg:flex-row gap-5 items-start">
         
-        {/* Sidebar Navigation (3 Cols) */}
-        <aside className={`lg:col-span-3 bg-white rounded-3xl p-4 border border-gray-200 shadow-sm space-y-1.5 sticky top-24 ${
-          sidebarOpenMobile ? 'fixed inset-x-4 top-20 z-50 shadow-2xl block' : 'hidden lg:block'
+        {/* Sidebar Navigation (Collapsible on Desktop, Drawer on Mobile) */}
+        <aside className={`bg-[#ffffff] rounded-[24px] border border-[#f0f0f0] space-y-1.5 sticky top-20 transition-all duration-200 shrink-0 ${
+          sidebarCollapsedDesktop ? 'lg:w-[82px] p-3' : 'lg:w-[275px] xl:w-[295px] p-4'
+        } ${
+          sidebarOpenMobile ? 'fixed inset-x-4 top-16 z-50 block max-h-[84vh] overflow-y-auto mobbin-modal-card p-5' : 'hidden lg:block'
         }`}>
           {sidebarOpenMobile && (
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100 lg:hidden">
-              <span className="font-bold text-xs text-gray-500">القائمة الإدارية</span>
-              <button onClick={() => setSidebarOpenMobile(false)} className="p-1 text-gray-400">
+            <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#f0f0f0] lg:hidden">
+              <span className="font-semibold text-xs text-[#707070]">القائمة الإدارية — سولينا.</span>
+              <button onClick={() => setSidebarOpenMobile(false)} className="p-1 text-[#707070]">
                 <X className="w-4 h-4" />
               </button>
             </div>
           )}
 
-          <div className="text-[11px] font-bold text-gray-400 px-3 py-1.5 uppercase tracking-wider">
-            {language === 'ar' ? 'الأقسام والعمليات' : 'Operations Modules'}
-          </div>
+          {/* Role Switcher Card (Hidden when collapsed to icon rail) */}
+          {!sidebarCollapsedDesktop && (
+            <div className="p-3 rounded-[18px] bg-[#f3f3f3] mb-2.5 space-y-2">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="font-bold text-[#141414] flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5 text-[#141414]" />
+                  <span>الدور الوظيفي:</span>
+                </span>
+                <span className="mobbin-badge-popular">{ADMIN_ROLES_META[adminRole].badgeAr}</span>
+              </div>
+              <select
+                value={adminRole}
+                onChange={(e) => {
+                  const nextRole = e.target.value as AdminRoleType;
+                  setAdminRole(nextRole);
+                  const allowed = ROLE_ALLOWED_TABS[nextRole];
+                  if (!allowed.includes(activeTab)) {
+                    setActiveTab('overview');
+                  }
+                }}
+                className="w-full py-1.5 px-2.5 rounded-xl bg-[#ffffff] text-[#141414] text-xs font-bold border border-[#e0e0e0] cursor-pointer outline-none"
+              >
+                {(Object.keys(ADMIN_ROLES_META) as AdminRoleType[]).map(r => (
+                  <option key={r} value={r}>
+                    {ADMIN_ROLES_META[r].titleAr}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-          {navItems.map((item) => {
+          {!sidebarCollapsedDesktop && (
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[#707070] px-2.5 py-1">
+              <span>{language === 'ar' ? 'أقسام إدارة وكالة سولينا' : 'Solina Modules'}</span>
+              <button
+                onClick={() => setSidebarCollapsedDesktop(true)}
+                className="hidden lg:inline-flex items-center gap-1 text-[10px] text-[#707070] hover:text-[#141414] cursor-pointer"
+                title="توسيع مساحة العمل"
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span>توسيع العرض</span>
+              </button>
+            </div>
+          )}
+
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setSidebarOpenMobile(false);
-                }}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-bold text-xs transition-all cursor-pointer text-start ${
+                onClick={() => handleNavigateTab(item.id)}
+                title={language === 'ar' ? item.labelAr : item.labelEn}
+                className={`mobbin-shell-row w-full flex items-center ${
+                  sidebarCollapsedDesktop ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
+                } text-[13px] font-semibold transition-colors cursor-pointer text-start ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-[#141414] text-[#ffffff] mobbin-ink-pill'
+                    : 'bg-transparent text-[#141414] hover:bg-[#f3f3f3]'
                 }`}
               >
                 <div className="flex items-center gap-2.5 truncate">
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-gray-400'}`} />
-                  <span className="truncate">{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                  <span className={`w-7 h-7 mobbin-squircle flex items-center justify-center shrink-0 ${
+                    isActive ? 'bg-[#262626] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#141414]'
+                  }`}>
+                    <Icon className="w-3.5 h-3.5" />
+                  </span>
+                  {!sidebarCollapsedDesktop && (
+                    <span className="truncate">{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                  )}
                 </div>
 
-                {item.badge && (
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full font-mono shrink-0 ${
-                    isActive 
-                      ? 'bg-white/20 text-white' 
-                      : (item.badgeColor ? `${item.badgeColor} text-white` : 'bg-gray-200 text-gray-700')
+                {!sidebarCollapsedDesktop && item.badge && (
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full font-mono shrink-0 ${
+                    item.isPopularSignal
+                      ? 'mobbin-badge-popular'
+                      : isActive 
+                        ? 'bg-[#262626] text-[#ffffff]' 
+                        : 'bg-[#f3f3f3] text-[#707070]'
                   }`}>
                     {item.badge}
                   </span>
@@ -247,23 +808,74 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             );
           })}
 
-          {/* Quick Stats Pill */}
-          <div className="pt-4 border-t border-gray-100 px-3 mt-4 space-y-1">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-700">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>نظام متصل ومؤمن 100%</span>
+          {/* Quick Export, Preview & Review Shortcuts inside Sidebar */}
+          {!sidebarCollapsedDesktop ? (
+            <div className="pt-3 border-t border-[#f0f0f0] space-y-2 mt-2">
+              <button
+                onClick={() => setExportModalRequest('all_erp')}
+                className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] mobbin-ink-pill font-semibold text-xs transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <Download className="w-3.5 h-3.5" />
+                  <span>{language === 'ar' ? 'مركز التصدير بكل الصيغ' : 'Universal Export Hub'}</span>
+                </div>
+                <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">7 صيغ</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setPreviewMode('live_preview');
+                  setPreviewDrawerOpen(true);
+                }}
+                className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] font-semibold text-xs transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <Eye className="w-3.5 h-3.5 text-[#141414]" />
+                  <span>{language === 'ar' ? 'معاينة التعديلات حياً' : 'Live Site Preview'}</span>
+                </div>
+                <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">مباشر</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setPreviewMode('audit_log');
+                  setPreviewDrawerOpen(true);
+                }}
+                className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] font-semibold text-xs transition-colors cursor-pointer border border-[#e0e0e0]"
+              >
+                <div className="flex items-center gap-2">
+                  <History className="w-3.5 h-3.5 text-[#707070]" />
+                  <span>{language === 'ar' ? 'سجل المراجعة والتدقيق' : 'Audit & Review Log'}</span>
+                </div>
+                <span className="text-[11px] font-mono bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded-full">
+                  {auditLogs.length}
+                </span>
+              </button>
             </div>
-            <span className="text-[10px] text-gray-400 block font-mono">Build v2026.8.2-ALJ Enterprise</span>
-          </div>
+          ) : (
+            <div className="pt-3 border-t border-[#f0f0f0] flex flex-col items-center gap-2 mt-2">
+              <button
+                onClick={() => setExportModalRequest('all_erp')}
+                title="مركز التصدير بكل الصيغ"
+                className="p-2.5 rounded-full bg-[#141414] text-[#ffffff] mobbin-ink-pill cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setSidebarCollapsedDesktop(false)}
+                title="توسيع القائمة الجانبية"
+                className="p-2.5 rounded-full bg-[#f3f3f3] text-[#141414] cursor-pointer"
+              >
+                <PanelRightOpen className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </aside>
 
-        {/* Content Tab Stage (9 Cols) */}
-        <main className="lg:col-span-9 w-full">
+        {/* Content Tab Stage — Stretches to 100% of remaining viewport width */}
+        <main className="flex-1 min-w-0 w-full">
           {activeTab === 'overview' && (
-            <AdminOverviewTab onSwitchTab={(t) => {
-              if (t === 'overview' || t === 'fleet') setActiveTab(t);
-              else setActiveTab('leads');
-            }} />
+            <AdminOverviewTab onSwitchTab={handleNavigateTab} />
           )}
 
           {activeTab === 'fleet' && (
@@ -275,11 +887,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           )}
 
           {activeTab === 'leads' && (
-            <AdminLeadsTab />
+            <AdminLeadsTab 
+              initialSubTab={leadsSubTab} 
+              onSubTabChange={setLeadsSubTab}
+              onNavigateTab={handleNavigateTab}
+            />
           )}
 
           {activeTab === 'workshop' && (
-            <AdminWorkshopJobCardsTab />
+            <AdminWorkshopJobCardsTab onNavigateTab={handleNavigateTab} />
           )}
 
           {activeTab === 'zatca' && (
@@ -301,9 +917,582 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           {activeTab === 'showrooms' && (
             <AdminShowroomsTab />
           )}
+
+          {activeTab === 'settings' && (
+            <AdminSettingsTab />
+          )}
         </main>
 
       </div>
+
+      {/* 3. Full-Width Polarity-Inverted Mobbin Footer Block (#141414 with 24px top corners) */}
+      <footer className="mobbin-footer-inverse mt-10 px-4 sm:px-6 lg:px-10 py-8 w-full">
+        <div className="w-full max-w-none flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 px-1.5 bg-[#ffffff] mobbin-squircle flex items-center justify-center">
+                <img src="/solina-logo.png" alt="سولينا للسيارات" className="h-5 w-auto object-contain" />
+              </div>
+              <h3 className="text-base font-semibold">
+                {language === 'ar' ? 'سولينا للسيارات.' : 'Solina Motors.'}
+              </h3>
+            </div>
+            <p className="mobbin-footer-muted text-xs max-w-xl">
+              {language === 'ar'
+                ? 'منصة الإدارة التنفيذية الموحدة لعمليات الأسطول، المستودعات، الصيانة السريعة، والفوترة الضريبية المعتمدة.'
+                : 'Unified dealership operations platform for fleet, VIN logistics, express maintenance, and ZATCA e-invoicing.'}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-5 text-xs font-semibold">
+            <button onClick={() => setExportModalRequest('all_erp')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'تصدير شامل (7 صيغ)' : 'Multi-Format Export'}
+            </button>
+            <button onClick={() => handleNavigateTab('overview')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'المؤشرات التنفيذية' : 'Executive Overview'}
+            </button>
+            <button onClick={() => handleNavigateTab('fleet')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'أسطول 2026' : '2026 Fleet'}
+            </button>
+            <button onClick={() => handleNavigateTab('vin_inventory')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'مخزون VIN' : 'VIN Inventory'}
+            </button>
+            <button onClick={() => handleNavigateTab('zatca')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'الفوترة ZATCA' : 'ZATCA Phase 2'}
+            </button>
+            <button onClick={onClose} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'الواجهة العامة ↗' : 'Public Storefront ↗'}
+            </button>
+          </div>
+        </div>
+
+        <div className="w-full max-w-none mt-6 pt-4 border-t border-[#262626] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+          <span className="mobbin-footer-muted">
+            © 2026 {language === 'ar' ? 'شركة سولينا للسيارات — جميع الحقوق محفوظة.' : 'Solina Motors Co. All rights reserved.'}
+          </span>
+          <span className="mobbin-footer-muted font-mono">
+            VATIN: 310984729100003 • ZATCA Phase 2 Connected • Full-Viewport Responsive
+          </span>
+        </div>
+      </footer>
+
+      {/* 4. UNIVERSAL MULTI-FORMAT EXPORT MODAL (مركز تصدير الملفات بجميع الصيغ) */}
+      {exportModalRequest && (
+        <div
+          className="fixed inset-0 z-50 bg-[#141414]/65 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setExportModalRequest(null)}
+        >
+          <div
+            className="mobbin-modal-card max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-6 py-5 border-b border-[#e0e0e0] flex items-center justify-between gap-4 bg-[#ffffff]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 mobbin-squircle bg-[#141414] text-[#ffffff] flex items-center justify-center shrink-0">
+                  <Download className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="mobbin-heading text-base md:text-lg text-[#141414]">
+                      مركز تصدير الملفات والتقارير بجميع الصيغ.
+                    </h3>
+                    <span className="mobbin-badge-popular">7 صيغ معتمدة</span>
+                  </div>
+                  <p className="mobbin-subtitle-light text-xs mt-0.5">
+                    اختر القسم أو الجدول المطلوب وحمّله فوراً بصيغة Excel أو CSV أو PDF أو JSON أو XML أو HTML أو TXT
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setExportModalRequest(null)}
+                className="w-9 h-9 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] flex items-center justify-center text-[#141414] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 overflow-y-auto space-y-6 bg-[#ffffff]">
+              {/* Step 1: Dataset Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#141414] block">
+                  1. اختر القسم أو قاعدة البيانات المطلوب تصديرها:
+                </label>
+                <select
+                  value={selectedExportDataset}
+                  onChange={(e) => setSelectedExportDataset(e.target.value as ExportDatasetType)}
+                  className="w-full p-3 rounded-2xl bg-[#f0f0f0] text-[#141414] text-xs md:text-sm font-bold cursor-pointer"
+                >
+                  {EXPORT_DATASETS_LIST.map(ds => (
+                    <option key={ds.id} value={ds.id}>
+                      {ds.labelAr} — ({ds.descAr})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Step 2: Format Cards Grid */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#141414]">
+                    2. اختر صيغة التصدير المطلوبة للتحميل الفوري:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadAllFormats(selectedExportDataset)}
+                    className="mobbin-ink-pill px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>تحميل بجميع الصيغ دفعة واحدة (All 6 Files)</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {EXPORT_FORMATS_LIST.map(fmt => (
+                    <div
+                      key={fmt.id}
+                      onClick={() => exportDataInFormat(selectedExportDataset, fmt.id)}
+                      className="p-4 rounded-[20px] bg-[#f3f3f3] hover:bg-[#eaeaea] border border-[#e0e0e0] flex flex-col justify-between gap-3 cursor-pointer transition-all"
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff]">
+                            {fmt.ext}
+                          </span>
+                          <span className={fmt.id === 'excel' || fmt.id === 'pdf_print' ? 'mobbin-badge-popular' : 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#ffffff] text-[#707070]'}>
+                            {fmt.badge}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-xs md:text-sm text-[#141414] pt-1">{fmt.titleAr}</h4>
+                        <p className="text-[11px] text-[#707070] leading-relaxed">{fmt.descAr}</p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          exportDataInFormat(selectedExportDataset, fmt.id);
+                        }}
+                        className="w-full py-2 rounded-full bg-[#ffffff] hover:bg-[#141414] hover:text-[#ffffff] text-[#141414] border border-[#e0e0e0] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        {fmt.id === 'pdf_print' ? <Printer className="w-3.5 h-3.5" /> : <Download className="w-3.5 h-3.5" />}
+                        <span>{fmt.id === 'pdf_print' ? 'معاينة وطباعة PDF' : `تصدير بصيغة ${fmt.ext}`}</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3.5 bg-[#f3f3f3] border-t border-[#e0e0e0] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#707070]">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="w-3.5 h-3.5 text-[#141414]" />
+                <FileJson className="w-3.5 h-3.5 text-[#141414]" />
+                <FileCode className="w-3.5 h-3.5 text-[#141414]" />
+                <span>جميع الملفات المصدرة تدعم الترميز العربي القياسي (UTF-8 BOM) والترويسة الضريبية لوكالة سولينا.</span>
+              </div>
+              <button
+                onClick={() => setExportModalRequest(null)}
+                className="px-4 py-1.5 rounded-full bg-[#ffffff] text-[#141414] font-bold border border-[#e0e0e0] cursor-pointer"
+              >
+                إغلاق النافذة
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Global Command Palette Modal (Ctrl+K / ⌘K) */}
+      {commandOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-[#141414]/60 backdrop-blur-xs flex items-start justify-center pt-16 p-4"
+          onClick={() => setCommandOpen(false)}
+        >
+          <div
+            className="mobbin-modal-card max-w-2xl w-full bg-[#ffffff] overflow-hidden animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-[#e0e0e0] flex items-center gap-3">
+              <div className="w-9 h-9 mobbin-squircle bg-[#141414] text-[#ffffff] flex items-center justify-center shrink-0">
+                <Command className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                autoFocus
+                value={commandQuery}
+                onChange={(e) => setCommandQuery(e.target.value)}
+                placeholder="ابحث برقم الشاسيه VIN، اسم العميل، رقم الفاتورة، القطعة، أو اسم الموديل..."
+                className="flex-1 text-sm font-semibold bg-[#f0f0f0] px-4 py-2.5 rounded-xl text-[#141414] outline-none"
+              />
+              <button
+                onClick={() => setCommandOpen(false)}
+                className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-xs font-bold text-[#707070] cursor-pointer"
+              >
+                ESC
+              </button>
+            </div>
+
+            <div className="max-h-[60vh] overflow-y-auto p-3 space-y-1.5">
+              {commandResults.length === 0 ? (
+                <div className="py-10 text-center text-xs text-[#707070]">
+                  لا توجد نتائج مطابقة لـ "{commandQuery}" في سجلات سولينا
+                </div>
+              ) : (
+                commandResults.map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavigateTab(item.targetTab)}
+                    className="w-full p-3 rounded-[16px] hover:bg-[#f3f3f3] flex items-center justify-between gap-3 text-start transition-colors cursor-pointer"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070]">
+                          {item.categoryAr}
+                        </span>
+                        <span className="text-xs font-bold text-[#141414]">{item.titleAr}</span>
+                      </div>
+                      <p className="text-[11px] text-[#707070] mt-0.5">{item.subtitleAr}</p>
+                    </div>
+                    {item.badgeAr && (
+                      <span className="mobbin-badge-popular shrink-0">{item.badgeAr}</span>
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+
+            <div className="px-4 py-2.5 bg-[#f3f3f3] border-t border-[#e0e0e0] flex items-center justify-between text-[11px] text-[#707070]">
+              <span>استخدم البحث الشامل للوصول الفوري لأي شاسيه أو فاتورة أو عميل</span>
+              <span className="font-mono">Solina Command Center • Ctrl+K</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Live Preview & Audit Review Modal (Full-Viewport Responsive) */}
+      {previewDrawerOpen && (
+        <div className="fixed inset-0 z-50 bg-[#141414]/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
+          <div className="mobbin-modal-card max-w-[96vw] w-full h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            
+            {/* Modal Header */}
+            <div className="bg-[#ffffff] px-6 py-4 border-b border-[#f0f0f0] flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 mobbin-squircle bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
+                  {previewMode === 'live_preview' ? <Eye className="w-5 h-5" /> : <History className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h3 className="mobbin-heading text-base md:text-lg text-[#141414]">
+                    {language === 'ar' 
+                      ? 'مركز المعاينة الحية ومراجعة التعديلات.' 
+                      : 'Live Storefront Preview & Audit Review.'}
+                  </h3>
+                  <p className="mobbin-subtitle-light text-xs">
+                    {language === 'ar'
+                      ? 'عاين كيف تظهر التعديلات للعملاء على الموقع العام أو راجع سجل العمليات الإدارية مع التراجع الفوري'
+                      : 'Preview how changes appear on the public storefront or inspect the administrative audit trail'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex items-center bg-[#f3f3f3] p-1 rounded-full">
+                  <button
+                    onClick={() => setPreviewMode('live_preview')}
+                    className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      previewMode === 'live_preview' ? 'mobbin-segmented-active' : 'text-[#707070] hover:text-[#141414]'
+                    }`}
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>المعاينة الحية للموقع</span>
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('audit_log')}
+                    className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      previewMode === 'audit_log' ? 'mobbin-segmented-active' : 'text-[#707070] hover:text-[#141414]'
+                    }`}
+                  >
+                    <History className="w-3.5 h-3.5" />
+                    <span>سجل المراجعة ({auditLogs.length})</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setPreviewDrawerOpen(false)}
+                  className="w-9 h-9 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] flex items-center justify-center text-[#141414] cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Mode 1: LIVE SITE PREVIEW */}
+            {previewMode === 'live_preview' && (
+              <div className="flex-1 flex flex-col overflow-hidden bg-[#f3f3f3]">
+                <div className="bg-[#ffffff] px-6 py-3 border-b border-[#e0e0e0] flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5 overflow-x-auto">
+                    {[
+                      { id: 'fleet', label: `الأسطول والأسعار (${vehicles.length})` },
+                      { id: 'offers', label: `العروض الترويجية (${offers.length})` },
+                      { id: 'cpo', label: `المستعمل المعتمد (${cpoVehicles.length})` },
+                      { id: 'parts', label: `قطع الغيار (${spareParts.length})` },
+                      { id: 'showrooms', label: `الفروع (${showrooms.length})` }
+                    ].map(sec => (
+                      <button
+                        key={sec.id}
+                        onClick={() => setPreviewSection(sec.id as any)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+                          previewSection === sec.id
+                            ? 'bg-[#141414] text-[#ffffff] mobbin-ink-pill'
+                            : 'bg-[#f3f3f3] text-[#707070] hover:text-[#141414]'
+                        }`}
+                      >
+                        {sec.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-[#f3f3f3] p-1 rounded-full">
+                      <button
+                        onClick={() => setPreviewDevice('desktop')}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 cursor-pointer ${
+                          previewDevice === 'desktop' ? 'mobbin-segmented-active' : 'text-[#707070]'
+                        }`}
+                      >
+                        <Monitor className="w-3.5 h-3.5" />
+                        <span>سطح المكتب</span>
+                      </button>
+                      <button
+                        onClick={() => setPreviewDevice('mobile')}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 cursor-pointer ${
+                          previewDevice === 'mobile' ? 'mobbin-segmented-active' : 'text-[#707070]'
+                        }`}
+                      >
+                        <Smartphone className="w-3.5 h-3.5" />
+                        <span>الجوال</span>
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setPreviewDrawerOpen(false);
+                        onClose();
+                      }}
+                      className="mobbin-ink-pill px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>فتح الموقع الكامل</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6 flex justify-center">
+                  <div className={`bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] p-6 transition-all duration-300 w-full ${
+                    previewDevice === 'mobile' ? 'max-w-[400px]' : 'max-w-full'
+                  }`}>
+                    <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#f0f0f0]">
+                      <div className="flex items-center gap-2.5">
+                        <img src="/solina-logo.png" alt="سولينا" className="h-7 w-auto object-contain" />
+                        <span className="font-semibold text-sm text-[#141414]">معاينة الواجهة العامة — سولينا للسيارات.</span>
+                      </div>
+                      <span className="mobbin-badge-popular px-3 py-1">
+                        ✓ متزامن لحظياً
+                      </span>
+                    </div>
+
+                    {previewSection === 'fleet' && (
+                      <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
+                        {vehicles.slice(0, 12).map(v => (
+                          <div key={v.id} className="p-5 rounded-[24px] border border-[#f0f0f0] hover:border-[#141414] transition-colors flex flex-col justify-between bg-[#ffffff]">
+                            <div>
+                              <div className="flex items-center justify-between text-[11px] font-semibold mb-2">
+                                <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070]">{v.bodyTypeAr}</span>
+                                {v.isFeatured && <span className="mobbin-badge-popular px-2.5 py-0.5">★ مميزة</span>}
+                              </div>
+                              <div className="h-28 flex items-center justify-center my-2 bg-[#f3f3f3] rounded-[16px] p-2">
+                                <img src={v.cardImage} alt={v.nameAr} className="max-h-full max-w-full object-contain" />
+                              </div>
+                              <h4 className="mobbin-heading text-[#141414] text-sm mt-2">{v.nameAr}</h4>
+                              <p className="text-[12px] text-[#707070]">{v.engineSpec} • {v.fuelEconomy}</p>
+                            </div>
+                            <div className="pt-3 mt-3 border-t border-[#f0f0f0] flex items-center justify-between">
+                              <div>
+                                <span className="text-[11px] text-[#adadad] block">يبدأ من</span>
+                                <strong className="text-sm font-semibold text-[#141414] font-mono">{formatPrice(v.priceStartingFrom)} ر.س</strong>
+                              </div>
+                              <div className="text-end">
+                                <span className="text-[11px] text-[#adadad] block">القسط الشهري</span>
+                                <span className="text-xs font-semibold text-[#707070] font-mono">{formatPrice(v.monthlyInstallmentStartingFrom)} ر.س</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {previewSection === 'offers' && (
+                      <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+                        {offers.map(o => (
+                          <div key={o.id} className="rounded-[24px] border border-[#f0f0f0] overflow-hidden bg-[#ffffff]">
+                            <div className="h-40 relative bg-[#f3f3f3]">
+                              <img src={o.image} alt={o.title} className="w-full h-full object-cover" />
+                              <span className="mobbin-badge-overlay absolute top-3 right-3 px-3 py-1">
+                                {o.badge}
+                              </span>
+                            </div>
+                            <div className="p-5 space-y-1">
+                              <h4 className="mobbin-heading text-[#141414] text-sm">{o.title}</h4>
+                              <p className="text-xs text-[#707070]">{o.subtitle}</p>
+                              <div className="text-[11px] text-[#adadad] pt-1">{o.validUntil}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {previewSection === 'cpo' && (
+                      <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4'}`}>
+                        {cpoVehicles.map(c => (
+                          <div key={c.id} className="p-5 rounded-[24px] border border-[#f0f0f0] bg-[#ffffff] space-y-2">
+                            <div className="h-28 bg-[#f3f3f3] rounded-[16px] flex items-center justify-center p-2">
+                              <img src={c.image} alt={c.titleAr} className="max-h-full max-w-full object-contain" />
+                            </div>
+                            <h4 className="mobbin-heading text-[#141414] text-sm">{c.titleAr}</h4>
+                            <p className="text-xs text-[#707070]">{c.grade} • موديل {c.year} • {formatPrice(c.mileage)} كم</p>
+                            <div className="font-semibold text-[#141414] font-mono text-sm">{formatPrice(c.price)} ر.س</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {previewSection === 'parts' && (
+                      <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4'}`}>
+                        {spareParts.map(p => (
+                          <div key={p.id} className="p-4 rounded-[24px] border border-[#f0f0f0] bg-[#ffffff] flex items-center gap-3">
+                            <img src={p.image} alt={p.nameAr} className="w-14 h-14 object-contain bg-[#f3f3f3] rounded-[16px] p-1.5" />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-[#141414] text-xs truncate">{p.nameAr}</h4>
+                              <span className="text-[11px] text-[#adadad] font-mono block">{p.partNumber}</span>
+                              <strong className="text-xs font-semibold text-[#141414] font-mono">{formatPrice(p.price)} ر.س</strong>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {previewSection === 'showrooms' && (
+                      <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+                        {showrooms.map(s => (
+                          <div key={s.id} className="p-5 rounded-[24px] border border-[#f0f0f0] bg-[#ffffff] space-y-1">
+                            <div className="flex items-center justify-between">
+                              <h4 className="mobbin-heading text-[#141414] text-sm">{s.name}</h4>
+                              <span className="text-[11px] bg-[#f3f3f3] text-[#141414] font-semibold px-2.5 py-0.5 rounded-full">{s.city}</span>
+                            </div>
+                            <p className="text-xs text-[#707070]">{s.address}</p>
+                            <p className="text-[11px] text-[#707070] font-mono">{s.phone} • {s.workingHours}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mode 2: AUDIT & REVIEW LOG */}
+            {previewMode === 'audit_log' && (
+              <div className="flex-1 flex flex-col overflow-hidden bg-[#f3f3f3] p-6 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-[#ffffff] p-5 rounded-[24px] border border-[#e0e0e0]">
+                  <div>
+                    <h4 className="mobbin-heading text-sm text-[#141414]">سجل المراجعة والتدقيق للعمليات الإدارية (مع التراجع الفوري).</h4>
+                    <p className="mobbin-subtitle-light text-xs">
+                      يتم توثيق كافة عمليات الإضافة والتعديل والحذف والاعتماد مع حفظ لقطة استرجاع (Snapshot) للتراجع بضغطة واحدة
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setExportModalRequest('audit_logs')}
+                      className="px-4 py-1.5 rounded-full bg-[#141414] text-[#ffffff] mobbin-ink-pill text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>تصدير سجل المراجعة (كل الصيغ)</span>
+                    </button>
+                    {auditLogs.length > 0 && (
+                      <button
+                        onClick={clearAuditLogs}
+                        className="px-4 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>مسح السجل</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-2.5">
+                  {auditLogs.length === 0 ? (
+                    <div className="text-center py-12 bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] text-[#adadad] text-xs">
+                      لا توجد تعديلات مسجلة في السجل حالياً
+                    </div>
+                  ) : (
+                    auditLogs.map(log => (
+                      <div key={log.id} className="bg-[#ffffff] p-4 rounded-[16px] border border-[#e0e0e0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 mobbin-squircle bg-[#f3f3f3] text-[#141414] flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-semibold text-xs md:text-sm text-[#141414]">
+                                {language === 'ar' ? log.summaryAr : log.summaryEn}
+                              </span>
+                              {log.reverted && (
+                                <span className="mobbin-badge-popular">تم التراجع ✓</span>
+                              )}
+                            </div>
+
+                            {log.diffAr && (
+                              <div className="mt-1 inline-block px-2.5 py-0.5 rounded-md bg-[#f3f3f3] text-[#141414] font-mono text-[11px] font-semibold">
+                                الفارق (Diff): {log.diffAr}
+                              </div>
+                            )}
+
+                            <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] text-[#707070] font-mono">
+                              <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-semibold">{log.module}</span>
+                              {log.actorAr && (
+                                <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#595959]">بواسطة: {log.actorAr}</span>
+                              )}
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(log.timestamp).toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {log.canUndo && !log.reverted && (
+                          <button
+                            onClick={() => undoAuditLog(log.id)}
+                            className="mobbin-ink-pill px-3.5 py-1.5 rounded-full bg-[#141414] hover:bg-[#2b2b2b] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 shrink-0 cursor-pointer self-end sm:self-center"
+                            title="استرجاع الحالة السابقة قبل هذا التعديل"
+                          >
+                            <Undo2 className="w-3.5 h-3.5" />
+                            <span>تراجع عن التعديل (Undo)</span>
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

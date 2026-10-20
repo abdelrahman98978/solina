@@ -1,0 +1,370 @@
+/* ==========================================================================
+   MOBBIN DESIGN SYSTEM — SCOPED EXCLUSIVELY TO ADMIN DASHBOARD (.mobbin-admin-shell)
+   Spec Reference: DESIGN-mobbin.md
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+.mobbin-admin-shell {
+  /* 1. Exact Mobbin Color Tokens */
+  --mobbin-primary: #141414;
+  --mobbin-on-primary: #ffffff;
+  --mobbin-ink: #141414;
+  --mobbin-ink-soft: #262626;
+  --mobbin-text-muted: #707070;
+  --mobbin-text-faint: #adadad;
+  --mobbin-canvas: #ffffff;
+  --mobbin-canvas-soft: #f3f3f3;
+  --mobbin-field: #f0f0f0;
+  --mobbin-hairline-soft: #f0f0f0;
+  --mobbin-hairline: #e0e0e0;
+  --mobbin-accent: #0066ff;
+
+  /* 2. Exact Mobbin Radii & Spacing */
+  --mobbin-rounded-none: 0px;
+  --mobbin-rounded-sm: 16px;
+  --mobbin-rounded-md: 24px;
+  --mobbin-rounded-full: 9999px;
+
+  /* Base Canvas & Typography — Full-Screen Adaptive */
+  width: 100% !important;
+  max-width: 100vw !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  background-color: #ffffff !important;
+  color: #141414 !important;
+  font-family: 'Saans', 'Inter', 'Hanken Grotesk', 'IBM Plex Sans Arabic', -apple-system, "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 456;
+  line-height: 1.38;
+  letter-spacing: 0 !important;
+}
+
+/* Zero letter-spacing & no uppercase everywhere per Mobbin spec */
+.mobbin-admin-shell *,
+.mobbin-admin-shell *::before,
+.mobbin-admin-shell *::after {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+/* 3. Typography Hierarchy (652 Headings / 300 Subtitles / 456 Body / 600 Links & Labels) */
+.mobbin-admin-shell h1,
+.mobbin-admin-shell .mobbin-display {
+  font-weight: 652 !important;
+  line-height: 1.05 !important;
+  color: #141414 !important;
+}
+
+.mobbin-admin-shell h2,
+.mobbin-admin-shell h3,
+.mobbin-admin-shell h4,
+.mobbin-admin-shell .mobbin-heading {
+  font-weight: 652 !important;
+  line-height: 1.18 !important;
+  color: #141414 !important;
+}
+
+.mobbin-admin-shell .mobbin-subtitle-light {
+  font-weight: 300 !important;
+  line-height: 1.38 !important;
+  color: #707070 !important;
+}
+
+/* 4. Shadow-Free Elevation (Hierarchy via Tint Ladder & 1px Hairlines) */
+.mobbin-admin-shell div,
+.mobbin-admin-shell section,
+.mobbin-admin-shell aside,
+.mobbin-admin-shell header,
+.mobbin-admin-shell button,
+.mobbin-admin-shell a,
+.mobbin-admin-shell span,
+.mobbin-admin-shell table {
+  box-shadow: none !important;
+}
+
+/* Modal dialog exception (ex-modal-card) & Segmented Control active pill */
+.mobbin-admin-shell .mobbin-modal-card,
+.mobbin-admin-shell div.fixed.inset-0 > div,
+.mobbin-admin-shell div.fixed.inset-0 > form {
+  background-color: #ffffff !important;
+  border-radius: 24px !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 24px 48px rgba(20, 20, 20, 0.14) !important;
+}
+
+.mobbin-admin-shell .mobbin-segmented-active {
+  background-color: #ffffff !important;
+  color: #141414 !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.08) !important;
+}
+
+/* 5. Every Interactive Button is a Stadium Pill ({rounded.full}) */
+.mobbin-admin-shell button,
+.mobbin-admin-shell a[class*="rounded-"] {
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* Sidebar Navigation Rows (ex-app-shell-row: 16px radius) */
+.mobbin-admin-shell button.mobbin-shell-row {
+  border-radius: 16px !important;
+}
+
+/* 6. Inputs & Forms (text-input & text-input-focused: #f0f0f0 fill, no resting border, 2px #141414 focus ring, 16px radius) */
+.mobbin-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.mobbin-admin-shell select,
+.mobbin-admin-shell textarea {
+  background-color: #f0f0f0 !important;
+  color: #141414 !important;
+  border: 2px solid transparent !important;
+  border-radius: 16px !important;
+  padding: 10px 16px !important;
+  font-weight: 456 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.mobbin-admin-shell input::placeholder,
+.mobbin-admin-shell textarea::placeholder {
+  color: #adadad !important;
+}
+
+.mobbin-admin-shell input:not([type="checkbox"]):not([type="radio"]):focus,
+.mobbin-admin-shell select:focus,
+.mobbin-admin-shell textarea:focus {
+  background-color: #f0f0f0 !important;
+  border-color: #141414 !important;
+  outline: none !important;
+}
+
+/* 7. Data Tables (ex-data-table-cell & compare-table) */
+.mobbin-admin-shell table {
+  border-collapse: collapse !important;
+}
+
+.mobbin-admin-shell thead,
+.mobbin-admin-shell thead tr,
+.mobbin-admin-shell thead th {
+  background-color: #f3f3f3 !important;
+  color: #707070 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.33 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.mobbin-admin-shell tbody tr {
+  border-bottom: 1px solid #e0e0e0 !important;
+  background-color: #ffffff !important;
+  transition: background-color 0.12s ease !important;
+}
+
+.mobbin-admin-shell tbody tr:hover {
+  background-color: #f3f3f3 !important;
+}
+
+.mobbin-admin-shell tbody td {
+  color: #141414 !important;
+  font-size: 13px !important;
+  font-weight: 456 !important;
+  line-height: 1.43 !important;
+}
+
+/* 8. iOS-style 30% Squircle Icon Tiles (app-icon-squircle) */
+.mobbin-admin-shell .mobbin-squircle {
+  border-radius: 30% !important;
+}
+
+/* 9. Card Geometry ({rounded.md} = 24px, {rounded.sm} = 16px) */
+.mobbin-admin-shell .rounded-3xl {
+  border-radius: 24px !important;
+}
+
+.mobbin-admin-shell .rounded-2xl,
+.mobbin-admin-shell .rounded-xl {
+  border-radius: 16px !important;
+}
+
+/* Keep buttons & pills at 9999px even if they have rounded-xl/2xl (except sidebar shell rows) */
+.mobbin-admin-shell button.rounded-xl:not(.mobbin-shell-row),
+.mobbin-admin-shell button.rounded-2xl:not(.mobbin-shell-row),
+.mobbin-admin-shell button.rounded-lg:not(.mobbin-shell-row),
+.mobbin-admin-shell span.rounded-full {
+  border-radius: 9999px !important;
+}
+
+/* 10. Strict Monochrome Remapping inside Admin Tabs
+   Primary CTAs become #141414 Ink Black; Soft surfaces become #f3f3f3;
+   Hairlines become #f0f0f0 / #e0e0e0; Only .mobbin-badge-popular stays #0066ff */
+
+/* Convert mid-page dark cards inside inner tabs to Mobbin Soft Canvas (#f3f3f3) per Section 7 */
+.mobbin-admin-shell div[class*="bg-slate-900"],
+.mobbin-admin-shell div[class*="from-gray-950"],
+.mobbin-admin-shell div[class*="bg-[#0F172A]"] {
+  background: #f3f3f3 !important;
+  color: #141414 !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+/* Convert colored CTA buttons (blue, red, emerald, purple, amber) inside tabs to #141414 Ink Primary Pill */
+.mobbin-admin-shell button[class*="bg-blue-600"],
+.mobbin-admin-shell button[class*="bg-blue-700"],
+.mobbin-admin-shell button[class*="bg-[#0056B3]"],
+.mobbin-admin-shell button[class*="bg-red-600"],
+.mobbin-admin-shell button[class*="bg-emerald-600"],
+.mobbin-admin-shell button[class*="bg-purple-600"],
+.mobbin-admin-shell button[class*="bg-amber-600"],
+.mobbin-admin-shell button[class*="bg-gray-900"],
+.mobbin-admin-shell button[class*="bg-slate-900"],
+.mobbin-admin-shell a[class*="bg-blue-600"],
+.mobbin-admin-shell a[class*="bg-[#0056B3]"] {
+  background-color: #141414 !important;
+  color: #ffffff !important;
+  border-color: #141414 !important;
+}
+
+.mobbin-admin-shell button[class*="bg-blue-600"]:hover,
+.mobbin-admin-shell button[class*="bg-[#0056B3]"]:hover,
+.mobbin-admin-shell button[class*="bg-red-600"]:hover,
+.mobbin-admin-shell button[class*="bg-emerald-600"]:hover,
+.mobbin-admin-shell button[class*="bg-purple-600"]:hover,
+.mobbin-admin-shell button[class*="bg-gray-900"]:hover,
+.mobbin-admin-shell a[class*="bg-[#0056B3]"]:hover {
+  background-color: #262626 !important;
+  color: #ffffff !important;
+}
+
+/* Convert soft colored backgrounds inside tabs to Mobbin Soft Canvas (#f3f3f3) */
+.mobbin-admin-shell [class*="bg-blue-50"],
+.mobbin-admin-shell [class*="bg-emerald-50"],
+.mobbin-admin-shell [class*="bg-amber-50"],
+.mobbin-admin-shell [class*="bg-purple-50"],
+.mobbin-admin-shell [class*="bg-red-50"],
+.mobbin-admin-shell [class*="bg-rose-50"],
+.mobbin-admin-shell [class*="bg-indigo-50"],
+.mobbin-admin-shell [class*="bg-slate-50"],
+.mobbin-admin-shell [class*="bg-gray-50"],
+.mobbin-admin-shell [class*="bg-gray-100"] {
+  background-color: #f3f3f3 !important;
+  color: #141414 !important;
+  border-color: #e0e0e0 !important;
+}
+
+.mobbin-admin-shell [class*="bg-blue-100"],
+.mobbin-admin-shell [class*="bg-emerald-100"],
+.mobbin-admin-shell [class*="bg-amber-100"],
+.mobbin-admin-shell [class*="bg-purple-100"],
+.mobbin-admin-shell [class*="bg-red-100"],
+.mobbin-admin-shell [class*="bg-gray-200"] {
+  background-color: #e0e0e0 !important;
+  color: #141414 !important;
+  border-color: #e0e0e0 !important;
+}
+
+/* Convert colored text classes inside tabs to Mobbin Ink (#141414) or Muted (#707070) */
+.mobbin-admin-shell [class*="text-blue-"],
+.mobbin-admin-shell [class*="text-[#0056B3]"],
+.mobbin-admin-shell [class*="text-emerald-"],
+.mobbin-admin-shell [class*="text-amber-"],
+.mobbin-admin-shell [class*="text-purple-"],
+.mobbin-admin-shell [class*="text-red-"],
+.mobbin-admin-shell [class*="text-rose-"],
+.mobbin-admin-shell [class*="text-indigo-"],
+.mobbin-admin-shell [class*="text-gray-900"],
+.mobbin-admin-shell [class*="text-gray-800"] {
+  color: #141414 !important;
+}
+
+.mobbin-admin-shell [class*="text-gray-600"],
+.mobbin-admin-shell [class*="text-gray-500"],
+.mobbin-admin-shell [class*="text-gray-300"] {
+  color: #707070 !important;
+}
+
+.mobbin-admin-shell [class*="text-gray-400"] {
+  color: #adadad !important;
+}
+
+/* Convert borders to Mobbin Hairline (#e0e0e0 / #f0f0f0) */
+.mobbin-admin-shell [class*="border-gray-200"],
+.mobbin-admin-shell [class*="border-blue-"],
+.mobbin-admin-shell [class*="border-emerald-"],
+.mobbin-admin-shell [class*="border-amber-"],
+.mobbin-admin-shell [class*="border-purple-"],
+.mobbin-admin-shell [class*="border-red-"] {
+  border-color: #e0e0e0 !important;
+}
+
+.mobbin-admin-shell [class*="border-gray-100"] {
+  border-color: #f0f0f0 !important;
+}
+
+/* Preserve white text on Ink Primary CTAs & active shell rows */
+.mobbin-admin-shell button[class*="bg-[#141414]"],
+.mobbin-admin-shell button[class*="bg-[#141414]"] *,
+.mobbin-admin-shell button[class*="bg-blue-600"] *,
+.mobbin-admin-shell button[class*="bg-[#0056B3]"] *,
+.mobbin-admin-shell button[class*="bg-red-600"] *,
+.mobbin-admin-shell button[class*="bg-emerald-600"] *,
+.mobbin-admin-shell button[class*="bg-purple-600"] *,
+.mobbin-admin-shell button[class*="bg-gray-900"] *,
+.mobbin-admin-shell a[class*="bg-[#0056B3]"] *,
+.mobbin-admin-shell .mobbin-ink-pill,
+.mobbin-admin-shell .mobbin-ink-pill * {
+  color: #ffffff !important;
+}
+
+/* Polarity-Inverted Mobbin Footer Block (#141414 with 24px top corners) */
+.mobbin-admin-shell .mobbin-footer-inverse {
+  background-color: #141414 !important;
+  color: #ffffff !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+.mobbin-admin-shell .mobbin-footer-inverse h2,
+.mobbin-admin-shell .mobbin-footer-inverse h3,
+.mobbin-admin-shell .mobbin-footer-inverse h4,
+.mobbin-admin-shell .mobbin-footer-inverse .mobbin-footer-link {
+  color: #ffffff !important;
+}
+
+.mobbin-admin-shell .mobbin-footer-inverse .mobbin-footer-muted {
+  color: #adadad !important;
+}
+
+/* The Single Electric Blue Accent (#0066ff) — Reserved strictly for badge-popular & commercial callouts */
+.mobbin-admin-shell .mobbin-badge-popular {
+  background-color: #0066ff !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.33 !important;
+  border: none !important;
+}
+
+.mobbin-admin-shell .mobbin-badge-popular * {
+  color: #ffffff !important;
+}
+
+.mobbin-admin-shell .mobbin-accent-text {
+  color: #0066ff !important;
+}
+
+/* Translucent Gray Overlay Badge (badge-overlay: rgba(115, 115, 115, 0.56)) */
+.mobbin-admin-shell .mobbin-badge-overlay,
+.mobbin-admin-shell span.absolute[class*="bg-black/"],
+.mobbin-admin-shell span.absolute[class*="bg-blue-600"],
+.mobbin-admin-shell span.absolute[class*="bg-emerald-600"] {
+  background-color: rgba(115, 115, 115, 0.56) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.33 !important;
+  border: none !important;
+}

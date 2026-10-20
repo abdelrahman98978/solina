@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Calculator, CheckCircle2, ChevronDown, DollarSign, FileText, Info, Percent, Send, Sparkles, Printer } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calculator, ChevronDown, FileText, Sparkles, Printer, Building2 } from 'lucide-react';
 import { VEHICLES } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 
 interface FinanceCalculatorProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -13,20 +14,38 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
   onOpenQuotation
 }) => {
   const { language, formatPrice } = useLanguage();
-  const toyotaVehicles = VEHICLES.filter(v => v.brand !== 'lexus');
+  const { vehicles, settings } = useAdminData();
+  const toyotaVehicles = (vehicles.length > 0 ? vehicles : VEHICLES).filter(v => v.brand !== 'lexus');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('camry-2026');
   const selectedVehicle = toyotaVehicles.find(v => v.id === selectedVehicleId) || toyotaVehicles[0];
 
+  const activeBanks = settings.bankPartners.filter(b => b.isActive);
+  const [selectedBankId, setSelectedBankId] = useState<string>(activeBanks[0]?.id || 'solina_fin');
+
   const [price, setPrice] = useState<number>(selectedVehicle.priceStartingFrom);
-  const [downPaymentPercent, setDownPaymentPercent] = useState<number>(10);
+  const [downPaymentPercent, setDownPaymentPercent] = useState<number>(settings.minDownPaymentPercent || 10);
   const [termMonths, setTermMonths] = useState<number>(60);
-  const [balloonPaymentPercent, setBalloonPaymentPercent] = useState<number>(25);
-  const [annualProfitRate, setAnnualProfitRate] = useState<number>(4.25);
+  const [balloonPaymentPercent, setBalloonPaymentPercent] = useState<number>(settings.defaultBalloonPercent || 25);
+  const [annualProfitRate, setAnnualProfitRate] = useState<number>(settings.defaultAprPercent || 3.79);
+
+  useEffect(() => {
+    setAnnualProfitRate(settings.defaultAprPercent);
+    setDownPaymentPercent(settings.minDownPaymentPercent);
+    setBalloonPaymentPercent(settings.defaultBalloonPercent);
+  }, [settings.defaultAprPercent, settings.minDownPaymentPercent, settings.defaultBalloonPercent]);
 
   const handleVehicleChange = (id: string) => {
     setSelectedVehicleId(id);
     const v = toyotaVehicles.find(item => item.id === id);
     if (v) setPrice(v.priceStartingFrom);
+  };
+
+  const handleBankChange = (bankId: string) => {
+    setSelectedBankId(bankId);
+    const found = activeBanks.find(b => b.id === bankId);
+    if (found) {
+      setAnnualProfitRate(found.aprPercent);
+    }
   };
 
   // Financial Calculations
@@ -72,24 +91,46 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
         <div className="bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           {/* Controls Column (7 Cols) */}
           <div className="lg:col-span-7 p-6 md:p-10 space-y-6">
-            {/* Vehicle Selector */}
-            <div>
-              <label className="block text-xs font-bold text-gray-700 mb-2">
-                {language === 'ar' ? 'اختر موديل سولينا المطلوب:' : 'Select Solina Model:'}
-              </label>
-              <div className="relative">
-                <select
-                  value={selectedVehicleId}
-                  onChange={(e) => handleVehicleChange(e.target.value)}
-                  className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm rounded-xl py-3.5 px-4 pr-10 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none cursor-pointer"
-                >
-                  {toyotaVehicles.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {language === 'ar' ? v.nameAr : v.nameEn} ({formatPrice(v.priceStartingFrom)} ﷼)
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            {/* Vehicle Selector + Financing Bank Partner */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-2">
+                  {language === 'ar' ? 'اختر موديل سولينا المطلوب:' : 'Select Solina Model:'}
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedVehicleId}
+                    onChange={(e) => handleVehicleChange(e.target.value)}
+                    className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm rounded-xl py-3.5 px-4 pr-10 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none cursor-pointer"
+                  >
+                    {toyotaVehicles.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {language === 'ar' ? v.nameAr : v.nameEn} ({formatPrice(v.priceStartingFrom)} ﷼)
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-2">
+                  {language === 'ar' ? 'الجهة التمويلية المعتمدة:' : 'Approved Financing Partner:'}
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedBankId}
+                    onChange={(e) => handleBankChange(e.target.value)}
+                    className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm rounded-xl py-3.5 px-4 pr-10 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none cursor-pointer"
+                  >
+                    {activeBanks.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {language === 'ar' ? b.nameAr : b.nameEn} (APR {b.aprPercent}%)
+                      </option>
+                    ))}
+                  </select>
+                  <Building2 className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
               </div>
             </div>
 
@@ -202,7 +243,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
               <div className="flex items-center gap-2 mb-6">
                 <Sparkles className="w-4 h-4 text-[#0056B3]" />
                 <span className="text-xs font-bold text-gray-300">
-                  {language === 'ar' ? 'عرض التمويل التأجيري المعتمد' : 'ALJ Lease Summary'}
+                  {language === 'ar' ? 'عرض التمويل التأجيري المعتمد' : 'Solina Lease Summary'}
                 </span>
               </div>
 

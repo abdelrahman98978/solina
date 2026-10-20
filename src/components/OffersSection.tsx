@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAdminData } from '../context/AdminDataContext';
 
 interface OffersSectionProps {
   onOpenTestDrive: (offerTitle?: string) => void;
@@ -7,8 +8,9 @@ interface OffersSectionProps {
 
 export const OffersSection: React.FC<OffersSectionProps> = ({ onOpenTestDrive }) => {
   const { language } = useLanguage();
+  const { offers: adminOffers } = useAdminData();
 
-  const offers = [
+  const defaultBanners = [
     {
       id: 'veloz-5-years',
       title: language === 'ar' ? '5 سنوات مع فيلوز' : '5 Years with Veloz',
@@ -24,6 +26,19 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onOpenTestDrive })
       cta: language === 'ar' ? 'اكتشف المزيد' : 'Learn More'
     }
   ];
+
+  // Include any newly created custom offers from AdminDashboard
+  const customAdminBanners = adminOffers
+    .filter(o => o.id.startsWith('offer-') && !['offer-1', 'offer-2', 'offer-3', 'offer-4'].includes(o.id))
+    .map(o => ({
+      id: o.id,
+      title: language === 'ar' ? o.title : o.titleEn,
+      subtitle: language === 'ar' ? o.subtitle : o.subtitleEn,
+      image: o.image,
+      cta: language === 'ar' ? o.ctaText : o.ctaTextEn
+    }));
+
+  const offers = [...customAdminBanners, ...defaultBanners];
 
   return (
     <section id="offers" className="py-16 bg-white font-arabic">

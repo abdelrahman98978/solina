@@ -18,7 +18,7 @@
   --mobbin-field: #f0f0f0;
   --mobbin-hairline-soft: #f0f0f0;
   --mobbin-hairline: #e0e0e0;
-  --mobbin-accent: #0066ff;
+  --mobbin-accent: #141414;
 
   /* 2. Exact Mobbin Radii & Spacing */
   --mobbin-rounded-none: 0px;
@@ -30,13 +30,20 @@
   width: 100% !important;
   max-width: 100vw !important;
   min-height: 100vh !important;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   background-color: #ffffff !important;
   color: #141414 !important;
-  font-family: 'Saans', 'Inter', 'Hanken Grotesk', 'IBM Plex Sans Arabic', -apple-system, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Cairo', 'IBM Plex Sans Arabic', 'Inter', -apple-system, "Helvetica Neue", Arial, sans-serif !important;
   font-weight: 456;
-  line-height: 1.38;
+  line-height: 1.45;
   letter-spacing: 0 !important;
+}
+
+.mobbin-admin-shell .font-mono,
+.mobbin-admin-shell .font-display,
+.mobbin-admin-shell .font-arabic {
+  font-family: 'Cairo', 'IBM Plex Sans Arabic', 'Inter', -apple-system, sans-serif !important;
+  font-variant-numeric: tabular-nums !important;
 }
 
 /* Zero letter-spacing & no uppercase everywhere per Mobbin spec */
@@ -120,16 +127,31 @@
   color: #141414 !important;
   border: 2px solid transparent !important;
   border-radius: 16px !important;
-  padding: 10px 16px !important;
+  padding: 10px 16px;
   font-weight: 456 !important;
   box-shadow: none !important;
   outline: none !important;
   transition: border-color 0.15s ease, background-color 0.15s ease !important;
 }
 
+/* Preserve icon padding on search & filter inputs so icons never overlap text */
+.mobbin-admin-shell input[class*="pr-9"],
+.mobbin-admin-shell input[class*="pr-10"],
+.mobbin-admin-shell input[class*="pr-11"],
+.mobbin-admin-shell input[class*="pr-12"] {
+  padding-right: 40px !important;
+}
+
+.mobbin-admin-shell input[class*="pl-9"],
+.mobbin-admin-shell input[class*="pl-10"],
+.mobbin-admin-shell input[class*="pl-11"],
+.mobbin-admin-shell input[class*="pl-12"] {
+  padding-left: 40px !important;
+}
+
 .mobbin-admin-shell input::placeholder,
 .mobbin-admin-shell textarea::placeholder {
-  color: #adadad !important;
+  color: #707070 !important;
 }
 
 .mobbin-admin-shell input:not([type="checkbox"]):not([type="radio"]):focus,
@@ -153,6 +175,7 @@
   font-size: 12px !important;
   font-weight: 600 !important;
   line-height: 1.33 !important;
+  white-space: nowrap !important;
   border-bottom: 1px solid #e0e0e0 !important;
 }
 
@@ -171,6 +194,12 @@
   font-size: 13px !important;
   font-weight: 456 !important;
   line-height: 1.43 !important;
+}
+
+.mobbin-admin-shell tbody td button,
+.mobbin-admin-shell tbody td span.rounded-full,
+.mobbin-admin-shell tbody td span.inline-flex {
+  white-space: nowrap !important;
 }
 
 /* 8. iOS-style 30% Squircle Icon Tiles (app-icon-squircle) */
@@ -335,14 +364,17 @@
   color: #adadad !important;
 }
 
-/* The Single Electric Blue Accent (#0066ff) — Reserved strictly for badge-popular & commercial callouts */
+/* Solina Architectural Monochrome Accent Badge (#141414 Ink Pill) */
 .mobbin-admin-shell .mobbin-badge-popular {
-  background-color: #0066ff !important;
+  background-color: #141414 !important;
   color: #ffffff !important;
   border-radius: 9999px !important;
-  font-size: 12px !important;
   font-weight: 600 !important;
   line-height: 1.33 !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   border: none !important;
 }
 
@@ -351,7 +383,7 @@
 }
 
 .mobbin-admin-shell .mobbin-accent-text {
-  color: #0066ff !important;
+  color: #141414 !important;
 }
 
 /* Translucent Gray Overlay Badge (badge-overlay: rgba(115, 115, 115, 0.56)) */

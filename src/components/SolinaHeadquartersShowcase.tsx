@@ -17,7 +17,7 @@ export const SolinaHeadquartersShowcase: React.FC<SolinaHeadquartersShowcaseProp
     <section className="relative w-full py-16 md:py-24 bg-gray-950 text-white font-arabic overflow-hidden">
       {/* Subtle background glow */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 relative z-10">
         
@@ -41,7 +41,7 @@ export const SolinaHeadquartersShowcase: React.FC<SolinaHeadquartersShowcaseProp
           <div className="flex items-center gap-3">
             <button
               onClick={onNavigateToShowrooms}
-              className="px-6 py-3 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs md:text-sm font-bold shadow-xl transition-all cursor-pointer inline-flex items-center gap-2 hover:scale-105"
+              className="px-6 py-3 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs md:text-sm font-bold shadow-xl transition-all cursor-pointer inline-flex items-center gap-2 hover:scale-105"
             >
               <span>{language === 'ar' ? 'استكشف شبكة الفروع' : 'Explore All Branches'}</span>
               <ArrowLeft className="w-4 h-4" />
@@ -65,7 +65,7 @@ export const SolinaHeadquartersShowcase: React.FC<SolinaHeadquartersShowcaseProp
           </div>
 
           <div className="absolute bottom-6 left-6 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs font-bold text-white shadow-xl">
-            <Award className="w-4 h-4 text-yellow-400" />
+            <Award className="w-4 h-4 text-red-500" />
             <span>{language === 'ar' ? 'صالات استقبال كبار الشخصيات VIP' : 'VIP Executive Lounges'}</span>
           </div>
         </div>
@@ -97,19 +97,19 @@ export const SolinaHeadquartersShowcase: React.FC<SolinaHeadquartersShowcaseProp
           </div>
 
           {/* Card 2: VIP Hospitality */}
-          <div className="relative p-7 rounded-3xl bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800 hover:border-blue-500/50 hover:shadow-[0_10px_35px_-10px_rgba(59,130,246,0.25)] transition-all duration-300 group overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-600/20 transition-all" />
+          <div className="relative p-7 rounded-3xl bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800 hover:border-[#141414] hover:shadow-[0_10px_35px_-10px_rgba(59,130,246,0.25)] transition-all duration-300 group overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/15 rounded-full blur-2xl pointer-events-none group-hover:bg-red-600/20 transition-all" />
             
             <div className="relative flex items-center justify-between mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/25 via-blue-600/15 to-transparent border border-blue-500/40 shadow-[0_0_20px_rgba(59,130,246,0.3)] flex items-center justify-center group-hover:scale-110 group-hover:border-blue-400 transition-all duration-300">
-                <Sparkles className="w-7 h-7 text-blue-400 drop-shadow-[0_2px_8px_rgba(59,130,246,0.6)]" strokeWidth={2.2} />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#141414] via-[#141414] to-transparent border border-red-600/40 shadow-[0_0_20px_rgba(59,130,246,0.3)] flex items-center justify-center group-hover:scale-110 group-hover:border-[#141414] transition-all duration-300">
+                <Sparkles className="w-7 h-7 text-red-500 drop-shadow-[0_2px_8px_rgba(59,130,246,0.6)]" strokeWidth={2.2} />
               </div>
-              <span className="text-[10px] uppercase font-mono tracking-widest text-blue-400/80 px-2.5 py-1 rounded-full bg-blue-950/50 border border-blue-800/40">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-red-500 px-2.5 py-1 rounded-full bg-red-600/15 border border-red-600/40">
                 02 / VIP
               </span>
             </div>
 
-            <h3 className="text-xl font-bold text-white mb-2.5 font-arabic group-hover:text-blue-300 transition-colors">
+            <h3 className="text-xl font-bold text-white mb-2.5 font-arabic group-hover:text-red-600 transition-colors">
               {language === 'ar' ? 'صالات استقبال VIP واستشارات الشراء' : 'VIP Hospitality & Buyer Advisory'}
             </h3>
             <p className="text-xs text-gray-400 leading-relaxed font-light">
@@ -120,19 +120,19 @@ export const SolinaHeadquartersShowcase: React.FC<SolinaHeadquartersShowcaseProp
           </div>
 
           {/* Card 3: Instant Delivery */}
-          <div className="relative p-7 rounded-3xl bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800 hover:border-emerald-500/50 hover:shadow-[0_10px_35px_-10px_rgba(16,185,129,0.25)] transition-all duration-300 group overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/10 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-600/20 transition-all" />
+          <div className="relative p-7 rounded-3xl bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800 hover:border-[#141414] hover:shadow-[0_10px_35px_-10px_rgba(16,185,129,0.25)] transition-all duration-300 group overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/15 rounded-full blur-2xl pointer-events-none group-hover:bg-red-600/20 transition-all" />
             
             <div className="relative flex items-center justify-between mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/25 via-emerald-600/15 to-transparent border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center justify-center group-hover:scale-110 group-hover:border-emerald-400 transition-all duration-300">
-                <Shield className="w-7 h-7 text-emerald-400 drop-shadow-[0_2px_8px_rgba(16,185,129,0.6)]" strokeWidth={2.2} />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#141414] via-[#141414] to-transparent border border-red-600/40 shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center justify-center group-hover:scale-110 group-hover:border-[#141414] transition-all duration-300">
+                <Shield className="w-7 h-7 text-red-500 drop-shadow-[0_2px_8px_rgba(16,185,129,0.6)]" strokeWidth={2.2} />
               </div>
-              <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-400/80 px-2.5 py-1 rounded-full bg-emerald-950/50 border border-emerald-800/40">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-red-500 px-2.5 py-1 rounded-full bg-red-600/15 border border-red-600/40">
                 03 / EXPRESS
               </span>
             </div>
 
-            <h3 className="text-xl font-bold text-white mb-2.5 font-arabic group-hover:text-emerald-300 transition-colors">
+            <h3 className="text-xl font-bold text-white mb-2.5 font-arabic group-hover:text-red-600 transition-colors">
               {language === 'ar' ? 'مراكز التسليم الفوري المعتمدة' : 'Express Delivery & Handover Centers'}
             </h3>
             <p className="text-xs text-gray-400 leading-relaxed font-light">

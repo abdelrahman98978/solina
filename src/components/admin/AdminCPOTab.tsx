@@ -121,31 +121,31 @@ export const AdminCPOTab: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* 1. Header Bar */}
-      <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-600" />
-            <span>{language === 'ar' ? 'إدارة سيارات سولينا المستعملة المعتمدة (Solina AutoHub CPO)' : 'Solina Certified Pre-Owned Inventory'}</span>
+          <h2 className="text-xl font-bold text-[#141414] font-display flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-[#141414]" />
+            <span>{language === 'ar' ? 'إدارة سيارات سولينا المستعملة المعتمدة' : 'Solina Certified Pre-Owned Inventory'}</span>
           </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-[#707070] mt-0.5">
             {language === 'ar' 
               ? 'متابعة وفحص وتسعير سيارات المستعمل المعتمد المفحوصة بـ 160 نقطة مع ضمان سولينا المعتمد.' 
               : 'Manage 160-point inspected certified pre-owned vehicles with official Solina warranty.'}
-          </p>
+            </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => exportDataToCSV('cpo')}
-            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>تصدير CSV</span>
+            <span>تصدير المستعمل المعتمد (10 صيغ)</span>
           </button>
 
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all cursor-pointer"
+            className="flex items-center gap-2 bg-[#141414] hover:bg-black text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-none transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>{language === 'ar' ? 'إضافة سيارة مستعملة معتمدة' : 'Add CPO Vehicle'}</span>
@@ -154,19 +154,19 @@ export const AdminCPOTab: React.FC = () => {
       </div>
 
       {/* 2. Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#adadad] absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="ابحث باسم السيارة، الفئة، اللون، أو الفرع..."
-            className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-10 pl-3 focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs rounded-xl py-2.5 pr-10 pl-3 focus:border-[#141414] outline-none"
           />
         </div>
-        <div className="text-xs font-bold text-gray-500 px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 shrink-0">
-          إجمالي السيارات المعروضة: <span className="text-emerald-700 font-mono">{filteredCPO.length}</span>
+        <div className="text-xs font-bold text-[#707070] px-3 py-2 bg-[#f3f3f3] rounded-xl border border-[#e0e0e0] shrink-0">
+          إجمالي السيارات المعروضة: <span className="text-[#141414] font-mono">{filteredCPO.length}</span>
         </div>
       </div>
 
@@ -175,64 +175,64 @@ export const AdminCPOTab: React.FC = () => {
         {filteredCPO.map((cpo) => (
           <div 
             key={cpo.id}
-            className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+            className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-none hover:shadow-none transition-all flex flex-col justify-between"
           >
             <div>
-              <div className="h-44 relative bg-gray-50 p-4 flex items-center justify-center">
+              <div className="h-44 relative bg-[#f3f3f3] p-4 flex items-center justify-center">
                 <img 
                   src={cpo.image} 
                   alt={cpo.titleAr} 
                   className="max-h-full max-w-full object-contain filter drop-shadow" 
                 />
-                <span className="absolute top-3 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow">
+                <span className="absolute top-3 right-3 bg-[#141414] text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow">
                   <ShieldCheck className="w-3 h-3" />
                   <span>مفحوصة {cpo.inspectionPoints} نقطة</span>
                 </span>
                 <span className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded">
                   موديل {cpo.year}
                 </span>
-                <span className="absolute bottom-3 right-3 bg-white/90 border border-gray-200 text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                <span className="absolute bottom-3 right-3 bg-white/90 border border-[#e0e0e0] text-[#141414] text-[10px] font-bold px-2 py-0.5 rounded">
                   ضمان {cpo.warrantyMonths} شهر
                 </span>
               </div>
 
               <div className="p-5 space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="font-bold text-gray-900 text-sm">{cpo.titleAr}</h3>
-                  <span className="text-[10px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-semibold">{cpo.color}</span>
+                  <h3 className="font-bold text-[#141414] text-sm">{cpo.titleAr}</h3>
+                  <span className="text-[10px] bg-[#f0f0f0] text-[#707070] px-2 py-0.5 rounded font-semibold">{cpo.color}</span>
                 </div>
-                <p className="text-xs text-gray-500 font-medium">{cpo.grade}</p>
+                <p className="text-xs text-[#707070] font-medium">{cpo.grade}</p>
                 
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 text-xs">
-                  <div className="flex items-center gap-1.5 text-gray-600">
-                    <Gauge className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#e0e0e0] text-xs">
+                  <div className="flex items-center gap-1.5 text-[#707070]">
+                    <Gauge className="w-3.5 h-3.5 text-[#141414]" />
                     <span>{formatPrice(cpo.mileage)} كم</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-gray-600">
-                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                  <div className="flex items-center gap-1.5 text-[#707070]">
+                    <MapPin className="w-3.5 h-3.5 text-[#adadad]" />
                     <span className="truncate">{cpo.location}</span>
                   </div>
                 </div>
 
                 <div className="pt-2 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-gray-400 block">السعر النقدي:</span>
-                    <span className="text-sm font-black text-gray-900 font-mono">{formatPrice(cpo.price)} ر.س</span>
+                    <span className="text-[10px] text-[#adadad] block">السعر النقدي:</span>
+                    <span className="text-sm font-black text-[#141414] font-mono">{formatPrice(cpo.price)} ر.س</span>
                   </div>
                   <div className="text-end">
-                    <span className="text-[10px] text-gray-400 block">القسط التقديري:</span>
-                    <span className="text-xs font-bold text-emerald-700 font-mono">{formatPrice(cpo.monthlyInstallment)} ر.س/ش</span>
+                    <span className="text-[10px] text-[#adadad] block">القسط التقديري:</span>
+                    <span className="text-xs font-bold text-[#141414] font-mono">{formatPrice(cpo.monthlyInstallment)} ر.س/ش</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-              <span className="text-[11px] text-gray-400 font-mono">ID: {cpo.id}</span>
+            <div className="p-4 bg-[#f3f3f3] border-t border-[#e0e0e0] flex items-center justify-between">
+              <span className="text-[11px] text-[#adadad] font-mono">ID: {cpo.id}</span>
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => openEditModal(cpo)}
-                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-emerald-600 hover:text-white text-gray-700 border border-gray-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-black hover:text-white text-[#707070] border border-[#e0e0e0] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   <span>تعديل</span>
@@ -243,7 +243,7 @@ export const AdminCPOTab: React.FC = () => {
                       deleteCPOVehicle(cpo.id);
                     }
                   }}
-                  className="p-2 rounded-xl bg-white hover:bg-red-600 hover:text-white text-gray-400 border border-gray-200 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-white hover:bg-red-600 hover:text-white text-[#adadad] border border-[#e0e0e0] transition-colors cursor-pointer"
                   title="حذف السيارة"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -257,15 +257,15 @@ export const AdminCPOTab: React.FC = () => {
       {/* 4. Add / Edit CPO Modal with Live Preview */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl border border-gray-200 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-5">
-              <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-none border border-[#e0e0e0] animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#e0e0e0] mb-5">
+              <h3 className="font-bold text-[#141414] text-base flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>{editingCPO ? `تعديل بيانات: ${editingCPO.titleAr}` : 'إضافة سيارة مستعملة معتمدة (سولينا AutoHub)'}</span>
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:text-black flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#f0f0f0] text-[#707070] hover:text-black flex items-center justify-center cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -275,107 +275,107 @@ export const AdminCPOTab: React.FC = () => {
               <form onSubmit={handleSaveCPO} className="lg:col-span-7 space-y-3.5 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">اسم السيارة والموديل *</label>
+                    <label className="font-bold text-[#707070] block mb-1">اسم السيارة والموديل *</label>
                     <input
                       type="text"
                       required
                       placeholder="مثال: سولينا كامري قراندي 2024"
                       value={titleAr}
                       onChange={(e) => setTitleAr(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] focus:border-[#141414] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">الفئة والتجهيز (Grade) *</label>
+                    <label className="font-bold text-[#707070] block mb-1">الفئة والتجهيز (Grade) *</label>
                     <input
                       type="text"
                       required
                       value={grade}
                       onChange={(e) => setGrade(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">سنة الصنع</label>
+                    <label className="font-bold text-[#707070] block mb-1">سنة الصنع</label>
                     <input
                       type="number"
                       value={year}
                       onChange={(e) => setYear(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">الممشى (كم)</label>
+                    <label className="font-bold text-[#707070] block mb-1">الممشى (كم)</label>
                     <input
                       type="number"
                       value={mileage}
                       onChange={(e) => setMileage(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">السعر النقدي (ر.س)</label>
+                    <label className="font-bold text-[#707070] block mb-1">السعر النقدي (ر.س)</label>
                     <input
                       type="number"
                       value={price}
                       onChange={(e) => setPrice(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono font-bold text-emerald-700 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono font-bold text-[#141414] outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">اللون الخارجي</label>
+                    <label className="font-bold text-[#707070] block mb-1">اللون الخارجي</label>
                     <input
                       type="text"
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">مدة الضمان (شهر)</label>
+                    <label className="font-bold text-[#707070] block mb-1">مدة الضمان (شهر)</label>
                     <input
                       type="number"
                       value={warrantyMonths}
                       onChange={(e) => setWarrantyMonths(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">نقاط الفحص الفني</label>
+                    <label className="font-bold text-[#707070] block mb-1">نقاط الفحص الفني</label>
                     <input
                       type="number"
                       value={inspectionPoints}
                       onChange={(e) => setInspectionPoints(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">مكان التواجد والفرع</label>
+                    <label className="font-bold text-[#707070] block mb-1">مكان التواجد والفرع</label>
                     <input
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">رابط صورة السيارة (URL)</label>
+                    <label className="font-bold text-[#707070] block mb-1">رابط صورة السيارة (URL)</label>
                     <input
                       type="text"
                       value={image}
                       onChange={(e) => setImage(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                     />
                   </div>
                 </div>
@@ -383,14 +383,14 @@ export const AdminCPOTab: React.FC = () => {
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     type="submit"
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition-all cursor-pointer"
+                    className="flex-1 bg-[#141414] hover:bg-black text-white font-bold py-3 rounded-xl shadow-none transition-all cursor-pointer"
                   >
                     {editingCPO ? 'حفظ التعديلات في سجل المستعمل المعتمد' : 'إضافة للمخزون المعتمد فوراً'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all cursor-pointer"
+                    className="px-5 py-3 bg-[#f0f0f0] hover:bg-[#e0e0e0] text-[#707070] font-bold rounded-xl transition-all cursor-pointer"
                   >
                     إلغاء
                   </button>
@@ -398,36 +398,36 @@ export const AdminCPOTab: React.FC = () => {
               </form>
 
               {/* Live Card Preview */}
-              <div className="lg:col-span-5 bg-slate-50 rounded-2xl p-4 border border-gray-200 flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between text-xs font-bold text-gray-500">
+              <div className="lg:col-span-5 bg-[#f3f3f3] rounded-2xl p-4 border border-[#e0e0e0] flex flex-col justify-between space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-[#707070]">
                   <span className="flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                    <Eye className="w-3.5 h-3.5 text-[#141414]" />
                     <span>معاينة بطاقة المستعمل المعتمد</span>
                   </span>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">مباشر</span>
+                  <span className="text-[10px] bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded-full">مباشر</span>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
-                  <div className="h-36 relative bg-gray-50 p-3 flex items-center justify-center">
+                <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-none">
+                  <div className="h-36 relative bg-[#f3f3f3] p-3 flex items-center justify-center">
                     <img src={image} alt="Preview" className="max-h-full max-w-full object-contain" />
-                    <span className="absolute top-2.5 right-2.5 bg-emerald-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="absolute top-2.5 right-2.5 bg-[#141414] text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                       <Award className="w-2.5 h-2.5" />
                       مفحوصة {inspectionPoints} نقطة
                     </span>
                   </div>
                   <div className="p-3.5 space-y-1.5">
-                    <h4 className="font-bold text-gray-900 text-xs">{titleAr || 'اسم السيارة المستعملة المعتمدة'}</h4>
-                    <p className="text-[11px] text-gray-500">{grade} • {color} • موديل {year}</p>
-                    <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
-                      <strong className="text-sm font-black text-gray-900 font-mono">{formatPrice(price)} ر.س</strong>
-                      <span className="text-[11px] font-bold text-emerald-700 font-mono">
+                    <h4 className="font-bold text-[#141414] text-xs">{titleAr || 'اسم السيارة المستعملة المعتمدة'}</h4>
+                    <p className="text-[11px] text-[#707070]">{grade} • {color} • موديل {year}</p>
+                    <div className="pt-2 border-t border-[#e0e0e0] flex items-center justify-between">
+                      <strong className="text-sm font-black text-[#141414] font-mono">{formatPrice(price)} ر.س</strong>
+                      <span className="text-[11px] font-bold text-[#141414] font-mono">
                         {formatPrice(Math.round((Number(price) * 0.9) / 60))} ر.س/شهرياً
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[10px] text-gray-400 text-center">
+                <p className="text-[10px] text-[#adadad] text-center">
                   تظهر هذه البطاقة مباشرة في قسم سولينا للسيارات المستعملة المعتمدة.
                 </p>
               </div>

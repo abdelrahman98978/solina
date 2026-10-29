@@ -1,6 +1,16 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { TRANSLATIONS, type Language } from '../data/translations';
-import { autoTranslate as autoTranslateUtil, detectLanguage as detectLanguageUtil } from '../utils/autoTranslation';
+import {
+  autoTranslate as autoTranslateUtil,
+  detectLanguage as detectLanguageUtil,
+  translateDOMSubtree,
+  getCustomGlossary,
+  saveCustomGlossary,
+  CustomGlossaryEntry,
+  isAutoTranslationEnabled,
+  setAutoTranslationEnabled,
+  getTranslationLibraryStats
+} from '../utils/autoTranslation';
 
 interface LanguageContextType {
   language: Language;
@@ -11,6 +21,12 @@ interface LanguageContextType {
   detectLanguage: (text: string) => 'ar' | 'en';
   isRTL: boolean;
   formatPrice: (amount: number) => string;
+  autoTranslateEnabled: boolean;
+  toggleAutoTranslateEngine: (enabled: boolean) => void;
+  customGlossary: CustomGlossaryEntry[];
+  addGlossaryTerm: (ar: string, en: string, category?: CustomGlossaryEntry['category']) => void;
+  removeGlossaryTerm: (id: string) => void;
+  translationStats: ReturnType<typeof getTranslationLibraryStats>;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -20,6 +36,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const saved = localStorage.getItem('toyota_lang');
     return saved === 'en' ? 'en' : 'ar';
   });
+
+  const [autoTranslateEnabled, setAutoTranslateEnabledState] = useState<boolean>(() =>
+    isAutoTranslationEnabled()
+  );
+
+  const [customGlossary, setCustomGlossaryState] = useState<CustomGlossaryEntry[]>(() =>
+    getCustomGlossary()
+  );
 
   useEffect(() => {
     localStorage.setItem('toyota_lang', language);
@@ -34,29 +58,110 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [language]);
 
-  const setLanguage = (lang: Language) => {
+  // Real-time Automatic DOM Translation Observer (مكتبة الترجمة التلقائية الفورية)
+  useEffect(() => {
+    if (!autoTranslateEnabled || typeof document === 'undefined') return;
+
+    let rafId: number | null = null;
+    let isApplying = false;
+
+    const observer = new MutationObserver(() => {
+      if (isApplying) return;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        runTranslationPass();
+        rafId = null;
+      });
+    });
+
+    const runTranslationPass = () => {
+      if (isApplying) return;
+      isApplying = true;
+      try {
+        translateDOMSubtree(document.body, language);
+      } finally {
+        // Drain any mutation records caused by our own translation pass so observer never loops
+        observer.takeRecords();
+        isApplying = false;
+      }
+    };
+
+    // Initial pass when language or glossary changes
+    runTranslationPass();
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    return () => {
+      observer.disconnect();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [language, autoTranslateEnabled, customGlossary]);
+
+  const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-  };
+  }, []);
 
-  const toggleLanguage = () => {
+  const toggleLanguage = useCallback(() => {
     setLanguageState(prev => (prev === 'ar' ? 'en' : 'ar'));
-  };
+  }, []);
 
-  const t = (key: keyof typeof TRANSLATIONS.ar): string => {
-    return TRANSLATIONS[language][key] || TRANSLATIONS.ar[key] || '';
-  };
+  const toggleAutoTranslateEngine = useCallback((enabled: boolean) => {
+    setAutoTranslationEnabled(enabled);
+    setAutoTranslateEnabledState(enabled);
+  }, []);
 
-  const autoTranslate = (text: string, targetLang?: Language): string => {
-    const target = targetLang || language;
-    return autoTranslateUtil(text, target);
-  };
+  const addGlossaryTerm = useCallback(
+    (ar: string, en: string, category: CustomGlossaryEntry['category'] = 'ui') => {
+      if (!ar.trim() || !en.trim()) return;
+      const next: CustomGlossaryEntry = {
+        id: `gloss-${Date.now()}`,
+        ar: ar.trim(),
+        en: en.trim(),
+        category
+      };
+      const updated = [next, ...getCustomGlossary()];
+      saveCustomGlossary(updated);
+      setCustomGlossaryState(updated);
+    },
+    []
+  );
 
-  const formatPrice = (amount: number): string => {
-    if (language === 'ar') {
-      return amount.toLocaleString('ar-SA');
-    }
-    return amount.toLocaleString('en-US');
-  };
+  const removeGlossaryTerm = useCallback((id: string) => {
+    const updated = getCustomGlossary().filter(item => item.id !== id);
+    saveCustomGlossary(updated);
+    setCustomGlossaryState(updated);
+  }, []);
+
+  const t = useCallback(
+    (key: keyof typeof TRANSLATIONS.ar): string => {
+      return TRANSLATIONS[language][key] || TRANSLATIONS.ar[key] || '';
+    },
+    [language]
+  );
+
+  const autoTranslate = useCallback(
+    (text: string, targetLang?: Language): string => {
+      const target = targetLang || language;
+      return autoTranslateUtil(text, target);
+    },
+    [language]
+  );
+
+  const formatPrice = useCallback(
+    (amount: number): string => {
+      if (language === 'ar') {
+        return amount.toLocaleString('ar-SA');
+      }
+      return amount.toLocaleString('en-US');
+    },
+    [language]
+  );
+
+  const translationStats = getTranslationLibraryStats();
 
   return (
     <LanguageContext.Provider
@@ -68,7 +173,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         autoTranslate,
         detectLanguage: detectLanguageUtil,
         isRTL: language === 'ar',
-        formatPrice
+        formatPrice,
+        autoTranslateEnabled,
+        toggleAutoTranslateEngine,
+        customGlossary,
+        addGlossaryTerm,
+        removeGlossaryTerm,
+        translationStats
       }}
     >
       {children}

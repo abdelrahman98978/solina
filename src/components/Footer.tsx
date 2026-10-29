@@ -17,14 +17,14 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-2 text-sm font-bold text-gray-800">
               <button 
                 onClick={() => language !== 'ar' && toggleLanguage()}
-                className={`hover:text-[#0056B3] transition-colors cursor-pointer ${language === 'ar' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
+                className={`hover:text-[#141414] transition-colors cursor-pointer ${language === 'ar' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
               >
                 ع
               </button>
               <span className="text-gray-300">|</span>
               <button 
                 onClick={() => language !== 'en' && toggleLanguage()}
-                className={`hover:text-[#0056B3] transition-colors cursor-pointer ${language === 'en' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
+                className={`hover:text-[#141414] transition-colors cursor-pointer ${language === 'en' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
               >
                 EN
               </button>
@@ -47,17 +47,17 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600 font-normal">
               <li>
-                <a href="#b2b-cars" className="hover:text-[#0056B3] transition-colors">
+                <a href="#b2b-cars" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'مبيعات السيارات B2B' : 'B2B Car Sales'}
                 </a>
               </li>
               <li>
-                <a href="#b2b-parts" className="hover:text-[#0056B3] transition-colors">
+                <a href="#b2b-parts" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'مبيعات قطع الغيار B2B' : 'B2B Parts Sales'}
                 </a>
               </li>
               <li>
-                <a href="#explore-vehicles" className="hover:text-[#0056B3] transition-colors">
+                <a href="#explore-vehicles" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'المركبات' : 'Vehicles'}
                 </a>
               </li>
@@ -71,17 +71,17 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600 font-normal">
               <li>
-                <a href="#faq" className="hover:text-[#0056B3] transition-colors">
+                <a href="#faq" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'الأسئلة الشائعة' : 'FAQ'}
                 </a>
               </li>
               <li>
-                <a href="tel:8002444400" className="hover:text-[#0056B3] transition-colors">
+                <a href="tel:8002444400" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'اتصل بنا (800 244 4400)' : 'Call Us (800 244 4400)'}
                 </a>
               </li>
               <li>
-                <a href="#guest-commitment" className="hover:text-[#0056B3] transition-colors">
+                <a href="#guest-commitment" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'معلومات عنا' : 'About Us'}
                 </a>
               </li>
@@ -95,17 +95,17 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600 font-normal">
               <li>
-                <a href="#showrooms" className="hover:text-[#0056B3] transition-colors">
+                <a href="#showrooms" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'فروعنا' : 'Our Branches'}
                 </a>
               </li>
               <li>
-                <a href="#service" className="hover:text-[#0056B3] transition-colors">
+                <a href="#service" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'حجز الصيانة' : 'Book a Service'}
                 </a>
               </li>
               <li>
-                <a href="#parts" className="hover:text-[#0056B3] transition-colors">
+                <a href="#parts" className="hover:text-[#141414] transition-colors">
                   {language === 'ar' ? 'مبيعات قطع الغيار' : 'Spare Parts Sales'}
                 </a>
               </li>
@@ -125,19 +125,19 @@ export const Footer: React.FC = () => {
             {/* Social Icons */}
             <div className="flex items-center gap-3">
               {/* Instagram */}
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#0056B3] hover:border-[#0056B3] transition-colors shadow-2xs">
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#141414] hover:border-[#141414] transition-colors shadow-2xs">
                 <img src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/social-icons/instagram.png?h=24&iar=0&w=24" alt="Instagram" className="w-4 h-4 object-contain" />
               </a>
               {/* YouTube */}
-              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#0056B3] hover:border-[#0056B3] transition-colors shadow-2xs">
+              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#141414] hover:border-[#141414] transition-colors shadow-2xs">
                 <img src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/social-icons/youtube.png?h=24&iar=0&w=24" alt="YouTube" className="w-4 h-4 object-contain" />
               </a>
               {/* X / Twitter */}
-              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#0056B3] hover:border-[#0056B3] transition-colors shadow-2xs">
+              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#141414] hover:border-[#141414] transition-colors shadow-2xs">
                 <img src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/social-icons/twitter.png?h=24&iar=0&w=24" alt="Twitter" className="w-4 h-4 object-contain" />
               </a>
               {/* Facebook */}
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#0056B3] hover:border-[#0056B3] transition-colors shadow-2xs">
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:text-[#141414] hover:border-[#141414] transition-colors shadow-2xs">
                 <img src="https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/social-icons/facebook.png?h=24&iar=0&w=24" alt="Facebook" className="w-4 h-4 object-contain" />
               </a>
             </div>

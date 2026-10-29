@@ -48,21 +48,21 @@ export const SolinaBrandHeritage: React.FC<SolinaBrandHeritageProps> = ({
                 },
                 { 
                   icon: Users, 
-                  badgeBg: 'bg-blue-50 text-blue-600 border-blue-200/80',
+                  badgeBg: 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0]',
                   number: '100k+', 
                   labelAr: 'ضيف يثق بسولينا', 
                   labelEn: 'Satisfied Guests' 
                 },
                 { 
                   icon: Award, 
-                  badgeBg: 'bg-emerald-50 text-emerald-600 border-emerald-200/80',
+                  badgeBg: 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0]',
                   number: '100%', 
                   labelAr: 'قطع غيار أصلية', 
                   labelEn: 'Genuine Parts' 
                 },
                 { 
                   icon: ShieldCheck, 
-                  badgeBg: 'bg-amber-50 text-amber-600 border-amber-200/80',
+                  badgeBg: 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0]',
                   number: '10', 
                   labelAr: 'سنوات ضمان سولينا', 
                   labelEn: 'Years Warranty' 
@@ -88,7 +88,7 @@ export const SolinaBrandHeritage: React.FC<SolinaBrandHeritageProps> = ({
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={onNavigateToDiscover}
-                className="px-8 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs md:text-sm font-bold shadow-lg transition-all cursor-pointer inline-flex items-center gap-2 hover:scale-105"
+                className="px-8 py-3.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs md:text-sm font-bold shadow-lg transition-all cursor-pointer inline-flex items-center gap-2 hover:scale-105"
               >
                 <span>{language === 'ar' ? 'اكتشف قصة سولينا ورؤيتنا' : 'Discover Solina Story'}</span>
                 <ArrowLeft className="w-4 h-4" />

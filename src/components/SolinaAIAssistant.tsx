@@ -1,24 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  X, 
-  Send, 
-  Bot, 
-  Sparkles, 
-  Car, 
-  Tag, 
-  MapPin, 
-  Headphones, 
-  ArrowLeft, 
-  CheckCircle2,
-  Calendar,
-  PhoneCall,
-  ExternalLink,
-  MessageSquare,
-  ShieldCheck,
-  ChevronDown
+import {
+  X,
+  Send,
+  Car,
+  Tag,
+  MapPin,
+  Headphones,
+  ArrowLeft,
+  Wrench
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { VEHICLES } from '../data/toyotaData';
 
 interface Message {
   id: string;
@@ -67,8 +58,8 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
       id: 'welcome',
       sender: 'bot',
       text: language === 'ar'
-        ? 'مرحباً بك في سولينا للسيارات! 🚗 أنا مساعدك الذكي المعتمد، كيف يمكنني خدمتك اليوم بخصوص أسطول 2026، عروض التمويل، أو حجز الصيانة؟'
-        : 'Welcome to Solina Motors! 🚗 I am your certified AI assistant. How may I assist you with 2026 vehicles, financing offers, or service bookings today?',
+        ? 'مرحباً بك في سولينا للسيارات. أنا مساعدك الذكي المعتمد، كيف يمكنني خدمتك اليوم بخصوص أسطول 2026، عروض التمويل، أو حجز الصيانة؟'
+        : 'Welcome to Solina Motors. I am your certified AI assistant. How may I assist you with 2026 vehicles, financing offers, or service bookings today?',
       timestamp: 'الآن'
     }
   ]);
@@ -237,25 +228,22 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
 
   return (
     <>
-      {/* 1. Floating AI Assistant Launcher Button (Positioned gracefully on the bottom-left on mobile so it never collides with navigation) */}
+      {/* 1. Floating AI Assistant Launcher Button */}
       {showFloatingTrigger && (
         <div className="fixed bottom-[74px] sm:bottom-6 left-3.5 sm:left-auto sm:right-6 z-40 font-arabic select-none">
           <button
             onClick={() => setIsOpen(true)}
-            className="relative group flex items-center gap-2 sm:gap-2.5 bg-gray-950/95 hover:bg-black text-white p-1.5 sm:p-2 pl-3 sm:pl-3.5 pr-1.5 sm:pr-2 rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.45)] border border-red-500/80 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ring-2 ring-red-500/20"
+            className="relative group flex items-center gap-2 sm:gap-2.5 bg-[#141414] hover:bg-black text-white p-1.5 sm:p-2 pl-3 sm:pl-3.5 pr-1.5 sm:pr-2 rounded-full border border-red-600/80 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
             title={language === 'ar' ? 'تحدث مع مساعد سولينا الذكي 24/7' : 'Chat with Solina AI Assistant 24/7'}
           >
-            {/* Subtle Pulse */}
-            <span className="absolute -inset-1 rounded-full bg-red-600/25 animate-ping pointer-events-none" />
-
             {/* AI Robot Avatar */}
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-red-500 shadow-md bg-white shrink-0">
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-red-600 bg-white shrink-0">
               <img
                 src="/solina-ai-assistant.png"
                 alt="مساعد سولينا الذكي"
                 className="w-full h-full object-cover"
               />
-              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white" />
+              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-red-600 border border-white" />
             </div>
 
             {/* Button Label */}
@@ -268,7 +256,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                   24/7
                 </span>
               </div>
-              <span className="text-[8px] sm:text-[9px] text-gray-300 font-light block leading-tight mt-0.5">
+              <span className="text-[8px] sm:text-[9px] text-white/70 font-light block leading-tight mt-0.5">
                 {language === 'ar' ? 'مساعدة فورية' : 'Instant Help'}
               </span>
             </div>
@@ -279,22 +267,22 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
       {/* 2. Professional AI Assistant Bottom Sheet / Modal Dialog */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-end sm:p-6 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div 
-            className="w-full sm:max-w-md h-[88vh] sm:h-[630px] bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 animate-in slide-in-from-bottom-8 duration-300 font-arabic"
+          <div
+            className="w-full sm:max-w-md h-[88vh] sm:h-[630px] bg-white rounded-t-[32px] sm:rounded-[28px] flex flex-col overflow-hidden border border-[#e0e0e0] animate-in slide-in-from-bottom-8 duration-300 font-arabic"
           >
             {/* Mobile Sheet Grab Handle */}
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2 sm:hidden" />
+            <div className="w-12 h-1.5 bg-[#e0e0e0] rounded-full mx-auto my-2 sm:hidden" />
 
-            {/* Header with Solina Luxury Dark & Red Theme */}
-            <div className="bg-gradient-to-r from-gray-950 via-slate-900 to-black text-white px-4 py-3 flex items-center justify-between border-b border-white/10 shadow-md">
+            {/* Header with Solina Architectural Dark & Red Theme */}
+            <div className="bg-[#141414] text-white px-4 py-3 flex items-center justify-between border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-red-500 bg-white shrink-0 shadow-sm">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-red-600 bg-white shrink-0">
                   <img
                     src="/solina-ai-assistant.png"
                     alt="Solina AI Assistant"
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-red-600 border border-white" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
@@ -305,7 +293,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                       LIVE
                     </span>
                   </div>
-                  <p className="text-[10px] text-gray-300 font-light">
+                  <p className="text-[10px] text-white/70 font-light">
                     {language === 'ar' ? 'خدمة ضيوف سولينا على مدار الساعة' : '24/7 Solina Guest Support'}
                   </p>
                 </div>
@@ -314,15 +302,15 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
               {/* Close Button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                 title="إغلاق"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" strokeWidth={1.75} />
               </button>
             </div>
 
             {/* Quick Action Navigation Grid (4 Core Shortcuts) */}
-            <div className="bg-gray-950 text-white px-3 py-2 grid grid-cols-4 gap-2 border-b border-gray-800 text-center">
+            <div className="bg-[#141414] text-white px-3 py-2 grid grid-cols-4 gap-2 border-b border-white/10 text-center">
               {[
                 { id: 'models', labelAr: 'الموديلات', icon: Car, query: 'أريد استعراض سيارات 2026' },
                 { id: 'prices', labelAr: 'الأسعار', icon: Tag, query: 'ما هي أسعار وعروض التمويل؟' },
@@ -334,12 +322,12 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                   <button
                     key={item.id}
                     onClick={() => handleSendMessage(item.query)}
-                    className="flex flex-col items-center gap-1 p-1 rounded-xl hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                    className="flex flex-col items-center gap-1 p-1 rounded-[14px] hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center">
-                      <Icon className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-[30%] bg-white/10 text-white border border-white/15 flex items-center justify-center">
+                      <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
                     </div>
-                    <span className="text-[9px] font-bold text-gray-200 leading-none">
+                    <span className="text-[9px] font-bold text-white/80 leading-none">
                       {item.labelAr}
                     </span>
                   </button>
@@ -348,8 +336,7 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
             </div>
 
             {/* Chat Body Messages */}
-            <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-gradient-to-b from-gray-50 via-white to-gray-50">
-              
+            <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-[#f3f3f3]">
               {/* Messages list */}
               {messages.map((msg) => (
                 <div
@@ -357,37 +344,37 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                   className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed shadow-xs ${
+                    className={`max-w-[85%] rounded-[20px] p-3 text-xs leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-red-600 text-white rounded-br-none'
-                        : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none shadow-xs'
+                        ? 'bg-[#141414] text-white rounded-br-none'
+                        : 'bg-white text-[#141414] border border-[#e0e0e0] rounded-bl-none'
                     }`}
                   >
                     <p>{msg.text}</p>
-                    
+
                     {/* Action buttons inside bot response */}
                     {msg.actions && msg.actions.length > 0 && (
-                      <div className="mt-2.5 pt-2 border-t border-gray-100 flex flex-wrap gap-1.5">
+                      <div className="mt-2.5 pt-2 border-t border-[#e0e0e0] flex flex-wrap gap-1.5">
                         {msg.actions.map((act, idx) => (
                           <button
                             key={idx}
                             onClick={act.action}
-                            className="px-2.5 py-1 rounded-full bg-gray-900 hover:bg-red-600 text-white text-[10px] font-bold transition-colors cursor-pointer inline-flex items-center gap-1 shadow-xs"
+                            className="px-2.5 py-1 rounded-full bg-[#141414] hover:bg-red-600 text-white text-[10px] font-bold transition-colors cursor-pointer inline-flex items-center gap-1"
                           >
                             <span>{act.label}</span>
-                            <ArrowLeft className="w-2.5 h-2.5" />
+                            <ArrowLeft className="w-2.5 h-2.5" strokeWidth={1.75} />
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
-                  <span className="text-[9px] text-gray-400 mt-1 px-1">{msg.timestamp}</span>
+                  <span className="text-[9px] text-[#707070] mt-1 px-1">{msg.timestamp}</span>
                 </div>
               ))}
 
               {/* Typing Animation */}
               {isTyping && (
-                <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-white border border-gray-200 w-20">
+                <div className="flex items-center gap-1.5 p-3 rounded-[20px] bg-white border border-[#e0e0e0] w-20">
                   <div className="w-2 h-2 rounded-full bg-red-600 animate-bounce" style={{ animationDelay: '0ms' }} />
                   <div className="w-2 h-2 rounded-full bg-red-600 animate-bounce" style={{ animationDelay: '150ms' }} />
                   <div className="w-2 h-2 rounded-full bg-red-600 animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -398,25 +385,29 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
             </div>
 
             {/* Suggested Question Chips */}
-            <div className="px-3 py-2 bg-white border-t border-gray-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="px-3 py-2 bg-white border-t border-[#e0e0e0] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {[
-                { label: '🚗 تجربة قيادة', query: 'أريد حجز تجربة قيادة' },
-                { label: '🏷️ سعر كامري 2026', query: 'كم سعر كامري 2026؟' },
-                { label: '📍 أقرب فرع', query: 'أين موقع المعرض الرئيسي؟' },
-                { label: '🛠️ حجز موعد صيانة', query: 'كيف أحجز موعد صيانة؟' }
-              ].map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSendMessage(chip.query)}
-                  className="px-2.5 py-1 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-700 text-[10px] font-bold whitespace-nowrap transition-colors cursor-pointer border border-gray-200"
-                >
-                  {chip.label}
-                </button>
-              ))}
+                { label: 'تجربة قيادة', icon: Car, query: 'أريد حجز تجربة قيادة' },
+                { label: 'سعر كامري 2026', icon: Tag, query: 'كم سعر كامري 2026؟' },
+                { label: 'أقرب فرع', icon: MapPin, query: 'أين موقع المعرض الرئيسي؟' },
+                { label: 'حجز موعد صيانة', icon: Wrench, query: 'كيف أحجز موعد صيانة؟' }
+              ].map((chip, idx) => {
+                const ChipIcon = chip.icon;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSendMessage(chip.query)}
+                    className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#141414] hover:text-white text-[#141414] text-[10px] font-bold whitespace-nowrap transition-colors cursor-pointer border border-[#e0e0e0] inline-flex items-center gap-1"
+                  >
+                    <ChipIcon className="w-3 h-3" strokeWidth={1.75} />
+                    <span>{chip.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Input Footer with Send Button */}
-            <div className="p-2.5 bg-white border-t border-gray-200 flex items-center gap-2">
+            <div className="p-2.5 bg-white border-t border-[#e0e0e0] flex items-center gap-2">
               <input
                 type="text"
                 value={inputMessage}
@@ -425,14 +416,14 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
                   if (e.key === 'Enter') handleSendMessage();
                 }}
                 placeholder={language === 'ar' ? 'اكتب استفسارك هنا...' : 'Type your question here...'}
-                className="flex-1 px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-xs text-gray-900 focus:outline-none focus:border-red-500 focus:bg-white transition-all font-arabic text-start"
+                className="flex-1 px-4 py-2.5 rounded-full bg-[#f0f0f0] border border-[#e0e0e0] text-xs text-[#141414] focus:outline-none focus:border-[#141414] focus:bg-white transition-all font-arabic text-start"
               />
               <button
                 onClick={() => handleSendMessage()}
-                className="w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 active:scale-95 text-white flex items-center justify-center shadow-md transition-all cursor-pointer shrink-0"
+                className="w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 active:scale-95 text-white flex items-center justify-center transition-all cursor-pointer shrink-0"
                 title="إرسال"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3.5 h-3.5" strokeWidth={1.75} />
               </button>
             </div>
 

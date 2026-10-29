@@ -43,8 +43,8 @@ export const ShowroomsSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-[#0056B3] text-xs font-bold mb-4 border border-red-100">
-            <MapPin className="w-4 h-4 text-[#0056B3]" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-[#141414] text-xs font-bold mb-4 border border-red-100">
+            <MapPin className="w-4 h-4 text-[#141414]" />
             <span>{language === 'ar' ? 'شبكة الفروع ومراكز الخدمة' : 'Showrooms & Service Network'}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-normal text-black mb-4 font-arabic tracking-tight">
@@ -67,7 +67,7 @@ export const ShowroomsSection: React.FC = () => {
                 onClick={() => setSelectedRegion(reg.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                   selectedRegion === reg.id
-                    ? 'bg-[#0056B3] text-white shadow-md'
+                    ? 'bg-[#141414] text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -84,7 +84,7 @@ export const ShowroomsSection: React.FC = () => {
               placeholder={language === 'ar' ? 'ابحث باسم المدينة أو الفرع...' : 'Search branch or city...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-9 pl-3 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-9 pl-3 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none"
             />
           </div>
         </div>
@@ -94,7 +94,7 @@ export const ShowroomsSection: React.FC = () => {
           {filteredShowrooms.map((branch) => (
             <div
               key={branch.id}
-              className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-[#0056B3]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+              className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-[#141414]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -102,7 +102,7 @@ export const ShowroomsSection: React.FC = () => {
                     {language === 'ar' ? branch.city : branch.cityEn}
                   </span>
                   {branch.isMain && (
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-[#0056B3]">
+                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-[#141414]">
                       {language === 'ar' ? 'المركز الرئيسي' : 'Main Hub'}
                     </span>
                   )}
@@ -131,7 +131,7 @@ export const ShowroomsSection: React.FC = () => {
                 {/* Available Services */}
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {(language === 'ar' ? branch.services : branch.servicesEn).map((srv, i) => (
-                    <span key={i} className="text-[10px] bg-red-50 text-[#0056B3] font-medium px-2 py-0.5 rounded-md">
+                    <span key={i} className="text-[10px] bg-red-50 text-[#141414] font-medium px-2 py-0.5 rounded-md">
                       {srv}
                     </span>
                   ))}

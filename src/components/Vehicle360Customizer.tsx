@@ -83,17 +83,17 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
   return (
     <section className="py-20 md:py-28 bg-[#070B14] text-white relative overflow-hidden select-none border-y border-white/5">
       {/* Luxury Ambient Studio Lighting */}
-      <div className="absolute top-0 right-1/4 w-[650px] h-[650px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-[550px] h-[550px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#D4AF37]/5 rounded-full blur-[180px] pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-[650px] h-[650px] bg-red-600/15 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 left-10 w-[550px] h-[550px] bg-red-600/15 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#dc2626]/5 rounded-full blur-[180px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10">
         
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs font-bold text-blue-400">
-              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-600/15 border border-red-600/40 text-xs font-bold text-red-500">
+              <Sparkles className="w-3.5 h-3.5 text-[#dc2626]" />
               <span>{language === 'ar' ? 'استوديو العرض التفاعلي الفاخر 360°' : 'Flagship 360° Interactive Showroom'}</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white font-display">
@@ -111,7 +111,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'all' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'all' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               {language === 'ar' ? 'الكل' : 'All'}
@@ -119,7 +119,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('jetour')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'jetour' ? 'bg-orange-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'jetour' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               {language === 'ar' ? 'جيتور JETOUR' : 'JETOUR'}
@@ -127,7 +127,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('byd')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'byd' ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'byd' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               {language === 'ar' ? 'بي واي دي BYD' : 'BYD'}
@@ -143,7 +143,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('toyota')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'toyota' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'toyota' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               SOLINA
@@ -151,10 +151,10 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('lexus')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
-                activeBrandTab === 'lexus' ? 'bg-gradient-to-r from-amber-600 to-amber-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'lexus' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
-              <Crown className="w-3 h-3 text-[#D4AF37]" />
+              <Crown className="w-3 h-3 text-[#dc2626]" />
               <span>LEXUS</span>
             </button>
             <button
@@ -192,7 +192,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('cadillac')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'cadillac' ? 'bg-amber-900 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'cadillac' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               CADILLAC
@@ -200,7 +200,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('ford')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'ford' ? 'bg-blue-900 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'ford' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               FORD
@@ -216,7 +216,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('lucid')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'lucid' ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'lucid' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               LUCID KSA
@@ -224,7 +224,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('bmw')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'bmw' ? 'bg-blue-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'bmw' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               BMW
@@ -240,7 +240,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <button
               onClick={() => setActiveBrandTab('landrover')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeBrandTab === 'landrover' ? 'bg-emerald-800 text-white shadow-md' : 'text-gray-400 hover:text-white'
+                activeBrandTab === 'landrover' ? 'bg-[#141414] text-white shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               RANGE ROVER
@@ -265,12 +265,12 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
                   isSelected
                     ? isMdlLexus
-                      ? 'bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border-[#D4AF37] text-[#D4AF37] shadow-lg shadow-amber-950/40 scale-105'
-                      : 'bg-blue-600 border-blue-400 text-white shadow-lg shadow-blue-600/30 scale-105'
+                      ? 'bg-gradient-to-r from-slate-900 via-[#141414] to-slate-900 border-[#dc2626] text-[#dc2626] shadow-lg  scale-105'
+                      : 'bg-[#141414] border-red-600 text-white shadow-lg  scale-105'
                     : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10'
                 }`}
               >
-                {isMdlLexus && <Crown className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                {isMdlLexus && <Crown className="w-3.5 h-3.5 text-[#dc2626]" />}
                 <span>{language === 'ar' ? m.nameAr : m.nameEn}</span>
                 <span className="text-[10px] opacity-70 font-mono">
                   {formatPrice(m.priceStartingFrom)} ر.س
@@ -292,7 +292,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 onClick={() => setViewMode('exterior')}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'exterior' 
-                    ? isLexus ? 'bg-[#D4AF37] text-black shadow-md' : 'bg-blue-600 text-white shadow-md' 
+                    ? isLexus ? 'bg-red-600 text-white shadow-md' : 'bg-[#141414] text-white shadow-md' 
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -304,7 +304,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 onClick={() => setViewMode('interior')}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'interior' 
-                    ? isLexus ? 'bg-[#D4AF37] text-black shadow-md' : 'bg-blue-600 text-white shadow-md' 
+                    ? isLexus ? 'bg-red-600 text-white shadow-md' : 'bg-[#141414] text-white shadow-md' 
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -316,7 +316,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 onClick={() => setViewMode('grades')}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'grades' 
-                    ? isLexus ? 'bg-[#D4AF37] text-black shadow-md' : 'bg-blue-600 text-white shadow-md' 
+                    ? isLexus ? 'bg-red-600 text-white shadow-md' : 'bg-[#141414] text-white shadow-md' 
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -333,7 +333,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                   {/* Studio Floor Reflection & Lighting */}
                   <div 
                     className="absolute inset-x-12 bottom-6 h-14 rounded-full blur-2xl pointer-events-none transition-colors duration-500"
-                    style={{ backgroundColor: `${activeColor?.hex || '#1A56DB'}45` }}
+                    style={{ backgroundColor: `${activeColor?.hex || '#141414'}45` }}
                   />
 
                   {/* 360 Rotation Control Badge */}
@@ -342,7 +342,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                     className="absolute top-2 right-2 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/80 backdrop-blur-md border border-white/15 text-[11px] text-gray-300 transition-all cursor-pointer"
                     title="تدوير زاوية العرض"
                   >
-                    <RotateCw className="w-3.5 h-3.5 text-blue-400 animate-spin-slow" />
+                    <RotateCw className="w-3.5 h-3.5 text-red-500 animate-spin-slow" />
                     <span>360° {language === 'ar' ? 'زاوية تفاعلية' : 'Interactive'}</span>
                   </button>
 
@@ -389,7 +389,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                         key={idx}
                         onClick={() => setSelectedInteriorShotIdx(idx)}
                         className={`rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                          selectedInteriorShotIdx === idx ? 'border-blue-500 scale-105 shadow-md' : 'border-white/10 opacity-70 hover:opacity-100'
+                          selectedInteriorShotIdx === idx ? 'border-red-600 scale-105 shadow-md' : 'border-white/10 opacity-70 hover:opacity-100'
                         }`}
                       >
                         <img src={shot.image} alt={shot.titleAr} className="w-full h-14 object-cover" />
@@ -413,7 +413,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                           onClick={() => setSelectedGradeIndex(idx)}
                           className={`p-4 rounded-2xl border transition-all cursor-pointer text-start ${
                             isGrdSelected
-                              ? 'bg-blue-600/20 border-blue-500 shadow-md ring-1 ring-blue-500'
+                              ? 'bg-red-600/15 border-red-600 shadow-md ring-1 ring-red-600/30'
                               : 'bg-white/5 border-white/10 hover:bg-white/10'
                           }`}
                         >
@@ -421,15 +421,15 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                             <span className="text-xs font-bold text-white">
                               {language === 'ar' ? grd.name : grd.nameEn}
                             </span>
-                            {isGrdSelected && <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0" />}
+                            {isGrdSelected && <CheckCircle2 className="w-4 h-4 text-red-500 shrink-0" />}
                           </div>
-                          <span className="text-sm font-black text-[#D4AF37] font-mono block mb-2">
+                          <span className="text-sm font-black text-[#dc2626] font-mono block mb-2">
                             {formatPrice(grd.price)} ر.س
                           </span>
                           <ul className="text-[10px] text-gray-300 space-y-1 font-sans">
                             {(language === 'ar' ? grd.features : grd.featuresEn).slice(0, 3).map((f, i) => (
                               <li key={i} className="flex items-center gap-1.5">
-                                <span className="w-1 h-1 rounded-full bg-blue-400" />
+                                <span className="w-1 h-1 rounded-full bg-[#141414]" />
                                 <span>{f}</span>
                               </li>
                             ))}
@@ -465,7 +465,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                       title={color.name}
                       className={`w-7 h-7 rounded-full transition-all relative flex items-center justify-center cursor-pointer ${
                         selectedColorIndex === idx
-                          ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-black scale-110 shadow-md'
+                          ? 'ring-2 ring-red-600/30 ring-offset-2 ring-offset-black scale-110 shadow-md'
                           : 'opacity-70 hover:opacity-100 hover:scale-105'
                       }`}
                       style={{ backgroundColor: color.hex }}
@@ -487,12 +487,12 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               {/* Brand & Body Type Tag */}
               <div className="flex items-center gap-2">
                 {isLexus ? (
-                  <span className="bg-amber-500/20 text-[#D4AF37] text-[10px] font-bold px-2.5 py-1 rounded-full border border-[#D4AF37]/40 flex items-center gap-1">
+                  <span className="bg-red-600/15 text-[#dc2626] text-[10px] font-bold px-2.5 py-1 rounded-full border border-[#dc2626]/40 flex items-center gap-1">
                     <Crown className="w-3 h-3" />
                     <span>LEXUS LUXURY</span>
                   </span>
                 ) : (
-                  <span className="bg-blue-600/20 text-blue-400 text-[10px] font-bold px-2.5 py-1 rounded-full border border-blue-500/30">
+                  <span className="bg-red-600/15 text-red-500 text-[10px] font-bold px-2.5 py-1 rounded-full border border-red-600/40">
                     SOLINA OFFICIAL
                   </span>
                 )}
@@ -513,7 +513,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5">
                   <div className="flex items-center gap-2 mb-1">
-                    <Gauge className="w-4 h-4 text-blue-400" />
+                    <Gauge className="w-4 h-4 text-red-500" />
                     <span className="text-[10px] text-gray-400">{language === 'ar' ? 'القوة الحصانية' : 'Horsepower'}</span>
                   </div>
                   <span className="text-sm font-bold text-white font-mono">{activeVehicle.horsepower}</span>
@@ -521,7 +521,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
 
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5">
                   <div className="flex items-center gap-2 mb-1">
-                    <Fuel className="w-4 h-4 text-emerald-400" />
+                    <Fuel className="w-4 h-4 text-red-500" />
                     <span className="text-[10px] text-gray-400">{language === 'ar' ? 'استهلاك الوقود' : 'Fuel Economy'}</span>
                   </div>
                   <span className="text-sm font-bold text-white font-mono">{activeVehicle.fuelEconomy}</span>
@@ -533,15 +533,15 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 onClick={handlePlayEngineSound}
                 className={`w-full py-3.5 px-4 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 border cursor-pointer ${
                   isPlayingAudio
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 border-blue-400 text-white scale-105 shadow-lg shadow-blue-500/30'
+                    ? 'bg-[#141414] border-red-600 text-white scale-105 shadow-lg '
                     : 'bg-white/10 hover:bg-white/20 border-white/15 text-white'
                 }`}
               >
-                <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce text-[#D4AF37]' : 'text-blue-400'}`} />
+                <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce text-[#dc2626]' : 'text-red-500'}`} />
                 <span>
                   {isPlayingAudio 
                     ? (language === 'ar' ? 'المحرك يعمل الآن (صوت واقعي)...' : 'Engine Running (HD Audio)...') 
-                    : (language === 'ar' ? 'تشغيل صوت محرك السيارة 🔊' : 'Listen to Engine Sound 🔊')}
+                    : (language === 'ar' ? 'تشغيل صوت محرك السيارة' : 'Listen to Engine Sound')}
                 </span>
               </button>
 
@@ -552,7 +552,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                 </span>
                 <div className="flex items-baseline justify-between">
                   <span className="text-2xl font-black text-white font-mono">
-                    {formatPrice(activeGrade?.price || activeVehicle.priceStartingFrom)} <span className="text-xs text-blue-400">ر.س</span>
+                    {formatPrice(activeGrade?.price || activeVehicle.priceStartingFrom)} <span className="text-xs text-red-500">ر.س</span>
                   </span>
                   <span className="text-xs text-gray-400 font-sans">
                     {language === 'ar' ? 'شامل الضريبة 15%' : '15% VAT Incl.'}
@@ -565,7 +565,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
             <div className="space-y-2.5 pt-4 border-t border-white/10">
               <button
                 onClick={() => onOpenDetails(activeVehicle.id)}
-                className="w-full py-3.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 bg-[#141414] hover:bg-red-600 text-white font-bold text-xs rounded-xl shadow-lg  transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>{language === 'ar' ? 'استعراض كافة تفاصيل ومواصفات الفئات' : 'View Full Model Trims & Specs'}</span>
                 {isRTL ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
@@ -584,7 +584,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                     onClick={() => onOpenQuotation(activeVehicle, activeGrade)}
                     className="py-3 bg-white hover:bg-gray-100 text-gray-900 font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer text-center"
                   >
-                    <Printer className="w-3.5 h-3.5 text-blue-600" />
+                    <Printer className="w-3.5 h-3.5 text-[#141414]" />
                     <span>{language === 'ar' ? 'عرض سعر' : 'Quotation'}</span>
                   </button>
                 )}

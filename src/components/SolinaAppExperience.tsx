@@ -235,11 +235,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
   };
 
   const quickServices = [
-    { id: 'smartkey', nameAr: 'المفتاح الذكي', icon: Key, color: 'bg-blue-50 text-[#0056B3]' },
-    { id: 'vinscan', nameAr: 'ماسح الشاسيه', icon: ScanLine, color: 'bg-emerald-50 text-emerald-600' },
-    { id: 'tradein', nameAr: 'تثمين سيارتك', icon: RefreshCw, color: 'bg-purple-50 text-purple-600' },
-    { id: 'offers', nameAr: 'عروض 2026', icon: Tag, color: 'bg-amber-50 text-amber-600' },
-    { id: 'support', nameAr: 'مساعد سولينا', icon: Sparkles, color: 'bg-rose-50 text-rose-600' }
+    { id: 'smartkey', nameAr: 'المفتاح الذكي', icon: Key, color: 'bg-[#f3f3f3] text-[#141414] group-hover:bg-[#141414] group-hover:text-white' },
+    { id: 'vinscan', nameAr: 'ماسح الشاسيه', icon: ScanLine, color: 'bg-[#f3f3f3] text-[#141414] group-hover:bg-[#141414] group-hover:text-white' },
+    { id: 'tradein', nameAr: 'تثمين سيارتك', icon: RefreshCw, color: 'bg-[#f3f3f3] text-[#141414] group-hover:bg-[#141414] group-hover:text-white' },
+    { id: 'offers', nameAr: 'عروض 2026', icon: Tag, color: 'bg-[#f3f3f3] text-[#141414] group-hover:bg-[#141414] group-hover:text-white' },
+    { id: 'support', nameAr: 'مساعد سولينا', icon: Headphones, color: 'bg-[#f3f3f3] text-red-600 group-hover:bg-red-600 group-hover:text-white' }
   ];
 
   const categories = [
@@ -258,7 +258,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
     const car = allVehicles.find(v => v.id === id);
     if (car) {
       showAppToast(
-        exists ? 'تمت الإزالة من المفضلة' : 'تمت الإضافة إلى المفضلة ❤️',
+        exists ? 'تمت الإزالة من المفضلة' : 'تمت الإضافة إلى المفضلة',
         car.nameAr,
         exists ? 'info' : 'success'
       );
@@ -277,7 +277,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       }
       const next = [...comparisonList, id];
       setComparisonList(next);
-      showAppToast('أضيفت للمقارنة المباشرة ⚖️', next.length === 2 ? 'جاهز للمقارنة! اضغط لعرض الجدول' : 'اختر سيارة ثانية للمقارنة', 'info');
+      showAppToast('أضيفت للمقارنة المباشرة', next.length === 2 ? 'جاهز للمقارنة! اضغط لعرض الجدول' : 'اختر سيارة ثانية للمقارنة', 'info');
       if (next.length === 2) {
         setShowComparisonModal(true);
       }
@@ -318,7 +318,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       discount: 'توفير يصل إلى 15,000 ريال',
       desc: 'احصل على سولينا كامري أو كراون 2026 مع 0% رسوم إدارية وضمان صيانة 3 سنوات مجاناً.',
       daysLeft: 6,
-      bg: 'from-red-600 via-rose-600 to-red-800',
+      bg: 'from-[#141414] via-red-950 to-black',
       vehicle: 'camry-2026'
     },
     {
@@ -329,7 +329,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       discount: 'قسط يبدأ من 1,450 ريال/شهر',
       desc: 'امتلك جيتور T2 الدفع الرباعي أو داشينج تيربو بدون دفعة أولى مع تظليل عازل حراري مجاناً.',
       daysLeft: 9,
-      bg: 'from-emerald-700 via-teal-800 to-slate-950',
+      bg: 'from-[#141414] via-[#1c1c1e] to-black',
       vehicle: 'jetour-t2-2026'
     },
     {
@@ -340,7 +340,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       discount: 'ضمان بطارية Blade لـ 8 سنوات',
       desc: 'اقتنِ بي واي دي سونغ بلس DM-i أو هان EV أو سيل مع شاحن جداري مجاني وصيانة سنتين.',
       daysLeft: 11,
-      bg: 'from-cyan-700 via-blue-800 to-slate-950',
+      bg: 'from-[#141414] via-[#262626] to-black',
       vehicle: 'byd-song-plus-2026'
     },
     {
@@ -351,7 +351,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       discount: 'شاملة الزيوت والفلاتر',
       desc: 'عند شراء أي سيارة دفع رباعي (لاندكروزر، برادو، سنتافي، باليسيد) استمتع بـ 4 صيانات دورية مجانية.',
       daysLeft: 12,
-      bg: 'from-gray-900 via-slate-900 to-black',
+      bg: 'from-[#141414] via-slate-900 to-black',
       vehicle: 'lc300-2026'
     },
     {
@@ -362,7 +362,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       discount: 'مكافأة 7,000 ريال فوق قيمة التثمين',
       desc: 'استبدل سيارتك الحالية مهما كان نوعها واحصل على تقييم فوري وأعلى سعر سوقي.',
       daysLeft: 18,
-      bg: 'from-blue-700 via-indigo-800 to-slate-950',
+      bg: 'from-[#141414] via-red-950/80 to-black',
       vehicle: 'crown-2026'
     }
   ];
@@ -381,28 +381,28 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
   // Render Inner App UI
   const renderAppContent = () => (
-    <div className={`relative w-full bg-slate-50 overflow-hidden flex flex-col font-arabic text-gray-900 ${isNativeMobileView ? 'min-h-screen pb-20' : 'h-[780px] rounded-[38px]'}`}>
+    <div className={`relative w-full bg-[#ffffff] overflow-hidden flex flex-col font-arabic text-[#141414] ${isNativeMobileView ? 'min-h-screen pb-20' : 'h-[780px] rounded-[38px]'}`}>
       
       {/* Dynamic Island In-App Notification Toast */}
       {appToast && (
         <div
           onClick={() => setAppToast(null)}
-          className="absolute top-10 left-3 right-3 z-[70] bg-gray-950/95 backdrop-blur-md text-white px-3.5 py-2.5 rounded-2xl shadow-2xl border border-white/15 flex items-center justify-between gap-2.5 animate-in slide-in-from-top duration-200 cursor-pointer"
+          className="absolute top-10 left-3 right-3 z-[70] bg-[#141414] text-white px-3.5 py-2.5 rounded-2xl border border-white/15 flex items-center justify-between gap-2.5 animate-in slide-in-from-top duration-200 cursor-pointer"
         >
           <div className="flex items-center gap-2.5">
-            <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
-              appToast.type === 'warning' ? 'bg-amber-500/20 text-amber-400' : appToast.type === 'info' ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
+            <div className={`w-7 h-7 rounded-[30%] flex items-center justify-center shrink-0 ${
+              appToast.type === 'warning' ? 'bg-red-600 text-white' : 'bg-white/15 text-white'
             }`}>
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4" strokeWidth={1.75} />
             </div>
             <div className="text-start">
               <div className="text-[11px] font-black leading-tight">{appToast.title}</div>
               {appToast.subtitle && (
-                <div className="text-[9px] text-gray-300 font-light mt-0.5 line-clamp-1">{appToast.subtitle}</div>
+                <div className="text-[9px] text-[#adadad] font-light mt-0.5 line-clamp-1">{appToast.subtitle}</div>
               )}
             </div>
           </div>
-          <X className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+          <X className="w-3.5 h-3.5 text-[#adadad] shrink-0" />
         </div>
       )}
 
@@ -537,12 +537,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                           setIsAssistantOpen(true);
                         }
                       }}
-                      className="flex flex-col items-center gap-1.5 min-w-[62px] p-2 rounded-2xl bg-white border border-gray-100 shadow-xs hover:shadow-md active:scale-95 transition-all cursor-pointer group"
+                      className="flex flex-col items-center gap-1.5 min-w-[62px] p-2 rounded-2xl bg-white border border-[#e0e0e0] active:scale-95 transition-all cursor-pointer group"
                     >
-                      <div className={`w-11 h-11 rounded-xl ${srv.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs`}>
-                        <Icon className="w-5 h-5" strokeWidth={2.2} />
+                      <div className={`w-11 h-11 rounded-[30%] ${srv.color} flex items-center justify-center transition-all`}>
+                        <Icon className="w-5 h-5" strokeWidth={1.75} />
                       </div>
-                      <span className="text-[10px] font-bold text-gray-700 text-center leading-tight">
+                      <span className="text-[10px] font-bold text-[#141414] text-center leading-tight">
                         {srv.nameAr}
                       </span>
                     </button>
@@ -740,7 +740,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                             )}
                           </div>
                           {vehicle.interiorGallery && vehicle.interiorGallery.length > 0 && (
-                            <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                            <span className="text-[8px] font-bold text-[#141414] bg-[#f3f3f3] border border-[#e0e0e0] px-1.5 py-0.5 rounded-full">
                               داخليات 360°
                             </span>
                           )}
@@ -780,7 +780,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                             setDetailGradeIndex(0);
                             setDetailViewMode('exterior');
                           }}
-                          className="flex-1 py-1.5 rounded-xl bg-gray-950 hover:bg-red-600 text-white text-[10px] font-black shadow-xs transition-colors cursor-pointer"
+                          className="flex-1 py-1.5 rounded-full bg-[#141414] hover:bg-red-600 text-white text-[10px] font-black transition-colors cursor-pointer"
                         >
                           تفاصيل وحجز
                         </button>
@@ -789,19 +789,19 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                             e.stopPropagation();
                             setCatalogModalVehicle(vehicle);
                           }}
-                          className="p-1.5 rounded-xl bg-red-50 text-red-600 border border-red-200 text-[9px] font-black transition-all cursor-pointer"
+                          className="px-2 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[9px] font-black transition-all cursor-pointer"
                           title="الكتالوج والداخليات"
                         >
                           كتالوج
                         </button>
                         <button
                           onClick={(e) => toggleComparison(vehicle.id, e)}
-                          className={`p-1.5 rounded-xl border text-[9px] font-bold transition-all cursor-pointer ${
-                            isCompared ? 'bg-red-600 text-white border-red-600' : 'bg-gray-50 text-gray-600 border-gray-200'
+                          className={`px-2 py-1.5 rounded-full border text-[9px] font-bold transition-all cursor-pointer inline-flex items-center justify-center ${
+                            isCompared ? 'bg-red-600 text-white border-red-600' : 'bg-[#f3f3f3] text-[#707070] border-[#e0e0e0]'
                           }`}
                           title="مقارنة"
                         >
-                          {isCompared ? '✓' : 'قارن'}
+                          {isCompared ? <Check className="w-3 h-3" strokeWidth={2.5} /> : 'قارن'}
                         </button>
                       </div>
                     </div>
@@ -814,7 +814,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             <div className="px-3.5 mb-3">
               <div 
                 onClick={() => setWarrantyModalCar(userCars[0])}
-                className="relative w-full rounded-2xl overflow-hidden shadow-md border border-gray-800 bg-gray-950 cursor-pointer active:scale-[0.98] transition-transform group"
+                className="relative w-full rounded-2xl overflow-hidden border border-[#e0e0e0] bg-[#141414] cursor-pointer active:scale-[0.98] transition-transform group"
               >
                 <img 
                   src="/solina-app-guarantee-card.png" 
@@ -831,11 +831,16 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         {activeTab === 'offers' && (
           <div className="p-3.5 space-y-3.5 text-start">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-black text-gray-900">🏷️ عروض سولينا الحصرية 2026</h3>
-                <p className="text-[10px] text-gray-400 font-light">أفضل الصفقات التمويلية وباقات الصيانة المعتمدة</p>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Tag className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#141414]">عروض سولينا الحصرية 2026</h3>
+                  <p className="text-[10px] text-[#707070] font-light">أفضل الصفقات التمويلية وباقات الصيانة المعتمدة</p>
+                </div>
               </div>
-              <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-black rounded-full">
+              <span className="px-2.5 py-0.5 bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[10px] font-black rounded-full">
                 {filteredOffers.length} عروض نشطة
               </span>
             </div>
@@ -851,10 +856,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 <button
                   key={f.id}
                   onClick={() => setOffersFilter(f.id as any)}
-                  className={`px-3 py-1.5 rounded-xl text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                     offersFilter === f.id
-                      ? 'bg-red-600 text-white shadow-xs'
-                      : 'bg-white text-gray-700 border border-gray-200'
+                      ? 'bg-[#141414] text-white'
+                      : 'bg-white text-[#141414] border border-[#e0e0e0]'
                   }`}
                 >
                   {f.label}
@@ -867,28 +872,28 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               {filteredOffers.map((offer) => (
                 <div 
                   key={offer.id}
-                  className={`p-4 rounded-2xl bg-gradient-to-r ${offer.bg} text-white shadow-md space-y-2.5 relative overflow-hidden`}
+                  className={`p-4 rounded-3xl bg-gradient-to-r ${offer.bg} text-white space-y-2.5 relative overflow-hidden border border-white/10`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+                    <span className="text-[10px] font-black bg-white/15 px-2.5 py-0.5 rounded-full backdrop-blur-xs">
                       {offer.badge}
                     </span>
-                    <div className="flex items-center gap-1 text-[10px] font-bold text-amber-300">
-                      <Clock className="w-3 h-3" />
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-[#adadad]">
+                      <Clock className="w-3 h-3" strokeWidth={1.75} />
                       <span>متبقي {offer.daysLeft} أيام</span>
                     </div>
                   </div>
 
                   <div>
                     <h4 className="text-sm font-black">{offer.title}</h4>
-                    <span className="text-[11px] font-bold text-red-200 block">{offer.discount}</span>
+                    <span className="text-[11px] font-bold text-red-400 block">{offer.discount}</span>
                     <p className="text-[11px] text-white/80 font-light mt-1 leading-snug">{offer.desc}</p>
                   </div>
 
                   <div className="pt-2 flex items-center justify-between border-t border-white/10">
                     <button
                       onClick={() => setTestDriveModalVehicle(offer.title)}
-                      className="px-4 py-1.5 rounded-xl bg-white text-gray-900 hover:bg-gray-100 text-[10px] font-black shadow-xs cursor-pointer active:scale-95 transition-all"
+                      className="px-4 py-1.5 rounded-full bg-white text-[#141414] hover:bg-[#f3f3f3] text-[10px] font-black cursor-pointer active:scale-95 transition-all"
                     >
                       الاستفادة من العرض الآن
                     </button>
@@ -897,12 +902,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         try {
                           navigator.clipboard?.writeText(`${window.location.origin}/#offers`);
                         } catch {}
-                        showAppToast('تم نسخ رابط العرض بنجاح 🔗', offer.title, 'info');
+                        showAppToast('تم نسخ رابط العرض بنجاح', offer.title, 'info');
                       }}
                       className="p-1.5 text-white/80 hover:text-white cursor-pointer"
                       title="مشاركة العرض"
                     >
-                      <Share2 className="w-3.5 h-3.5" />
+                      <Share2 className="w-3.5 h-3.5" strokeWidth={1.75} />
                     </button>
                   </div>
                 </div>
@@ -915,15 +920,20 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         {activeTab === 'garage' && (
           <div className="p-3.5 space-y-3.5 text-start">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-black text-gray-900">🚗 مرآبي وسياراتي المسجلة</h3>
-                <p className="text-[10px] text-gray-400 font-light">إدارة الصيانة وسجل الضمان الرقمي لمركباتك</p>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Car className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#141414]">مرآبي وسياراتي المسجلة</h3>
+                  <p className="text-[10px] text-[#707070] font-light">إدارة الصيانة وسجل الضمان الرقمي لمركباتك</p>
+                </div>
               </div>
               <button 
                 onClick={() => setShowAddCarModal(true)}
-                className="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl flex items-center gap-1 cursor-pointer shadow-xs active:scale-95 transition-all"
+                className="px-3 py-1.5 bg-[#141414] hover:bg-black text-white text-[10px] font-bold rounded-full flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-3 h-3" strokeWidth={2} />
                 <span>إضافة سيارة</span>
               </button>
             </div>
@@ -931,35 +941,36 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             {/* User Cars List */}
             <div className="space-y-3">
               {userCars.map((car: any) => (
-                <div key={car.id} className="p-4 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
+                <div key={car.id} className="p-4 rounded-3xl bg-white border border-[#e0e0e0] space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
-                        <Car className="w-4 h-4" />
+                      <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                        <Car className="w-4 h-4" strokeWidth={1.75} />
                       </div>
                       <div>
-                        <h4 className="text-xs font-black text-gray-900">{car.model}</h4>
-                        <span className="text-[10px] font-bold text-gray-500">لوحة: {car.plate}</span>
+                        <h4 className="text-xs font-black text-[#141414]">{car.model}</h4>
+                        <span className="text-[10px] font-bold text-[#707070]">لوحة: {car.plate}</span>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[9px] font-bold border border-emerald-200">
-                      الضمان نشط ✓
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] text-[9px] font-bold border border-[#e0e0e0] inline-flex items-center gap-1">
+                      <Check className="w-2.5 h-2.5" strokeWidth={2.5} />
+                      <span>الضمان نشط</span>
                     </span>
                   </div>
 
                   {/* Car Image Preview */}
-                  <div className="h-20 w-full flex items-center justify-center bg-gray-50 rounded-xl p-2 overflow-hidden">
+                  <div className="h-20 w-full flex items-center justify-center bg-[#f3f3f3] rounded-2xl p-2 overflow-hidden">
                     <img src={car.image} alt={car.model} className="h-full object-contain rounded-lg" />
                   </div>
 
                   {/* Live Odometer & Maintenance Status */}
-                  <div className="grid grid-cols-2 gap-2 text-[10px] bg-slate-50 p-2.5 rounded-xl border border-gray-100">
+                  <div className="grid grid-cols-2 gap-2 text-[10px] bg-[#f3f3f3] p-2.5 rounded-2xl border border-[#e0e0e0]">
                     <div>
-                      <span className="text-gray-400 block">عداد الكيلومترات</span>
-                      <strong className="text-gray-800 font-bold text-xs">{Number(car.mileage).toLocaleString('ar-SA')} كم</strong>
+                      <span className="text-[#707070] block">عداد الكيلومترات</span>
+                      <strong className="text-[#141414] font-bold text-xs">{Number(car.mileage).toLocaleString('ar-SA')} كم</strong>
                     </div>
                     <div>
-                      <span className="text-gray-400 block">الصيانة القادمة</span>
+                      <span className="text-[#707070] block">الصيانة القادمة</span>
                       <strong className="text-red-600 font-bold text-xs">{Number(car.nextServiceKm).toLocaleString('ar-SA')} كم</strong>
                     </div>
                   </div>
@@ -971,9 +982,9 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         setSmartKeyCar(car);
                         setShowSmartKeyModal(true);
                       }}
-                      className="py-2 rounded-xl bg-[#0056B3] hover:bg-blue-700 text-white text-[10px] font-bold text-center cursor-pointer flex items-center justify-center gap-1 active:scale-95 transition-all shadow-xs"
+                      className="py-2 rounded-full bg-[#141414] hover:bg-black text-white text-[10px] font-bold text-center cursor-pointer flex items-center justify-center gap-1 active:scale-95 transition-all"
                     >
-                      <Key className="w-3 h-3" />
+                      <Key className="w-3 h-3" strokeWidth={1.75} />
                       <span>المفتاح الذكي</span>
                     </button>
                     <button 
@@ -981,13 +992,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         setServiceForm(prev => ({ ...prev, car: car.model, plate: car.plate }));
                         setServiceBookingOpen(true);
                       }}
-                      className="py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold text-center cursor-pointer active:scale-95 transition-all"
+                      className="py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold text-center cursor-pointer flex items-center justify-center gap-1 active:scale-95 transition-all"
                     >
-                      📅 حجز صيانة
+                      <Calendar className="w-3 h-3" strokeWidth={1.75} />
+                      <span>حجز صيانة</span>
                     </button>
                     <button 
                       onClick={() => setWarrantyModalCar(car)}
-                      className="py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-bold cursor-pointer text-center"
+                      className="py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e8e8e8] text-[#141414] border border-[#e0e0e0] text-[10px] font-bold cursor-pointer text-center"
                     >
                       وثيقة الضمان
                     </button>
@@ -1002,14 +1014,19 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         {activeTab === 'favorites' && (
           <div className="p-3.5 space-y-3.5 text-start">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-black text-gray-900">❤️ المفضلة والمقارنة</h3>
-                <p className="text-[10px] text-gray-400 font-light">السيارات التي تم حفظها للاطلاع والمقارنة</p>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Heart className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#141414]">المفضلة والمقارنة</h3>
+                  <p className="text-[10px] text-[#707070] font-light">السيارات التي تم حفظها للاطلاع والمقارنة</p>
+                </div>
               </div>
               {comparisonList.length > 0 && (
                 <button
                   onClick={() => setShowComparisonModal(true)}
-                  className="px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-xl animate-pulse cursor-pointer"
+                  className="px-3 py-1 bg-[#141414] text-white text-[10px] font-black rounded-full cursor-pointer"
                 >
                   قارن الآن ({comparisonList.length})
                 </button>
@@ -1017,10 +1034,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             </div>
 
             {favorites.length === 0 ? (
-              <div className="p-8 text-center bg-white rounded-2xl border border-gray-200 space-y-2">
-                <Heart className="w-8 h-8 text-gray-300 mx-auto" />
-                <p className="text-xs font-bold text-gray-700">لم تقم بإضافة سيارات للمفضلة بعد</p>
-                <button onClick={() => setActiveTab('home')} className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-xl cursor-pointer">
+              <div className="p-8 text-center bg-white rounded-3xl border border-[#e0e0e0] space-y-2">
+                <Heart className="w-8 h-8 text-[#adadad] mx-auto" strokeWidth={1.5} />
+                <p className="text-xs font-bold text-[#141414]">لم تقم بإضافة سيارات للمفضلة بعد</p>
+                <button onClick={() => setActiveTab('home')} className="px-4 py-1.5 bg-[#141414] text-white text-xs font-bold rounded-full cursor-pointer">
                   تصفح السيارات الآن
                 </button>
               </div>
@@ -1036,11 +1053,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       setDetailGradeIndex(0);
                       setDetailViewMode('exterior');
                     }}
-                    className="p-3 rounded-2xl bg-white border border-gray-200 flex items-center justify-between gap-3 shadow-xs cursor-pointer hover:border-red-300 transition-all"
+                    className="p-3 rounded-2xl bg-white border border-[#e0e0e0] flex items-center justify-between gap-3 cursor-pointer hover:border-[#141414] transition-all"
                   >
                     <img src={v.cardImage || v.heroImage || ''} alt={v.nameAr} className="h-12 w-16 object-contain rounded-lg" />
                     <div className="flex-1 text-start">
-                      <h5 className="text-xs font-black text-gray-900">{formatVehicleTitle(v)}</h5>
+                      <h5 className="text-xs font-black text-[#141414]">{formatVehicleTitle(v)}</h5>
                       <span className="text-xs font-black text-red-600">{v.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
                     </div>
                     <div className="flex items-center gap-1">
@@ -1049,7 +1066,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                           e.stopPropagation();
                           setCatalogModalVehicle(v);
                         }}
-                        className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 text-[9px] font-black rounded-lg cursor-pointer"
+                        className="px-2.5 py-1 bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[9px] font-black rounded-full cursor-pointer"
                       >
                         كتالوج
                       </button>
@@ -1058,7 +1075,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                           e.stopPropagation();
                           setTestDriveModalVehicle(formatVehicleTitle(v));
                         }}
-                        className="px-2.5 py-1 bg-gray-900 text-white text-[9px] font-bold rounded-lg cursor-pointer"
+                        className="px-2.5 py-1 bg-[#141414] text-white text-[9px] font-bold rounded-full cursor-pointer"
                       >
                         تجربة
                       </button>
@@ -1077,59 +1094,80 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         {activeTab === 'account' && (
           <div className="p-3.5 space-y-3.5 text-start">
             {/* VIP Card */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-gray-950 via-slate-900 to-black text-white flex items-center justify-between shadow-lg border border-gray-800 relative overflow-hidden">
+            <div className="p-4 rounded-3xl bg-[#141414] text-white flex items-center justify-between border border-white/10 relative overflow-hidden">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-black text-amber-400">عضوية سولينا الذهبية VIP</span>
+                  <Award className="w-4 h-4 text-white" strokeWidth={1.75} />
+                  <span className="text-xs font-black text-white">عضوية سولينا الذهبية VIP</span>
                 </div>
                 <h4 className="text-sm font-black">ضيف سولينا المتميز</h4>
-                <span className="text-[10px] text-gray-400 block font-mono">+966 50 123 4567</span>
+                <span className="text-[10px] text-[#adadad] block font-mono">+966 50 123 4567</span>
               </div>
               <button 
                 onClick={() => setShowVipQrModal(true)}
-                className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white cursor-pointer"
+                className="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-white cursor-pointer"
                 title="عرض رمز العضوية QR"
               >
-                <QrCode className="w-6 h-6" />
+                <QrCode className="w-6 h-6" strokeWidth={1.75} />
               </button>
             </div>
 
             {/* Quick Actions List */}
-            <div className="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100 text-xs">
-              <button onClick={() => setShowInstallAppModal(true)} className="w-full p-3.5 flex items-center justify-between text-gray-900 bg-red-50/50 hover:bg-red-50 cursor-pointer">
-                <span className="flex items-center gap-2">📲 <strong className="text-red-600">تثبيت التطبيق على الهاتف (iOS & Android)</strong></span>
-                <span className="px-2 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-bold">PWA</span>
+            <div className="bg-white rounded-3xl border border-[#e0e0e0] divide-y divide-[#f0f0f0] text-xs overflow-hidden">
+              <button onClick={() => setShowInstallAppModal(true)} className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors">
+                <span className="flex items-center gap-2.5">
+                  <Smartphone className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
+                  <strong className="text-[#141414]">تثبيت التطبيق على الهاتف (iOS & Android)</strong>
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-white text-[9px] font-bold">PWA</span>
               </button>
               <button 
                 onClick={() => {
                   window.location.hash = 'erp';
                   window.location.reload();
                 }} 
-                className="w-full p-3.5 flex items-center justify-between text-blue-700 bg-blue-50/50 hover:bg-blue-50 cursor-pointer border-y border-blue-100"
+                className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors"
               >
-                <span className="flex items-center gap-2">💼 <strong className="text-blue-700">نظام إدارة الوكالة والـ ERP المتكامل</strong></span>
-                <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[9px] font-bold">ZATCA & DMS</span>
+                <span className="flex items-center gap-2.5">
+                  <SlidersHorizontal className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
+                  <strong className="text-[#141414]">نظام إدارة الوكالة والـ ERP المتكامل</strong>
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[9px] font-bold">ZATCA & DMS</span>
               </button>
-              <button onClick={() => setServiceBookingOpen(true)} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
-                <span className="flex items-center gap-2">📅 <strong>طلباتي ومواعيد الصيانة</strong></span>
-                <ChevronLeft className="w-4 h-4 text-gray-400" />
+              <button onClick={() => setServiceBookingOpen(true)} className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors">
+                <span className="flex items-center gap-2.5">
+                  <Calendar className="w-4 h-4 text-[#707070]" strokeWidth={1.75} />
+                  <strong>طلباتي ومواعيد الصيانة</strong>
+                </span>
+                <ChevronLeft className="w-4 h-4 text-[#adadad]" />
               </button>
-              <button onClick={() => setIsAssistantOpen(true)} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
-                <span className="flex items-center gap-2">🎧 <strong>خدمة عملاء ومساعد سولينا الذكي 24/7</strong></span>
-                <ChevronLeft className="w-4 h-4 text-gray-400" />
+              <button onClick={() => setIsAssistantOpen(true)} className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors">
+                <span className="flex items-center gap-2.5">
+                  <Headphones className="w-4 h-4 text-[#707070]" strokeWidth={1.75} />
+                  <strong>خدمة عملاء ومساعد سولينا الذكي 24/7</strong>
+                </span>
+                <ChevronLeft className="w-4 h-4 text-[#adadad]" />
               </button>
-              <button onClick={() => { setShowRoadsideSosModal(true); setSosDispatched(false); }} className="w-full p-3.5 flex items-center justify-between text-red-600 hover:bg-red-50 cursor-pointer font-bold">
-                <span className="flex items-center gap-2">🚨 <strong>طوارئ المساعدة على الطريق 24/7 (SOS)</strong></span>
+              <button onClick={() => { setShowRoadsideSosModal(true); setSosDispatched(false); }} className="w-full p-3.5 flex items-center justify-between text-red-600 hover:bg-[#f3f3f3] cursor-pointer font-bold transition-colors">
+                <span className="flex items-center gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-red-600" strokeWidth={1.75} />
+                  <strong>طوارئ المساعدة على الطريق 24/7 (SOS)</strong>
+                </span>
                 <ChevronLeft className="w-4 h-4 text-red-400" />
               </button>
-              <button onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
-                <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-gray-500" /> <strong>لغة التطبيق / Language</strong></span>
-                <span className="text-[11px] font-bold text-red-600">{language === 'ar' ? 'العربية (AR)' : 'English (EN)'}</span>
+              <button onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')} className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors">
+                <span className="flex items-center gap-2.5">
+                  <Globe className="w-4 h-4 text-[#707070]" strokeWidth={1.75} />
+                  <strong>لغة التطبيق / Language</strong>
+                </span>
+                <span className="text-[11px] font-bold text-[#141414]">{language === 'ar' ? 'العربية (AR)' : 'English (EN)'}</span>
               </button>
-              <button onClick={() => showAppToast('تطبيق سولينا موتورز - الإصدار 2026.5.0', 'مرتبط مباشرة بنظام الـ ERP والفوترة الإلكترونية ZATCA', 'info')} className="w-full p-3.5 flex items-center justify-between text-gray-700 hover:bg-gray-50 cursor-pointer">
-                <span className="flex items-center gap-2">⚙️ <strong>عن التطبيق والشروط</strong></span>
-                <span className="text-[10px] text-gray-400">v2026.5</span>
+              <button onClick={() => showAppToast('تطبيق سولينا موتورز - الإصدار 2026.5.0', 'مرتبط مباشرة بنظام الـ ERP والفوترة الإلكترونية ZATCA', 'info')} className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors">
+                <span className="flex items-center gap-2.5">
+                  <Settings className="w-4 h-4 text-[#707070]" strokeWidth={1.75} />
+                  <strong>عن التطبيق والشروط</strong>
+                </span>
+                <span className="text-[10px] text-[#707070]">v2026.5</span>
               </button>
             </div>
           </div>
@@ -1223,7 +1261,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       />
                       <div className="absolute bottom-2 right-2 left-2 bg-black/65 backdrop-blur-xs text-white px-2.5 py-1 rounded-lg flex items-center justify-between text-[10px]">
                         <span className="font-bold">{activeInteriorShot?.titleAr || 'المقصورة الداخلية 360°'}</span>
-                        <span className="text-emerald-300 font-mono">{detailInteriorAngleIndex + 1} / {interiorShots.length}</span>
+                        <span className="text-red-500 font-mono">{detailInteriorAngleIndex + 1} / {interiorShots.length}</span>
                       </div>
                     </div>
                   ) : (
@@ -1370,33 +1408,33 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 </button>
 
                 {/* Key Specs Grid */}
-                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-2xl border border-gray-100">
+                <div className="grid grid-cols-2 gap-2 text-xs bg-[#f3f3f3] p-3 rounded-2xl border border-[#e0e0e0]">
                   <div className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-amber-500" />
+                    <Zap className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
                     <div>
-                      <span className="text-gray-400 text-[10px] block">المحرك والقوة</span>
-                      <strong className="text-gray-900 font-black text-[11px]">{activeGrade?.engine || selectedVehicleDetail.horsepower || '225 حصان'}</strong>
+                      <span className="text-[#707070] text-[10px] block">المحرك والقوة</span>
+                      <strong className="text-[#141414] font-black text-[11px]">{activeGrade?.engine || selectedVehicleDetail.horsepower || '225 حصان'}</strong>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Fuel className="w-4 h-4 text-emerald-500" />
+                    <Fuel className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
                     <div>
-                      <span className="text-gray-400 text-[10px] block">كفاءة الاستهلاك</span>
-                      <strong className="text-gray-900 font-black text-[11px]">{selectedVehicleDetail.fuelEconomy || '27.7 كم/لتر'}</strong>
+                      <span className="text-[#707070] text-[10px] block">كفاءة الاستهلاك</span>
+                      <strong className="text-[#141414] font-black text-[11px]">{selectedVehicleDetail.fuelEconomy || '27.7 كم/لتر'}</strong>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Gauge className="w-4 h-4 text-blue-500" />
+                    <Gauge className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
                     <div>
-                      <span className="text-gray-400 text-[10px] block">ناقل الحركة</span>
-                      <strong className="text-gray-900 font-black text-[11px]">{activeGrade?.transmission || selectedVehicleDetail.transmissionAr || 'أوتوماتيكي ذكي'}</strong>
+                      <span className="text-[#707070] text-[10px] block">ناقل الحركة</span>
+                      <strong className="text-[#141414] font-black text-[11px]">{activeGrade?.transmission || selectedVehicleDetail.transmissionAr || 'أوتوماتيكي ذكي'}</strong>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-red-500" />
+                    <Shield className="w-4 h-4 text-red-600" strokeWidth={1.75} />
                     <div>
-                      <span className="text-gray-400 text-[10px] block">الضمان المعتمد</span>
-                      <strong className="text-gray-900 font-black text-[11px]">
+                      <span className="text-[#707070] text-[10px] block">الضمان المعتمد</span>
+                      <strong className="text-[#141414] font-black text-[11px]">
                         {selectedVehicleDetail.brand === 'jetour' ? '10 سنوات / مليون كم' : '10 سنوات / 300 ألف كم'}
                       </strong>
                     </div>
@@ -1404,9 +1442,9 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 </div>
 
                 {/* Pricing & Installment Box */}
-                <div className="p-3 bg-red-50 rounded-2xl border border-red-200 flex items-center justify-between">
+                <div className="p-3 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-gray-500 block">
+                    <span className="text-[10px] text-[#707070] block">
                       سعر فئة ({activeGrade?.name || 'القياسية'}) شامل الضريبة
                     </span>
                     <strong className="text-base font-black text-red-600">
@@ -1418,7 +1456,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       setFinanceCalcVehicle(selectedVehicleDetail);
                       setSelectedVehicleDetail(null);
                     }}
-                    className="px-3 py-1.5 bg-white text-red-600 border border-red-300 rounded-xl text-xs font-black shadow-xs cursor-pointer"
+                    className="px-3 py-1.5 bg-white text-[#141414] border border-[#e0e0e0] rounded-full text-xs font-black cursor-pointer"
                   >
                     حاسبة التمويل
                   </button>
@@ -1426,7 +1464,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               </div>
 
               {/* Sticky Action Footer */}
-              <div className="p-3 bg-white border-t border-gray-200 space-y-2">
+              <div className="p-3 bg-white border-t border-[#e0e0e0] space-y-2">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
@@ -1435,14 +1473,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       setDepositSuccess(false);
                       setSelectedVehicleDetail(null);
                     }}
-                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md cursor-pointer text-center flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                    className="flex-1 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-black cursor-pointer text-center flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                   >
-                    <CreditCard className="w-4 h-4" />
+                    <CreditCard className="w-4 h-4" strokeWidth={1.75} />
                     <span>حجز فوري بعربون (2,500 ريال)</span>
                   </button>
                   <button
                     onClick={() => toggleFavorite(selectedVehicleDetail.id)}
-                    className="p-2.5 rounded-xl border border-gray-200 text-gray-700 hover:text-red-600 cursor-pointer"
+                    className="p-2.5 rounded-full border border-[#e0e0e0] text-[#141414] hover:text-red-600 cursor-pointer"
                   >
                     <Heart className={`w-5 h-5 ${favorites.includes(selectedVehicleDetail.id) ? 'fill-red-600 text-red-600' : ''}`} />
                   </button>
@@ -1453,9 +1491,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     setTestDriveModalVehicle(formatVehicleTitle(selectedVehicleDetail));
                     setSelectedVehicleDetail(null);
                   }}
-                  className="w-full py-2 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold shadow-xs cursor-pointer text-center"
+                  className="w-full py-2.5 rounded-full bg-[#141414] hover:bg-black text-white text-xs font-bold cursor-pointer text-center flex items-center justify-center gap-1.5"
                 >
-                  طلب تجربة قيادة مجانية 🚗
+                  <Calendar className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  <span>طلب تجربة قيادة مجانية</span>
                 </button>
               </div>
             </div>
@@ -1467,28 +1506,33 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {testDriveModalVehicle && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3`}>
           <div className="w-full bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div>
-                <h3 className="text-sm font-black text-gray-900">🚗 حجز تجربة قيادة سريعة</h3>
-                <span className="text-[10px] text-red-600 font-bold">{testDriveModalVehicle}</span>
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Car className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#141414]">حجز تجربة قيادة سريعة</h3>
+                  <span className="text-[10px] text-red-600 font-bold">{testDriveModalVehicle}</span>
+                </div>
               </div>
-              <button onClick={() => { setTestDriveModalVehicle(null); setTestDriveSuccess(false); }} className="p-1 text-gray-400 cursor-pointer">
+              <button onClick={() => { setTestDriveModalVehicle(null); setTestDriveSuccess(false); }} className="p-1 text-[#707070] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {testDriveSuccess ? (
               <div className="py-6 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
-                  <Check className="w-6 h-6 stroke-[3]" />
+                <div className="w-12 h-12 rounded-[30%] bg-[#141414] text-white flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
-                <h4 className="text-base font-black text-gray-900">تم تأكيد طلب تجربة القيادة!</h4>
-                <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                <h4 className="text-base font-black text-[#141414]">تم تأكيد طلب تجربة القيادة!</h4>
+                <p className="text-xs text-[#707070] max-w-xs mx-auto">
                   تم تسجيل طلبك مباشرة في نظام الوكالة (ERP) وإرسال تفاصيل الموعد إلى جوالك.
                 </p>
                 <button
                   onClick={() => { setTestDriveModalVehicle(null); setTestDriveSuccess(false); }}
-                  className="px-6 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold cursor-pointer"
+                  className="px-6 py-2 rounded-full bg-[#141414] text-white text-xs font-bold cursor-pointer"
                 >
                   العودة للرئيسية
                 </button>
@@ -1496,31 +1540,31 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             ) : (
               <div className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">الاسم الكريم</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الاسم الكريم</label>
                   <input
                     type="text"
                     value={testDriveForm.name}
                     onChange={(e) => setTestDriveForm(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="مثال: عبد الرحمن محمد"
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">رقم الجوال</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">رقم الجوال</label>
                   <input
                     type="tel"
                     value={testDriveForm.phone}
                     onChange={(e) => setTestDriveForm(prev => ({ ...prev, phone: e.target.value }))}
                     placeholder="05XXXXXXXX"
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">صالة العرض المفضلة</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">صالة العرض المفضلة</label>
                   <select 
                     value={testDriveForm.city}
                     onChange={(e) => setTestDriveForm(prev => ({ ...prev, city: e.target.value }))}
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none bg-white"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   >
                     {liveShowrooms && liveShowrooms.length > 0 ? (
                       liveShowrooms.map(s => (
@@ -1555,9 +1599,9 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       notes: 'تم الحجز عبر تطبيق الهاتف الذكي'
                     });
                     setTestDriveSuccess(true);
-                    showAppToast('تم تسجيل حجز تجربة القيادة ✓', `${testDriveModalVehicle} — ${testDriveForm.city}`, 'success');
+                    showAppToast('تم تسجيل حجز تجربة القيادة', `${testDriveModalVehicle} — ${testDriveForm.city}`, 'success');
                   }}
-                  className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer"
+                  className="w-full py-2.5 rounded-full bg-[#141414] hover:bg-black text-white text-xs font-black cursor-pointer"
                 >
                   تأكيد حجز التجربة
                 </button>
@@ -1571,35 +1615,40 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {serviceBookingOpen && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3`}>
           <div className="w-full bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-4 text-start font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div>
-                <h3 className="text-sm font-black text-gray-900">🛠️ حجز موعد صيانة سولينا الفورية</h3>
-                <span className="text-[10px] text-gray-400">خدمة سريعة خلال 45 دقيقة ومعتمدة في الـ ERP</span>
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Wrench className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#141414]">حجز موعد صيانة سولينا الفورية</h3>
+                  <span className="text-[10px] text-[#707070]">خدمة سريعة خلال 45 دقيقة ومعتمدة في الـ ERP</span>
+                </div>
               </div>
-              <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="p-1 text-gray-400 cursor-pointer">
+              <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="p-1 text-[#707070] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {serviceSuccess ? (
               <div className="py-6 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                  <Check className="w-6 h-6 stroke-[3]" />
+                <div className="w-12 h-12 rounded-[30%] bg-[#141414] text-white flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
-                <h4 className="text-base font-black text-gray-900">تم تأكيد موعد الصيانة بنجاح!</h4>
-                <p className="text-xs text-gray-500">رقم الحجز: <strong className="text-red-600 font-mono">{lastServiceBookingRef}</strong></p>
-                <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl cursor-pointer">
+                <h4 className="text-base font-black text-[#141414]">تم تأكيد موعد الصيانة بنجاح!</h4>
+                <p className="text-xs text-[#707070]">رقم الحجز: <strong className="text-red-600 font-mono">{lastServiceBookingRef}</strong></p>
+                <button onClick={() => { setServiceBookingOpen(false); setServiceSuccess(false); }} className="px-5 py-2 bg-[#141414] text-white text-xs font-bold rounded-full cursor-pointer">
                   إغلاق
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">السيارة</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">السيارة</label>
                   <select 
                     value={serviceForm.car}
                     onChange={(e) => setServiceForm(prev => ({ ...prev, car: e.target.value }))}
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs"
                   >
                     {userCars.map((c: any) => (
                       <option key={c.id} value={c.model}>{c.model} ({c.plate})</option>
@@ -1611,11 +1660,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">نوع الخدمة</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">نوع الخدمة</label>
                   <select 
                     value={serviceForm.type}
                     onChange={(e) => setServiceForm(prev => ({ ...prev, type: e.target.value }))}
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs"
                   >
                     <option>صيانة دورية سريعة 10,000 كم (45 دقيقة)</option>
                     <option>صيانة شاملة 20,000 كم</option>
@@ -1624,12 +1673,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">تاريخ الموعد المفضل</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">تاريخ الموعد المفضل</label>
                   <input
                     type="date"
                     value={serviceForm.date}
                     onChange={(e) => setServiceForm(prev => ({ ...prev, date: e.target.value }))}
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs"
                   />
                 </div>
                 <button
@@ -1651,9 +1700,9 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       estimatedCost: serviceForm.type.includes('20,000') ? 980 : 540
                     });
                     setServiceSuccess(true);
-                    showAppToast('تم حجز موعد الصيانة بنجاح 🛠️', `رقم الموعد: ${ref}`, 'success');
+                    showAppToast('تم حجز موعد الصيانة بنجاح', `رقم الموعد: ${ref}`, 'success');
                   }}
-                  className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer"
+                  className="w-full py-2.5 rounded-full bg-[#141414] hover:bg-black text-white text-xs font-black cursor-pointer"
                 >
                   تأكيد موعد الصيانة
                 </button>
@@ -1667,12 +1716,17 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {financeCalcVehicle && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3`}>
           <div className="w-full bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl space-y-3.5 text-start font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
-              <div>
-                <h3 className="text-sm font-black text-gray-900">💰 حاسبة التمويل والأقساط 2026</h3>
-                <span className="text-[10px] text-red-600 font-bold">{formatVehicleTitle(financeCalcVehicle)}</span>
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2.5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Calculator className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#141414]">حاسبة التمويل والأقساط 2026</h3>
+                  <span className="text-[10px] text-red-600 font-bold">{formatVehicleTitle(financeCalcVehicle)}</span>
+                </div>
               </div>
-              <button onClick={() => setFinanceCalcVehicle(null)} className="p-1 text-gray-400 cursor-pointer">
+              <button onClick={() => setFinanceCalcVehicle(null)} className="p-1 text-[#707070] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1690,14 +1744,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   step={5}
                   value={downPaymentPercent}
                   onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                  className="w-full accent-red-600"
+                  className="w-full accent-[#141414]"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between text-xs mb-1 font-bold">
                   <span>مدة التمويل ({loanYears} سنوات)</span>
-                  <span className="text-gray-600">{loanYears * 12} شهر</span>
+                  <span className="text-[#707070]">{loanYears * 12} شهر</span>
                 </div>
                 <input
                   type="range"
@@ -1706,7 +1760,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   step={1}
                   value={loanYears}
                   onChange={(e) => setLoanYears(Number(e.target.value))}
-                  className="w-full accent-red-600"
+                  className="w-full accent-[#141414]"
                 />
               </div>
 
@@ -1716,24 +1770,24 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   value={financeApplicantName}
                   onChange={(e) => setFinanceApplicantName(e.target.value)}
                   placeholder="الاسم الكامل"
-                  className="p-2 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                  className="p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                 />
                 <input
                   type="tel"
                   value={financeApplicantPhone}
                   onChange={(e) => setFinanceApplicantPhone(e.target.value)}
                   placeholder="رقم الجوال 05XXXX"
-                  className="p-2 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                  className="p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
               {/* Calculated Result Box */}
-              <div className="p-3.5 bg-gradient-to-r from-gray-950 to-black rounded-2xl text-white text-center space-y-1">
-                <span className="text-[10px] text-gray-400">القسط الشهري التقديري (شامل التأمين)</span>
-                <div className="text-xl font-black text-red-500">
+              <div className="p-3.5 bg-[#141414] rounded-2xl text-white text-center space-y-1">
+                <span className="text-[10px] text-[#adadad]">القسط الشهري التقديري (شامل التأمين)</span>
+                <div className="text-xl font-black text-white">
                   {Math.round(((financeCalcVehicle.priceStartingFrom * (1 - downPaymentPercent / 100)) * 1.15) / (loanYears * 12)).toLocaleString('ar-SA')} ريال / شهر
                 </div>
-                <span className="text-[9px] text-gray-400 block">بدون رسوم إدارية بمناسبة عروض 2026</span>
+                <span className="text-[9px] text-[#adadad] block">بدون رسوم إدارية بمناسبة عروض 2026</span>
               </div>
 
               <button
@@ -1760,10 +1814,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     bankName: 'تمويل سولينا المعتمد',
                     status: 'sent'
                   });
-                  showAppToast('تم إصدار عرض السعر والتمويل بنجاح 💰', `رقم عرض السعر: ${qNum}`, 'success');
+                  showAppToast('تم إصدار عرض السعر والتمويل بنجاح', `رقم عرض السعر: ${qNum}`, 'success');
                   setFinanceCalcVehicle(null);
                 }}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md cursor-pointer"
+                className="w-full py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-black cursor-pointer"
               >
                 تقديم طلب تمويل فوري وإصدار عرض سعر
               </button>
@@ -1776,30 +1830,30 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showNotifications && (
         <div className={`${modalOverlayPos} inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-3 animate-in fade-in duration-200`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-4 shadow-2xl space-y-3 text-start mt-12 animate-in slide-in-from-top duration-300">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2">
               <div className="flex items-center gap-1.5">
-                <Bell className="w-4 h-4 text-red-600" />
-                <h3 className="text-xs font-black text-gray-900">مركز الإشعارات والتنبيهات</h3>
+                <Bell className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
+                <h3 className="text-xs font-black text-[#141414]">مركز الإشعارات والتنبيهات</h3>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={markAllNotificationsRead} className="text-[10px] font-bold text-red-600 hover:underline cursor-pointer">
+                <button onClick={markAllNotificationsRead} className="text-[10px] font-bold text-[#141414] hover:underline cursor-pointer">
                   قراءة الكل
                 </button>
-                <button onClick={() => setShowNotifications(false)} className="p-1 text-gray-400 cursor-pointer">
+                <button onClick={() => setShowNotifications(false)} className="p-1 text-[#707070] cursor-pointer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            <div className="divide-y divide-gray-100 max-h-72 overflow-y-auto">
+            <div className="divide-y divide-[#f0f0f0] max-h-72 overflow-y-auto">
               {notifications.map((n) => (
-                <div key={n.id} className={`py-2.5 space-y-1 ${n.unread ? 'bg-red-50/40 p-2 rounded-xl' : ''}`}>
+                <div key={n.id} className={`py-2.5 space-y-1 ${n.unread ? 'bg-[#f3f3f3] p-2 rounded-xl' : ''}`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">{n.tag}</span>
-                    <span className="text-[9px] text-gray-400">{n.time}</span>
+                    <span className="text-[9px] font-bold px-2 py-0.5 bg-white border border-[#e0e0e0] rounded-full text-[#141414]">{n.tag}</span>
+                    <span className="text-[9px] text-[#707070]">{n.time}</span>
                   </div>
-                  <h5 className="text-xs font-bold text-gray-900">{n.title}</h5>
-                  <p className="text-[10px] text-gray-600 font-light leading-snug">{n.desc}</p>
+                  <h5 className="text-xs font-bold text-[#141414]">{n.title}</h5>
+                  <p className="text-[10px] text-[#707070] font-light leading-snug">{n.desc}</p>
                 </div>
               ))}
             </div>
@@ -1812,36 +1866,36 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
         <div className={`${modalOverlayPos} inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-stretch justify-start animate-in fade-in duration-200`}>
           <div className="w-64 bg-white h-full p-5 shadow-2xl flex flex-col justify-between text-start font-arabic">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center justify-between pb-3 border-b border-[#f0f0f0]">
                 <img src="/solina-logo.png" alt="سولينا" className="h-7 w-auto" />
-                <button onClick={() => setShowSideMenu(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+                <button onClick={() => setShowSideMenu(false)} className="p-1 text-[#707070] hover:text-black cursor-pointer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <nav className="space-y-1 text-xs font-bold text-gray-700">
-                <button onClick={() => { setActiveTab('home'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
-                  <Home className="w-4 h-4" /> <span>الرئيسية</span>
+              <nav className="space-y-1 text-xs font-bold text-[#141414]">
+                <button onClick={() => { setActiveTab('home'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-[#f3f3f3] flex items-center gap-2.5 cursor-pointer">
+                  <Home className="w-4 h-4" strokeWidth={1.75} /> <span>الرئيسية</span>
                 </button>
-                <button onClick={() => { setActiveTab('offers'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
-                  <Tag className="w-4 h-4" /> <span>أحدث العروض</span>
+                <button onClick={() => { setActiveTab('offers'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-[#f3f3f3] flex items-center gap-2.5 cursor-pointer">
+                  <Tag className="w-4 h-4" strokeWidth={1.75} /> <span>أحدث العروض</span>
                 </button>
-                <button onClick={() => { setActiveTab('garage'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
-                  <Car className="w-4 h-4" /> <span>مرآبي وسياراتي ({userCars.length})</span>
+                <button onClick={() => { setActiveTab('garage'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-[#f3f3f3] flex items-center gap-2.5 cursor-pointer">
+                  <Car className="w-4 h-4" strokeWidth={1.75} /> <span>مرآبي وسياراتي ({userCars.length})</span>
                 </button>
-                <button onClick={() => { setServiceBookingOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
-                  <Wrench className="w-4 h-4" /> <span>حجز موعد صيانة</span>
+                <button onClick={() => { setServiceBookingOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-[#f3f3f3] flex items-center gap-2.5 cursor-pointer">
+                  <Wrench className="w-4 h-4" strokeWidth={1.75} /> <span>حجز موعد صيانة</span>
                 </button>
-                <button onClick={() => { setTestDriveModalVehicle('جيتور T2 الدفع الرباعي 2026'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 flex items-center gap-2 cursor-pointer">
-                  <Calendar className="w-4 h-4" /> <span>طلب تجربة قيادة</span>
+                <button onClick={() => { setTestDriveModalVehicle('جيتور T2 الدفع الرباعي 2026'); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl hover:bg-[#f3f3f3] flex items-center gap-2.5 cursor-pointer">
+                  <Calendar className="w-4 h-4" strokeWidth={1.75} /> <span>طلب تجربة قيادة</span>
                 </button>
-                <button onClick={() => { setIsAssistantOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl bg-red-50 text-red-600 font-bold flex items-center gap-2 cursor-pointer">
-                  <Headphones className="w-4 h-4" /> <span>مساعد سولينا الذكي 24/7</span>
+                <button onClick={() => { setIsAssistantOpen(true); setShowSideMenu(false); }} className="w-full p-2.5 rounded-xl bg-[#141414] text-white font-bold flex items-center gap-2.5 cursor-pointer">
+                  <Headphones className="w-4 h-4" strokeWidth={1.75} /> <span>مساعد سولينا الذكي 24/7</span>
                 </button>
               </nav>
             </div>
 
-            <div className="pt-4 border-t border-gray-100 text-[10px] text-gray-400 text-center">
-              تطبيق سولينا للسيارات © 2026
+            <div className="pt-4 border-t border-[#f0f0f0] text-[10px] text-[#707070] text-center">
+              تطبيق سولينا للسيارات 2026
             </div>
           </div>
         </div>
@@ -1851,9 +1905,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showComparisonModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-4 shadow-2xl space-y-3 text-start font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-              <h3 className="text-xs font-black text-gray-900">⚖️ مقارنة المواصفات المباشرة</h3>
-              <button onClick={() => setShowComparisonModal(false)} className="p-1 text-gray-400 cursor-pointer">
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2">
+              <div className="flex items-center gap-1.5">
+                <SlidersHorizontal className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
+                <h3 className="text-xs font-black text-[#141414]">مقارنة المواصفات المباشرة</h3>
+              </div>
+              <button onClick={() => setShowComparisonModal(false)} className="p-1 text-[#707070] cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1863,14 +1920,23 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 const carObj = allVehicles.find(v => v.id === carId);
                 if (!carObj) return null;
                 return (
-                  <div key={carId} className="p-2.5 bg-slate-50 rounded-2xl border border-gray-200 space-y-2">
+                  <div key={carId} className="p-2.5 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] space-y-2">
                     <img src={carObj.cardImage || carObj.heroImage} alt={carObj.nameAr} className="h-14 object-contain mx-auto rounded-lg" />
-                    <h5 className="text-[11px] font-black text-gray-900 line-clamp-1">{formatVehicleTitle(carObj)}</h5>
+                    <h5 className="text-[11px] font-black text-[#141414] line-clamp-1">{formatVehicleTitle(carObj)}</h5>
                     <div className="text-xs font-black text-red-600">{carObj.priceStartingFrom.toLocaleString('ar-SA')} ريال</div>
-                    <div className="text-[10px] space-y-1 text-gray-600 border-t border-gray-200 pt-1">
-                      <div>⚡ {carObj.horsepower || '225 حصان'}</div>
-                      <div>⛽ {carObj.fuelEconomy || '24.5 كم/لتر'}</div>
-                      <div>🛡️ {carObj.brand === 'jetour' ? 'ضمان مليون كم' : 'ضمان 10 سنوات'}</div>
+                    <div className="text-[10px] space-y-1 text-[#141414] border-t border-[#e0e0e0] pt-1.5">
+                      <div className="flex items-center justify-center gap-1">
+                        <Zap className="w-3 h-3 text-[#707070]" strokeWidth={1.75} />
+                        <span>{carObj.horsepower || '225 حصان'}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <Fuel className="w-3 h-3 text-[#707070]" strokeWidth={1.75} />
+                        <span>{carObj.fuelEconomy || '24.5 كم/لتر'}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <Shield className="w-3 h-3 text-red-600" strokeWidth={1.75} />
+                        <span>{carObj.brand === 'jetour' ? 'ضمان مليون كم' : 'ضمان 10 سنوات'}</span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -1882,7 +1948,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 setComparisonList([]);
                 setShowComparisonModal(false);
               }}
-              className="w-full py-2 bg-gray-900 text-white text-xs font-bold rounded-xl cursor-pointer"
+              className="w-full py-2 bg-[#141414] text-white text-xs font-bold rounded-full cursor-pointer"
             >
               إفراغ المقارنة
             </button>
@@ -1894,15 +1960,15 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showVipQrModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4`}>
           <div className="w-full max-w-xs bg-white rounded-3xl p-6 text-center space-y-4 shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
-              <Award className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-[30%] bg-[#141414] text-white flex items-center justify-center mx-auto">
+              <Award className="w-6 h-6" strokeWidth={1.75} />
             </div>
-            <h4 className="text-sm font-black text-gray-900">بطاقة عضوية VIP الرقمية</h4>
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 inline-block">
-              <QrCode className="w-32 h-32 text-gray-900 mx-auto" />
+            <h4 className="text-sm font-black text-[#141414]">بطاقة عضوية VIP الرقمية</h4>
+            <div className="p-4 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] inline-block">
+              <QrCode className="w-32 h-32 text-[#141414] mx-auto" strokeWidth={1.5} />
             </div>
-            <p className="text-[10px] text-gray-400">امسح الرمز في صالات العرض ومراكز الصيانة للحصول على خدمات VIP الفورية.</p>
-            <button onClick={() => setShowVipQrModal(false)} className="w-full py-2 bg-red-600 text-white text-xs font-bold rounded-xl cursor-pointer">
+            <p className="text-[10px] text-[#707070]">امسح الرمز في صالات العرض ومراكز الصيانة للحصول على خدمات VIP الفورية.</p>
+            <button onClick={() => setShowVipQrModal(false)} className="w-full py-2 bg-[#141414] text-white text-xs font-bold rounded-full cursor-pointer">
               إغلاق
             </button>
           </div>
@@ -1913,64 +1979,66 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showInstallAppModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
               <div className="flex items-center gap-2">
                 <img src="/solina-logo.png" alt="سولينا" className="h-6 w-auto" />
-                <h4 className="text-xs font-black text-gray-900">تثبيت تطبيق سولينا</h4>
+                <h4 className="text-xs font-black text-[#141414]">تثبيت تطبيق سولينا</h4>
               </div>
-              <button onClick={() => setShowInstallAppModal(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+              <button onClick={() => setShowInstallAppModal(false)} className="p-1 text-[#707070] hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Platform Selector Tabs */}
-            <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-2xl text-xs font-bold text-center">
+            <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#f3f3f3] rounded-full text-xs font-bold text-center">
               <button
                 onClick={() => setInstallPlatform('ios')}
-                className={`py-2 rounded-xl transition-all cursor-pointer ${
-                  installPlatform === 'ios' ? 'bg-white text-black shadow-xs' : 'text-gray-500'
+                className={`py-2 rounded-full transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  installPlatform === 'ios' ? 'bg-white text-[#141414]' : 'text-[#707070]'
                 }`}
               >
-                🍏 أجهزة آيفون (iOS)
+                <Smartphone className="w-3.5 h-3.5" strokeWidth={1.75} />
+                <span>أجهزة آيفون (iOS)</span>
               </button>
               <button
                 onClick={() => setInstallPlatform('android')}
-                className={`py-2 rounded-xl transition-all cursor-pointer ${
-                  installPlatform === 'android' ? 'bg-white text-black shadow-xs' : 'text-gray-500'
+                className={`py-2 rounded-full transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  installPlatform === 'android' ? 'bg-white text-[#141414]' : 'text-[#707070]'
                 }`}
               >
-                🤖 أجهزة أندرويد (Android)
+                <Smartphone className="w-3.5 h-3.5" strokeWidth={1.75} />
+                <span>أجهزة أندرويد (Android)</span>
               </button>
             </div>
 
             {/* Guided Steps Body */}
             {installPlatform === 'ios' ? (
-              <div className="space-y-2.5 text-xs text-gray-700 bg-slate-50 p-3.5 rounded-2xl border border-gray-100">
+              <div className="space-y-2.5 text-xs text-[#141414] bg-[#f3f3f3] p-3.5 rounded-2xl border border-[#e0e0e0]">
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">1</span>
-                  <p>اضغط على زر <strong>المشاركة (Share ⎋)</strong> في أسفل متصفح Safari.</p>
+                  <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                  <p>اضغط على زر <strong>المشاركة (Share)</strong> في أسفل متصفح Safari.</p>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">2</span>
-                  <p>مرر للأسفل واختر <strong>«إضافة إلى الشاشة الرئيسية» (Add to Home Screen ⊞)</strong>.</p>
+                  <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                  <p>مرر للأسفل واختر <strong>«إضافة إلى الشاشة الرئيسية» (Add to Home Screen)</strong>.</p>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                  <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px] font-black shrink-0">3</span>
                   <p>اضغط على <strong>«إضافة» (Add)</strong> في الزاوية العلوية لتثبيت أيقونة التطبيق الرسمية فوراً.</p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-2.5 text-xs text-gray-700 bg-slate-50 p-3.5 rounded-2xl border border-gray-100">
+              <div className="space-y-2.5 text-xs text-[#141414] bg-[#f3f3f3] p-3.5 rounded-2xl border border-[#e0e0e0]">
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">1</span>
-                  <p>اضغط على أيقونة <strong>الخيارات (⋮)</strong> في الزاوية العلوية لمتصفح Chrome.</p>
+                  <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                  <p>اضغط على أيقونة <strong>الخيارات</strong> في الزاوية العلوية لمتصفح Chrome.</p>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">2</span>
-                  <p>اختر <strong>«تثبيت التطبيق» أو «الإضافة إلى الشاشة الرئيسية» (Install app 📥)</strong>.</p>
+                  <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                  <p>اختر <strong>«تثبيت التطبيق» أو «الإضافة إلى الشاشة الرئيسية» (Install app)</strong>.</p>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                  <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px] font-black shrink-0">3</span>
                   <p>اضغط <strong>«تثبيت»</strong> وسيعمل التطبيق في نافذة مستقلة وبدون متصفح.</p>
                 </div>
               </div>
@@ -1978,7 +2046,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
             <button
               onClick={() => setShowInstallAppModal(false)}
-              className="w-full py-2.5 bg-gray-950 hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
+              className="w-full py-2.5 bg-[#141414] hover:bg-black text-white text-xs font-bold rounded-full cursor-pointer"
             >
               فهمت، حسناً
             </button>
@@ -1989,28 +2057,23 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {/* J. Smart Digital Key Remote Control Modal */}
       {showSmartKeyModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 animate-in fade-in`}>
-          <div className="w-full max-w-sm bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white rounded-[32px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
-            {/* Ambient Background Glow */}
-            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 blur-3xl rounded-full transition-all duration-500 pointer-events-none ${
-              isEngineRunning ? 'bg-emerald-500/30' : 'bg-blue-600/20'
-            }`} />
-
+          <div className="w-full max-w-sm bg-[#141414] text-white rounded-[32px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3 relative z-10">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-blue-400">
-                  <Key className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-[30%] bg-white/10 flex items-center justify-center text-white">
+                  <Key className="w-4 h-4" strokeWidth={1.75} />
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-white">مفتاح سولينا الذكي الرقمي</h4>
-                  <span className="text-[10px] text-gray-400 font-mono">
+                  <span className="text-[10px] text-[#adadad] font-mono">
                     {smartKeyCar?.plate || 'س ل ن 2026'}
                   </span>
                 </div>
               </div>
               <button 
                 onClick={() => setShowSmartKeyModal(false)} 
-                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-300 cursor-pointer"
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -2018,22 +2081,19 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
             {/* Selected Car Display */}
             <div className="text-center relative z-10 space-y-1">
-              <span className="text-[10px] text-gray-400 font-bold block">{smartKeyCar?.model || 'سولينا كامري 2026 هايبرد'}</span>
+              <span className="text-[10px] text-[#adadad] font-bold block">{smartKeyCar?.model || 'سولينا كامري 2026 هايبرد'}</span>
               <div className="flex items-center justify-center gap-2">
                 <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                   isEngineRunning 
-                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 animate-pulse' 
-                    : 'bg-white/5 text-gray-400 border-white/10'
+                    ? 'bg-red-600/20 text-red-400 border-red-500/40' 
+                    : 'bg-white/5 text-[#adadad] border-white/10'
                 }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${isEngineRunning ? 'bg-emerald-400' : 'bg-gray-500'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${isEngineRunning ? 'bg-red-500' : 'bg-[#707070]'}`} />
                   {isEngineRunning ? 'المحرك يعمل (تشغيل عن بعد)' : 'المحرك متوقف'}
                 </span>
-                <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
-                  isDoorsLocked 
-                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/40' 
-                    : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                }`}>
-                  {isDoorsLocked ? 'الأبواب مقفلة 🔒' : 'الأبواب مفتوحة 🔓'}
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-white/10 text-white border-white/15">
+                  {isDoorsLocked ? <Lock className="w-3 h-3" strokeWidth={1.75} /> : <Unlock className="w-3 h-3" strokeWidth={1.75} />}
+                  <span>{isDoorsLocked ? 'الأبواب مقفلة' : 'الأبواب مفتوحة'}</span>
                 </span>
               </div>
             </div>
@@ -2065,11 +2125,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 }}
                 className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 ${
                   isEngineRunning
-                    ? 'bg-emerald-600/30 border-emerald-500 shadow-lg shadow-emerald-600/30 text-emerald-300'
-                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'
+                    ? 'bg-red-600 border-red-500 text-white'
+                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-white'
                 }`}
               >
-                <Power className={`w-7 h-7 ${isEngineRunning ? 'text-emerald-400 animate-spin' : 'text-gray-400'}`} />
+                <Power className="w-6 h-6" strokeWidth={1.75} />
                 <span className="text-xs font-black">
                   {isEngineRunning ? 'إيقاف المحرك' : 'تشغيل المحرك'}
                 </span>
@@ -2098,11 +2158,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 }}
                 className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 ${
                   !isDoorsLocked
-                    ? 'bg-amber-600/30 border-amber-500 shadow-lg shadow-amber-600/30 text-amber-300'
-                    : 'bg-blue-600/30 border-blue-500 shadow-lg shadow-blue-600/30 text-blue-300'
+                    ? 'bg-white text-[#141414] border-white'
+                    : 'bg-white/10 border-white/20 text-white'
                 }`}
               >
-                {isDoorsLocked ? <Lock className="w-7 h-7 text-blue-400" /> : <Unlock className="w-7 h-7 text-amber-400" />}
+                {isDoorsLocked ? <Lock className="w-6 h-6" strokeWidth={1.75} /> : <Unlock className="w-6 h-6" strokeWidth={1.75} />}
                 <span className="text-xs font-black">
                   {isDoorsLocked ? 'فتح الأبواب' : 'قفل الأبواب'}
                 </span>
@@ -2114,15 +2174,15 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2.5 relative z-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Thermometer className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs font-bold text-gray-200">التكييف المسبق للمقصورة</span>
+                  <Thermometer className="w-4 h-4 text-white" strokeWidth={1.75} />
+                  <span className="text-xs font-bold text-white">التكييف المسبق للمقصورة</span>
                 </div>
                 <button
                   onClick={() => setIsAcPrecooling(!isAcPrecooling)}
                   className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-all cursor-pointer ${
                     isAcPrecooling
-                      ? 'bg-cyan-500 text-black border-cyan-400 font-black'
-                      : 'bg-white/10 text-gray-400 border-white/10'
+                      ? 'bg-white text-[#141414] border-white font-black'
+                      : 'bg-white/10 text-[#adadad] border-white/10'
                   }`}
                 >
                   {isAcPrecooling ? 'يعمل الآن (بارد)' : 'مغلق'}
@@ -2130,18 +2190,18 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               </div>
 
               <div className="flex items-center justify-between gap-3 pt-1">
-                <span className="text-[10px] text-gray-400">درجة الحرارة المطلوبة:</span>
+                <span className="text-[10px] text-[#adadad]">درجة الحرارة المطلوبة:</span>
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setTargetAcTemp(prev => Math.max(16, +(prev - 0.5).toFixed(1)))}
-                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs cursor-pointer"
+                    className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs cursor-pointer"
                   >
                     -
                   </button>
-                  <span className="text-sm font-black font-mono text-cyan-300">{targetAcTemp}°C</span>
+                  <span className="text-sm font-black font-mono text-white">{targetAcTemp}°C</span>
                   <button 
                     onClick={() => setTargetAcTemp(prev => Math.min(28, +(prev + 0.5).toFixed(1)))}
-                    className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs cursor-pointer"
+                    className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center text-xs cursor-pointer"
                   >
                     +
                   </button>
@@ -2154,35 +2214,35 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               <button
                 onClick={() => {
                   setIsHazardFlashing(true);
-                  setKeyActionFeedback('تم تشغيل أضواء التحذير وتنبيه البوق 🚨');
+                  setKeyActionFeedback('تم تشغيل أضواء التحذير وتنبيه البوق');
                   setTimeout(() => {
                     setIsHazardFlashing(false);
                     setKeyActionFeedback('');
                   }, 2500);
                 }}
-                className={`py-2 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  isHazardFlashing ? 'bg-amber-500/40 text-amber-300 border-amber-400 animate-ping' : 'text-gray-300'
+                className={`py-2 px-3 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  isHazardFlashing ? 'bg-red-600 text-white border-red-500' : 'text-white'
                 }`}
               >
-                <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                <Volume2 className="w-3.5 h-3.5" strokeWidth={1.75} />
                 <span>إطلاق المنبه والأضواء</span>
               </button>
 
               <button
                 onClick={() => {
-                  setKeyActionFeedback('تم فتح الصندوق الخلفي آلياً 🚗');
+                  setKeyActionFeedback('تم فتح الصندوق الخلفي آلياً');
                   setTimeout(() => setKeyActionFeedback(''), 3000);
                 }}
-                className="py-2 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-bold text-gray-300 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                className="py-2 px-3 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-bold text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
-                <Car className="w-3.5 h-3.5 text-blue-400" />
+                <Car className="w-3.5 h-3.5" strokeWidth={1.75} />
                 <span>فتح الصندوق الخلفي</span>
               </button>
             </div>
 
             {/* Live Feedback Toast */}
             {keyActionFeedback && (
-              <div className="p-2.5 rounded-xl bg-blue-500/20 border border-blue-400/40 text-blue-200 text-xs font-bold text-center animate-in fade-in">
+              <div className="p-2.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold text-center animate-in fade-in">
                 {keyActionFeedback}
               </div>
             )}
@@ -2193,34 +2253,34 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {/* K. VIN Chassis Camera Scanner Modal */}
       {showVinScannerModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 animate-in fade-in`}>
-          <div className="w-full max-w-sm bg-gray-950 text-white rounded-[32px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
+          <div className="w-full max-w-sm bg-[#141414] text-white rounded-[32px] p-5 text-start space-y-4 shadow-2xl border border-white/10 font-arabic relative overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
-                <ScanLine className="w-5 h-5 text-emerald-400" />
+                <ScanLine className="w-5 h-5 text-white" strokeWidth={1.75} />
                 <h4 className="text-xs font-black text-white">ماسح رقم الشاسيه (VIN) الذكي</h4>
               </div>
-              <button onClick={() => setShowVinScannerModal(false)} className="p-1 text-gray-400 hover:text-white cursor-pointer">
+              <button onClick={() => setShowVinScannerModal(false)} className="p-1 text-[#adadad] hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Scanner Viewfinder Box */}
-            <div className="relative h-44 w-full rounded-2xl bg-black/60 border-2 border-dashed border-emerald-500/60 overflow-hidden flex flex-col items-center justify-center p-4">
-              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-emerald-400" />
-              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-emerald-400" />
-              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-emerald-400" />
-              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-emerald-400" />
+            <div className="relative h-44 w-full rounded-2xl bg-black/60 border-2 border-dashed border-white/40 overflow-hidden flex flex-col items-center justify-center p-4">
+              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-white" />
+              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-white" />
+              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-white" />
+              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-white" />
 
               {isScanningVin && (
-                <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_12px_#34d399] animate-bounce" />
+                <div className="absolute inset-x-0 h-0.5 bg-red-600 animate-bounce" />
               )}
 
-              <Camera className="w-8 h-8 text-emerald-400/80 mb-2 animate-pulse" />
-              <span className="text-[11px] text-gray-300 font-bold text-center">
+              <Camera className="w-8 h-8 text-white/80 mb-2" strokeWidth={1.5} />
+              <span className="text-[11px] text-white font-bold text-center">
                 {isScanningVin ? 'جاري قراءة رقم الشاسيه أو الباركود...' : 'وجه الكاميرا نحو رقم هيكل السيارة أو كتيب الصيانة'}
               </span>
-              <span className="text-[9px] text-emerald-400 font-mono mt-1">VIN AI SCANNER v2.6</span>
+              <span className="text-[9px] text-[#adadad] font-mono mt-1">VIN AI SCANNER v2.6</span>
             </div>
 
             {!scannedVinRecord && (
@@ -2236,33 +2296,37 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       engine: '2.0L Turbo TGDI — 254 HP (XWD)',
                       warranty: 'ساري وموثق (10 سنوات / مليون كم)',
                       lastService: 'صيانة 5,000 كم (معتمدة لدى وكالة سولينا)',
-                      fahasStatus: 'مجاز بالفحص الدوري السعودي ✓'
+                      fahasStatus: 'مجاز بالفحص الدوري السعودي'
                     });
                   }, 1000);
                 }}
-                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
+                className="w-full py-2.5 bg-white hover:bg-[#f3f3f3] text-[#141414] text-xs font-black rounded-full cursor-pointer flex items-center justify-center gap-1.5"
               >
-                🔍 مسح باركود شاسيه افتراضي
+                <ScanLine className="w-4 h-4" strokeWidth={1.75} />
+                <span>مسح باركود شاسيه افتراضي</span>
               </button>
             )}
 
             {scannedVinRecord && (
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-emerald-500/40 space-y-2 text-xs animate-in slide-in-from-bottom">
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/15 space-y-2 text-xs animate-in slide-in-from-bottom">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-[10px] text-gray-400">رقم الهيكل VIN:</span>
-                  <span className="font-mono text-emerald-400 font-bold">{scannedVinRecord.vin}</span>
+                  <span className="text-[10px] text-[#adadad]">رقم الهيكل VIN:</span>
+                  <span className="font-mono text-white font-bold">{scannedVinRecord.vin}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-[11px]">الطراز:</span>
+                  <span className="text-[#adadad] text-[11px]">الطراز:</span>
                   <span className="text-white font-bold">{scannedVinRecord.model}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-[11px]">حالة الضمان:</span>
-                  <span className="text-emerald-400 font-bold">{scannedVinRecord.warranty}</span>
+                  <span className="text-[#adadad] text-[11px]">حالة الضمان:</span>
+                  <span className="text-white font-bold">{scannedVinRecord.warranty}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-[11px]">الفحص الفني:</span>
-                  <span className="text-blue-300 font-bold">{scannedVinRecord.fahasStatus}</span>
+                  <span className="text-[#adadad] text-[11px]">الفحص الفني:</span>
+                  <span className="text-white font-bold inline-flex items-center gap-1">
+                    <Check className="w-3 h-3 text-red-500" strokeWidth={2.5} />
+                    <span>{scannedVinRecord.fahasStatus}</span>
+                  </span>
                 </div>
 
                 <div className="pt-2 flex gap-2">
@@ -2272,13 +2336,13 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       setShowVinScannerModal(false);
                       setServiceBookingOpen(true);
                     }}
-                    className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-xl text-center cursor-pointer"
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-full text-center cursor-pointer"
                   >
                     حجز صيانة لهذا الهيكل
                   </button>
                   <button
                     onClick={() => setScannedVinRecord(null)}
-                    className="px-3 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-[10px] font-bold rounded-xl cursor-pointer"
+                    className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold rounded-full cursor-pointer"
                   >
                     مسح آخر
                   </button>
@@ -2293,29 +2357,31 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showTradeInModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
               <div className="flex items-center gap-2">
-                <RefreshCw className="w-5 h-5 text-purple-600" />
-                <h4 className="text-xs font-black text-gray-900">تثمين واستبدال سيارتك المستعملة</h4>
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <RefreshCw className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <h4 className="text-xs font-black text-[#141414]">تثمين واستبدال سيارتك المستعملة</h4>
               </div>
-              <button onClick={() => { setShowTradeInModal(false); setTradeInEstimatedValue(null); }} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+              <button onClick={() => { setShowTradeInModal(false); setTradeInEstimatedValue(null); }} className="p-1 text-[#707070] hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {tradeInEstimatedValue !== null ? (
               <div className="py-4 text-center space-y-3 animate-in zoom-in-95">
-                <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto">
-                  <Check className="w-6 h-6 stroke-[3]" />
+                <div className="w-12 h-12 rounded-[30%] bg-[#141414] text-white flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <span className="text-[10px] text-gray-500 block">القيمة التقديرية المعتمدة لاستبدال سيارتك:</span>
-                  <strong className="text-2xl font-black text-purple-700 font-mono">
+                  <span className="text-[10px] text-[#707070] block">القيمة التقديرية المعتمدة لاستبدال سيارتك:</span>
+                  <strong className="text-2xl font-black text-[#141414] font-mono">
                     {tradeInEstimatedValue.toLocaleString('ar-SA')} ريال
                   </strong>
                 </div>
-                <p className="text-xs text-gray-600 bg-purple-50 p-2.5 rounded-xl border border-purple-100">
-                  كوبون خصم الاستبدال: <strong className="text-purple-700 font-mono">TRADE-SOLINA-2026</strong> يتم خصم هذا المبلغ فوراً من الدفعة الأولى لأي سيارة جديدة.
+                <p className="text-xs text-[#141414] bg-[#f3f3f3] p-2.5 rounded-2xl border border-[#e0e0e0]">
+                  كوبون خصم الاستبدال: <strong className="text-red-600 font-mono">TRADE-SOLINA-2026</strong> يتم خصم هذا المبلغ فوراً من الدفعة الأولى لأي سيارة جديدة.
                 </p>
                 <button
                   onClick={() => {
@@ -2323,31 +2389,32 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     setActiveTab('home');
                     showAppToast('تم تفعيل كوبون الاستبدال TRADE-SOLINA-2026', 'اختر سيارتك الجديدة الآن', 'success');
                   }}
-                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl cursor-pointer"
+                  className="w-full py-2.5 bg-[#141414] hover:bg-black text-white text-xs font-bold rounded-full cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  استبدال وشراء سيارة جديدة الآن 🚗
+                  <Car className="w-4 h-4" strokeWidth={1.75} />
+                  <span>استبدال وشراء سيارة جديدة الآن</span>
                 </button>
               </div>
             ) : (
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">الشركة والموديل الحالي</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الشركة والموديل الحالي</label>
                   <input
                     type="text"
                     value={tradeInForm.model}
                     onChange={(e) => setTradeInForm(prev => ({ ...prev, model: e.target.value }))}
                     placeholder="مثال: تويوتا كامري GLX"
-                    className="w-full p-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:outline-none text-xs"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent focus:border-[#141414] focus:outline-none text-xs"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] font-bold text-gray-700 block mb-1">سنة الصنع</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">سنة الصنع</label>
                     <select
                       value={tradeInForm.year}
                       onChange={(e) => setTradeInForm(prev => ({ ...prev, year: e.target.value }))}
-                      className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
+                      className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs"
                     >
                       <option>2025</option>
                       <option>2024</option>
@@ -2359,23 +2426,23 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-gray-700 block mb-1">الممشى التقديري</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">الممشى التقديري</label>
                     <input
                       type="text"
                       value={tradeInForm.mileage}
                       onChange={(e) => setTradeInForm(prev => ({ ...prev, mileage: e.target.value }))}
                       placeholder="مثال: 50,000 كم"
-                      className="w-full p-2.5 rounded-xl border border-gray-200 text-xs"
+                      className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">حالة الهيكل والمحرك</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">حالة الهيكل والمحرك</label>
                   <select
                     value={tradeInForm.condition}
                     onChange={(e) => setTradeInForm(prev => ({ ...prev, condition: e.target.value }))}
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs"
                   >
                     <option>ممتازة - صيانة وكالة منتظمة وبدون حوادث</option>
                     <option>جيدة جداً - خدوش سطحية بسيطة</option>
@@ -2388,9 +2455,10 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     const baseVal = tradeInForm.year === '2025' ? 104000 : tradeInForm.year === '2024' ? 95000 : tradeInForm.year === '2023' ? 82000 : 68000;
                     setTradeInEstimatedValue(baseVal);
                   }}
-                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
+                  className="w-full py-2.5 bg-[#141414] hover:bg-black text-white text-xs font-black rounded-full cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  حساب قيمة التثمين الفورية ⚡
+                  <Calculator className="w-4 h-4" strokeWidth={1.75} />
+                  <span>حساب قيمة التثمين الفورية</span>
                 </button>
               </div>
             )}
@@ -2402,47 +2470,52 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showDepositCheckoutModal && depositVehicle && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-3.5 shadow-2xl font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
-              <div>
-                <h4 className="text-xs font-black text-gray-900">💳 حجز السيارة وتثبيت العربون</h4>
-                <span className="text-[10px] text-emerald-600 font-bold">عربون مسترد 100% وموثق بفاتورة ZATCA</span>
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2.5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <CreditCard className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-[#141414]">حجز السيارة وتثبيت العربون</h4>
+                  <span className="text-[10px] text-[#707070] font-bold">عربون مسترد 100% وموثق بفاتورة ZATCA</span>
+                </div>
               </div>
-              <button onClick={() => { setShowDepositCheckoutModal(false); setDepositSuccess(false); }} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+              <button onClick={() => { setShowDepositCheckoutModal(false); setDepositSuccess(false); }} className="p-1 text-[#707070] hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {depositSuccess ? (
               <div className="py-3 text-center space-y-3 animate-in zoom-in-95">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                  <Check className="w-6 h-6 stroke-[3]" />
+                <div className="w-12 h-12 rounded-[30%] bg-[#141414] text-white flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h4 className="text-base font-black text-gray-900">تم تأكيد حجز السيارة بنجاح!</h4>
-                  <span className="text-xs text-gray-500 block">رقم سند القبض والفاتورة الضريبية:</span>
-                  <strong className="text-emerald-600 font-mono text-sm">{depositReference}</strong>
+                  <h4 className="text-base font-black text-[#141414]">تم تأكيد حجز السيارة بنجاح!</h4>
+                  <span className="text-xs text-[#707070] block">رقم سند القبض والفاتورة الضريبية:</span>
+                  <strong className="text-red-600 font-mono text-sm">{depositReference}</strong>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-2xl border border-gray-100 text-xs text-start space-y-1">
+                <div className="p-3 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] text-xs text-start space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">السيارة المحجوزة:</span>
-                    <strong className="text-gray-900">{formatVehicleTitle(depositVehicle)}</strong>
+                    <span className="text-[#707070]">السيارة المحجوزة:</span>
+                    <strong className="text-[#141414]">{formatVehicleTitle(depositVehicle)}</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">مبلغ العربون المدفوع:</span>
-                    <strong className="text-emerald-600">2,500 ريال سعودي</strong>
+                    <span className="text-[#707070]">مبلغ العربون المدفوع:</span>
+                    <strong className="text-[#141414]">2,500 ريال سعودي</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">طريقة الدفع:</span>
-                    <strong className="text-gray-900">{paymentMethod.toUpperCase()}</strong>
+                    <span className="text-[#707070]">طريقة الدفع:</span>
+                    <strong className="text-[#141414]">{paymentMethod.toUpperCase()}</strong>
                   </div>
                 </div>
                 <button
                   onClick={() => {
-                    showAppToast(`تم حفظ سند القبض ${depositReference} 📄`, 'وتم تسجيل الفاتورة الضريبية في نظام ZATCA', 'success');
+                    showAppToast(`تم حفظ سند القبض ${depositReference}`, 'وتم تسجيل الفاتورة الضريبية في نظام ZATCA', 'success');
                     setShowDepositCheckoutModal(false);
                     setDepositSuccess(false);
                   }}
-                  className="w-full py-2.5 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
+                  className="w-full py-2.5 bg-[#141414] hover:bg-black text-white text-xs font-bold rounded-full cursor-pointer"
                 >
                   حفظ سند القبض الإلكتروني وإغلاق
                 </button>
@@ -2450,11 +2523,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
             ) : (
               <div className="space-y-3 text-xs">
                 {/* Vehicle Summary */}
-                <div className="p-2.5 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+                <div className="p-2.5 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] flex items-center gap-3">
                   <img src={depositVehicle.cardImage || depositVehicle.heroImage} alt={depositVehicle.nameAr} className="h-12 w-auto object-contain rounded-lg" />
                   <div>
-                    <h5 className="text-xs font-black text-gray-900">{formatVehicleTitle(depositVehicle)}</h5>
-                    <span className="text-[10px] text-gray-500">السعر الإجمالي: {depositVehicle.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
+                    <h5 className="text-xs font-black text-[#141414]">{formatVehicleTitle(depositVehicle)}</h5>
+                    <span className="text-[10px] text-[#707070]">السعر الإجمالي: {depositVehicle.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
                   </div>
                 </div>
 
@@ -2464,29 +2537,29 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     value={depositCustomerName}
                     onChange={(e) => setDepositCustomerName(e.target.value)}
                     placeholder="اسم المشتري"
-                    className="p-2 rounded-xl border border-gray-200 text-xs focus:border-emerald-500 focus:outline-none"
+                    className="p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   />
                   <input
                     type="tel"
                     value={depositCustomerPhone}
                     onChange={(e) => setDepositCustomerPhone(e.target.value)}
                     placeholder="رقم الجوال"
-                    className="p-2 rounded-xl border border-gray-200 text-xs focus:border-emerald-500 focus:outline-none"
+                    className="p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
                 {/* Amount Due */}
-                <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-900">عربون الحجز الفوري المسترد:</span>
-                  <strong className="text-base font-black text-emerald-700 font-mono">2,500 ريال</strong>
+                <div className="p-3 bg-[#141414] text-white rounded-2xl flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#adadad]">عربون الحجز الفوري المسترد:</span>
+                  <strong className="text-base font-black text-white font-mono">2,500 ريال</strong>
                 </div>
 
                 {/* Payment Methods */}
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1.5">اختر وسيلة الدفع المعتمدة:</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1.5">اختر وسيلة الدفع المعتمدة:</label>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { id: 'applepay', name: 'Apple Pay ', badge: 'دفع بلمسة واحدة' },
+                      { id: 'applepay', name: 'Apple Pay', badge: 'دفع بلمسة واحدة' },
                       { id: 'mada', name: 'بطاقة مدى Mada', badge: 'دفع محلي مباشر' },
                       { id: 'visa', name: 'Visa / Mastercard', badge: 'بطاقات ائتمانية' },
                       { id: 'tabby', name: 'Tabby تابي', badge: 'تقسيط 4 دفعات 0%' }
@@ -2494,14 +2567,14 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                       <button
                         key={p.id}
                         onClick={() => setPaymentMethod(p.id as any)}
-                        className={`p-2 rounded-xl border text-start transition-all cursor-pointer ${
+                        className={`p-2.5 rounded-2xl border text-start transition-all cursor-pointer ${
                           paymentMethod === p.id
-                            ? 'bg-emerald-50/80 border-emerald-500 ring-1 ring-emerald-500'
-                            : 'bg-white border-gray-200 hover:bg-gray-50'
+                            ? 'bg-[#f3f3f3] border-[#141414] ring-1 ring-[#141414]'
+                            : 'bg-white border-[#e0e0e0] hover:bg-[#f3f3f3]'
                         }`}
                       >
-                        <strong className="text-xs font-black text-gray-900 block">{p.name}</strong>
-                        <span className="text-[9px] text-gray-500 font-light">{p.badge}</span>
+                        <strong className="text-xs font-black text-[#141414] block">{p.name}</strong>
+                        <span className="text-[9px] text-[#707070] font-light">{p.badge}</span>
                       </button>
                     ))}
                   </div>
@@ -2521,11 +2594,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     const ref = inv?.invoiceNumber || `SOL-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
                     setDepositReference(ref);
                     setDepositSuccess(true);
-                    showAppToast('تم سداد العربون وتوثيق الفاتورة ✓', `رقم السند: ${ref}`, 'success');
+                    showAppToast('تم سداد العربون وتوثيق الفاتورة', `رقم السند: ${ref}`, 'success');
                   }}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md active:scale-95 transition-all"
+                  className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-full cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                 >
-                  تأكيد ودفع 2,500 ريال عبر {paymentMethod.toUpperCase()} 🔒
+                  <Lock className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  <span>تأكيد ودفع 2,500 ريال عبر {paymentMethod.toUpperCase()}</span>
                 </button>
               </div>
             )}
@@ -2537,23 +2611,25 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showAddCarModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
               <div className="flex items-center gap-2">
-                <Car className="w-5 h-5 text-red-600" />
-                <h4 className="text-xs font-black text-gray-900">إضافة سيارة جديدة إلى مرآبي</h4>
+                <div className="w-8 h-8 rounded-[30%] bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0]">
+                  <Car className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+                <h4 className="text-xs font-black text-[#141414]">إضافة سيارة جديدة إلى مرآبي</h4>
               </div>
-              <button onClick={() => setShowAddCarModal(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+              <button onClick={() => setShowAddCarModal(false)} className="p-1 text-[#707070] hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-[11px] font-bold text-gray-700 block mb-1">اختر طراز السيارة من أسطول 2026</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">اختر طراز السيارة من أسطول 2026</label>
                 <select
                   value={newGarageCarForm.vehicleId}
                   onChange={(e) => setNewGarageCarForm(prev => ({ ...prev, vehicleId: e.target.value }))}
-                  className="w-full p-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:border-red-500 focus:outline-none"
+                  className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                 >
                   {allVehicles.map((v) => (
                     <option key={v.id} value={v.id}>{formatVehicleTitle(v)}</option>
@@ -2563,23 +2639,23 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">رقم اللوحة</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">رقم اللوحة</label>
                   <input
                     type="text"
                     value={newGarageCarForm.plate}
                     onChange={(e) => setNewGarageCarForm(prev => ({ ...prev, plate: e.target.value }))}
                     placeholder="مثال: أ ب ج 2026"
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-700 block mb-1">الممشى الحالي (كم)</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الممشى الحالي (كم)</label>
                   <input
                     type="number"
                     value={newGarageCarForm.mileage}
                     onChange={(e) => setNewGarageCarForm(prev => ({ ...prev, mileage: e.target.value }))}
                     placeholder="1200"
-                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:border-red-500 focus:outline-none"
+                    className="w-full p-2.5 rounded-2xl bg-[#f0f0f0] border border-transparent text-xs focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -2602,11 +2678,12 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   };
                   setUserCars((prev: any[]) => [newCar, ...prev]);
                   setShowAddCarModal(false);
-                  showAppToast('تمت إضافة السيارة إلى مرآبك 🚗', `${newCar.model} — لوحة (${newCar.plate})`, 'success');
+                  showAppToast('تمت إضافة السيارة إلى مرآبك', `${newCar.model} — لوحة (${newCar.plate})`, 'success');
                 }}
-                className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl cursor-pointer shadow-md"
+                className="w-full py-2.5 bg-[#141414] hover:bg-black text-white text-xs font-black rounded-full cursor-pointer flex items-center justify-center gap-1.5"
               >
-                حفظ السيارة وتفعيل المفتاح الذكي ✓
+                <Check className="w-4 h-4" strokeWidth={2} />
+                <span>حفظ السيارة وتفعيل المفتاح الذكي</span>
               </button>
             </div>
           </div>
@@ -2616,52 +2693,58 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {/* O. Digital Warranty Certificate Modal */}
       {warrantyModalCar && (
         <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
-          <div className="w-full max-w-sm bg-gradient-to-b from-slate-900 via-gray-950 to-black text-white rounded-3xl p-5 text-start space-y-4 shadow-2xl border border-amber-500/30 font-arabic">
+          <div className="w-full max-w-sm bg-[#141414] text-white rounded-3xl p-5 text-start space-y-4 shadow-2xl border border-white/15 font-arabic">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-amber-400" />
+                <Shield className="w-5 h-5 text-white" strokeWidth={1.75} />
                 <div>
-                  <h4 className="text-xs font-black text-amber-400">شهادة الضمان الرقمية المعتمدة</h4>
-                  <span className="text-[9px] text-gray-400">موثقة لدى شركة سولينا موتورز ووزارة التجارة</span>
+                  <h4 className="text-xs font-black text-white">شهادة الضمان الرقمية المعتمدة</h4>
+                  <span className="text-[9px] text-[#adadad]">موثقة لدى شركة سولينا موتورز ووزارة التجارة</span>
                 </div>
               </div>
-              <button onClick={() => setWarrantyModalCar(null)} className="p-1 text-gray-400 hover:text-white cursor-pointer">
+              <button onClick={() => setWarrantyModalCar(null)} className="p-1 text-[#adadad] hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2.5 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400 text-[10px]">الطراز المضمون:</span>
+                <span className="text-[#adadad] text-[10px]">الطراز المضمون:</span>
                 <strong className="text-white font-black">{warrantyModalCar.model}</strong>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400 text-[10px]">رقم اللوحة:</span>
-                <strong className="text-amber-300 font-bold">{warrantyModalCar.plate}</strong>
+                <span className="text-[#adadad] text-[10px]">رقم اللوحة:</span>
+                <strong className="text-white font-bold">{warrantyModalCar.plate}</strong>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400 text-[10px]">رقم الهيكل (VIN):</span>
-                <strong className="text-emerald-400 font-mono text-[11px]">{warrantyModalCar.vin || 'JTNB11HK9P3012948'}</strong>
+                <span className="text-[#adadad] text-[10px]">رقم الهيكل (VIN):</span>
+                <strong className="text-white font-mono text-[11px]">{warrantyModalCar.vin || 'JTNB11HK9P3012948'}</strong>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400 text-[10px]">تغطية الضمان:</span>
+                <span className="text-[#adadad] text-[10px]">تغطية الضمان:</span>
                 <strong className="text-white font-bold">{warrantyModalCar.warrantyExpiry || '10 سنوات / 300 ألف كم'}</strong>
               </div>
               <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-                <div className="text-[10px] text-gray-300 space-y-0.5">
-                  <div>✓ يشمل المحرك وناقل الحركة والبطارية الهجينة</div>
-                  <div>✓ مساعدة مجانية على الطريق 24/7 في جميع مناطق المملكة</div>
+                <div className="text-[10px] text-[#adadad] space-y-1">
+                  <div className="flex items-center gap-1">
+                    <Check className="w-3 h-3 text-white shrink-0" strokeWidth={2} />
+                    <span>يشمل المحرك وناقل الحركة والبطارية الهجينة</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Check className="w-3 h-3 text-white shrink-0" strokeWidth={2} />
+                    <span>مساعدة مجانية على الطريق 24/7 في جميع مناطق المملكة</span>
+                  </div>
                 </div>
-                <QrCode className="w-10 h-10 text-amber-400 shrink-0" />
+                <QrCode className="w-10 h-10 text-white shrink-0" strokeWidth={1.5} />
               </div>
             </div>
 
             <button
               onClick={() => {
                 setWarrantyModalCar(null);
-                showAppToast('تم حفظ شهادة الضمان الرقمية 🛡️', 'متاحة للعرض في جميع مراكز صيانة سولينا', 'success');
+                showAppToast('تم حفظ شهادة الضمان الرقمية', 'متاحة للعرض في جميع مراكز صيانة سولينا', 'success');
               }}
-              className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-black rounded-xl cursor-pointer"
+              className="w-full py-2.5 bg-white hover:bg-[#f3f3f3] text-[#141414] text-xs font-black rounded-full cursor-pointer"
             >
               حفظ الشهادة في المحفظة الرقمية
             </button>
@@ -2673,76 +2756,80 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       {showRoadsideSosModal && (
         <div className={`${modalOverlayPos} inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 animate-in fade-in`}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 text-start space-y-4 shadow-2xl font-arabic">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
-                  <AlertCircle className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-[30%] bg-red-600 text-white flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4" strokeWidth={1.75} />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-gray-900">طوارئ المساعدة على الطريق 24/7</h4>
+                  <h4 className="text-xs font-black text-[#141414]">طوارئ المساعدة على الطريق 24/7</h4>
                   <span className="text-[10px] text-red-600 font-bold">استجابة سريعة خلال 25 دقيقة — 8002444400</span>
                 </div>
               </div>
-              <button onClick={() => setShowRoadsideSosModal(false)} className="p-1 text-gray-400 hover:text-black cursor-pointer">
+              <button onClick={() => setShowRoadsideSosModal(false)} className="p-1 text-[#707070] hover:text-black cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {sosDispatched ? (
               <div className="py-4 text-center space-y-3 animate-in zoom-in-95">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
-                  <Check className="w-6 h-6 stroke-[3]" />
+                <div className="w-12 h-12 rounded-[30%] bg-[#141414] text-white flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
-                <h4 className="text-sm font-black text-gray-900">تم توجيه وحدة الإنقاذ إلى موقعك!</h4>
-                <p className="text-xs text-gray-500">
+                <h4 className="text-sm font-black text-[#141414]">تم توجيه وحدة الإنقاذ إلى موقعك!</h4>
+                <p className="text-xs text-[#707070]">
                   فني سولينا المتنقل في طريقه إليك الآن (الوقت المتوقع للوصول: <strong className="text-red-600">18 دقيقة</strong>).
                 </p>
                 <button
                   onClick={() => setShowRoadsideSosModal(false)}
-                  className="w-full py-2.5 bg-gray-900 text-white text-xs font-bold rounded-xl cursor-pointer"
+                  className="w-full py-2.5 bg-[#141414] text-white text-xs font-bold rounded-full cursor-pointer"
                 >
                   حسناً، متابعة
                 </button>
               </div>
             ) : (
               <div className="space-y-3 text-xs">
-                <div className="p-3 bg-red-50 rounded-2xl border border-red-100 flex items-center justify-between">
+                <div className="p-3 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-red-600" />
+                    <MapPin className="w-4 h-4 text-red-600" strokeWidth={1.75} />
                     <div>
-                      <span className="text-[10px] text-gray-500 block">موقعك الحالي (GPS مفعل):</span>
-                      <strong className="text-gray-900 text-xs">الرياض — طريق الملك فهد الفرعي</strong>
+                      <span className="text-[10px] text-[#707070] block">موقعك الحالي (GPS مفعل):</span>
+                      <strong className="text-[#141414] text-xs">الرياض — طريق الملك فهد الفرعي</strong>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full">متصل</span>
+                  <span className="px-2.5 py-0.5 bg-[#141414] text-white text-[9px] font-bold rounded-full">متصل</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: '🚛 طلب سطحة نقل فورية', desc: 'نقل لأقرب مركز صيانة' },
-                    { label: '🔋 شحن أو استبدال البطارية', desc: 'خدمة متنقلة في موقعك' },
-                    { label: '🛞 إصلاح وتبديل الإطارات', desc: 'إطار احتياطي وضغط هواء' },
-                    { label: '⛽ تزويد وقود / شحن EV', desc: 'إنقاذ طارئ على الطريق' }
-                  ].map((item, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setSosDispatched(true);
-                        showAppToast('تم إرسال بلاغ الطوارئ SOS 🚨', item.label, 'warning');
-                      }}
-                      className="p-2.5 rounded-2xl border border-gray-200 hover:border-red-500 hover:bg-red-50/40 text-start transition-all cursor-pointer"
-                    >
-                      <strong className="text-[11px] font-black text-gray-900 block">{item.label}</strong>
-                      <span className="text-[9px] text-gray-500">{item.desc}</span>
-                    </button>
-                  ))}
+                    { label: 'طلب سطحة نقل فورية', desc: 'نقل لأقرب مركز صيانة', icon: Car },
+                    { label: 'شحن أو استبدال البطارية', desc: 'خدمة متنقلة في موقعك', icon: Battery },
+                    { label: 'إصلاح وتبديل الإطارات', desc: 'إطار احتياطي وضغط هواء', icon: Wrench },
+                    { label: 'تزويد وقود / شحن EV', desc: 'إنقاذ طارئ على الطريق', icon: Fuel }
+                  ].map((item, idx) => {
+                    const SosIcon = item.icon;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setSosDispatched(true);
+                          showAppToast('تم إرسال بلاغ الطوارئ SOS', item.label, 'warning');
+                        }}
+                        className="p-2.5 rounded-2xl border border-[#e0e0e0] hover:border-[#141414] hover:bg-[#f3f3f3] text-start transition-all cursor-pointer space-y-1"
+                      >
+                        <SosIcon className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
+                        <strong className="text-[11px] font-black text-[#141414] block">{item.label}</strong>
+                        <span className="text-[9px] text-[#707070] block">{item.desc}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <a
                   href="tel:8002444400"
-                  className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl flex items-center justify-center gap-2 shadow-md"
+                  className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-full flex items-center justify-center gap-2"
                 >
-                  <PhoneCall className="w-4 h-4" />
+                  <PhoneCall className="w-4 h-4" strokeWidth={1.75} />
                   <span>اتصال مباشر بطوارئ سولينا (8002444400)</span>
                 </a>
               </div>

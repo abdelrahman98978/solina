@@ -69,7 +69,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onOpenTestDrive })
 
               {/* Bottom CTA Red Pill matching Solina SA */}
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-                <button className="px-8 py-2.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm shadow-md transition-all duration-200 cursor-pointer">
+                <button className="px-8 py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-sm shadow-md transition-all duration-200 cursor-pointer">
                   {offer.cta}
                 </button>
               </div>

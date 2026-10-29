@@ -66,7 +66,7 @@ export const SolinaMobileAppSection: React.FC<SolinaMobileAppSectionProps> = ({
             },
             {
               icon: BellRing,
-              badgeBg: 'bg-amber-50 border-amber-200/80 text-amber-600',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]',
               titleAr: 'عروض وإشعارات حصرية',
               titleEn: 'Exclusive Notifications',
               descAr: 'تنبيهات فورية بخصومات الصيانة والعروض التمويلية وباقات التأجير الحصرية',
@@ -74,7 +74,7 @@ export const SolinaMobileAppSection: React.FC<SolinaMobileAppSectionProps> = ({
             },
             {
               icon: MapPin,
-              badgeBg: 'bg-blue-50 border-blue-200/80 text-blue-600',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]',
               titleAr: 'محدد الفروع الذكي',
               titleEn: 'Smart Branch Locator',
               descAr: 'ملاحة دقيقة لأقرب صالة عرض أو مركز صيانة معتمد لسولينا مع أوقات العمل',
@@ -82,7 +82,7 @@ export const SolinaMobileAppSection: React.FC<SolinaMobileAppSectionProps> = ({
             },
             {
               icon: Headphones,
-              badgeBg: 'bg-emerald-50 border-emerald-200/80 text-emerald-600',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]',
               titleAr: 'دعم ومساعدة 24/7',
               titleEn: '24/7 Priority Support',
               descAr: 'محادثة فورية مع المساعد الذكي وخدمة المساعدة على الطريق بنقرة زر واحدة',

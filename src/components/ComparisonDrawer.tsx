@@ -30,7 +30,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-200">
+            <div className="w-10 h-10 rounded-2xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold border border-[#e0e0e0]">
               <Layers className="w-5 h-5" />
             </div>
             <div>
@@ -121,7 +121,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                 <tr>
                   <td className="p-4 font-bold text-gray-700 bg-gray-50/50">{language === 'ar' ? 'القسط الشهري التقديري' : 'Monthly Installment'}</td>
                   {comparedVehicles.map((car) => (
-                    <td key={car.id} className="p-4 text-center font-black text-sm text-blue-600 font-mono">
+                    <td key={car.id} className="p-4 text-center font-black text-sm text-[#141414] font-mono">
                       {formatPrice(car.monthlyInstallmentStartingFrom)} ر.س/شهر
                     </td>
                   ))}
@@ -178,7 +178,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                           onClose();
                           onOpenTestDrive(car.nameAr);
                         }}
-                        className="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm shadow-blue-600/30 transition-colors cursor-pointer"
+                        className="w-full py-2.5 px-3 bg-[#141414] hover:bg-red-600 text-white font-bold text-xs rounded-xl shadow-sm  transition-colors cursor-pointer"
                       >
                         {language === 'ar' ? 'حجز تجربة' : 'Book Drive'}
                       </button>

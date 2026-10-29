@@ -118,15 +118,15 @@ export const SolinaCinemaSection: React.FC = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white font-arabic overflow-hidden relative border-t border-b border-gray-800">
       {/* Background Ambient Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-[#0056B3]/15 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-[#141414]/15 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 relative z-10">
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0056B3]/20 text-blue-400 text-xs font-bold mb-3 border border-[#0056B3]/40">
-              <Film className="w-3.5 h-3.5 text-[#0056B3]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#141414]/20 text-red-500 text-xs font-bold mb-3 border border-[#141414]/40">
+              <Film className="w-3.5 h-3.5 text-[#141414]" />
               <span>{language === 'ar' ? 'استوديو سينما سولينا للسيارات 4K' : 'Solina 4K Cinema Studio'}</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white font-arabic">
@@ -151,7 +151,7 @@ export const SolinaCinemaSection: React.FC = () => {
                 }}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeCategory === cat.id
-                    ? 'bg-[#0056B3] text-white shadow-md shadow-[#0056B3]/40'
+                    ? 'bg-[#141414] text-white shadow-md shadow-[#141414]/40'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
                 }`}
               >
@@ -183,17 +183,17 @@ export const SolinaCinemaSection: React.FC = () => {
             {/* Video Meta Info */}
             <div className="p-6 md:p-8 space-y-4 bg-gradient-to-t from-black via-gray-900/80 to-transparent">
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-[#0056B3]/30 text-blue-300 text-xs font-bold border border-[#0056B3]/50">
+                <span className="px-3 py-1 rounded-full bg-[#141414]/30 text-red-500 text-xs font-bold border border-[#141414]/50">
                   {language === 'ar' ? selectedVideo.category : selectedVideo.categoryEn}
                 </span>
 
                 <div className="flex items-center gap-3 text-xs text-gray-400 font-mono">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-[#0056B3]" />
+                    <Clock className="w-3.5 h-3.5 text-[#141414]" />
                     {selectedVideo.duration}
                   </span>
                   <span>•</span>
-                  <span className="text-emerald-400 font-bold">4K Ultra HD</span>
+                  <span className="text-red-500 font-bold">4K Ultra HD</span>
                 </div>
               </div>
 
@@ -220,7 +220,7 @@ export const SolinaCinemaSection: React.FC = () => {
           <div className="lg:col-span-4 space-y-3">
             <h4 className="text-sm font-bold text-gray-400 px-2 uppercase tracking-wider flex items-center justify-between">
               <span>{language === 'ar' ? 'قائمة التشغيل السينمائية' : 'Cinematic Playlist'}</span>
-              <span className="text-xs text-[#0056B3] font-mono">{filteredVideos.length} {language === 'ar' ? 'أفلام' : 'Films'}</span>
+              <span className="text-xs text-[#141414] font-mono">{filteredVideos.length} {language === 'ar' ? 'أفلام' : 'Films'}</span>
             </h4>
 
             <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1 no-scrollbar">
@@ -235,7 +235,7 @@ export const SolinaCinemaSection: React.FC = () => {
                     }}
                     className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3.5 group ${
                       isSelected
-                        ? 'bg-[#0056B3]/20 border-[#0056B3] shadow-lg shadow-[#0056B3]/20'
+                        ? 'bg-[#141414]/20 border-[#141414] shadow-lg shadow-[#141414]/20'
                         : 'bg-white/5 hover:bg-white/10 border-white/5'
                     }`}
                   >
@@ -248,7 +248,7 @@ export const SolinaCinemaSection: React.FC = () => {
                       />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                          isSelected ? 'bg-[#0056B3] text-white' : 'bg-white/70 text-black group-hover:bg-white'
+                          isSelected ? 'bg-[#141414] text-white' : 'bg-white/70 text-black group-hover:bg-white'
                         }`}>
                           <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                         </div>
@@ -261,7 +261,7 @@ export const SolinaCinemaSection: React.FC = () => {
                     {/* Video Title & Info */}
                     <div className="flex-1 min-w-0">
                       <h5 className={`text-xs font-bold line-clamp-2 leading-snug mb-1 font-arabic transition-colors ${
-                        isSelected ? 'text-blue-300' : 'text-white group-hover:text-blue-200'
+                        isSelected ? 'text-red-500' : 'text-white group-hover:text-red-600'
                       }`}>
                         {language === 'ar' ? video.title : video.titleEn}
                       </h5>

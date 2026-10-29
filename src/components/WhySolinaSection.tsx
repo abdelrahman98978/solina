@@ -8,13 +8,13 @@ export const WhySolinaSection: React.FC = () => {
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
-      case 'ShieldCheck': return <ShieldCheck className="w-7 h-7 text-[#0056B3]" />;
-      case 'Award': return <Award className="w-7 h-7 text-[#0056B3]" />;
-      case 'Zap': return <Zap className="w-7 h-7 text-[#0056B3]" />;
-      case 'LifeBuoy': return <LifeBuoy className="w-7 h-7 text-[#0056B3]" />;
-      case 'TrendingUp': return <TrendingUp className="w-7 h-7 text-[#0056B3]" />;
-      case 'CheckCircle2': return <CheckCircle2 className="w-7 h-7 text-[#0056B3]" />;
-      default: return <Sparkles className="w-7 h-7 text-[#0056B3]" />;
+      case 'ShieldCheck': return <ShieldCheck className="w-7 h-7 text-[#141414]" />;
+      case 'Award': return <Award className="w-7 h-7 text-[#141414]" />;
+      case 'Zap': return <Zap className="w-7 h-7 text-[#141414]" />;
+      case 'LifeBuoy': return <LifeBuoy className="w-7 h-7 text-[#141414]" />;
+      case 'TrendingUp': return <TrendingUp className="w-7 h-7 text-[#141414]" />;
+      case 'CheckCircle2': return <CheckCircle2 className="w-7 h-7 text-[#141414]" />;
+      default: return <Sparkles className="w-7 h-7 text-[#141414]" />;
     }
   };
 
@@ -23,8 +23,8 @@ export const WhySolinaSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#0056B3] text-xs font-bold mb-4 border border-blue-100">
-            <HeartHandshake className="w-4 h-4 text-[#0056B3]" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] text-xs font-bold mb-4 border border-[#e0e0e0]">
+            <HeartHandshake className="w-4 h-4 text-[#141414]" />
             <span>{language === 'ar' ? 'الثقة والاعتمادية والريادة في المملكة' : 'Trust, Reliability & Excellence in Saudi Arabia'}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-normal text-black mb-4 font-arabic tracking-tight">
@@ -42,14 +42,14 @@ export const WhySolinaSection: React.FC = () => {
           {WHY_SOLINA_POINTS.map((point, idx) => (
             <div
               key={idx}
-              className="bg-gray-50 hover:bg-white rounded-2xl p-8 border border-gray-200/70 hover:border-[#0056B3]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
+              className="bg-gray-50 hover:bg-white rounded-2xl p-8 border border-gray-200/70 hover:border-[#141414]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
             >
               <div>
-                <div className="w-14 h-14 rounded-xl bg-white group-hover:bg-blue-50 text-[#0056B3] flex items-center justify-center shadow-sm border border-gray-100 mb-6 transition-colors">
+                <div className="w-14 h-14 rounded-xl bg-white group-hover:bg-[#f3f3f3] text-[#141414] flex items-center justify-center shadow-sm border border-gray-100 mb-6 transition-colors">
                   {getIcon(point.icon)}
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 mb-3 font-arabic group-hover:text-[#0056B3] transition-colors">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 font-arabic group-hover:text-[#141414] transition-colors">
                   {language === 'ar' ? point.title : point.titleEn}
                 </h3>
 

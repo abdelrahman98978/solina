@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { AdminDataProvider, useAdminData } from './context/AdminDataContext';
 import { Header } from './components/Header';
@@ -8,16 +8,6 @@ import { ExploreVehicles } from './components/ExploreVehicles';
 import { OffersSection } from './components/OffersSection';
 import { DiscoverSolinaSection } from './components/DiscoverSolinaSection';
 import { GuestCommitmentSection } from './components/GuestCommitmentSection';
-import { Vehicle360Customizer } from './components/Vehicle360Customizer';
-import { CarFinderWizard } from './components/CarFinderWizard';
-import { TechSimulator } from './components/TechSimulator';
-import { GRPerformanceSection } from './components/GRPerformanceSection';
-import { FinanceCalculator } from './components/FinanceCalculator';
-import { CertifiedPreOwnedSection } from './components/CertifiedPreOwnedSection';
-import { PartsAccessoriesSection } from './components/PartsAccessoriesSection';
-import { SolinaCinemaSection } from './components/SolinaCinemaSection';
-import { ShowroomsSection } from './components/ShowroomsSection';
-import { WhySolinaSection } from './components/WhySolinaSection';
 import { Footer } from './components/Footer';
 import { SectionDivider } from './components/SectionDivider';
 import { SolinaQualitySection } from './components/SolinaQualitySection';
@@ -27,28 +17,32 @@ import { SolinaBrandHeritage } from './components/SolinaBrandHeritage';
 import { SolinaMobileAppSection } from './components/SolinaMobileAppSection';
 import { SolinaAIAssistant } from './components/SolinaAIAssistant';
 
-// Standalone Pages
-import { VehicleModelPage } from './components/VehicleModelPage';
-import { OffersPage } from './pages/OffersPage';
-import { OwnersPage } from './pages/OwnersPage';
-import { DiscoverPage } from './pages/DiscoverPage';
-import { ShowroomsPage } from './pages/ShowroomsPage';
-import { SolinaAppPage } from './pages/SolinaAppPage';
-import { SolinaAppExperience } from './components/SolinaAppExperience';
+import { type Vehicle, type VehicleGrade } from './data/toyotaData';
 
-// Admin Dashboard Component
-import { AdminDashboard } from './components/admin/AdminDashboard';
+// Lazy-loaded Standalone Pages & Heavy Modules (Code Splitting)
+const VehicleModelPage = lazy(() => import('./components/VehicleModelPage').then(m => ({ default: m.VehicleModelPage })));
+const OffersPage = lazy(() => import('./pages/OffersPage').then(m => ({ default: m.OffersPage })));
+const OwnersPage = lazy(() => import('./pages/OwnersPage').then(m => ({ default: m.OwnersPage })));
+const DiscoverPage = lazy(() => import('./pages/DiscoverPage').then(m => ({ default: m.DiscoverPage })));
+const ShowroomsPage = lazy(() => import('./pages/ShowroomsPage').then(m => ({ default: m.ShowroomsPage })));
+const SolinaAppPage = lazy(() => import('./pages/SolinaAppPage').then(m => ({ default: m.SolinaAppPage })));
+const SolinaAppExperience = lazy(() => import('./components/SolinaAppExperience').then(m => ({ default: m.SolinaAppExperience })));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 
-// Modals
-import { TestDriveModal } from './components/TestDriveModal';
-import { ServiceBookingModal } from './components/ServiceBookingModal';
-import { VehicleDetailModal } from './components/VehicleDetailModal';
-import { ComparisonDrawer } from './components/ComparisonDrawer';
-import { QuotationModal } from './components/QuotationModal';
-
-import { type Vehicle, type VehicleGrade, VEHICLES } from './data/toyotaData';
+// Lazy-loaded Modals
+const TestDriveModal = lazy(() => import('./components/TestDriveModal').then(m => ({ default: m.TestDriveModal })));
+const ServiceBookingModal = lazy(() => import('./components/ServiceBookingModal').then(m => ({ default: m.ServiceBookingModal })));
+const VehicleDetailModal = lazy(() => import('./components/VehicleDetailModal').then(m => ({ default: m.VehicleDetailModal })));
+const ComparisonDrawer = lazy(() => import('./components/ComparisonDrawer').then(m => ({ default: m.ComparisonDrawer })));
+const QuotationModal = lazy(() => import('./components/QuotationModal').then(m => ({ default: m.QuotationModal })));
 
 type AppRoute = 'home' | 'offers' | 'owners' | 'discover' | 'showrooms' | 'vehicle' | 'app' | 'mobile-app' | 'erp' | 'admin';
+
+const PageFallback: React.FC = () => (
+  <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
+    <div className="w-8 h-8 rounded-full border-2 border-[#e0e0e0] border-t-[#141414] animate-spin" />
+  </div>
+);
 
 const MainAppContent: React.FC = () => {
   const { language } = useLanguage();
@@ -210,43 +204,55 @@ const MainAppContent: React.FC = () => {
 
   // If Admin Dashboard is active, render it directly
   if (adminViewOpen) {
-    return <AdminDashboard onClose={() => setAdminViewOpen(false)} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <AdminDashboard onClose={() => setAdminViewOpen(false)} />
+      </Suspense>
+    );
   }
 
   // Common Modals Wrapper
   const renderModals = () => (
-    <>
-      <TestDriveModal
-        isOpen={testDriveModalOpen}
-        onClose={() => setTestDriveModalOpen(false)}
-        defaultModelName={testDriveDefaultModel}
-      />
+    <Suspense fallback={null}>
+      {testDriveModalOpen && (
+        <TestDriveModal
+          isOpen={testDriveModalOpen}
+          onClose={() => setTestDriveModalOpen(false)}
+          defaultModelName={testDriveDefaultModel}
+        />
+      )}
 
-      <ServiceBookingModal
-        isOpen={serviceBookingModalOpen}
-        onClose={() => setServiceBookingModalOpen(false)}
-      />
+      {serviceBookingModalOpen && (
+        <ServiceBookingModal
+          isOpen={serviceBookingModalOpen}
+          onClose={() => setServiceBookingModalOpen(false)}
+        />
+      )}
 
-      <VehicleDetailModal
-        isOpen={!!selectedVehicleForDetails}
-        onClose={() => setSelectedVehicleForDetails(null)}
-        vehicle={selectedVehicleForDetails}
-        onOpenTestDrive={handleOpenTestDrive}
-        onOpenQuotation={(v, g) => handleOpenQuotation(v, g)}
-        onToggleCompare={handleToggleCompare}
-        isCompared={selectedVehicleForDetails ? comparedVehicles.some(v => v.id === selectedVehicleForDetails.id) : false}
-      />
+      {selectedVehicleForDetails && (
+        <VehicleDetailModal
+          isOpen={!!selectedVehicleForDetails}
+          onClose={() => setSelectedVehicleForDetails(null)}
+          vehicle={selectedVehicleForDetails}
+          onOpenTestDrive={handleOpenTestDrive}
+          onOpenQuotation={(v, g) => handleOpenQuotation(v, g)}
+          onToggleCompare={handleToggleCompare}
+          isCompared={selectedVehicleForDetails ? comparedVehicles.some(v => v.id === selectedVehicleForDetails.id) : false}
+        />
+      )}
 
-      <ComparisonDrawer
-        isOpen={isComparisonDrawerOpen}
-        onClose={() => setIsComparisonDrawerOpen(false)}
-        comparedVehicles={comparedVehicles}
-        onRemoveVehicle={handleRemoveComparedVehicle}
-        onClearAll={handleClearComparedVehicles}
-        onOpenTestDrive={handleOpenTestDrive}
-      />
+      {isComparisonDrawerOpen && (
+        <ComparisonDrawer
+          isOpen={isComparisonDrawerOpen}
+          onClose={() => setIsComparisonDrawerOpen(false)}
+          comparedVehicles={comparedVehicles}
+          onRemoveVehicle={handleRemoveComparedVehicle}
+          onClearAll={handleClearComparedVehicles}
+          onOpenTestDrive={handleOpenTestDrive}
+        />
+      )}
 
-      {quotationVehicle && (
+      {quotationVehicle && quotationModalOpen && (
         <QuotationModal
           isOpen={quotationModalOpen}
           onClose={() => setQuotationModalOpen(false)}
@@ -264,134 +270,154 @@ const MainAppContent: React.FC = () => {
         onOpenServiceBooking={handleOpenServiceBooking}
         onNavigate={navigateTo}
       />
-    </>
+    </Suspense>
   );
 
   // 0. ERP & DEALERSHIP MANAGEMENT DASHBOARD (DMS & ZATCA 2)
   if (adminViewOpen || currentRoute === 'erp' || currentRoute === 'admin') {
     return (
-      <div className="min-h-screen bg-[#F8F9FA] text-gray-900 flex flex-col font-arabic">
-        <AdminDashboard onClose={() => {
-          setAdminViewOpen(false);
-          handleBackToHome();
-        }} />
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-[#f3f3f3] text-[#141414] flex flex-col font-arabic">
+          <AdminDashboard onClose={() => {
+            setAdminViewOpen(false);
+            handleBackToHome();
+          }} />
+        </div>
+      </Suspense>
     );
   }
 
   // 1. DEDICATED VEHICLE MODEL PAGE
   if (currentRoute === 'vehicle' && dedicatedVehicle) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
-        <VehicleModelPage
-          vehicle={dedicatedVehicle}
-          onBackToHome={handleBackToHome}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenQuotation={(v, g, f) => handleOpenQuotation(v, g, f)}
-          onSelectOtherVehicle={(id) => handleSelectVehicle(id)}
-          onOpenServiceBooking={handleOpenServiceBooking}
-          onOpenCompare={() => setIsComparisonDrawerOpen(true)}
-          comparisonCount={comparedVehicles.length}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-white text-[#141414] flex flex-col font-arabic">
+          <VehicleModelPage
+            vehicle={dedicatedVehicle}
+            onBackToHome={handleBackToHome}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenQuotation={(v, g, f) => handleOpenQuotation(v, g, f)}
+            onSelectOtherVehicle={(id) => handleSelectVehicle(id)}
+            onOpenServiceBooking={handleOpenServiceBooking}
+            onOpenCompare={() => setIsComparisonDrawerOpen(true)}
+            comparisonCount={comparedVehicles.length}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
   // 2. OFFERS PAGE
   if (currentRoute === 'offers') {
     return (
-      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
-        <OffersPage
-          onBackToHome={handleBackToHome}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenServiceBooking={handleOpenServiceBooking}
-          onSelectVehicle={handleSelectVehicle}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-white text-[#141414] flex flex-col font-arabic">
+          <OffersPage
+            onBackToHome={handleBackToHome}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenServiceBooking={handleOpenServiceBooking}
+            onSelectVehicle={handleSelectVehicle}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
   // 3. OWNERS PAGE
   if (currentRoute === 'owners') {
     return (
-      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
-        <OwnersPage
-          onBackToHome={handleBackToHome}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenServiceBooking={handleOpenServiceBooking}
-          onSelectVehicle={handleSelectVehicle}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-white text-[#141414] flex flex-col font-arabic">
+          <OwnersPage
+            onBackToHome={handleBackToHome}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenServiceBooking={handleOpenServiceBooking}
+            onSelectVehicle={handleSelectVehicle}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
   // 4. DISCOVER SOLINA PAGE
   if (currentRoute === 'discover') {
     return (
-      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
-        <DiscoverPage
-          onBackToHome={handleBackToHome}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenServiceBooking={handleOpenServiceBooking}
-          onSelectVehicle={handleSelectVehicle}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-white text-[#141414] flex flex-col font-arabic">
+          <DiscoverPage
+            onBackToHome={handleBackToHome}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenServiceBooking={handleOpenServiceBooking}
+            onSelectVehicle={handleSelectVehicle}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
   // 5. SHOWROOMS & CENTERS PAGE
   if (currentRoute === 'showrooms') {
     return (
-      <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
-        <ShowroomsPage
-          onBackToHome={handleBackToHome}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenServiceBooking={handleOpenServiceBooking}
-          onSelectVehicle={handleSelectVehicle}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-white text-[#141414] flex flex-col font-arabic">
+          <ShowroomsPage
+            onBackToHome={handleBackToHome}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenServiceBooking={handleOpenServiceBooking}
+            onSelectVehicle={handleSelectVehicle}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
   // 6. SOLINA MOBILE APP INTERACTIVE PAGE
   if (currentRoute === 'app' || currentRoute === 'mobile-app') {
     return (
-      <div className="min-h-screen bg-neutral-950 text-white flex flex-col font-arabic">
-        <SolinaAppPage
-          onNavigateHome={handleBackToHome}
-          onNavigateBack={handleBackToHome}
-          onSelectVehicle={handleSelectVehicle}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenServiceBooking={handleOpenServiceBooking}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-[#141414] text-white flex flex-col font-arabic">
+          <SolinaAppPage
+            onNavigateHome={handleBackToHome}
+            onNavigateBack={handleBackToHome}
+            onSelectVehicle={handleSelectVehicle}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenServiceBooking={handleOpenServiceBooking}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
-  // 7. NATIVE MOBILE APP VIEW (When viewed on Mobile Phone only)
-  if (isMobileScreen && currentRoute === 'home') {
+  // 7. NATIVE MOBILE APP VIEW (When viewed on Mobile Phone or forced via ?view=mobile-native)
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const forceMobileNative = searchParams?.get('view') === 'mobile-native';
+  const forceStorefront = searchParams?.get('view') === 'storefront';
+
+  if ((forceMobileNative || (isMobileScreen && !forceStorefront)) && currentRoute === 'home') {
     return (
-      <div className="min-h-screen bg-slate-50 text-gray-900 flex flex-col font-arabic">
-        <SolinaAppExperience
-          isNativeMobileView={true}
-          onSelectVehicle={handleSelectVehicle}
-          onOpenTestDrive={handleOpenTestDrive}
-          onOpenServiceBooking={handleOpenServiceBooking}
-        />
-        {renderModals()}
-      </div>
+      <Suspense fallback={<PageFallback />}>
+        <div className="min-h-screen bg-[#f3f3f3] text-[#141414] flex flex-col font-arabic">
+          <SolinaAppExperience
+            isNativeMobileView={true}
+            onSelectVehicle={handleSelectVehicle}
+            onOpenTestDrive={handleOpenTestDrive}
+            onOpenServiceBooking={handleOpenServiceBooking}
+          />
+          {renderModals()}
+        </div>
+      </Suspense>
     );
   }
 
   // 8. MAIN DESKTOP HOMEPAGE (Desktop View: All Official Sections)
   return (
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col font-arabic">
+    <div className="min-h-screen bg-white text-[#141414] flex flex-col font-arabic">
       {/* 1. Global Navigation Header */}
       <Header
         onOpenTestDrive={handleOpenTestDrive}

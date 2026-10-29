@@ -30,7 +30,7 @@ export const DiscoverAlJabraniSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
         {/* Centered Heading matching Solina SA */}
         <h2 className="text-3xl md:text-5xl font-black text-gray-900 font-display mb-2">
-          {language === 'ar' ? 'اكتشف الجبراني' : 'Discover Al Jabrani'}
+          {language === 'ar' ? 'اكتشف سولينا' : 'Discover Solina'}
         </h2>
         <p className="text-base md:text-lg text-gray-600 font-medium mb-12">
           {language === 'ar' ? 'ابتكار تثق به' : 'Innovation You Can Trust'}

@@ -85,14 +85,14 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
         {/* Top Control Bar (Hidden in Print) */}
         <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6 print:hidden">
           <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
-            <FileText className="w-5 h-5 text-[#0056B3]" />
+            <FileText className="w-5 h-5 text-[#141414]" />
             <span>{language === 'ar' ? 'عرض سعر رسمي معتمد — سولينا للسيارات' : 'Official Quotation — Solina Motors'}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold shadow transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold shadow transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>{language === 'ar' ? 'طباعة / حفظ PDF' : 'Print / Save PDF'}</span>
@@ -132,7 +132,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
             <div className="text-left font-mono">
               <div className="bg-gray-100 p-2.5 rounded-xl border border-gray-200">
                 <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'رقم عرض السعر:' : 'Quotation Ref:'}</span>
-                <span className="text-xs font-bold text-[#0056B3]">{quoteNumber}</span>
+                <span className="text-xs font-bold text-[#141414]">{quoteNumber}</span>
                 <div className="mt-1 text-[10px] text-gray-500">
                   <span>{language === 'ar' ? 'تاريخ الإصدار: ' : 'Date: '}</span>
                   <span className="font-semibold text-gray-800">{issueDate}</span>
@@ -148,13 +148,13 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           {/* Vehicle Information Box */}
           <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1.5 flex-1">
-              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-[#0056B3] border border-red-200">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-[#141414] border border-red-200">
                 {vehicle.bodyTypeAr} | موديل {vehicle.year}
               </span>
               <h2 className="text-xl font-bold text-gray-900 font-arabic">
                 {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
               </h2>
-              <p className="text-xs font-bold text-[#0056B3]">
+              <p className="text-xs font-bold text-[#141414]">
                 {language === 'ar' ? `الفئة المختارة: ${activeGrade.name}` : `Selected Trim: ${activeGrade.nameEn}`}
               </p>
               <div className="text-[11px] text-gray-500 flex flex-wrap gap-4 pt-1">
@@ -179,7 +179,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
             <div className="grid grid-cols-2 gap-2 text-[11px] bg-white p-3 rounded-xl border border-gray-200">
               {activeGrade.features.map((feat, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-gray-700">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#141414] flex-shrink-0" />
                   <span>{feat}</span>
                 </div>
               ))}
@@ -205,7 +205,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 </tr>
                 <tr>
                   <td className="p-2.5 text-gray-700">{language === 'ar' ? 'ضريبة القيمة المضافة (VAT)' : 'Value Added Tax (VAT)'}</td>
-                  <td className="p-2.5 text-center font-mono text-[#0056B3] font-bold">15%</td>
+                  <td className="p-2.5 text-center font-mono text-[#141414] font-bold">15%</td>
                   <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(vatAmount)} {language === 'ar' ? '﷼' : 'SAR'}</td>
                 </tr>
                 <tr>
@@ -216,7 +216,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 <tr className="bg-red-50/50 font-bold text-gray-900">
                   <td className="p-3 text-xs">{language === 'ar' ? 'إجمالي السعر النقدي الشامل على الطريق:' : 'Total On-Road Cash Price:'}</td>
                   <td className="p-3 text-center font-mono">-</td>
-                  <td className="p-3 text-end font-mono text-sm text-[#0056B3]">{formatPrice(totalPriceOnRoad)} {language === 'ar' ? '﷼' : 'SAR'}</td>
+                  <td className="p-3 text-end font-mono text-sm text-[#141414]">{formatPrice(totalPriceOnRoad)} {language === 'ar' ? '﷼' : 'SAR'}</td>
                 </tr>
               </tbody>
             </table>
@@ -237,7 +237,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 </div>
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'القسط الشهري التقديري:' : 'Est. Monthly Payment:'}</span>
-                  <span className="font-bold text-[#0056B3] font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ﷼/ش</span>
+                  <span className="font-bold text-[#141414] font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ﷼/ش</span>
                 </div>
               </div>
             </div>
@@ -246,7 +246,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           {/* Official Footnote & Barcode */}
           <div className="pt-4 border-t border-gray-200 flex items-center justify-between text-[10px] text-gray-500">
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-emerald-600" />
+              <Shield className="w-4 h-4 text-[#141414]" />
               <span>{language === 'ar' ? 'يشمل ضمان المصنع 5 سنوات أو 150,000 كم + برنامج جميل كير لسيارات الهايبرد' : 'Includes 5-year/150,000 km warranty & Jameel Care Hybrid Coverage'}</span>
             </div>
 

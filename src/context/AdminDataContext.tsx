@@ -206,10 +206,53 @@ export interface InvoiceItem {
   referenceInvoiceNumber?: string;
 }
 
+export interface CustodyRecord {
+  id: string;
+  custodyNumber: string;
+  employeeName: string;
+  employeeRole: string;
+  branchName: string;
+  custodyType: 'permanent_petty_cash' | 'workshop_operations' | 'showroom_hospitality' | 'procurement_advance';
+  allocatedAmount: number;
+  spentAmount: number;
+  remainingBalance: number;
+  issueDate: string;
+  lastSettlementDate: string;
+  status: 'active' | 'pending_settlement' | 'settled_closed';
+  notes?: string;
+}
+
+export interface AccountingVoucher {
+  id: string;
+  voucherNumber: string;
+  type: 'receipt' | 'payment' | 'journal';
+  date: string;
+  partyName: string;
+  description: string;
+  accountCode: string;
+  accountName: string;
+  costCenter: string;
+  paymentMethod: 'bank_transfer' | 'mada_pos' | 'cash' | 'cheque' | 'custody_deduction';
+  baseAmount: number;
+  vatAmount: number;
+  totalAmount: number;
+  referenceNumber?: string;
+  status: 'posted' | 'draft' | 'cancelled';
+}
+
+export interface AccountLedgerItem {
+  code: string;
+  nameAr: string;
+  categoryAr: 'الأصول' | 'الالتزامات' | 'حقوق الملكية' | 'الإيرادات' | 'المصروفات';
+  debit: number;
+  credit: number;
+  balance: number;
+}
+
 export interface AuditLogEntry {
   id: string;
   timestamp: string;
-  module: 'fleet' | 'vin_inventory' | 'leads' | 'workshop' | 'zatca' | 'offers' | 'cpo' | 'parts' | 'showrooms' | 'settings' | 'system';
+  module: 'fleet' | 'vin_inventory' | 'leads' | 'workshop' | 'zatca' | 'accounting' | 'offers' | 'cpo' | 'parts' | 'showrooms' | 'settings' | 'system';
   action: 'create' | 'update' | 'delete' | 'status_change' | 'convert' | 'reset';
   summaryAr: string;
   summaryEn: string;
@@ -229,22 +272,30 @@ export type ExportCSVType =
   | 'fleet' 
   | 'vin_stock' 
   | 'job_cards' 
-  | 'zatca_invoices' 
+  | 'zatca_invoices'
+  | 'accounting_vouchers'
+  | 'custodies'
+  | 'chart_of_accounts'
   | 'offers'
   | 'parts' 
   | 'cpo' 
-  | 'showrooms';
+  | 'showrooms'
+  | 'audit_logs'
+  | 'all_erp';
 
 export type ExportDatasetType = ExportCSVType | 'audit_logs' | 'all_erp';
 
 export type ExportFormatType =
   | 'excel'
   | 'csv'
+  | 'pdf_print'
+  | 'word'
   | 'json'
   | 'xml'
+  | 'sql'
   | 'html'
-  | 'txt'
-  | 'pdf_print';
+  | 'markdown'
+  | 'txt';
 
 interface StateSnapshot {
   vehicles: Vehicle[];
@@ -258,6 +309,8 @@ interface StateSnapshot {
   vinStock: VehicleStockItem[];
   jobCards: JobCard[];
   zatcaInvoices: InvoiceItem[];
+  custodies: CustodyRecord[];
+  vouchers: AccountingVoucher[];
   settings: DealershipSettings;
   partQuantities: Record<string, number>;
 }
@@ -274,6 +327,9 @@ interface AdminDataContextType {
   vinStock: VehicleStockItem[];
   jobCards: JobCard[];
   zatcaInvoices: InvoiceItem[];
+  custodies: CustodyRecord[];
+  vouchers: AccountingVoucher[];
+  chartOfAccounts: AccountLedgerItem[];
   auditLogs: AuditLogEntry[];
   settings: DealershipSettings;
   partQuantities: Record<string, number>;
@@ -356,6 +412,25 @@ interface AdminDataContextType {
   issueCreditNote: (invoiceId: string) => InvoiceItem | null;
   deleteZatcaInvoice: (id: string) => void;
 
+  // Accounting, Vouchers & Custodies Actions
+  addCustody: (custody: Omit<CustodyRecord, 'id' | 'custodyNumber' | 'remainingBalance' | 'lastSettlementDate'>) => CustodyRecord;
+  settleCustodyExpense: (custodyId: string, expenseAmount: number, description: string, vatIncluded?: boolean) => void;
+  replenishCustody: (custodyId: string, amountToAdd: number) => void;
+  closeCustody: (custodyId: string) => void;
+  deleteCustody: (custodyId: string) => void;
+  addVoucher: (voucher: Omit<AccountingVoucher, 'id' | 'voucherNumber' | 'date'>) => AccountingVoucher;
+  updateVoucherStatus: (id: string, status: AccountingVoucher['status']) => void;
+  deleteVoucher: (id: string) => void;
+  createReceiptFromInvoice: (invoiceId: string, paymentMethod?: AccountingVoucher['paymentMethod']) => AccountingVoucher | null;
+  exportSingleDocument: (
+    titleAr: string,
+    docNumber: string,
+    metaRows: Array<[string, string]>,
+    tableHeaders: string[],
+    tableRows: string[][],
+    format: ExportFormatType
+  ) => void;
+
   // Settings & Full Backup / Undo Actions
   updateSettings: (updated: Partial<DealershipSettings>) => void;
   undoAuditLog: (logId: string) => boolean;
@@ -395,6 +470,15 @@ interface AdminDataContextType {
     totalInvoicesCount: number;
     totalInvoicedSalesSAR: number;
     totalVatCollectedSAR: number;
+    totalReceiptsSAR: number;
+    totalPaymentsSAR: number;
+    netCashFlowSAR: number;
+    totalInputVatSAR: number;
+    netVatPayableSAR: number;
+    totalCustodiesAllocatedSAR: number;
+    totalCustodiesSpentSAR: number;
+    totalCustodiesRemainingSAR: number;
+    activeCustodiesCount: number;
   };
 
   resetToDefaultData: () => void;
@@ -883,6 +967,174 @@ const INITIAL_INVOICES: InvoiceItem[] = [
   }
 ];
 
+const INITIAL_CUSTODIES: CustodyRecord[] = [
+  {
+    id: 'cus-001',
+    custodyNumber: 'CUS-2026-801',
+    employeeName: 'م. أحمد الشريف',
+    employeeRole: 'مدير الصيانة والورش',
+    branchName: 'مركز خريص الرئيسي — الرياض',
+    custodyType: 'workshop_operations',
+    allocatedAmount: 50000,
+    spentAmount: 18450,
+    remainingBalance: 31550,
+    issueDate: '2026-08-01',
+    lastSettlementDate: '2026-08-24',
+    status: 'active',
+    notes: 'عهدة تشغيلية مستديمة لمشتريات الورشة السريعة والمستهلكات الفنية'
+  },
+  {
+    id: 'cus-002',
+    custodyNumber: 'CUS-2026-802',
+    employeeName: 'أ. تركي العتيبي',
+    employeeRole: 'مدير صالة العرض والمبيعات',
+    branchName: 'معرض طريق الملك فهد — جدة',
+    custodyType: 'showroom_hospitality',
+    allocatedAmount: 25000,
+    spentAmount: 9200,
+    remainingBalance: 15800,
+    issueDate: '2026-08-05',
+    lastSettlementDate: '2026-08-22',
+    status: 'active',
+    notes: 'عهدة ضيافة كبار العملاء VIP وتجهيز فعاليات تسليم المركبات الجديدة'
+  },
+  {
+    id: 'cus-003',
+    custodyNumber: 'CUS-2026-803',
+    employeeName: 'أ. نايف القحطاني',
+    employeeRole: 'أمين المستودع المركزي',
+    branchName: 'المستودع الإقليمي — الدمام',
+    custodyType: 'procurement_advance',
+    allocatedAmount: 35000,
+    spentAmount: 31500,
+    remainingBalance: 3500,
+    issueDate: '2026-08-10',
+    lastSettlementDate: '2026-08-25',
+    status: 'pending_settlement',
+    notes: 'سلفة تخليص جمركي ونقل سريع لشحنات قطع الغيار الأصلية OEM'
+  },
+  {
+    id: 'cus-004',
+    custodyNumber: 'CUS-2026-804',
+    employeeName: 'أ. فهد الدوسري',
+    employeeRole: 'مشرف الخدمات الإدارية',
+    branchName: 'الإدارة العامة — الرياض',
+    custodyType: 'permanent_petty_cash',
+    allocatedAmount: 15000,
+    spentAmount: 15000,
+    remainingBalance: 0,
+    issueDate: '2026-07-01',
+    lastSettlementDate: '2026-08-15',
+    status: 'settled_closed',
+    notes: 'تمت تسوية كامل الفواتير الضريبية وإقفال العهدة بموجب محضر مطابقة مالي'
+  }
+];
+
+const INITIAL_VOUCHERS: AccountingVoucher[] = [
+  {
+    id: 'vch-001',
+    voucherNumber: 'RV-2026-501',
+    type: 'receipt',
+    date: '2026-08-26 14:25:00',
+    partyName: 'عبد الرحمن بن عبد العزيز آل سعود',
+    description: 'سداد قيمة فاتورة بيع سيارة سولينا لاند كروزر LC300 VXR 2026',
+    accountCode: '4101',
+    accountName: 'إيرادات مبيعات السيارات الجديدة',
+    costCenter: 'مركز خريص الرئيسي — الرياض',
+    paymentMethod: 'bank_transfer',
+    baseAmount: 233300,
+    vatAmount: 34995,
+    totalAmount: 268295,
+    referenceNumber: 'SOL-INV-2026-00891',
+    status: 'posted'
+  },
+  {
+    id: 'vch-002',
+    voucherNumber: 'RV-2026-502',
+    type: 'receipt',
+    date: '2026-08-26 12:50:00',
+    partyName: 'فيصل محمد الشمري',
+    description: 'سداد فاتورة بيع سيارة سولينا كامري 2026 هايبرد قراندي',
+    accountCode: '4101',
+    accountName: 'إيرادات مبيعات السيارات الجديدة',
+    costCenter: 'معرض طريق المدينة — جدة',
+    paymentMethod: 'mada_pos',
+    baseAmount: 91695.65,
+    vatAmount: 13754.35,
+    totalAmount: 105450,
+    referenceNumber: 'SOL-INV-2026-00892',
+    status: 'posted'
+  },
+  {
+    id: 'vch-003',
+    voucherNumber: 'RV-2026-503',
+    type: 'receipt',
+    date: '2026-08-25 18:35:00',
+    partyName: 'سارة خالد القحطاني',
+    description: 'دفعة مبيعات سيارة سولينا كراون 2026 ماجستيك سيدان',
+    accountCode: '4101',
+    accountName: 'إيرادات مبيعات السيارات الجديدة',
+    costCenter: 'مركز خريص الرئيسي — الرياض',
+    paymentMethod: 'bank_transfer',
+    baseAmount: 155200,
+    vatAmount: 23280,
+    totalAmount: 178480,
+    referenceNumber: 'SOL-INV-2026-00893',
+    status: 'posted'
+  },
+  {
+    id: 'vch-004',
+    voucherNumber: 'PV-2026-301',
+    type: 'payment',
+    date: '2026-08-25 11:15:00',
+    partyName: 'شركة النقل البري واللوجستيات السعودية',
+    description: 'أجور شحن ونقل 14 مركبة من ميناء جدة الإسلامي إلى مستودع الرياض',
+    accountCode: '5102',
+    accountName: 'مصروفات الشحن والنقل والتخليص',
+    costCenter: 'المستودع المركزي — الرياض',
+    paymentMethod: 'bank_transfer',
+    baseAmount: 28000,
+    vatAmount: 4200,
+    totalAmount: 32200,
+    referenceNumber: 'CUS-2026-803',
+    status: 'posted'
+  },
+  {
+    id: 'vch-005',
+    voucherNumber: 'PV-2026-302',
+    type: 'payment',
+    date: '2026-08-24 16:40:00',
+    partyName: 'مؤسسة التجهيزات الصناعية للورش',
+    description: 'توريد زيوت تخليقية ومستهلكات فحص المسار السريع (تسوية عهدة الورشة)',
+    accountCode: '5203',
+    accountName: 'مصروفات تشغيل وصيانة الورش',
+    costCenter: 'مركز خريص الرئيسي — الرياض',
+    paymentMethod: 'custody_deduction',
+    baseAmount: 16043.48,
+    vatAmount: 2406.52,
+    totalAmount: 18450,
+    referenceNumber: 'CUS-2026-801',
+    status: 'posted'
+  },
+  {
+    id: 'vch-006',
+    voucherNumber: 'JV-2026-101',
+    type: 'journal',
+    date: '2026-08-24 09:00:00',
+    partyName: 'قيد استحقاق وتسوية العهدة الإدارية',
+    description: 'إقفال وتسوية عهدة المصروفات الإدارية والضيافة للفترة السابقة',
+    accountCode: '1104',
+    accountName: 'عُهد وسلف الموظفين',
+    costCenter: 'الإدارة العامة — الرياض',
+    paymentMethod: 'cash',
+    baseAmount: 13043.48,
+    vatAmount: 1956.52,
+    totalAmount: 15000,
+    referenceNumber: 'CUS-2026-804',
+    status: 'posted'
+  }
+];
+
 const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
   {
     id: 'log-init-1',
@@ -987,7 +1239,10 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     loadFromStorage('solina_admin_parts', 'toyota_admin_parts', GENUINE_PARTS)
   );
   const [showrooms, setShowrooms] = useState<Showroom[]>(() =>
-    loadFromStorage('solina_admin_showrooms', 'toyota_admin_showrooms', SHOWROOMS)
+    loadFromStorage('solina_admin_showrooms', 'toyota_admin_showrooms', SHOWROOMS).map(s => ({
+      ...s,
+      name: s.name.replace(/سولينا سولينا/g, 'سولينا')
+    }))
   );
   const [testDrives, setTestDrives] = useState<TestDriveLead[]>(() =>
     loadFromStorage('solina_admin_test_drives', 'toyota_admin_test_drives', INITIAL_TEST_DRIVES)
@@ -1006,6 +1261,12 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   );
   const [zatcaInvoices, setZatcaInvoices] = useState<InvoiceItem[]>(() =>
     loadFromStorage('solina_admin_zatca_invoices', null, INITIAL_INVOICES)
+  );
+  const [custodies, setCustodies] = useState<CustodyRecord[]>(() =>
+    loadFromStorage('solina_admin_custodies', null, INITIAL_CUSTODIES)
+  );
+  const [vouchers, setVouchers] = useState<AccountingVoucher[]>(() =>
+    loadFromStorage('solina_admin_vouchers', null, INITIAL_VOUCHERS)
   );
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(() =>
     loadFromStorage('solina_admin_audit_logs', null, INITIAL_AUDIT_LOGS)
@@ -1026,6 +1287,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     vinStock: JSON.parse(JSON.stringify(vinStock)),
     jobCards: JSON.parse(JSON.stringify(jobCards)),
     zatcaInvoices: JSON.parse(JSON.stringify(zatcaInvoices)),
+    custodies: JSON.parse(JSON.stringify(custodies)),
+    vouchers: JSON.parse(JSON.stringify(vouchers)),
     settings: JSON.parse(JSON.stringify(settings)),
     partQuantities: { ...partQuantities }
   });
@@ -1076,6 +1339,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setVinStock(snap.vinStock);
     setJobCards(snap.jobCards);
     setZatcaInvoices(snap.zatcaInvoices);
+    if (snap.custodies) setCustodies(snap.custodies);
+    if (snap.vouchers) setVouchers(snap.vouchers);
     setSettings(snap.settings);
     setPartQuantities(snap.partQuantities);
 
@@ -1142,6 +1407,14 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     localStorage.setItem('solina_admin_zatca_invoices', JSON.stringify(zatcaInvoices));
   }, [zatcaInvoices]);
+
+  useEffect(() => {
+    localStorage.setItem('solina_admin_custodies', JSON.stringify(custodies));
+  }, [custodies]);
+
+  useEffect(() => {
+    localStorage.setItem('solina_admin_vouchers', JSON.stringify(vouchers));
+  }, [vouchers]);
 
   useEffect(() => {
     localStorage.setItem('solina_admin_audit_logs', JSON.stringify(auditLogs));
@@ -1247,7 +1520,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `${nextState ? 'تمييز' : 'إلغاء تمييز'} ${target?.nameAr || vehicleId} على الصفحة الرئيسية`,
       `${nextState ? 'Featured' : 'Unfeatured'} ${target?.nameEn || vehicleId} on homepage`,
-      `الحالة: ${nextState ? 'مميزة بالرئيسية ★' : 'عرض قياسي'}`,
+      `الحالة: ${nextState ? 'مميزة بالرئيسية' : 'عرض قياسي'}`,
       undefined,
       snap
     );
@@ -1789,6 +2062,43 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     if (inv.type !== 'credit_note') {
       setVinStock(prev => prev.map(item => item.vin === inv.vinNumber ? { ...item, status: 'sold' } : item));
+      const autoReceipt: AccountingVoucher = {
+        id: `vch-${Date.now()}-inv`,
+        voucherNumber: `RV-2026-${501 + vouchers.length}`,
+        type: 'receipt',
+        date: dateStr,
+        partyName: inv.customerName,
+        description: `تحصيل تلقائي للفاتورة الضريبية ${invoiceNumber} — ${inv.vehicleModel}`,
+        accountCode: inv.sourceJobCardId ? '4102' : '4101',
+        accountName: inv.sourceJobCardId ? 'إيرادات خدمات الصيانة الدورية وقطع الغيار' : 'إيرادات مبيعات السيارات الجديدة والمستعملة',
+        costCenter: inv.sourceJobCardId ? 'الإدارة المالية — مركز الصيانة' : 'الإدارة المالية — المبيعات',
+        paymentMethod: inv.type === 'tax_invoice' ? 'bank_transfer' : 'mada_pos',
+        baseAmount: base,
+        vatAmount: vat,
+        totalAmount: total,
+        referenceNumber: invoiceNumber,
+        status: 'posted'
+      };
+      setVouchers(prev => [autoReceipt, ...prev]);
+    } else {
+      const autoRefundVoucher: AccountingVoucher = {
+        id: `vch-${Date.now()}-cn`,
+        voucherNumber: `PV-2026-${301 + vouchers.length}`,
+        type: 'payment',
+        date: dateStr,
+        partyName: inv.customerName,
+        description: `رد قيمة إشعار دائن ضريبي (${invoiceNumber}) مرجع ${inv.referenceInvoiceNumber || '-'}`,
+        accountCode: '4101',
+        accountName: 'مرتجعات وإشعارات دائنة للمبيعات',
+        costCenter: 'الإدارة المالية — التسويات الضريبية',
+        paymentMethod: 'bank_transfer',
+        baseAmount: Math.abs(base),
+        vatAmount: Math.abs(vat),
+        totalAmount: Math.abs(total),
+        referenceNumber: invoiceNumber,
+        status: 'posted'
+      };
+      setVouchers(prev => [autoRefundVoucher, ...prev]);
     }
 
     appendLog(
@@ -1823,6 +2133,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
 
     setZatcaInvoices(prev => prev.map(i => i.id === invoiceId ? { ...i, status: 'refunded' } : i));
+    setVinStock(prev => prev.map(item => item.vin === orig.vinNumber ? { ...item, status: 'in_stock' } : item));
     appendLog(
       'zatca',
       'create',
@@ -1899,6 +2210,294 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   // -------------------------------------------------------------
+  // 11B. Accounting, Vouchers & Custodies (العهد والخزينة والمحاسبة)
+  // -------------------------------------------------------------
+  const addCustody = (
+    custody: Omit<CustodyRecord, 'id' | 'custodyNumber' | 'remainingBalance' | 'lastSettlementDate'>
+  ): CustodyRecord => {
+    const snap = captureSnapshot();
+    const nextNum = 801 + custodies.length;
+    const today = new Date().toISOString().split('T')[0];
+    const newCustody: CustodyRecord = {
+      ...custody,
+      id: `cus-${Date.now()}`,
+      custodyNumber: `CUS-2026-${nextNum}`,
+      remainingBalance: Math.max(0, custody.allocatedAmount - (custody.spentAmount || 0)),
+      lastSettlementDate: today
+    };
+    setCustodies(prev => [newCustody, ...prev]);
+
+    // Also create a payment voucher for issuing the custody
+    const vch: AccountingVoucher = {
+      id: `vch-${Date.now()}-cus`,
+      voucherNumber: `PV-2026-${301 + vouchers.length}`,
+      type: 'payment',
+      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      partyName: custody.employeeName,
+      description: `صرف عهدة مالية جديدة (${newCustody.custodyNumber}) — ${custody.notes || custody.branchName}`,
+      accountCode: '1104',
+      accountName: 'عُهد وسلف الموظفين',
+      costCenter: custody.branchName,
+      paymentMethod: 'bank_transfer',
+      baseAmount: custody.allocatedAmount,
+      vatAmount: 0,
+      totalAmount: custody.allocatedAmount,
+      referenceNumber: newCustody.custodyNumber,
+      status: 'posted'
+    };
+    setVouchers(prev => [vch, ...prev]);
+
+    appendLog(
+      'accounting',
+      'create',
+      `صرف عهدة مالية جديدة ${newCustody.custodyNumber} للموظف: ${custody.employeeName}`,
+      `Issued new custody ${newCustody.custodyNumber} to ${custody.employeeName}`,
+      `المبلغ المعتمد: ${custody.allocatedAmount.toLocaleString('ar-SA')} ر.س • الفرع: ${custody.branchName}`,
+      undefined,
+      snap
+    );
+    return newCustody;
+  };
+
+  const settleCustodyExpense = (
+    custodyId: string,
+    expenseAmount: number,
+    description: string,
+    vatIncluded: boolean = true
+  ) => {
+    const target = custodies.find(c => c.id === custodyId);
+    if (!target || expenseAmount <= 0) return;
+    const snap = captureSnapshot();
+    const today = new Date().toISOString().split('T')[0];
+
+    setCustodies(prev =>
+      prev.map(c => {
+        if (c.id !== custodyId) return c;
+        const nextSpent = c.spentAmount + expenseAmount;
+        const nextRem = Math.max(0, c.allocatedAmount - nextSpent);
+        return {
+          ...c,
+          spentAmount: nextSpent,
+          remainingBalance: nextRem,
+          lastSettlementDate: today,
+          status: nextRem === 0 ? 'settled_closed' : nextRem <= c.allocatedAmount * 0.15 ? 'pending_settlement' : c.status
+        };
+      })
+    );
+
+    const baseAmt = vatIncluded ? Number((expenseAmount / 1.15).toFixed(2)) : expenseAmount;
+    const vatAmt = vatIncluded ? Number((expenseAmount - baseAmt).toFixed(2)) : 0;
+
+    const expenseVoucher: AccountingVoucher = {
+      id: `vch-${Date.now()}`,
+      voucherNumber: `PV-2026-${301 + vouchers.length}`,
+      type: 'payment',
+      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      partyName: target.employeeName,
+      description: `تسوية مصروف من عهدة ${target.custodyNumber}: ${description}`,
+      accountCode: '5203',
+      accountName: 'مصروفات تشغيل وصيانة الفروع',
+      costCenter: target.branchName,
+      paymentMethod: 'custody_deduction',
+      baseAmount: baseAmt,
+      vatAmount: vatAmt,
+      totalAmount: expenseAmount,
+      referenceNumber: target.custodyNumber,
+      status: 'posted'
+    };
+    setVouchers(prev => [expenseVoucher, ...prev]);
+
+    appendLog(
+      'accounting',
+      'update',
+      `تسوية مصروف من العهدة ${target.custodyNumber} (${target.employeeName})`,
+      `Settled expense on custody ${target.custodyNumber}`,
+      `المبلغ المسوى: ${expenseAmount.toLocaleString('ar-SA')} ر.س • البيان: ${description}`,
+      undefined,
+      snap
+    );
+  };
+
+  const replenishCustody = (custodyId: string, amountToAdd: number) => {
+    const target = custodies.find(c => c.id === custodyId);
+    if (!target || amountToAdd <= 0) return;
+    const snap = captureSnapshot();
+    const today = new Date().toISOString().split('T')[0];
+
+    setCustodies(prev =>
+      prev.map(c =>
+        c.id === custodyId
+          ? {
+              ...c,
+              allocatedAmount: c.allocatedAmount + amountToAdd,
+              remainingBalance: c.remainingBalance + amountToAdd,
+              lastSettlementDate: today,
+              status: 'active'
+            }
+          : c
+      )
+    );
+
+    const replenishVoucher: AccountingVoucher = {
+      id: `vch-${Date.now()}-rep`,
+      voucherNumber: `PV-2026-${301 + vouchers.length}`,
+      type: 'payment',
+      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      partyName: target.employeeName,
+      description: `تغذية وزيادة سقف العهدة المالية ${target.custodyNumber} — ${target.branchName}`,
+      accountCode: '1104',
+      accountName: 'عُهد وسلف الموظفين',
+      costCenter: target.branchName,
+      paymentMethod: 'bank_transfer',
+      baseAmount: amountToAdd,
+      vatAmount: 0,
+      totalAmount: amountToAdd,
+      referenceNumber: target.custodyNumber,
+      status: 'posted'
+    };
+    setVouchers(prev => [replenishVoucher, ...prev]);
+
+    appendLog(
+      'accounting',
+      'update',
+      `تغذية وزيادة سقف العهدة ${target.custodyNumber} (${target.employeeName})`,
+      `Replenished custody ${target.custodyNumber}`,
+      `مبلغ التغذية الإضافي: +${amountToAdd.toLocaleString('ar-SA')} ر.س`,
+      undefined,
+      snap
+    );
+  };
+
+  const closeCustody = (custodyId: string) => {
+    const target = custodies.find(c => c.id === custodyId);
+    if (!target) return;
+    const snap = captureSnapshot();
+    const today = new Date().toISOString().split('T')[0];
+
+    setCustodies(prev =>
+      prev.map(c =>
+        c.id === custodyId
+          ? {
+              ...c,
+              remainingBalance: 0,
+              spentAmount: c.allocatedAmount,
+              lastSettlementDate: today,
+              status: 'settled_closed'
+            }
+          : c
+      )
+    );
+
+    appendLog(
+      'accounting',
+      'status_change',
+      `إقفال وإخلاء طرف العهدة المالية ${target.custodyNumber} (${target.employeeName})`,
+      `Closed and cleared custody ${target.custodyNumber}`,
+      `إجمالي المبلغ المسوى: ${target.allocatedAmount.toLocaleString('ar-SA')} ر.س`,
+      undefined,
+      snap
+    );
+  };
+
+  const deleteCustody = (custodyId: string) => {
+    const target = custodies.find(c => c.id === custodyId);
+    const snap = captureSnapshot();
+    setCustodies(prev => prev.filter(c => c.id !== custodyId));
+    appendLog(
+      'accounting',
+      'delete',
+      `حذف سجل العهدة: ${target?.custodyNumber || custodyId}`,
+      `Deleted custody ${target?.custodyNumber || custodyId}`,
+      undefined,
+      undefined,
+      snap
+    );
+  };
+
+  const addVoucher = (
+    voucher: Omit<AccountingVoucher, 'id' | 'voucherNumber' | 'date'>
+  ): AccountingVoucher => {
+    const snap = captureSnapshot();
+    const prefix = voucher.type === 'receipt' ? 'RV' : voucher.type === 'payment' ? 'PV' : 'JV';
+    const baseNum = voucher.type === 'receipt' ? 501 : voucher.type === 'payment' ? 301 : 101;
+    const nextNum = baseNum + vouchers.length;
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+    const newVoucher: AccountingVoucher = {
+      ...voucher,
+      id: `vch-${Date.now()}`,
+      voucherNumber: `${prefix}-2026-${nextNum}`,
+      date: nowStr
+    };
+
+    setVouchers(prev => [newVoucher, ...prev]);
+    appendLog(
+      'accounting',
+      'create',
+      `إصدار ${voucher.type === 'receipt' ? 'سند قبض' : voucher.type === 'payment' ? 'سند صرف' : 'قيد يومية'} رقم ${newVoucher.voucherNumber}`,
+      `Issued ${voucher.type} voucher ${newVoucher.voucherNumber}`,
+      `الطرف: ${voucher.partyName} • المبلغ: ${voucher.totalAmount.toLocaleString('ar-SA')} ر.س`,
+      undefined,
+      snap
+    );
+    return newVoucher;
+  };
+
+  const updateVoucherStatus = (id: string, status: AccountingVoucher['status']) => {
+    const snap = captureSnapshot();
+    setVouchers(prev => prev.map(v => (v.id === id ? { ...v, status } : v)));
+    appendLog(
+      'accounting',
+      'status_change',
+      `تحديث حالة السند المحاسبي إلى: ${status}`,
+      `Updated voucher status to ${status}`,
+      undefined,
+      undefined,
+      snap
+    );
+  };
+
+  const deleteVoucher = (id: string) => {
+    const target = vouchers.find(v => v.id === id);
+    const snap = captureSnapshot();
+    setVouchers(prev => prev.filter(v => v.id !== id));
+    appendLog(
+      'accounting',
+      'delete',
+      `حذف السند المحاسبي: ${target?.voucherNumber || id}`,
+      `Deleted accounting voucher ${target?.voucherNumber || id}`,
+      undefined,
+      undefined,
+      snap
+    );
+  };
+
+  const createReceiptFromInvoice = (
+    invoiceId: string,
+    paymentMethod: AccountingVoucher['paymentMethod'] = 'bank_transfer'
+  ): AccountingVoucher | null => {
+    const inv = zatcaInvoices.find(i => i.id === invoiceId);
+    if (!inv) return null;
+    const existing = vouchers.find(v => v.referenceNumber === inv.invoiceNumber && v.type === 'receipt');
+    if (existing) return existing;
+
+    return addVoucher({
+      type: 'receipt',
+      partyName: inv.customerName,
+      description: `تحصيل قيمة الفاتورة الضريبية ${inv.invoiceNumber} (${inv.vehicleModel})`,
+      accountCode: '4101',
+      accountName: 'إيرادات مبيعات السيارات والصيانة',
+      costCenter: 'الإدارة المالية — الرياض',
+      paymentMethod,
+      baseAmount: inv.baseAmount,
+      vatAmount: inv.vatAmount,
+      totalAmount: inv.totalAmount,
+      referenceNumber: inv.invoiceNumber,
+      status: 'posted'
+    });
+  };
+
+  // -------------------------------------------------------------
   // 12. Settings & Full Backup JSON Import/Export
   // -------------------------------------------------------------
   const updateSettings = (updated: Partial<DealershipSettings>) => {
@@ -1938,7 +2537,10 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       quotations,
       vinStock,
       jobCards,
-      zatcaInvoices
+      zatcaInvoices,
+      custodies,
+      vouchers,
+      chartOfAccounts
     };
     const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1965,6 +2567,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (Array.isArray(parsed.vinStock)) setVinStock(parsed.vinStock);
       if (Array.isArray(parsed.jobCards)) setJobCards(parsed.jobCards);
       if (Array.isArray(parsed.zatcaInvoices)) setZatcaInvoices(parsed.zatcaInvoices);
+      if (Array.isArray(parsed.custodies)) setCustodies(parsed.custodies);
+      if (Array.isArray(parsed.vouchers)) setVouchers(parsed.vouchers);
       if (parsed.settings) setSettings(parsed.settings);
       if (parsed.partQuantities) setPartQuantities(parsed.partQuantities);
 
@@ -2093,6 +2697,59 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           o.id, o.title, o.subtitle, o.category, o.badge, o.validUntil
         ])
       };
+    } else if (type === 'accounting_vouchers') {
+      return {
+        titleAr: 'سجل سندات القبض والصرف والقيود المحاسبية — سولينا للسيارات',
+        headers: ['رقم السند', 'نوع السند', 'التاريخ', 'اسم العميل / المستفيد', 'البيان المحاسبي', 'رقم الحساب', 'اسم الحساب', 'مركز التكلفة', 'طريقة الدفع', 'المبلغ الأساسي (ر.س)', 'الضريبة 15% (ر.س)', 'الإجمالي (ر.س)', 'المرجع المرتبط', 'الحالة'],
+        rows: vouchers.map(v => [
+          v.voucherNumber,
+          v.type === 'receipt' ? 'سند قبض' : v.type === 'payment' ? 'سند صرف' : 'قيد يومية',
+          v.date,
+          v.partyName,
+          v.description,
+          v.accountCode,
+          v.accountName,
+          v.costCenter,
+          v.paymentMethod,
+          v.baseAmount.toString(),
+          v.vatAmount.toString(),
+          v.totalAmount.toString(),
+          v.referenceNumber || '-',
+          v.status === 'posted' ? 'مرحّل' : v.status === 'draft' ? 'مسودة' : 'ملغى'
+        ])
+      };
+    } else if (type === 'custodies') {
+      return {
+        titleAr: 'سجل العُهد المالية والسلف التشغيلية للموظفين والفروع — سولينا',
+        headers: ['رقم العهدة', 'الموظف المستلم', 'المسمى الوظيفي', 'الفرع / القسم', 'نوع العهدة', 'المبلغ المعتمد (ر.س)', 'المبلغ المصروف والمسوى (ر.س)', 'الرصيد المتبقي (ر.س)', 'تاريخ الصرف', 'آخر تسوية', 'الحالة', 'ملاحظات'],
+        rows: custodies.map(c => [
+          c.custodyNumber,
+          c.employeeName,
+          c.employeeRole,
+          c.branchName,
+          c.custodyType === 'permanent_petty_cash' ? 'عهدة نقدية مستديمة' : c.custodyType === 'workshop_operations' ? 'عهدة تشغيل ورشة' : c.custodyType === 'showroom_hospitality' ? 'عهدة ضيافة ومعارض' : 'سلفة مشتريات',
+          c.allocatedAmount.toString(),
+          c.spentAmount.toString(),
+          c.remainingBalance.toString(),
+          c.issueDate,
+          c.lastSettlementDate,
+          c.status === 'active' ? 'نشطة' : c.status === 'pending_settlement' ? 'قيد التسوية' : 'مسددة ومقفلة',
+          c.notes || '-'
+        ])
+      };
+    } else if (type === 'chart_of_accounts') {
+      return {
+        titleAr: 'دليل الحسابات وميزان المراجعة المالي (Chart of Accounts & Trial Balance) — سولينا',
+        headers: ['كود الحساب', 'اسم الحساب المحاسبي', 'التصنيف المالي', 'إجمالي المدين (ر.س)', 'إجمالي الدائن (ر.س)', 'الرصيد الصافي (ر.س)'],
+        rows: chartOfAccounts.map(acc => [
+          acc.code,
+          acc.nameAr,
+          acc.categoryAr,
+          acc.debit.toString(),
+          acc.credit.toString(),
+          acc.balance.toString()
+        ])
+      };
     } else if (type === 'audit_logs') {
       return {
         titleAr: 'سجل المراجعة والتدقيق الإداري (Audit Log) — سولينا',
@@ -2110,11 +2767,16 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           ...vehicles.map(v => ['الأسطول الجديد 2026', v.id, v.nameAr, `${v.category} • ${v.engineSpec}`, v.priceStartingFrom.toString(), v.isFeatured ? 'مميز' : 'نشط']),
           ...vinStock.map(s => ['مخزون الشاسيه VIN', s.vin, s.model, `${s.trim} • ${s.color}`, s.price.toString(), `${s.location} (${s.status})`]),
           ...zatcaInvoices.map(i => ['فواتير ZATCA', i.invoiceNumber, i.customerName, `${i.vehicleModel} (${i.vinNumber})`, i.totalAmount.toString(), i.status]),
+          ...vouchers.map(v => ['السندات المحاسبية', v.voucherNumber, v.partyName, `${v.description} (${v.accountCode})`, v.totalAmount.toString(), v.status]),
+          ...custodies.map(c => ['العهد المالية', c.custodyNumber, c.employeeName, `${c.branchName} • المتبقي: ${c.remainingBalance}`, c.allocatedAmount.toString(), c.status]),
           ...quotations.map(q => ['عروض الأسعار', q.quotationNumber, q.fullName, `${q.vehicleName} (${q.gradeName})`, q.totalWithVat.toString(), q.status]),
           ...jobCards.map(c => ['أوامر عمل الورشة', c.cardNumber, c.customerName, `${c.vehicleModel} • ${c.serviceType}`, c.totalCost.toString(), c.status]),
           ...testDrives.map(t => ['تجارب القيادة', t.id, t.fullName, `${t.modelName} • ${t.preferredDate}`, '0', `${t.preferredShowroom} (${t.status})`]),
           ...serviceAppointments.map(s => ['مواعيد الصيانة', s.id, s.fullName, `${s.vehicleModel} • ${s.serviceType}`, s.estimatedCost.toString(), s.status]),
-          ...spareParts.map(p => ['قطع الغيار الأصلية', p.partNumber, p.nameAr, `${p.category} • المخزون: ${partQuantities[p.id] ?? 20}`, p.price.toString(), 'متوفر'])
+          ...spareParts.map(p => ['قطع الغيار الأصلية', p.partNumber, p.nameAr, `${p.category} • المخزون: ${partQuantities[p.id] ?? 20}`, p.price.toString(), 'متوفر']),
+          ...cpoVehicles.map(c => ['المستعمل المعتمد', c.id, c.titleAr, `${c.year} • ${c.mileage} كم`, c.price.toString(), c.location]),
+          ...offers.map(o => ['العروض الترويجية', o.id, o.title, `${o.category} • ${o.badge}`, '0', o.validUntil]),
+          ...showrooms.map(sh => ['فروع وصالات العرض', sh.id, sh.name, `${sh.city} • ${sh.phone}`, '0', sh.region])
         ]
       };
     }
@@ -2193,6 +2855,9 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               quotations,
               jobCards,
               zatcaInvoices,
+              custodies,
+              vouchers,
+              chartOfAccounts,
               spareParts,
               partQuantities,
               cpoVehicles,
@@ -2280,7 +2945,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 </head>
 <body>
   <div class="toolbar no-print">
-    <button onclick="window.print()" style="background:#141414;color:#fff;border:0;padding:10px 20px;border-radius:999px;font-weight:bold;cursor:pointer;">🖨️ طباعة / حفظ كملف PDF</button>
+    <button onclick="window.print()" style="background:#141414;color:#fff;border:0;padding:10px 20px;border-radius:999px;font-weight:bold;cursor:pointer;">طباعة / حفظ كملف PDF</button>
   </div>
   <div class="header">
     <div>
@@ -2300,6 +2965,62 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 </body>
 </html>`;
 
+    if (format === 'word') {
+      const wordHtml = `\uFEFF<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar">
+<head><meta charset="UTF-8"><title>${escapeXml(titleAr)}</title>
+<style>
+  body { font-family: 'Arial', 'Tahoma', sans-serif; direction: rtl; color: #141414; padding: 24px; }
+  .header { border-bottom: 2px solid #141414; padding-bottom: 12px; margin-bottom: 20px; }
+  h1 { font-size: 18pt; margin: 0 0 6px 0; }
+  .meta { font-size: 10pt; color: #555555; }
+  table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 12px; }
+  th { background-color: #141414; color: #ffffff; padding: 8px; border: 1px solid #141414; text-align: right; }
+  td { padding: 7px; border: 1px solid #cccccc; text-align: right; }
+</style></head>
+<body>
+  <div class="header">
+    <h1>${escapeXml(titleAr)}</h1>
+    <div class="meta">${escapeXml(settings.companyNameAr)} | الرقم الضريبي: ${escapeXml(settings.vatNumber)} | السجل التجاري: ${escapeXml(settings.crNumber)} | التاريخ: ${dateStamp} | إجمالي السجلات: ${rows.length}</div>
+  </div>
+  <table>
+    <thead><tr>${headers.map(h => `<th>${escapeXml(h)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${escapeXml(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table>
+</body></html>`;
+      triggerBlobDownload(wordHtml, 'application/msword;charset=utf-8;', `${baseFilename}.doc`);
+      return;
+    }
+
+    if (format === 'sql') {
+      const tableName = `solina_${type}`;
+      const colNames = headers.map((_, idx) => `col_${idx + 1}`);
+      const createTableSql = [
+        `-- ==========================================================`,
+        `-- Solina Motors ERP SQL Dump: ${titleAr}`,
+        `-- VAT Number: ${settings.vatNumber} | Exported At: ${new Date().toISOString()}`,
+        `-- ==========================================================`,
+        `CREATE TABLE IF NOT EXISTS ${tableName} (`,
+        colNames.map((c, idx) => `  ${c} TEXT COMMENT '${String(headers[idx]).replace(/'/g, "''")}'`).join(',\n'),
+        `);\n`
+      ].join('\n');
+
+      const insertRowsSql = rows.map(r => {
+        const vals = r.map(v => `'${String(v ?? '').replace(/'/g, "''")}'`).join(', ');
+        return `INSERT INTO ${tableName} (${colNames.join(', ')}) VALUES (${vals});`;
+      }).join('\n');
+
+      triggerBlobDownload('\uFEFF' + createTableSql + insertRowsSql + '\n', 'application/sql;charset=utf-8;', `${baseFilename}.sql`);
+      return;
+    }
+
+    if (format === 'markdown') {
+      const mdHeader = `# ${titleAr}\n\n- **المنشأة:** ${settings.companyNameAr}\n- **الرقم الضريبي:** ${settings.vatNumber}\n- **تاريخ التصدير:** ${dateStamp}\n- **إجمالي السجلات:** ${rows.length}\n\n`;
+      const mdTableHead = `| ${headers.join(' | ')} |\n| ${headers.map(() => '---').join(' | ')} |\n`;
+      const mdTableBody = rows.map(r => `| ${r.map(c => String(c ?? '').replace(/\|/g, '\\|')).join(' | ')} |`).join('\n');
+      triggerBlobDownload('\uFEFF' + mdHeader + mdTableHead + mdTableBody + '\n', 'text/markdown;charset=utf-8;', `${baseFilename}.md`);
+      return;
+    }
+
     if (format === 'html') {
       triggerBlobDownload(reportHtmlDocument, 'text/html;charset=utf-8;', `${baseFilename}.html`);
       return;
@@ -2318,6 +3039,128 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       } else {
         window.print();
       }
+    }
+  };
+
+  const exportSingleDocument = (
+    titleAr: string,
+    docNumber: string,
+    metaRows: Array<[string, string]>,
+    tableHeaders: string[],
+    tableRows: string[][],
+    format: ExportFormatType
+  ) => {
+    const safeDoc = docNumber.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const baseFilename = `solina_doc_${safeDoc}`;
+
+    if (format === 'json') {
+      const payload = {
+        agency: settings.companyNameAr,
+        vatNumber: settings.vatNumber,
+        crNumber: settings.crNumber,
+        documentTitle: titleAr,
+        documentNumber: docNumber,
+        metadata: Object.fromEntries(metaRows),
+        items: tableRows.map(r => Object.fromEntries(tableHeaders.map((h, i) => [h, r[i] ?? ''])))
+      };
+      triggerBlobDownload(JSON.stringify(payload, null, 2), 'application/json;charset=utf-8;', `${baseFilename}.json`);
+      return;
+    }
+
+    if (format === 'csv') {
+      const lines = [
+        `"${titleAr}","${docNumber}"`,
+        ...metaRows.map(([k, v]) => `"${k}","${String(v).replace(/"/g, '""')}"`),
+        '',
+        tableHeaders.map(h => `"${h}"`).join(','),
+        ...tableRows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(','))
+      ];
+      triggerBlobDownload('\uFEFF' + lines.join('\n'), 'text/csv;charset=utf-8;', `${baseFilename}.csv`);
+      return;
+    }
+
+    if (format === 'xml') {
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<SolinaDocument number="${escapeXml(docNumber)}" title="${escapeXml(titleAr)}" vatNumber="${escapeXml(settings.vatNumber)}">
+  <Metadata>
+${metaRows.map(([k, v]) => `    <Meta label="${escapeXml(k)}">${escapeXml(v)}</Meta>`).join('\n')}
+  </Metadata>
+  <LineItems>
+${tableRows.map((r, idx) => `    <Item index="${idx + 1}">\n${tableHeaders.map((h, cIdx) => `      <Field name="${escapeXml(h)}">${escapeXml(r[cIdx] ?? '')}</Field>`).join('\n')}\n    </Item>`).join('\n')}
+  </LineItems>
+</SolinaDocument>`;
+      triggerBlobDownload(xml, 'application/xml;charset=utf-8;', `${baseFilename}.xml`);
+      return;
+    }
+
+    const docHtml = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>${escapeXml(titleAr)} - ${escapeXml(docNumber)}</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #ffffff; color: #141414; margin: 0; padding: 36px; direction: rtl; }
+    .box { max-width: 860px; margin: 0 auto; border: 1px solid #141414; border-radius: 20px; padding: 28px; }
+    .top { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #141414; padding-bottom: 16px; margin-bottom: 20px; }
+    h1 { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; }
+    .sub { font-size: 12px; color: #555; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #f3f3f3; padding: 16px; border-radius: 14px; margin-bottom: 20px; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    th { background: #141414; color: #fff; padding: 10px; text-align: right; }
+    td { padding: 10px; border-bottom: 1px solid #e0e0e0; text-align: right; }
+    .sigs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; padding-top: 16px; border-top: 1px dashed #cccccc; text-align: center; font-size: 12px; color: #555; }
+    @media print { .no-print { display: none !important; } body { padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="no-print" style="margin-bottom:16px;">
+      <button onclick="window.print()" style="background:#141414;color:#fff;border:0;padding:8px 18px;border-radius:999px;font-weight:bold;cursor:pointer;">طباعة / حفظ كملف PDF</button>
+    </div>
+    <div class="top">
+      <div>
+        <h1>${escapeXml(titleAr)}</h1>
+        <div class="sub">${escapeXml(settings.companyNameAr)} • الرقم الضريبي: ${escapeXml(settings.vatNumber)} • س.ت: ${escapeXml(settings.crNumber)}</div>
+      </div>
+      <div style="background:#141414;color:#fff;padding:6px 14px;border-radius:999px;font-weight:bold;font-size:13px;">${escapeXml(docNumber)}</div>
+    </div>
+    <div class="grid">
+      ${metaRows.map(([k, v]) => `<div><strong>${escapeXml(k)}:</strong> ${escapeXml(v)}</div>`).join('')}
+    </div>
+    <table>
+      <thead><tr>${tableHeaders.map(h => `<th>${escapeXml(h)}</th>`).join('')}</tr></thead>
+      <tbody>${tableRows.map(r => `<tr>${r.map(c => `<td>${escapeXml(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>
+    <div class="sigs">
+      <div>إعداد المحاسب المختص<br/><br/>___________________</div>
+      <div>اعتماد المدير المالي<br/><br/>___________________</div>
+      <div>توقيع المستلم / الطرف الثاني<br/><br/>___________________</div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    if (format === 'excel') {
+      triggerBlobDownload('\uFEFF' + docHtml, 'application/vnd.ms-excel;charset=utf-8;', `${baseFilename}.xls`);
+      return;
+    }
+    if (format === 'word') {
+      triggerBlobDownload('\uFEFF' + docHtml, 'application/msword;charset=utf-8;', `${baseFilename}.doc`);
+      return;
+    }
+    if (format === 'html') {
+      triggerBlobDownload(docHtml, 'text/html;charset=utf-8;', `${baseFilename}.html`);
+      return;
+    }
+    const printWin = window.open('', '_blank', 'width=960,height=780');
+    if (printWin) {
+      printWin.document.open();
+      printWin.document.write(docHtml);
+      printWin.document.close();
+      setTimeout(() => {
+        printWin.focus();
+        printWin.print();
+      }, 300);
     }
   };
 
@@ -2350,7 +3193,11 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setZatcaInvoices(INITIAL_INVOICES);
     setSettings(INITIAL_SETTINGS);
     setPartQuantities(INITIAL_PART_QUANTITIES);
+    setCustodies(INITIAL_CUSTODIES);
+    setVouchers(INITIAL_VOUCHERS);
     setAuditLogs(INITIAL_AUDIT_LOGS);
+    localStorage.removeItem('solina_admin_custodies');
+    localStorage.removeItem('solina_admin_vouchers');
     undoSnapshotsRef.current = {};
 
     const keys = [
@@ -2391,6 +3238,119 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const totalVatCollectedSAR = zatcaInvoices.reduce((acc, inv) => acc + inv.vatAmount, 0);
   const lowStockPartsCount = spareParts.filter(p => (partQuantities[p.id] ?? 20) <= 10).length;
 
+  const postedVouchers = vouchers.filter(v => v.status === 'posted');
+  const totalReceiptsSAR = postedVouchers.filter(v => v.type === 'receipt').reduce((acc, v) => acc + v.totalAmount, 0);
+  const totalPaymentsSAR = postedVouchers.filter(v => v.type === 'payment').reduce((acc, v) => acc + v.totalAmount, 0);
+  const netCashFlowSAR = totalReceiptsSAR - totalPaymentsSAR;
+  const totalInputVatSAR = postedVouchers.filter(v => v.type === 'payment').reduce((acc, v) => acc + v.vatAmount, 0);
+  const netVatPayableSAR = Math.max(0, totalVatCollectedSAR - totalInputVatSAR);
+
+  const totalCustodiesAllocatedSAR = custodies.reduce((acc, c) => acc + c.allocatedAmount, 0);
+  const totalCustodiesSpentSAR = custodies.reduce((acc, c) => acc + c.spentAmount, 0);
+  const totalCustodiesRemainingSAR = custodies.reduce((acc, c) => acc + c.remainingBalance, 0);
+  const activeCustodiesCount = custodies.filter(c => c.status !== 'settled_closed').length;
+
+  const partsInventoryValueSAR = spareParts.reduce((acc, p) => acc + p.price * (partQuantities[p.id] ?? 20), 0);
+
+  const chartOfAccounts: AccountLedgerItem[] = [
+    {
+      code: '1101',
+      nameAr: 'النقدية بالخزينة والحسابات البنكية المعتمدة',
+      categoryAr: 'الأصول',
+      debit: totalReceiptsSAR + 2450000,
+      credit: totalPaymentsSAR,
+      balance: 2450000 + netCashFlowSAR
+    },
+    {
+      code: '1104',
+      nameAr: 'عُهد وسلف الموظفين والفروع التشغيلة',
+      categoryAr: 'الأصول',
+      debit: totalCustodiesAllocatedSAR,
+      credit: totalCustodiesSpentSAR,
+      balance: totalCustodiesRemainingSAR
+    },
+    {
+      code: '1105',
+      nameAr: 'ذمم العملاء وعقود التمويل تحت التحصيل',
+      categoryAr: 'الأصول',
+      debit: totalPipelineValueSAR,
+      credit: totalReceiptsSAR,
+      balance: Math.max(0, totalPipelineValueSAR - totalReceiptsSAR)
+    },
+    {
+      code: '1201',
+      nameAr: 'مخزون المركبات الجديدة والمستودعات (VIN Stock)',
+      categoryAr: 'الأصول',
+      debit: totalVinStockValueSAR,
+      credit: 0,
+      balance: totalVinStockValueSAR
+    },
+    {
+      code: '1202',
+      nameAr: 'مخزون قطع الغيار الأصلية والإكسسوارات (OEM)',
+      categoryAr: 'الأصول',
+      debit: partsInventoryValueSAR,
+      credit: 0,
+      balance: partsInventoryValueSAR
+    },
+    {
+      code: '2101',
+      nameAr: 'ذمم الموردين والوكالات والشحن الدولي',
+      categoryAr: 'الالتزامات',
+      debit: totalPaymentsSAR,
+      credit: 1850000,
+      balance: 1850000 - totalPaymentsSAR
+    },
+    {
+      code: '2104',
+      nameAr: 'حساب ضريبة القيمة المضافة المستحقة (ZATCA 15%)',
+      categoryAr: 'الالتزامات',
+      debit: totalInputVatSAR,
+      credit: totalVatCollectedSAR,
+      balance: netVatPayableSAR
+    },
+    {
+      code: '3101',
+      nameAr: 'رأس المال العامل والاحتياطي النظامي للوكالة',
+      categoryAr: 'حقوق الملكية',
+      debit: 0,
+      credit: 15000000,
+      balance: 15000000
+    },
+    {
+      code: '4101',
+      nameAr: 'إيرادات مبيعات السيارات الجديدة والمستعملة',
+      categoryAr: 'الإيرادات',
+      debit: 0,
+      credit: totalInvoicedSalesSAR - totalVatCollectedSAR,
+      balance: totalInvoicedSalesSAR - totalVatCollectedSAR
+    },
+    {
+      code: '4102',
+      nameAr: 'إيرادات خدمات الصيانة الدورية وقطع الغيار',
+      categoryAr: 'الإيرادات',
+      debit: 0,
+      credit: workshopRevenueSAR,
+      balance: workshopRevenueSAR
+    },
+    {
+      code: '5102',
+      nameAr: 'مصروفات الشحن والنقل والتخليص الجمركي',
+      categoryAr: 'المصروفات',
+      debit: 32200,
+      credit: 0,
+      balance: 32200
+    },
+    {
+      code: '5203',
+      nameAr: 'مصروفات تشغيل وصيانة الفروع والورش والعُهد',
+      categoryAr: 'المصروفات',
+      debit: totalCustodiesSpentSAR,
+      credit: 0,
+      balance: totalCustodiesSpentSAR
+    }
+  ];
+
   const stats = {
     totalTestDrives: testDrives.length,
     newTestDrivesCount,
@@ -2415,7 +3375,16 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     workshopRevenueSAR,
     totalInvoicesCount: zatcaInvoices.length,
     totalInvoicedSalesSAR,
-    totalVatCollectedSAR
+    totalVatCollectedSAR,
+    totalReceiptsSAR,
+    totalPaymentsSAR,
+    netCashFlowSAR,
+    totalInputVatSAR,
+    netVatPayableSAR,
+    totalCustodiesAllocatedSAR,
+    totalCustodiesSpentSAR,
+    totalCustodiesRemainingSAR,
+    activeCustodiesCount
   };
 
   return (
@@ -2432,6 +3401,9 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         vinStock,
         jobCards,
         zatcaInvoices,
+        custodies,
+        vouchers,
+        chartOfAccounts,
         auditLogs,
         settings,
         partQuantities,
@@ -2486,6 +3458,16 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         updateZatcaInvoiceStatus,
         issueCreditNote,
         deleteZatcaInvoice,
+        addCustody,
+        settleCustodyExpense,
+        replenishCustody,
+        closeCustody,
+        deleteCustody,
+        addVoucher,
+        updateVoucherStatus,
+        deleteVoucher,
+        createReceiptFromInvoice,
+        exportSingleDocument,
         updateSettings,
         undoAuditLog,
         exportFullBackupJSON,

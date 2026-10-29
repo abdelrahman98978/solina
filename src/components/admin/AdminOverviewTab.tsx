@@ -15,7 +15,9 @@ import {
   Tag,
   Printer,
   Sliders,
-  Filter
+  Filter,
+  Wallet,
+  Download
 } from 'lucide-react';
 import { useAdminData } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -38,7 +40,9 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
     showrooms,
     cpoVehicles,
     spareParts,
-    partQuantities
+    partQuantities,
+    vouchers,
+    setExportModalRequest
   } = useAdminData();
   const { language, formatPrice } = useLanguage();
   const [period, setPeriod] = useState<PeriodFilter>('month');
@@ -67,12 +71,12 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       id: 'zatca-sales',
       titleAr: `مبيعات الفواتير الضريبية (${activeFactor.labelAr})`,
       titleEn: `ZATCA Invoiced Sales (${activeFactor.labelEn})`,
-      value: `${formatPrice(scaledSalesSAR)} ر.س`,
-      subtextAr: `${stats.totalInvoicesCount} فاتورة معتمدة • ضريبة VAT: ${formatPrice(scaledVatSAR)} ر.س`,
-      subtextEn: `${stats.totalInvoicesCount} cleared invoices`,
+      value: language === 'ar' ? `${formatPrice(scaledSalesSAR)} ر.س` : `SAR ${formatPrice(scaledSalesSAR)}`,
+      subtextAr: `${stats.totalInvoicesCount} فاتورة معتمدة • ضريبة القيمة المضافة: ${formatPrice(scaledVatSAR)} ر.س`,
+      subtextEn: `${stats.totalInvoicesCount} cleared invoices • VAT: SAR ${formatPrice(scaledVatSAR)}`,
       icon: QrCode,
       isFeatured: true,
-      popularBadge: language === 'ar' ? 'مباشر ZATCA' : 'ZATCA Live',
+      popularBadge: language === 'ar' ? 'ربط مباشر' : 'ZATCA Live',
       tab: 'zatca' as const
     },
     {
@@ -84,7 +88,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       subtextEn: `${stats.newTestDrivesCount} new requests pending`,
       icon: Users,
       isFeatured: false,
-      popularBadge: stats.newTestDrivesCount > 0 ? `${stats.newTestDrivesCount} جديد` : undefined,
+      popularBadge: stats.newTestDrivesCount > 0 ? (language === 'ar' ? `${stats.newTestDrivesCount} جديد` : `${stats.newTestDrivesCount} New`) : undefined,
       tab: 'test_drives' as const
     },
     {
@@ -111,22 +115,22 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
     },
     {
       id: 'vin-stock',
-      titleAr: 'مخزون الشاسيه (VIN Stock)',
+      titleAr: 'مخزون الشاسيه والمستودعات',
       titleEn: 'VIN Warehouse Stock',
-      value: `${stats.totalVinStockCount} مركبة`,
-      subtextAr: `${stats.inStockVinCount} جاهزة • ${stats.agingVinCount > 0 ? `${stats.agingVinCount} متقادمة (+45 يوم)` : `${stats.inTransitVinCount} في الشحن`}`,
+      value: language === 'ar' ? `${stats.totalVinStockCount} مركبة` : `${stats.totalVinStockCount} Units`,
+      subtextAr: `${stats.inStockVinCount} جاهزة للتسليم • ${stats.agingVinCount > 0 ? `${stats.agingVinCount} متقادمة (+45 يوم)` : `${stats.inTransitVinCount} قيد الشحن`}`,
       subtextEn: `${stats.inStockVinCount} in stock • ${stats.inTransitVinCount} in transit`,
       icon: Layers,
       isFeatured: false,
-      popularBadge: stats.agingVinCount > 0 ? `${stats.agingVinCount} +45 يوم` : undefined,
+      popularBadge: stats.agingVinCount > 0 ? (language === 'ar' ? `${stats.agingVinCount} راكد` : `${stats.agingVinCount} Aging`) : undefined,
       tab: 'vin_inventory' as const
     },
     {
       id: 'workshop-jobs',
-      titleAr: 'أوامر العمل بالورشة (Job Cards)',
+      titleAr: 'أوامر العمل بالورشة',
       titleEn: 'Active Workshop Job Cards',
-      value: `${stats.activeJobCardsCount + stats.readyJobCardsCount} كرت عمل`,
-      subtextAr: `${stats.readyJobCardsCount} جاهزة للتسليم • إيراد: ${formatPrice(scaledWorkshopSAR)} ر.س`,
+      value: language === 'ar' ? `${stats.activeJobCardsCount + stats.readyJobCardsCount} أمر عمل` : `${stats.activeJobCardsCount + stats.readyJobCardsCount} Job Cards`,
+      subtextAr: `${stats.readyJobCardsCount} جاهزة للتسليم • الإيراد: ${formatPrice(scaledWorkshopSAR)} ر.س`,
       subtextEn: `${stats.readyJobCardsCount} ready for handover`,
       icon: Wrench,
       isFeatured: false,
@@ -136,23 +140,35 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       id: 'fleet-models',
       titleAr: 'طرازات أسطول سولينا 2026',
       titleEn: '2026 Solina Fleet Models',
-      value: `${stats.totalFleetCount} طراز`,
-      subtextAr: `${stats.totalCPOCount} سيارة مستعملة معتمدة AutoHub`,
+      value: language === 'ar' ? `${stats.totalFleetCount} طراز` : `${stats.totalFleetCount} Models`,
+      subtextAr: `${stats.totalCPOCount} سيارة مستعملة معتمدة بالمعارض`,
       subtextEn: `${stats.totalCPOCount} Certified Pre-Owned units`,
       icon: Car,
       isFeatured: false,
       tab: 'fleet' as const
     },
     {
+      id: 'accounting-treasury',
+      titleAr: 'الخزينة والعُهد المالية',
+      titleEn: 'Treasury & Petty Cash Custodies',
+      value: language === 'ar' ? `${formatPrice(stats.netCashFlowSAR)} ر.س` : `SAR ${formatPrice(stats.netCashFlowSAR)}`,
+      subtextAr: `${vouchers.length} سند محاسبي • ${stats.activeCustodiesCount} عُهد نشطة (${formatPrice(stats.totalCustodiesRemainingSAR)} ر.س)`,
+      subtextEn: `${vouchers.length} vouchers • ${stats.activeCustodiesCount} active custodies`,
+      icon: Wallet,
+      isFeatured: true,
+      popularBadge: language === 'ar' ? 'نظام محاسبي معتمد' : 'SOCPA Ledger',
+      tab: 'accounting' as const
+    },
+    {
       id: 'active-campaigns',
       titleAr: 'العروض وقطع الغيار والفروع',
       titleEn: 'Campaigns, Parts & Network',
-      value: `${stats.totalOffersCount} عروض نشطة`,
+      value: language === 'ar' ? `${stats.totalOffersCount} عروض نشطة` : `${stats.totalOffersCount} Active Offers`,
       subtextAr: `${stats.totalShowroomsCount} فروع • ${stats.lowStockPartsCount > 0 ? `${stats.lowStockPartsCount} قطع منخفضة المخزون` : `${stats.totalPartsCount} قطعة أصلية`}`,
       subtextEn: `${stats.totalShowroomsCount} branches • ${stats.totalPartsCount} OEM parts`,
       icon: Tag,
       isFeatured: false,
-      popularBadge: stats.lowStockPartsCount > 0 ? `تنبيه مخزون` : undefined,
+      popularBadge: stats.lowStockPartsCount > 0 ? (language === 'ar' ? 'تنبيه مخزون' : 'Low Stock') : undefined,
       tab: 'parts' as const
     }
   ];
@@ -173,6 +189,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
     {
       id: 'f-leads',
       labelAr: '1. طلبات تجارب القيادة والاستفسارات',
+      labelEn: '1. Test Drive Leads & Inquiries',
       count: Math.max(testDrives.length, 12),
       percent: 100,
       tab: 'test_drives' as const
@@ -180,20 +197,23 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
     {
       id: 'f-quotes',
       labelAr: '2. عروض الأسعار والتمويل الصادرة',
+      labelEn: '2. Issued Quotations & Finance Applications',
       count: Math.max(quotations.length, 8),
       percent: 68,
       tab: 'quotations' as const
     },
     {
       id: 'f-reserved',
-      labelAr: '3. المركبات المحجوزة برقم الشاسيه (VIN)',
+      labelAr: '3. المركبات المحجوزة برقم الشاسيه',
+      labelEn: '3. Reserved VIN Units',
       count: Math.max(stats.reservedVinCount + stats.totalInvoicesCount, 5),
       percent: 44,
       tab: 'vin_inventory' as const
     },
     {
       id: 'f-invoiced',
-      labelAr: '4. الصفقات المغلقة والفواتير الضريبية (ZATCA)',
+      labelAr: '4. الصفقات المغلقة والفواتير الضريبية المعتمدة',
+      labelEn: '4. Closed Deals & Cleared ZATCA Invoices',
       count: stats.totalInvoicesCount,
       percent: 29,
       tab: 'zatca' as const
@@ -211,7 +231,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                 {language === 'ar' ? 'سولينا للسيارات ٢٠٢٦' : 'Solina Motors 2026'}
               </span>
               <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#707070] text-xs font-semibold">
-                {language === 'ar' ? 'نظام الإدارة التنفيذي ERP & DMS' : 'Executive ERP & DMS'}
+                {language === 'ar' ? 'نظام الإدارة التنفيذي الشامل للوكالة' : 'Executive Dealership Platform'}
               </span>
             </div>
 
@@ -223,7 +243,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
 
             <p className="mobbin-subtitle-light text-sm md:text-base max-w-xl">
               {language === 'ar' 
-                ? 'متابعة لحظية لكافة العمليات، طلبات تجارب القيادة، حجوزات الصيانة الدورية 45 دقيقة، مخزون الشاسيه VIN، والفوترة الإلكترونية ZATCA في كافة صالات سولينا.' 
+                ? 'متابعة لحظية لكافة العمليات، طلبات تجارب القيادة، حجوزات الصيانة الدورية السريعة، مخزون المركبات والمستودعات، والفوترة الضريبية المعتمدة في كافة صالات سولينا.' 
                 : 'Live tracking for customer test drives, 45-min express service queues, VIN stock, and ZATCA Phase 2 e-invoicing across all Solina Motors showrooms.'}
             </p>
           </div>
@@ -255,26 +275,40 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={() => onSwitchTab('fleet')}
-              className="mobbin-ink-pill px-5 py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs md:text-sm font-semibold cursor-pointer"
+              className="mobbin-ink-pill px-5 py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs md:text-sm font-semibold cursor-pointer whitespace-nowrap"
             >
               {language === 'ar' ? 'إدارة أسطول سولينا 2026' : 'Manage 2026 Fleet'}
             </button>
             <button
               onClick={() => onSwitchTab('zatca')}
-              className="px-5 py-2.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs md:text-sm font-semibold cursor-pointer"
+              className="px-5 py-2.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs md:text-sm font-semibold cursor-pointer whitespace-nowrap"
             >
-              {language === 'ar' ? 'إصدار فاتورة ضريبية ZATCA' : 'Issue ZATCA Invoice'}
+              {language === 'ar' ? 'إصدار فاتورة ضريبية معتمدة' : 'Issue ZATCA Invoice'}
+            </button>
+            <button
+              onClick={() => onSwitchTab('accounting')}
+              className="px-5 py-2.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs md:text-sm font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              <Wallet className="w-3.5 h-3.5" />
+              <span>{language === 'ar' ? 'المحاسبة والعُهد والسندات' : 'Accounting & Custodies'}</span>
             </button>
             <button
               onClick={() => onSwitchTab('settings')}
-              className="px-4 py-2.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'محرك التمويل والإعدادات' : 'Financing & Settings'}</span>
             </button>
             <button
+              onClick={() => setExportModalRequest('all_erp')}
+              className="px-4 py-2.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>{language === 'ar' ? 'تصدير شامل (10 صيغ)' : 'Export All (10 Formats)'}</span>
+            </button>
+            <button
               onClick={() => window.print()}
-              className="px-4 py-2.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2.5 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'طباعة التقرير التنفيذي' : 'Print Executive Report'}</span>
@@ -283,7 +317,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
 
           <div
             onClick={() => onSwitchTab('showrooms')}
-            className="flex items-center gap-3 bg-[#f3f3f3] hover:bg-[#e0e0e0] transition-colors cursor-pointer px-4 py-2 rounded-full"
+            className="flex items-center gap-3 bg-[#f3f3f3] hover:bg-[#e0e0e0] transition-colors cursor-pointer px-4 py-2 rounded-full whitespace-nowrap"
           >
             <Building2 className="w-4 h-4 text-[#141414]" />
             <span className="text-xs font-semibold text-[#141414]">
@@ -294,7 +328,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       </div>
 
       {/* 2. KPI Cards Grid (8 Cards — pricing-card & pricing-card-featured with 30% squircle icon tiles) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {kpis.map((kpi) => {
           const Icon = kpi.icon;
           return (
@@ -317,7 +351,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                 </div>
 
                 {kpi.popularBadge ? (
-                  <span className="mobbin-badge-popular px-2.5 py-1">
+                  <span className="mobbin-badge-popular px-2.5 py-1 text-[11px]">
                     {kpi.popularBadge}
                   </span>
                 ) : (
@@ -354,7 +388,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
               </span>
               <span>{language === 'ar' ? 'قمع التحويل البيعي والتمويلي.' : 'Sales Conversion Funnel.'}</span>
             </h3>
-            <span className="mobbin-badge-popular px-2.5 py-0.5">معدل التحويل 29%</span>
+            <span className="mobbin-badge-popular px-2.5 py-0.5 text-[11px]">{language === 'ar' ? 'معدل التحويل 29%' : '29% Conversion'}</span>
           </div>
 
           <div className="space-y-3.5 text-xs">
@@ -365,8 +399,10 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                 className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] transition-colors cursor-pointer space-y-2"
               >
                 <div className="flex items-center justify-between font-semibold text-[#141414]">
-                  <span>{step.labelAr}</span>
-                  <span className="font-mono text-[#707070]">{step.count} عملية ({step.percent}%)</span>
+                  <span>{language === 'ar' ? step.labelAr : step.labelEn}</span>
+                  <span className="font-mono text-[#707070]">
+                    {language === 'ar' ? `${step.count} عملية (${step.percent}%)` : `${step.count} ops (${step.percent}%)`}
+                  </span>
                 </div>
                 <div className="w-full h-2 bg-[#ffffff] rounded-full overflow-hidden">
                   <div
@@ -389,14 +425,18 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                 </span>
                 <span>{language === 'ar' ? 'توزيع الأسطول والمحفظة التشغيلية.' : 'Fleet & Portfolio Breakdown.'}</span>
               </h3>
-              <span className="text-xs font-mono text-[#707070] bg-[#f3f3f3] px-3 py-1 rounded-full">{vehicles.length} طراز</span>
+              <span className="text-xs font-mono text-[#707070] bg-[#f3f3f3] px-3 py-1 rounded-full">
+                {language === 'ar' ? `${vehicles.length} طراز` : `${vehicles.length} Models`}
+              </span>
             </div>
 
             <div className="space-y-3.5 text-xs">
               <div>
                 <div className="flex justify-between mb-1.5 font-semibold text-[#141414]">
-                  <span>سيارات الدفع الرباعي والكروس أوفر (SUV & 4x4)</span>
-                  <span className="font-mono text-[#707070]">{suvCount} طراز ({Math.round((suvCount / totalV) * 100)}%)</span>
+                  <span>{language === 'ar' ? 'سيارات الدفع الرباعي والكروس أوفر' : 'SUV & 4x4 Crossover Fleet'}</span>
+                  <span className="font-mono text-[#707070]">
+                    {language === 'ar' ? `${suvCount} طراز (${Math.round((suvCount / totalV) * 100)}%)` : `${suvCount} models (${Math.round((suvCount / totalV) * 100)}%)`}
+                  </span>
                 </div>
                 <div className="w-full h-2.5 bg-[#f0f0f0] rounded-full overflow-hidden">
                   <div className="h-full bg-[#141414] rounded-full" style={{ width: `${(suvCount / totalV) * 100}%` }} />
@@ -405,8 +445,10 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
 
               <div>
                 <div className="flex justify-between mb-1.5 font-semibold text-[#141414]">
-                  <span>سيارات السيدان والأداء الرياضي (Sedan & GR)</span>
-                  <span className="font-mono text-[#707070]">{sedanCount} طراز ({Math.round((sedanCount / totalV) * 100)}%)</span>
+                  <span>{language === 'ar' ? 'سيارات السيدان والأداء الرياضي' : 'Sedans & Sports Performance'}</span>
+                  <span className="font-mono text-[#707070]">
+                    {language === 'ar' ? `${sedanCount} طراز (${Math.round((sedanCount / totalV) * 100)}%)` : `${sedanCount} models (${Math.round((sedanCount / totalV) * 100)}%)`}
+                  </span>
                 </div>
                 <div className="w-full h-2.5 bg-[#f0f0f0] rounded-full overflow-hidden">
                   <div className="h-full bg-[#262626] rounded-full" style={{ width: `${(sedanCount / totalV) * 100}%` }} />
@@ -415,8 +457,10 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
 
               <div>
                 <div className="flex justify-between mb-1.5 font-semibold text-[#141414]">
-                  <span>السيارات التجارية والبيك أب والنقل (Commercial)</span>
-                  <span className="font-mono text-[#707070]">{commercialCount} طراز ({Math.round((commercialCount / totalV) * 100)}%)</span>
+                  <span>{language === 'ar' ? 'السيارات التجارية والبيك أب والنقل' : 'Commercial & Pickup Fleet'}</span>
+                  <span className="font-mono text-[#707070]">
+                    {language === 'ar' ? `${commercialCount} طراز (${Math.round((commercialCount / totalV) * 100)}%)` : `${commercialCount} models (${Math.round((commercialCount / totalV) * 100)}%)`}
+                  </span>
                 </div>
                 <div className="w-full h-2.5 bg-[#f0f0f0] rounded-full overflow-hidden">
                   <div className="h-full bg-[#707070] rounded-full" style={{ width: `${(commercialCount / totalV) * 100}%` }} />
@@ -428,20 +472,20 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
           {/* Mini Revenue Split Tiles */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 border-t border-[#f0f0f0] text-xs">
             <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
-              <span className="text-[10px] text-[#707070] block">مبيعات الفواتير</span>
+              <span className="text-[10px] text-[#707070] block">{language === 'ar' ? 'مبيعات الفواتير' : 'Invoiced Sales'}</span>
               <strong className="font-mono text-[#141414]">{Math.round((scaledSalesSAR / totalUnitRevenue) * 100)}%</strong>
             </div>
             <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
-              <span className="text-[10px] text-[#707070] block">المستعمل AutoHub</span>
+              <span className="text-[10px] text-[#707070] block">{language === 'ar' ? 'المستعمل المعتمد' : 'Certified Pre-Owned'}</span>
               <strong className="font-mono text-[#141414]">{Math.round((cpoInventoryValue / totalUnitRevenue) * 100)}%</strong>
             </div>
             <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
-              <span className="text-[10px] text-[#707070] block">مخزون قطع الغيار</span>
+              <span className="text-[10px] text-[#707070] block">{language === 'ar' ? 'مخزون قطع الغيار' : 'OEM Parts Stock'}</span>
               <strong className="font-mono text-[#141414]">{Math.round((partsInventoryValue / totalUnitRevenue) * 100)}%</strong>
             </div>
             <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
-              <span className="text-[10px] text-[#707070] block">إيراد الصيانة</span>
-              <strong className="font-mono text-[#141414]">{formatPrice(scaledWorkshopSAR)} ر.س</strong>
+              <span className="text-[10px] text-[#707070] block">{language === 'ar' ? 'إيراد الصيانة' : 'Service Revenue'}</span>
+              <strong className="font-mono text-[#141414]">{language === 'ar' ? `${formatPrice(scaledWorkshopSAR)} ر.س` : `SAR ${formatPrice(scaledWorkshopSAR)}`}</strong>
             </div>
           </div>
         </div>
@@ -509,7 +553,9 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-semibold text-[#141414]">{inv.invoiceNumber}</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[10px] font-semibold">ZATCA ✓</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[10px] font-semibold">
+                      {language === 'ar' ? 'معتمدة ضريبياً' : 'ZATCA Cleared'}
+                    </span>
                   </div>
                   <div className="text-[#707070] mt-0.5">{inv.customerName} — {inv.vehicleModel}</div>
                 </div>

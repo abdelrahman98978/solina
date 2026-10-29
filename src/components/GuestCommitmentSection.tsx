@@ -36,7 +36,7 @@ export const GuestCommitmentSection: React.FC = () => {
                 const el = document.getElementById('showrooms');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="px-10 py-3 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-base shadow-lg transition-all duration-200 cursor-pointer"
+              className="px-10 py-3 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-base shadow-lg transition-all duration-200 cursor-pointer"
             >
               {language === 'ar' ? 'معلومات عنا' : 'About Us'}
             </button>

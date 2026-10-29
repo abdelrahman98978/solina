@@ -27,9 +27,9 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
   };
 
   return (
-    <section id="gr-performance" className="py-20 bg-[#090A0D] text-white relative overflow-hidden border-t-2 border-[#0056B3]">
+    <section id="gr-performance" className="py-20 bg-[#090A0D] text-white relative overflow-hidden border-t-2 border-[#141414]">
       {/* Carbon fiber grid pattern & Red racing glow */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0056B3]/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#141414]/15 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-950/20 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10">
@@ -58,7 +58,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
                 onClick={() => setActiveModelId(v.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                   activeModelId === v.id
-                    ? 'bg-[#0056B3] text-white shadow-lg shadow-red-600/30'
+                    ? 'bg-[#141414] text-white shadow-lg shadow-red-600/30'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -103,7 +103,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
           <div className="lg:col-span-5 space-y-6 lg:border-r lg:border-white/10 lg:pr-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Trophy className="w-4 h-4 text-yellow-400" />
+                <Trophy className="w-4 h-4 text-red-500" />
                 <span className="text-xs font-bold text-red-500 uppercase tracking-widest">
                   GAZOO RACING TUNED
                 </span>
@@ -130,7 +130,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
 
               <div className="bg-white/5 border border-white/10 p-3.5 rounded-2xl">
                 <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'التسارع (0-100 كم/س)' : '0-100 km/h'}</span>
-                <span className="text-xl font-black text-emerald-400 font-mono">{selectedVehicle.acceleration0to100 || '3.9s'}</span>
+                <span className="text-xl font-black text-red-500 font-mono">{selectedVehicle.acceleration0to100 || '3.9s'}</span>
               </div>
 
               <div className="bg-white/5 border border-white/10 p-3.5 rounded-2xl">
@@ -150,7 +150,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
 
               <button
                 onClick={() => onOpenTestDrive(selectedVehicle.nameAr)}
-                className="flex-1 py-3.5 px-4 rounded-xl bg-[#0056B3] hover:bg-[#BA0817] text-white font-bold text-xs text-center transition-colors shadow-lg shadow-red-600/30"
+                className="flex-1 py-3.5 px-4 rounded-xl bg-[#141414] hover:bg-[#BA0817] text-white font-bold text-xs text-center transition-colors shadow-lg shadow-red-600/30"
               >
                 {language === 'ar' ? 'حجز تجربة قيادة GR' : 'Book GR Test Drive'}
               </button>

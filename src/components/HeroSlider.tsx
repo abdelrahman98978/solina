@@ -109,7 +109,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
                     onExploreModel(slide.targetId);
                   }
                 }}
-                className="pointer-events-auto bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm sm:text-base px-8 sm:px-12 py-2.5 sm:py-3.5 rounded-full shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                className="pointer-events-auto bg-[#141414] hover:bg-[#262626] text-white font-bold text-sm sm:text-base px-8 sm:px-12 py-2.5 sm:py-3.5 rounded-full shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
               >
                 {slide.ctaText}
               </button>
@@ -141,7 +141,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentSlide ? 'w-8 bg-[#0056B3]' : 'w-2 bg-white/40 hover:bg-white/70'
+                idx === currentSlide ? 'w-8 bg-[#141414]' : 'w-2 bg-white/40 hover:bg-white/70'
               }`}
               aria-label={`Slide ${idx + 1}`}
             />

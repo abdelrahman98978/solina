@@ -8,4 +8,23 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          const normId = id.replace(/\\/g, '/');
+          if (normId.includes('node_modules/react') || normId.includes('node_modules/react-dom')) {
+            return 'vendor-react';
+          }
+          if (normId.includes('node_modules/lucide-react')) {
+            return 'vendor-icons';
+          }
+          if (normId.includes('/src/data/toyotaData')) {
+            return 'fleet-data';
+          }
+        },
+      },
+    },
+  },
 })

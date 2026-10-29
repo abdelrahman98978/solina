@@ -161,7 +161,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
               >
                 {cat.label}
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3]"></span>
+                  <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414]"></span>
                 )}
               </button>
             );
@@ -183,7 +183,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                 }}
                 className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 border ${
                   active
-                    ? 'bg-[#0056B3] text-white border-[#0056B3] shadow-md'
+                    ? 'bg-[#141414] text-white border-[#141414] shadow-md'
                     : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
                 }`}
               >
@@ -203,7 +203,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
           {/* Left Arrow */}
           <button
             onClick={() => scrollSlider('left')}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-[#0056B3] hover:text-white transition-all cursor-pointer hidden md:flex"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-[#141414] hover:text-white transition-all cursor-pointer hidden md:flex"
             aria-label="Previous Vehicles"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -212,7 +212,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
           {/* Right Arrow */}
           <button
             onClick={() => scrollSlider('right')}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-[#0056B3] hover:text-white transition-all cursor-pointer hidden md:flex"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-[#141414] hover:text-white transition-all cursor-pointer hidden md:flex"
             aria-label="Next Vehicles"
           >
             <ChevronRight className="w-6 h-6" />
@@ -240,7 +240,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
               return (
                 <div
                   key={vehicle.id}
-                  className="w-[290px] sm:w-[310px] md:w-[325px] flex-shrink-0 bg-white rounded-2xl p-4 flex flex-col justify-between hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 group text-center relative"
+                  className="w-[290px] sm:w-[310px] md:w-[325px] flex-shrink-0 bg-white rounded-2xl p-4 flex flex-col justify-between hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#141414] group text-center relative"
                 >
                   {/* Top Info: Brand Badge, Model Name & Price */}
                   <div>
@@ -256,7 +256,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                             setCardInteriorModeMap(prev => ({ ...prev, [vehicle.id]: false }));
                           }}
                           className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer ${
-                            !isInterior ? 'bg-[#0056B3] text-white shadow-xs' : 'text-gray-600 hover:text-black'
+                            !isInterior ? 'bg-[#141414] text-white shadow-xs' : 'text-gray-600 hover:text-black'
                           }`}
                         >
                           {language === 'ar' ? 'خارجية' : 'Ext'}
@@ -268,7 +268,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                             setCardInteriorModeMap(prev => ({ ...prev, [vehicle.id]: true }));
                           }}
                           className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer ${
-                            isInterior ? 'bg-[#0056B3] text-white shadow-xs' : 'text-gray-600 hover:text-black'
+                            isInterior ? 'bg-[#141414] text-white shadow-xs' : 'text-gray-600 hover:text-black'
                           }`}
                         >
                           {language === 'ar' ? 'داخلية' : 'Int'}
@@ -278,17 +278,17 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
 
                     <h3
                       onClick={() => onSelectVehicle(vehicle.id)}
-                      className="text-lg md:text-xl font-bold text-gray-900 font-arabic mb-1 group-hover:text-[#0056B3] transition-colors cursor-pointer"
+                      className="text-lg md:text-xl font-bold text-gray-900 font-arabic mb-1 group-hover:text-[#141414] transition-colors cursor-pointer"
                     >
                       {cleanTitle}
                     </h3>
                     
                     <div className="text-sm text-gray-700 font-medium mb-2 flex items-center justify-center gap-1.5">
                       <span>{language === 'ar' ? 'تبدأ من' : 'Starts from'}</span>
-                      <span className="text-base font-bold font-mono text-[#0056B3]">
+                      <span className="text-base font-bold font-mono text-[#141414]">
                         {vehicle.priceStartingFrom.toLocaleString()}
                       </span>
-                      <span className="text-xs font-bold text-[#0056B3]">﷼</span>
+                      <span className="text-xs font-bold text-[#141414]">﷼</span>
                     </div>
 
                     {/* Vehicle Cutout / Interior Image Stage */}
@@ -299,6 +299,8 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                       <img
                         src={displayImg}
                         alt={vehicle.nameAr}
+                        width={306}
+                        height={122}
                         className={`w-full h-full ${isInterior ? 'object-cover' : 'max-h-36 w-auto object-contain p-2'} drop-shadow-sm group-hover:scale-105 transition-transform duration-300`}
                         loading={cardIdx < 12 ? 'eager' : 'lazy'}
                       />
@@ -326,7 +328,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                               style={{ backgroundColor: c.hex }}
                               className={`w-4 h-4 rounded-full border transition-all cursor-pointer ${
                                 !isInterior && selectedColorIdx === idx
-                                  ? 'scale-125 border-[#0056B3] ring-2 ring-blue-300'
+                                  ? 'scale-125 border-[#141414] ring-2 ring-red-600/30'
                                   : 'border-gray-300 hover:scale-110'
                               }`}
                             />
@@ -346,15 +348,15 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={() => onSelectVehicle(vehicle.id)}
-                        className="py-2 px-2 rounded-lg bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-[#0056B3] transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                        className="py-2 px-2 rounded-lg bg-gray-50 hover:bg-[#f3f3f3] text-gray-900 hover:text-[#141414] transition-colors flex items-center justify-center gap-1 cursor-pointer"
                       >
-                        <Eye className="w-3.5 h-3.5 text-[#0056B3]" />
+                        <Eye className="w-3.5 h-3.5 text-[#141414]" />
                         <span>{language === 'ar' ? 'صفحة الموديل' : 'Overview'}</span>
                       </button>
 
                       <button
                         onClick={() => setCatalogModalVehicle(vehicle)}
-                        className="py-2 px-2 rounded-lg bg-blue-50 hover:bg-[#0056B3] text-[#0056B3] hover:text-white transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                        className="py-2 px-2 rounded-lg bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-white transition-colors flex items-center justify-center gap-1 cursor-pointer"
                       >
                         <BookOpen className="w-3.5 h-3.5" />
                         <span>{language === 'ar' ? 'الكتالوج والداخلية' : 'Catalog & Inside'}</span>
@@ -363,10 +365,10 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
 
                     <button
                       onClick={() => onOpenTestDrive(cleanTitle)}
-                      className="text-gray-700 hover:text-[#0056B3] transition-colors flex items-center justify-center gap-1.5 py-1 cursor-pointer"
+                      className="text-gray-700 hover:text-[#141414] transition-colors flex items-center justify-center gap-1.5 py-1 cursor-pointer"
                     >
                       <span>{language === 'ar' ? 'خيارات الشراء وحجز التجربة' : 'Buying Options & Test Drive'}</span>
-                      <span className="text-[#0056B3] font-bold">›</span>
+                      <span className="text-[#141414] font-bold">›</span>
                     </button>
                   </div>
                 </div>
@@ -378,7 +380,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
         {/* Progress Bar Indicator matching Solina SA */}
         <div className="max-w-xs mx-auto h-1 bg-gray-200 rounded-full mb-10 overflow-hidden">
           <div
-            className="h-full bg-[#0056B3] rounded-full transition-all duration-200"
+            className="h-full bg-[#141414] rounded-full transition-all duration-200"
             style={{ width: `${Math.max((scrollProgress * 100), 30)}%` }}
           />
         </div>
@@ -390,7 +392,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
               const megaBtn = document.querySelector('header nav button');
               if (megaBtn) (megaBtn as HTMLButtonElement).click();
             }}
-            className="px-10 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+            className="px-10 py-3.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
           >
             {language === 'ar' ? 'عرض جميع المركبات' : 'View All Vehicles'}
           </button>

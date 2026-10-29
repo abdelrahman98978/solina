@@ -185,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({
     { name: 'ذهبي', hex: '#B89758' },
     { name: 'سماوي', hex: '#00BCD4' },
     { name: 'أبيض لؤلؤي', hex: '#EEEEEE' },
-    { name: 'أحمر سولينا', hex: '#0056B3' },
+    { name: 'أحمر سولينا', hex: '#dc2626' },
     { name: 'برتقالي', hex: '#E65100' },
     { name: 'فحمي', hex: '#37474F' },
     { name: 'أخضر داكن', hex: '#1B3B2B' }
@@ -211,13 +211,13 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setActiveMenu(activeMenu === 'vehicles' ? null : 'vehicles')}
               className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
-                activeMenu === 'vehicles' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+                activeMenu === 'vehicles' ? 'text-[#141414]' : 'text-gray-900 hover:text-[#141414]'
               }`}
             >
               <span>{language === 'ar' ? 'المركبات' : 'Vehicles'}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'vehicles' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'vehicles' ? 'rotate-180 text-[#141414]' : 'text-gray-500'}`} />
               {activeMenu === 'vehicles' && (
-                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414] rounded-t-full"></span>
               )}
             </button>
 
@@ -225,13 +225,13 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setActiveMenu(activeMenu === 'offers' ? null : 'offers')}
               className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
-                activeMenu === 'offers' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+                activeMenu === 'offers' ? 'text-[#141414]' : 'text-gray-900 hover:text-[#141414]'
               }`}
             >
               <span>{language === 'ar' ? 'العروض' : 'Offers'}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'offers' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'offers' ? 'rotate-180 text-[#141414]' : 'text-gray-500'}`} />
               {activeMenu === 'offers' && (
-                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414] rounded-t-full"></span>
               )}
             </button>
 
@@ -239,13 +239,13 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setActiveMenu(activeMenu === 'owners' ? null : 'owners')}
               className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
-                activeMenu === 'owners' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+                activeMenu === 'owners' ? 'text-[#141414]' : 'text-gray-900 hover:text-[#141414]'
               }`}
             >
               <span>{language === 'ar' ? 'ملاك سولينا' : 'Solina Owners'}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'owners' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'owners' ? 'rotate-180 text-[#141414]' : 'text-gray-500'}`} />
               {activeMenu === 'owners' && (
-                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414] rounded-t-full"></span>
               )}
             </button>
 
@@ -253,29 +253,50 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setActiveMenu(activeMenu === 'discover' ? null : 'discover')}
               className={`relative py-6 text-base font-bold transition-colors flex items-center gap-1.5 ${
-                activeMenu === 'discover' ? 'text-[#0056B3]' : 'text-gray-900 hover:text-[#0056B3]'
+                activeMenu === 'discover' ? 'text-[#141414]' : 'text-gray-900 hover:text-[#141414]'
               }`}
             >
               <span>{language === 'ar' ? 'اكتشف' : 'Discover'}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'discover' ? 'rotate-180 text-[#0056B3]' : 'text-gray-500'}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'discover' ? 'rotate-180 text-[#141414]' : 'text-gray-500'}`} />
               {activeMenu === 'discover' && (
-                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414] rounded-t-full"></span>
               )}
             </button>
           </nav>
         </div>
 
         {/* Left Side: Language Toggle, User Profile, and Red Solina Logo */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Direct Quick Access Buttons: Mobile App & Dealership ERP */}
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={() => { if (onNavigate) onNavigate('app'); else window.location.href = '/app'; }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-xs font-bold transition-colors cursor-pointer"
+              title="تطبيق سولينا التفاعلي للجوال"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-red-600" />
+              <span>{language === 'ar' ? 'تطبيق الجوال' : 'Mobile App'}</span>
+            </button>
+
+            <button
+              onClick={() => handleTriggerAdmin()}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold transition-colors cursor-pointer"
+              title="لوحة التحكم ونظام الـ ERP والمحاسبة"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-white" />
+              <span>{language === 'ar' ? 'لوحة التحكم ERP' : 'ERP Admin'}</span>
+            </button>
+          </div>
+
           {/* Compare Shortcut Badge */}
           {comparisonCount > 0 && (
             <button 
               onClick={onOpenCompare}
               className="relative hidden sm:flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
             >
-              <Scale className="w-4 h-4 text-[#0056B3]" />
+              <Scale className="w-4 h-4 text-[#141414]" />
               <span>{language === 'ar' ? 'المقارنة' : 'Compare'}</span>
-              <span className="w-5 h-5 rounded-full bg-[#0056B3] text-white flex items-center justify-center text-[10px]">
+              <span className="w-5 h-5 rounded-full bg-[#141414] text-white flex items-center justify-center text-[10px]">
                 {comparisonCount}
               </span>
             </button>
@@ -299,15 +320,15 @@ export const Header: React.FC<HeaderProps> = ({
                   <p className="text-sm font-bold text-gray-900">{language === 'ar' ? 'بوابة الضيف' : 'Guest Portal'}</p>
                 </div>
                 <div className="py-1">
-                  <a href="#test-drive" onClick={() => { onOpenTestDrive(); setUserDropdownOpen(false); }} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#0056B3] transition-colors">
+                  <a href="#test-drive" onClick={() => { onOpenTestDrive(); setUserDropdownOpen(false); }} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#141414] transition-colors">
                     <Car className="w-4 h-4" />
                     <span>{language === 'ar' ? 'طلب تجربة قيادة' : 'Book Test Drive'}</span>
                   </a>
-                  <a href="#service" onClick={() => { onOpenServiceBooking(); setUserDropdownOpen(false); }} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#0056B3] transition-colors">
+                  <a href="#service" onClick={() => { onOpenServiceBooking(); setUserDropdownOpen(false); }} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#141414] transition-colors">
                     <Wrench className="w-4 h-4" />
                     <span>{language === 'ar' ? 'حجز موعد صيانة' : 'Book Service'}</span>
                   </a>
-                  <button onClick={() => { if (onNavigate) onNavigate('showrooms'); else window.location.href = '#showrooms'; setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                  <button onClick={() => { if (onNavigate) onNavigate('showrooms'); else window.location.href = '#showrooms'; setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#141414] transition-colors text-right cursor-pointer">
                     <MapPin className="w-4 h-4" />
                     <span>{language === 'ar' ? 'أقرب فرع وصالة عرض' : 'Find Showroom'}</span>
                   </button>
@@ -315,12 +336,12 @@ export const Header: React.FC<HeaderProps> = ({
                     <Smartphone className="w-4 h-4 text-red-600" />
                     <span>{language === 'ar' ? 'تطبيق سولينا التفاعلي' : 'Solina Interactive App'}</span>
                   </button>
-                  <button onClick={() => { handleTriggerAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 transition-colors text-right rounded-xl my-1 cursor-pointer">
+                  <button onClick={() => { handleTriggerAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-[#141414] bg-[#f3f3f3] hover:bg-[#f3f3f3] transition-colors text-right rounded-xl my-1 cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-blue-600" />
+                      <ShieldCheck className="w-4 h-4 text-[#141414]" />
                       <span>{language === 'ar' ? 'نظام إدارة الوكالة والـ ERP' : 'Dealership ERP & DMS'}</span>
                     </div>
-                    <span className="px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[9px] font-mono">ZATCA 2</span>
+                    <span className="px-1.5 py-0.5 rounded-md bg-[#141414] text-white text-[9px] font-mono">ZATCA 2</span>
                   </button>
                 </div>
               </div>
@@ -331,14 +352,14 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-1 text-sm font-bold text-gray-800">
             <button 
               onClick={() => language !== 'ar' && toggleLanguage()}
-              className={`hover:text-[#0056B3] transition-colors ${language === 'ar' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
+              className={`hover:text-[#141414] transition-colors ${language === 'ar' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
             >
               ع
             </button>
             <span className="text-gray-300">|</span>
             <button 
               onClick={() => language !== 'en' && toggleLanguage()}
-              className={`hover:text-[#0056B3] transition-colors ${language === 'en' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
+              className={`hover:text-[#141414] transition-colors ${language === 'en' ? 'text-black font-extrabold' : 'text-gray-400 font-normal'}`}
             >
               EN
             </button>
@@ -406,18 +427,20 @@ export const Header: React.FC<HeaderProps> = ({
                           }}
                           className="group cursor-pointer flex flex-col items-center text-center transition-all p-2 rounded-xl hover:bg-gray-50/80"
                         >
-                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#0056B3] transition-colors leading-tight">
+                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#141414] transition-colors leading-tight">
                             {getModelTitle(v)}
                           </h4>
                           <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
                             <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
                             <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
-                            <span className="text-[#0056B3] mr-1"> ﷼</span>
+                            <span className="text-[#141414] mr-1"> ﷼</span>
                           </p>
                           <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
                             <img 
                               src={v.cardImage} 
                               alt={v.nameAr} 
+                              width={240}
+                              height={110}
                               className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
                               loading="lazy"
                             />
@@ -444,18 +467,20 @@ export const Header: React.FC<HeaderProps> = ({
                           }}
                           className="group cursor-pointer flex flex-col items-center text-center transition-all p-2 rounded-xl hover:bg-gray-50/80"
                         >
-                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#0056B3] transition-colors leading-tight">
+                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#141414] transition-colors leading-tight">
                             {getModelTitle(v)}
                           </h4>
                           <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
                             <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
                             <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
-                            <span className="text-[#0056B3] mr-1"> ﷼</span>
+                            <span className="text-[#141414] mr-1"> ﷼</span>
                           </p>
                           <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
                             <img 
                               src={v.cardImage} 
                               alt={v.nameAr} 
+                              width={240}
+                              height={110}
                               className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
                               loading="lazy"
                             />
@@ -482,18 +507,20 @@ export const Header: React.FC<HeaderProps> = ({
                           }}
                           className="group cursor-pointer flex flex-col items-center text-center transition-all p-2 rounded-xl hover:bg-gray-50/80"
                         >
-                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#0056B3] transition-colors leading-tight">
+                          <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#141414] transition-colors leading-tight">
                             {getModelTitle(v)}
                           </h4>
                           <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
                             <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
                             <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
-                            <span className="text-[#0056B3] mr-1"> ﷼</span>
+                            <span className="text-[#141414] mr-1"> ﷼</span>
                           </p>
                           <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
                             <img 
                               src={v.cardImage} 
                               alt={v.nameAr} 
+                              width={240}
+                              height={110}
                               className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
                               loading="lazy"
                             />
@@ -527,7 +554,7 @@ export const Header: React.FC<HeaderProps> = ({
                         onClick={() => setFilterBrand(tab.id)}
                         className={`text-xs px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer ${
                           filterBrand === tab.id
-                            ? 'bg-[#0056B3] text-white shadow-sm'
+                            ? 'bg-[#141414] text-white shadow-sm'
                             : 'bg-white text-gray-800 border border-gray-300 hover:border-black'
                         }`}
                       >
@@ -597,7 +624,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <label className="text-sm font-bold text-gray-900">
                       {language === 'ar' ? 'السعر' : 'Price'}
                     </label>
-                    <span className="text-xs font-mono font-bold text-[#0056B3]">
+                    <span className="text-xs font-mono font-bold text-[#141414]">
                       {maxPrice.toLocaleString()} ﷼
                     </span>
                   </div>
@@ -608,7 +635,7 @@ export const Header: React.FC<HeaderProps> = ({
                     step="10000"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0056B3]"
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#141414]"
                   />
                   <div className="flex justify-between text-[11px] text-gray-500 mt-1 font-mono">
                     <span>66,987 ﷼</span>
@@ -629,7 +656,7 @@ export const Header: React.FC<HeaderProps> = ({
                         key={idx}
                         onClick={() => setSelectedColor(selectedColor === col.hex ? null : col.hex)}
                         className={`w-6 h-6 rounded-full border transition-all ${
-                          selectedColor === col.hex ? 'scale-125 border-black shadow-md ring-2 ring-[#0056B3]' : 'border-gray-200 hover:scale-110'
+                          selectedColor === col.hex ? 'scale-125 border-black shadow-md ring-2 ring-[#141414]' : 'border-gray-200 hover:scale-110'
                         }`}
                         style={{ backgroundColor: col.hex }}
                         title={col.name}
@@ -639,7 +666,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="mt-2 text-left">
                     <button 
                       onClick={() => setSelectedColor(null)}
-                      className="text-xs text-[#0056B3] hover:underline font-semibold"
+                      className="text-xs text-[#141414] hover:underline font-semibold"
                     >
                       {language === 'ar' ? 'رؤية الكل' : 'View All'}
                     </button>
@@ -653,10 +680,10 @@ export const Header: React.FC<HeaderProps> = ({
                       onOpenCompare();
                       setActiveMenu(null);
                     }}
-                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#0056B3] py-1.5 transition-colors"
+                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#141414] py-1.5 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Scale className="w-4 h-4 text-[#0056B3]" />
+                      <Scale className="w-4 h-4 text-[#141414]" />
                       <span>{language === 'ar' ? 'قارن المركبات' : 'Compare Vehicles'}</span>
                     </div>
                     <ArrowLeft className="w-4 h-4 text-gray-400" />
@@ -667,10 +694,10 @@ export const Header: React.FC<HeaderProps> = ({
                       onOpenTestDrive();
                       setActiveMenu(null);
                     }}
-                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#0056B3] py-1.5 transition-colors"
+                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#141414] py-1.5 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
-                      <PhoneCall className="w-4 h-4 text-[#0056B3]" />
+                      <PhoneCall className="w-4 h-4 text-[#141414]" />
                       <span>{language === 'ar' ? 'اطلب مكالمة' : 'Request a Call'}</span>
                     </div>
                     <ArrowLeft className="w-4 h-4 text-gray-400" />
@@ -683,10 +710,10 @@ export const Header: React.FC<HeaderProps> = ({
                       if (onNavigate) onNavigate('offers');
                       setActiveMenu(null);
                     }}
-                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#0056B3] py-1.5 transition-colors"
+                    className="w-full flex items-center justify-between text-sm font-bold text-gray-800 hover:text-[#141414] py-1.5 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Tag className="w-4 h-4 text-[#0056B3]" />
+                      <Tag className="w-4 h-4 text-[#141414]" />
                       <span>{language === 'ar' ? 'أحدث العروض' : 'Latest Offers'}</span>
                     </div>
                     <ArrowLeft className="w-4 h-4 text-gray-400" />
@@ -711,7 +738,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <button 
                 onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
-                className="px-5 py-2 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>استكشف صفحة العروض كاملة</span>
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -723,10 +750,10 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
                 className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-red-100 text-[#0056B3] flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-xl bg-red-100 text-[#141414] flex items-center justify-center mb-3">
                   <Tag className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#141414] mb-1">
                   عروض 5 سنوات مع فيلوز
                 </h4>
                 <p className="text-xs text-gray-500 leading-relaxed">
@@ -739,10 +766,10 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
                 className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center mb-3">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#141414] mb-1">
                   راحة بال HEV حتى 10 سنوات
                 </h4>
                 <p className="text-xs text-gray-500 leading-relaxed">
@@ -755,10 +782,10 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
                 className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center mb-3">
                   <Wrench className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#141414] mb-1">
                   باقات الصيانة الدورية
                 </h4>
                 <p className="text-xs text-gray-500 leading-relaxed">
@@ -771,10 +798,10 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => { if (onNavigate) onNavigate('offers'); setActiveMenu(null); }}
                 className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-300 hover:bg-red-50/40 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center mb-3">
                   <Car className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#0056B3] mb-1">
+                <h4 className="font-bold text-base text-gray-900 group-hover:text-[#141414] mb-1">
                   حاسبة التمويل والأقساط
                 </h4>
                 <p className="text-xs text-gray-500 leading-relaxed">
@@ -799,7 +826,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <button 
                 onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }}
-                className="px-5 py-2 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>فتح صفحة ملاك سولينا بالكامل</span>
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -808,55 +835,55 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">خدمات الصيانة</h4>
-                <button onClick={() => { onOpenServiceBooking(); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { onOpenServiceBooking(); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   حجز الصيانة
                 </button>
-                <button onClick={() => { onOpenServiceBooking(); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { onOpenServiceBooking(); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   تعديل حجز الصيانة
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   الصيانة الدورية وأسعارها
                 </button>
               </div>
 
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">الرعاية والدعم</h4>
-                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   مؤشرات لوحة المعلومات (رموز الطبلون)
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   حملات الإستدعاء
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   الضمان وبرامج العناية
                 </button>
               </div>
 
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">مراكز الخدمة</h4>
-                <button onClick={() => { if (onNavigate) onNavigate('showrooms'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('showrooms'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   فروعنا ومراكز الصيانة السريعة
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   مبيعات قطع الغيار الأصلية
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('owners'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   الأسئلة الشائعة للملاك
                 </button>
               </div>
 
               <div className="bg-red-50/60 rounded-2xl p-5 border border-red-100 flex flex-col justify-between">
                 <div>
-                  <span className="text-xs font-bold text-[#0056B3]">العناية بالضيوف 24/7</span>
+                  <span className="text-xs font-bold text-[#141414]">العناية بالضيوف 24/7</span>
                   <h5 className="text-base font-bold text-gray-900 mt-1 mb-2">اتصل بنا على الرقم المجاني</h5>
-                  <p className="text-xl font-bold font-mono text-[#0056B3]">800 440 0055</p>
+                  <p className="text-xl font-bold font-mono text-[#141414]">800 440 0055</p>
                 </div>
                 <button
                   onClick={() => {
                     onOpenServiceBooking();
                     setActiveMenu(null);
                   }}
-                  className="mt-4 w-full bg-[#0056B3] text-white py-2.5 px-4 rounded-full text-xs font-bold hover:bg-black transition-colors cursor-pointer"
+                  className="mt-4 w-full bg-[#141414] text-white py-2.5 px-4 rounded-full text-xs font-bold hover:bg-black transition-colors cursor-pointer"
                 >
                   احجز موعدك الآن
                 </button>
@@ -879,7 +906,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <button 
                 onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }}
-                className="px-5 py-2 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>عرض صفحة اكتشف كاملة</span>
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -888,45 +915,45 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">تكنولوجيا وابتكار</h4>
-                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   مستقبل التنقل وتكنولوجيا HEV
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   جازو ريسنج Gazoo Racing (GR)
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   رياضة السيارات و Esports
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   الحياد الكربوني و #غدك_اليوم
                 </button>
               </div>
 
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">عن سولينا للسيارات</h4>
-                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   معلومات عنا وقصة 80 عاماً
                 </button>
-                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors text-right cursor-pointer">
+                <button onClick={() => { if (onNavigate) onNavigate('discover'); setActiveMenu(null); }} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors text-right cursor-pointer">
                   التزامنا نحو ضيوفنا (الضيف أولاً)
                 </button>
-                <a href="#news" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                <a href="#news" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors">
                   أخبار سولينا للسيارات
                 </a>
-                <a href="#fake-parts" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                <a href="#fake-parts" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors">
                   حملة التوعية ضد القطع المقلدة
                 </a>
               </div>
 
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">الدعم والتواصل</h4>
-                <a href="#faq" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                <a href="#faq" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors">
                   الأسئلة الشائعة
                 </a>
-                <a href="#contact" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                <a href="#contact" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors">
                   اتصل بنا
                 </a>
-                <a href="#showrooms" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#0056B3] transition-colors">
+                <a href="#showrooms" onClick={() => setActiveMenu(null)} className="block text-sm font-bold text-gray-800 hover:text-[#141414] transition-colors">
                   مراكزنا وفروعنا
                 </a>
               </div>
@@ -938,7 +965,7 @@ export const Header: React.FC<HeaderProps> = ({
                   className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 flex flex-col justify-end text-white">
-                  <span className="text-[10px] font-bold text-[#0056B3] bg-white px-2 py-0.5 rounded w-fit mb-1">ابتكار هجين</span>
+                  <span className="text-[10px] font-bold text-[#141414] bg-white px-2 py-0.5 rounded w-fit mb-1">ابتكار هجين</span>
                   <h5 className="font-bold text-sm">تكنولوجيا الهايبرد HEV من سولينا</h5>
                 </div>
               </div>
@@ -997,7 +1024,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onOpenTestDrive();
                 setMobileMenuOpen(false);
               }}
-              className="w-full bg-[#0056B3] text-white py-3 rounded-full text-sm font-bold hover:bg-black transition-colors"
+              className="w-full bg-[#141414] text-white py-3 rounded-full text-sm font-bold hover:bg-black transition-colors"
             >
               طلب تجربة قيادة
             </button>
@@ -1015,11 +1042,11 @@ export const Header: React.FC<HeaderProps> = ({
                 handleTriggerAdmin();
                 setMobileMenuOpen(false);
               }}
-              className="w-full bg-slate-900 border border-blue-500/30 text-white py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              className="w-full bg-slate-900 border border-red-600/40 text-white py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >
-              <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <ShieldCheck className="w-4 h-4 text-red-500" />
               <span>نظام إدارة الوكالة والـ ERP</span>
-              <span className="px-1.5 py-0.2 rounded bg-blue-600 text-[10px]">ZATCA 2</span>
+              <span className="px-1.5 py-0.2 rounded bg-[#141414] text-[10px]">ZATCA 2</span>
             </button>
           </div>
         </div>

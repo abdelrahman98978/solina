@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { 
   LayoutDashboard, 
   Car, 
@@ -37,7 +37,8 @@ import {
   Printer,
   PanelRightClose,
   PanelRightOpen,
-  Maximize2
+  Maximize2,
+  Wallet
 } from 'lucide-react';
 import { 
   useAdminData, 
@@ -51,16 +52,17 @@ import './mobbin-admin.css';
 
 // Tabs
 import { AdminOverviewTab } from './AdminOverviewTab';
-import { AdminFleetTab } from './AdminFleetTab';
-import { AdminLeadsTab } from './AdminLeadsTab';
-import { AdminOffersTab } from './AdminOffersTab';
-import { AdminCPOTab } from './AdminCPOTab';
-import { AdminPartsTab } from './AdminPartsTab';
-import { AdminShowroomsTab } from './AdminShowroomsTab';
-import { AdminZatcaInvoicingTab } from './AdminZatcaInvoicingTab';
-import { AdminWorkshopJobCardsTab } from './AdminWorkshopJobCardsTab';
-import { AdminVINInventoryTab } from './AdminVINInventoryTab';
-import { AdminSettingsTab } from './AdminSettingsTab';
+const AdminFleetTab = lazy(() => import('./AdminFleetTab').then(m => ({ default: m.AdminFleetTab })));
+const AdminLeadsTab = lazy(() => import('./AdminLeadsTab').then(m => ({ default: m.AdminLeadsTab })));
+const AdminOffersTab = lazy(() => import('./AdminOffersTab').then(m => ({ default: m.AdminOffersTab })));
+const AdminCPOTab = lazy(() => import('./AdminCPOTab').then(m => ({ default: m.AdminCPOTab })));
+const AdminPartsTab = lazy(() => import('./AdminPartsTab').then(m => ({ default: m.AdminPartsTab })));
+const AdminShowroomsTab = lazy(() => import('./AdminShowroomsTab').then(m => ({ default: m.AdminShowroomsTab })));
+const AdminZatcaInvoicingTab = lazy(() => import('./AdminZatcaInvoicingTab').then(m => ({ default: m.AdminZatcaInvoicingTab })));
+const AdminAccountingTab = lazy(() => import('./AdminAccountingTab').then(m => ({ default: m.AdminAccountingTab })));
+const AdminWorkshopJobCardsTab = lazy(() => import('./AdminWorkshopJobCardsTab').then(m => ({ default: m.AdminWorkshopJobCardsTab })));
+const AdminVINInventoryTab = lazy(() => import('./AdminVINInventoryTab').then(m => ({ default: m.AdminVINInventoryTab })));
+const AdminSettingsTab = lazy(() => import('./AdminSettingsTab').then(m => ({ default: m.AdminSettingsTab })));
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -73,6 +75,7 @@ export type AdminTabType =
   | 'leads'
   | 'workshop'
   | 'zatca'
+  | 'accounting'
   | 'offers'
   | 'cpo'
   | 'parts'
@@ -90,6 +93,9 @@ const EXPORT_DATASETS_LIST: Array<{ id: ExportDatasetType; labelAr: string; desc
   { id: 'quotations', labelAr: 'عروض الأسعار وطلبات التمويل', descAr: 'عروض الأسعار الرسمية، مبالغ الضريبة، والتمويل التأجيري' },
   { id: 'job_cards', labelAr: 'أوامر العمل بالورشة والمسار السريع', descAr: 'كروت العمل، الفنيين، قطع الغيار المصروفة والتكاليف' },
   { id: 'zatca_invoices', labelAr: 'الفواتير الضريبية الإلكترونية (ZATCA Phase 2)', descAr: 'الفواتير الضريبية والمبسطة والإشعارات الدائنة' },
+  { id: 'accounting_vouchers', labelAr: 'سندات القبض والصرف والقيود المحاسبية', descAr: 'حركة الخزينة، التحويلات البنكية، وسندات القبض والصرف' },
+  { id: 'custodies', labelAr: 'سجل العُهد المالية والسلف التشغيلية (Petty Cash & Custodies)', descAr: 'عُهد الموظفين والفروع، المبالغ المصروفة، والأرصدة المتبقية' },
+  { id: 'chart_of_accounts', labelAr: 'دليل الحسابات وميزان المراجعة (Chart of Accounts)', descAr: 'شجرة الحسابات المحاسبية SOCPA وأرصدة المدين والدائن' },
   { id: 'parts', labelAr: 'قطع الغيار الأصلية والأرصدة المخزنية', descAr: 'أرقام القطع OEM، الأسعار، والكميات المتوفرة بالمستودع' },
   { id: 'offers', labelAr: 'العروض الترويجية والحملات التسويقية', descAr: 'حملات التمويل والصيانة والعروض الموسمية' },
   { id: 'cpo', labelAr: 'السيارات المستعملة المعتمدة (AutoHub CPO)', descAr: 'السيارات المفحوصة، الممشى، الضمان والأسعار' },
@@ -147,6 +153,27 @@ const EXPORT_FORMATS_LIST: Array<{
     badge: 'تفاعلي'
   },
   {
+    id: 'word',
+    ext: '.DOC',
+    titleAr: 'مستند وورد رسمي (Microsoft Word)',
+    descAr: 'مستند وورد منسق بترويسة وكالة سولينا والرقم الضريبي جاهز للتعديل والاعتماد',
+    badge: 'مستند رسمي'
+  },
+  {
+    id: 'sql',
+    ext: '.SQL',
+    titleAr: 'قاعدة بيانات SQL (Database Dump)',
+    descAr: 'أوامر CREATE TABLE و INSERT INTO جاهزة للاستيراد في MySQL و PostgreSQL',
+    badge: 'قواعد بيانات'
+  },
+  {
+    id: 'markdown',
+    ext: '.MD',
+    titleAr: 'وثيقة جداول ماركداون (Markdown Table)',
+    descAr: 'جداول توثيقية منسقة متوافقة مع أنظمة التوثيق والتقارير الفنية',
+    badge: 'توثيق'
+  },
+  {
     id: 'txt',
     ext: '.TXT',
     titleAr: 'ملف نصي جدولي (Plain Text / TSV)',
@@ -170,6 +197,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     quotations,
     jobCards,
     zatcaInvoices,
+    vouchers,
+    custodies,
     auditLogs,
     undoAuditLog,
     clearAuditLogs,
@@ -203,7 +232,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [previewDrawerOpen, setPreviewDrawerOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState<'live_preview' | 'audit_log'>('live_preview');
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
-  const [previewSection, setPreviewSection] = useState<'fleet' | 'offers' | 'cpo' | 'parts' | 'showrooms'>('fleet');
+  const [previewSection, setPreviewSection] = useState<'fleet' | 'live_site' | 'live_app' | 'offers' | 'cpo' | 'parts' | 'showrooms' | 'zatca' | 'accounting'>('fleet');
+  const [previewSearchQuery, setPreviewSearchQuery] = useState('');
 
   // Keyboard shortcut Ctrl+K / Cmd+K for Command Palette
   useEffect(() => {
@@ -214,6 +244,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       } else if (e.key === 'Escape') {
         setCommandOpen(false);
         setExportModalRequest(null);
+        setPreviewDrawerOpen(false);
+        setNotificationsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -230,6 +262,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     setSidebarOpenMobile(false);
     setNotificationsOpen(false);
     setCommandOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const unreadAlertsCount = stats.newTestDrivesCount + stats.pendingServicesCount + stats.readyJobCardsCount;
@@ -246,18 +279,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     },
     {
       id: 'fleet' as const,
-      labelAr: 'إدارة أسطول سولينا 2026',
+      labelAr: 'أسطول سولينا والأسعار',
       labelEn: 'Solina Fleet & Pricing',
       icon: Car,
-      badge: `${stats.totalFleetCount} موديل`,
+      badge: language === 'ar' ? `${stats.totalFleetCount} موديل` : `${stats.totalFleetCount} Models`,
       isPopularSignal: false
     },
     {
       id: 'vin_inventory' as const,
-      labelAr: 'مخزون الشاسيه والمستودعات (VIN)',
+      labelAr: 'مخزون الشاسيه والمستودعات',
       labelEn: 'VIN Stock & Warehouses',
       icon: Layers,
-      badge: stats.agingVinCount > 0 ? `${stats.agingVinCount} راكد` : `${stats.totalVinStockCount} VIN`,
+      badge: stats.agingVinCount > 0
+        ? (language === 'ar' ? `${stats.agingVinCount} راكد` : `${stats.agingVinCount} Aging`)
+        : (language === 'ar' ? `${stats.totalVinStockCount} مركبة` : `${stats.totalVinStockCount} VIN`),
       isPopularSignal: stats.agingVinCount > 0
     },
     {
@@ -266,7 +301,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       labelEn: 'Leads & Appointments',
       icon: Users,
       badge: hasNewLeads
-        ? `${stats.newTestDrivesCount + stats.pendingServicesCount} جديد` 
+        ? (language === 'ar' ? `${stats.newTestDrivesCount + stats.pendingServicesCount} جديد` : `${stats.newTestDrivesCount + stats.pendingServicesCount} New`)
         : `${stats.totalTestDrives + stats.totalServices + stats.totalQuotations}`,
       isPopularSignal: hasNewLeads
     },
@@ -275,15 +310,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       labelAr: 'ورش الصيانة وأوامر العمل',
       labelEn: 'Workshop & Express Bay',
       icon: Wrench,
-      badge: `${stats.activeJobCardsCount + stats.readyJobCardsCount} نشط`,
+      badge: language === 'ar'
+        ? `${stats.activeJobCardsCount + stats.readyJobCardsCount} نشط`
+        : `${stats.activeJobCardsCount + stats.readyJobCardsCount} Active`,
       isPopularSignal: false
     },
     {
       id: 'zatca' as const,
-      labelAr: 'الفوترة الإلكترونية (ZATCA)',
-      labelEn: 'ZATCA e-Invoicing Phase 2',
+      labelAr: 'الفوترة الضريبية الإلكترونية',
+      labelEn: 'ZATCA e-Invoicing',
       icon: FileText,
-      badge: `${stats.totalInvoicesCount} فاتورة`,
+      badge: language === 'ar' ? `${stats.totalInvoicesCount} فاتورة` : `${stats.totalInvoicesCount} Inv`,
+      isPopularSignal: false
+    },
+    {
+      id: 'accounting' as const,
+      labelAr: 'المحاسبة والعُهد والخزينة',
+      labelEn: 'Accounting & Treasury',
+      icon: Wallet,
+      badge: language === 'ar' ? `${stats.activeCustodiesCount} عهدة` : `${stats.activeCustodiesCount} Active`,
       isPopularSignal: false
     },
     {
@@ -296,7 +341,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     },
     {
       id: 'cpo' as const,
-      labelAr: 'المستعمل المعتمد AutoHub',
+      labelAr: 'السيارات المستعملة المعتمدة',
       labelEn: 'Certified Pre-Owned',
       icon: ShieldCheck,
       badge: `${stats.totalCPOCount}`,
@@ -304,36 +349,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     },
     {
       id: 'parts' as const,
-      labelAr: 'قطع الغيار الأصلية والإكسسوارات',
-      labelEn: 'Genuine Parts & Accessories',
+      labelAr: 'قطع الغيار والإكسسوارات',
+      labelEn: 'Genuine Parts & OEM',
       icon: PackageCheck,
-      badge: stats.lowStockPartsCount > 0 ? `${stats.lowStockPartsCount} نقص` : `${stats.totalPartsCount}`,
+      badge: stats.lowStockPartsCount > 0
+        ? (language === 'ar' ? `${stats.lowStockPartsCount} نقص` : `${stats.lowStockPartsCount} Low`)
+        : `${stats.totalPartsCount}`,
       isPopularSignal: stats.lowStockPartsCount > 0
     },
     {
       id: 'showrooms' as const,
-      labelAr: 'الفروع وصالات عرض سولينا',
-      labelEn: 'Solina Showrooms Network',
+      labelAr: 'الفروع وصالات العرض',
+      labelEn: 'Showrooms Network',
       icon: MapPin,
       badge: `${stats.totalShowroomsCount}`,
       isPopularSignal: false
     },
     {
       id: 'settings' as const,
-      labelAr: 'إعدادات الوكالة والتمويل والنسخ',
-      labelEn: 'Settings, Finance & Backup',
+      labelAr: 'إعدادات الوكالة والنسخ',
+      labelEn: 'Settings & Backup',
       icon: Settings,
-      badge: 'ERP',
+      badge: language === 'ar' ? 'النظام' : 'ERP',
       isPopularSignal: false
     }
   ];
 
   // Role-based filtering of sidebar modules
   const ROLE_ALLOWED_TABS: Record<AdminRoleType, AdminTabType[]> = {
-    gm: ['overview', 'fleet', 'vin_inventory', 'leads', 'workshop', 'zatca', 'offers', 'cpo', 'parts', 'showrooms', 'settings'],
+    gm: ['overview', 'fleet', 'vin_inventory', 'leads', 'workshop', 'zatca', 'accounting', 'offers', 'cpo', 'parts', 'showrooms', 'settings'],
     sales: ['overview', 'fleet', 'vin_inventory', 'leads', 'offers', 'cpo', 'showrooms'],
     workshop: ['overview', 'workshop', 'parts', 'leads'],
-    finance: ['overview', 'zatca', 'vin_inventory', 'leads', 'settings']
+    finance: ['overview', 'zatca', 'accounting', 'vin_inventory', 'leads', 'settings']
   };
   const allowedTabsForRole = ROLE_ALLOWED_TABS[adminRole];
   const visibleNavItems = navItems.filter(item => allowedTabsForRole.includes(item.id));
@@ -357,6 +404,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         { id: 'qa-vin', categoryAr: 'تنقل سريع', titleAr: 'مخزون الشاسيه والمستودعات (VIN)', subtitleAr: `${vinStock.length} مركبة مسجلة بالـ VIN`, targetTab: 'vin_inventory' as const, badgeAr: 'VIN' },
         { id: 'qa-workshop', categoryAr: 'تنقل سريع', titleAr: 'أوامر العمل والمسار السريع 45 دقيقة', subtitleAr: `${jobCards.length} كرت عمل بالورشة`, targetTab: 'workshop' as const, badgeAr: 'Workshop' },
         { id: 'qa-zatca', categoryAr: 'تنقل سريع', titleAr: 'الفوترة الإلكترونية ZATCA وإشعارات الدائن', subtitleAr: `${zatcaInvoices.length} فاتورة ضريبية ومبسطة`, targetTab: 'zatca' as const, badgeAr: 'ZATCA' },
+        { id: 'qa-accounting', categoryAr: 'تنقل سريع', titleAr: 'النظام المحاسبي وسندات القبض والصرف والعُهد المالية', subtitleAr: `${vouchers.length} سند محاسبي • ${custodies.length} عهدة مالية`, targetTab: 'accounting' as const, badgeAr: 'Accounting' },
         { id: 'qa-settings', categoryAr: 'تنقل سريع', titleAr: 'إعدادات الوكالة ومحرك التمويل والنسخ الاحتياطي', subtitleAr: 'تعديل نسب المرابحة APR وتصدير قاعدة البيانات JSON', targetTab: 'settings' as const, badgeAr: 'ERP' }
       ];
     }
@@ -465,11 +513,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       }
     });
 
+    vouchers.forEach(vch => {
+      if (vch.voucherNumber.toLowerCase().includes(q) || vch.partyName.toLowerCase().includes(q) || vch.description.toLowerCase().includes(q)) {
+        results.push({
+          id: `vch-${vch.id}`,
+          categoryAr: 'السندات المحاسبية والخزينة',
+          titleAr: `${vch.voucherNumber} — ${vch.partyName}`,
+          subtitleAr: `${vch.description} • ${vch.totalAmount.toLocaleString('ar-SA')} ر.س`,
+          targetTab: 'accounting',
+          badgeAr: vch.type === 'receipt' ? 'سند قبض' : vch.type === 'payment' ? 'سند صرف' : 'قيد يومية'
+        });
+      }
+    });
+
+    custodies.forEach(cst => {
+      if (cst.custodyNumber.toLowerCase().includes(q) || cst.employeeName.toLowerCase().includes(q) || cst.branchName.toLowerCase().includes(q)) {
+        results.push({
+          id: `cst-${cst.id}`,
+          categoryAr: 'العُهد المالية والسلف',
+          titleAr: `${cst.custodyNumber} — ${cst.employeeName}`,
+          subtitleAr: `${cst.branchName} • المتبقي: ${cst.remainingBalance.toLocaleString('ar-SA')} ر.س`,
+          targetTab: 'accounting',
+          badgeAr: 'عهدة مالية'
+        });
+      }
+    });
+
     return results.slice(0, 12);
-  }, [commandQuery, vehicles, vinStock, testDrives, serviceAppointments, quotations, jobCards, zatcaInvoices, spareParts]);
+  }, [commandQuery, vehicles, vinStock, testDrives, serviceAppointments, quotations, jobCards, zatcaInvoices, spareParts, vouchers, custodies]);
 
   const handleDownloadAllFormats = (dataset: ExportDatasetType) => {
-    const downloadableFormats: ExportFormatType[] = ['excel', 'csv', 'json', 'xml', 'html', 'txt'];
+    const downloadableFormats: ExportFormatType[] = ['excel', 'csv', 'word', 'json', 'xml', 'sql', 'html', 'markdown', 'txt'];
     downloadableFormats.forEach((fmt, idx) => {
       setTimeout(() => {
         exportDataInFormat(dataset, fmt);
@@ -481,92 +555,95 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     <div className="mobbin-admin-shell w-full min-h-screen bg-[#ffffff] text-[#141414] flex flex-col justify-between select-none">
       {/* 1. Full-Screen Responsive Floating Stadium Header (nav-pill) */}
       <header className="sticky top-0 z-40 pt-3 pb-2 px-3 sm:px-5 lg:px-7 bg-[#ffffff]/95 backdrop-blur-md w-full">
-        <div className="w-full max-w-none bg-[#f3f3f3] rounded-full px-3 md:px-5 py-2 flex items-center justify-between gap-2">
+        <div className="w-full max-w-none bg-[#f3f3f3] rounded-full px-3 md:px-5 py-2 flex items-center justify-between gap-3">
           
           {/* Brand Lockup + Desktop Sidebar Collapse Toggle */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               onClick={() => setSidebarOpenMobile(!sidebarOpenMobile)}
-              className="lg:hidden p-2 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] hover:bg-[#e0e0e0] cursor-pointer"
-              title="القائمة الجانبية"
+              className="lg:hidden p-2 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] hover:bg-[#e0e0e0] cursor-pointer shrink-0"
+              title={language === 'ar' ? 'القائمة الجانبية' : 'Sidebar Menu'}
             >
               <Menu className="w-4 h-4" />
             </button>
 
             <button
               onClick={() => setSidebarCollapsedDesktop(!sidebarCollapsedDesktop)}
-              className="hidden lg:flex p-2 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] hover:bg-[#e0e0e0] cursor-pointer"
-              title={sidebarCollapsedDesktop ? 'توسيع القائمة الجانبية' : 'طي القائمة الجانبية (ملء الشاشة الكامل)'}
+              className="hidden lg:flex p-2 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] hover:bg-[#e0e0e0] cursor-pointer shrink-0"
+              title={sidebarCollapsedDesktop ? (language === 'ar' ? 'توسيع القائمة الجانبية' : 'Expand Sidebar') : (language === 'ar' ? 'طي القائمة الجانبية (ملء الشاشة الكامل)' : 'Collapse Sidebar')}
             >
               {sidebarCollapsedDesktop ? <PanelRightOpen className="w-4 h-4" /> : <PanelRightClose className="w-4 h-4" />}
             </button>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 shrink-0">
               <div className="w-9 h-9 px-1.5 bg-[#ffffff] border border-[#e0e0e0] mobbin-squircle flex items-center justify-center shrink-0">
-                <img src="/solina-logo.png" alt="سولينا للسيارات" className="h-6 w-auto object-contain" />
+                <img src="/solina-logo.png" alt="سولينا للسيارات" width={40} height={24} className="h-6 w-auto object-contain" />
               </div>
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-2 whitespace-nowrap">
                 <span className="mobbin-heading text-base md:text-lg text-[#141414]">
                   {language === 'ar' ? 'سولينا.' : 'Solina.'}
                 </span>
-                <span className="hidden sm:inline-block text-xs text-[#707070] font-normal">
-                  {language === 'ar' ? 'منصة إدارة الوكالة الشاملة' : 'Full-Screen Dealership ERP'}
+                <span className="hidden md:inline-block text-xs text-[#707070] font-normal">
+                  {language === 'ar' ? 'منصة إدارة الوكالة الشاملة' : 'Dealership Enterprise Platform'}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Center Global Search Trigger (Command Palette Ctrl+K) + Quick Nav */}
-          <div className="hidden xl:flex items-center gap-2 flex-1 justify-center max-w-4xl">
+          {/* Center Global Search Trigger (Command Palette Ctrl+K) + Quick Nav (when sidebar collapsed) */}
+          <div className="hidden lg:flex items-center gap-2 flex-1 justify-center max-w-3xl min-w-0">
             <button
               onClick={() => setCommandOpen(true)}
-              className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#eaeaea] text-[#707070] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer min-w-[250px] justify-between"
-              title="البحث الشامل في النظام (Ctrl+K)"
+              className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#eaeaea] text-[#707070] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer w-full max-w-md justify-between whitespace-nowrap"
+              title={language === 'ar' ? 'البحث الشامل في النظام (Ctrl+K)' : 'Global System Search (Ctrl+K)'}
             >
-              <span className="flex items-center gap-1.5">
-                <Search className="w-3.5 h-3.5 text-[#141414]" />
-                <span>{language === 'ar' ? 'بحث شامل (VIN، عميل، فاتورة)...' : 'Search VIN, Lead, Invoice...'}</span>
+              <span className="flex items-center gap-2 truncate">
+                <Search className="w-3.5 h-3.5 text-[#141414] shrink-0" />
+                <span className="truncate">{language === 'ar' ? 'بحث شامل (رقم الشاسيه، عميل، فاتورة، قطعة غيار)...' : 'Search VIN, Customer, Invoice, Part...'}</span>
               </span>
-              <kbd className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-mono text-[10px]">Ctrl+K</kbd>
+              <kbd className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-mono text-[10px] shrink-0">Ctrl+K</kbd>
             </button>
 
-            <nav className="flex items-center gap-1">
-              {[
-                { id: 'overview' as const, ar: 'المؤشرات', en: 'Overview' },
-                { id: 'fleet' as const, ar: 'الأسطول', en: 'Fleet' },
-                { id: 'vin_inventory' as const, ar: 'الشاسيه VIN', en: 'VIN' },
-                { id: 'leads' as const, ar: 'المبيعات', en: 'Leads' },
-                { id: 'workshop' as const, ar: 'الصيانة', en: 'Workshop' },
-                { id: 'zatca' as const, ar: 'ZATCA', en: 'ZATCA' },
-                { id: 'settings' as const, ar: 'الإعدادات', en: 'Settings' }
-              ]
-                .filter(link => allowedTabsForRole.includes(link.id))
-                .map(link => {
-                  const active = activeTab === link.id;
-                  return (
-                    <button
-                      key={link.id}
-                      onClick={() => handleNavigateTab(link.id)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                        active
-                          ? 'bg-[#ffffff] text-[#141414]'
-                          : 'text-[#707070] hover:text-[#141414]'
-                      }`}
-                    >
-                      {language === 'ar' ? link.ar : link.en}
-                    </button>
-                  );
-                })}
-            </nav>
+            {sidebarCollapsedDesktop && (
+              <nav className="hidden 2xl:flex items-center gap-1 shrink-0">
+                {[
+                  { id: 'overview' as const, ar: 'المؤشرات', en: 'Overview' },
+                  { id: 'fleet' as const, ar: 'الأسطول', en: 'Fleet' },
+                  { id: 'vin_inventory' as const, ar: 'المستودعات', en: 'VIN' },
+                  { id: 'leads' as const, ar: 'المبيعات', en: 'Leads' },
+                  { id: 'workshop' as const, ar: 'الصيانة', en: 'Workshop' },
+                  { id: 'zatca' as const, ar: 'الفوترة', en: 'ZATCA' },
+                  { id: 'accounting' as const, ar: 'المحاسبة', en: 'Accounting' },
+                  { id: 'settings' as const, ar: 'الإعدادات', en: 'Settings' }
+                ]
+                  .filter(link => allowedTabsForRole.includes(link.id))
+                  .map(link => {
+                    const active = activeTab === link.id;
+                    return (
+                      <button
+                        key={link.id}
+                        onClick={() => handleNavigateTab(link.id)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+                          active
+                            ? 'bg-[#ffffff] text-[#141414]'
+                            : 'text-[#707070] hover:text-[#141414]'
+                        }`}
+                      >
+                        {language === 'ar' ? link.ar : link.en}
+                      </button>
+                    );
+                  })}
+              </nav>
+            )}
           </div>
 
           {/* Right Pill Action Bar */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Mobile/Tablet Search Button */}
             <button
               onClick={() => setCommandOpen(true)}
-              className="xl:hidden p-2 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
-              title="بحث شامل (Ctrl+K)"
+              className="lg:hidden p-2 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer shrink-0"
+              title={language === 'ar' ? 'بحث شامل (Ctrl+K)' : 'Global Search (Ctrl+K)'}
             >
               <Search className="w-4 h-4" />
             </button>
@@ -574,12 +651,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             {/* Universal Multi-Format Export Button (تصدير بكل الصيغ) */}
             <button
               onClick={() => setExportModalRequest('all_erp')}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer"
-              title="تصدير الملفات والتقارير بجميع الصيغ (Excel, CSV, PDF, JSON, XML, HTML, TXT)"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              title={language === 'ar' ? 'تصدير الملفات والتقارير بجميع الصيغ المعتمدة' : 'Export Reports in All 10 Formats'}
             >
-              <Download className="w-3.5 h-3.5 text-[#141414]" />
-              <span className="hidden sm:inline">{language === 'ar' ? 'تصدير بكل الصيغ' : 'Multi-Format Export'}</span>
-              <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">7 صيغ</span>
+              <Download className="w-3.5 h-3.5 text-[#141414] shrink-0" />
+              <span className="hidden sm:inline">{language === 'ar' ? 'تصدير بكل الصيغ' : 'Export Hub'}</span>
+              <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">{language === 'ar' ? '10 صيغ' : '10 Formats'}</span>
             </button>
 
             {/* Live Preview & Audit Review Trigger */}
@@ -588,11 +665,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 setPreviewMode('live_preview');
                 setPreviewDrawerOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer"
-              title="المعاينة الحية وسجل المراجعة"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] text-xs font-semibold border border-[#e0e0e0] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              title={language === 'ar' ? 'المعاينة الحية وسجل المراجعة' : 'Live Preview & Audit Log'}
             >
-              <Eye className="w-3.5 h-3.5 text-[#141414]" />
-              <span className="hidden md:inline">{language === 'ar' ? 'المعاينة والمراجعة' : 'Preview & Review'}</span>
+              <Eye className="w-3.5 h-3.5 text-[#141414] shrink-0" />
+              <span className="hidden md:inline">{language === 'ar' ? 'المعاينة والمراجعة' : 'Live Preview'}</span>
               {auditLogs.length > 0 && (
                 <span className="mobbin-badge-popular px-2 py-0.5 text-[11px] font-mono">
                   {auditLogs.length}
@@ -601,7 +678,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             </button>
 
             {/* Notifications Bell Dropdown */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 className="relative p-2 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
@@ -609,7 +686,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               >
                 <Bell className="w-4 h-4" />
                 {unreadAlertsCount > 0 && (
-                  <span className="mobbin-badge-popular absolute -top-1 -right-1 w-4 h-4 text-[9px] flex items-center justify-center">
+                  <span className="mobbin-badge-popular absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px] flex items-center justify-center">
                     {unreadAlertsCount}
                   </span>
                 )}
@@ -634,7 +711,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         onClick={() => handleNavigateTab('test_drives')}
                         className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] cursor-pointer transition-colors"
                       >
-                        <div className="font-semibold text-[#141414]">طلب تجربة قيادة جديد: {td.fullName}</div>
+                        <div className="font-semibold text-[#141414]">{language === 'ar' ? `طلب تجربة قيادة جديد: ${td.fullName}` : `New Test Drive: ${td.fullName}`}</div>
                         <div className="text-[11px] text-[#707070] mt-0.5">{td.modelName} • {td.preferredShowroom}</div>
                       </div>
                     ))}
@@ -644,7 +721,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         onClick={() => handleNavigateTab('services')}
                         className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] cursor-pointer transition-colors"
                       >
-                        <div className="font-semibold text-[#141414]">حجز صيانة بانتظار التأكيد: {srv.fullName}</div>
+                        <div className="font-semibold text-[#141414]">{language === 'ar' ? `حجز صيانة بانتظار التأكيد: ${srv.fullName}` : `Pending Service: ${srv.fullName}`}</div>
                         <div className="text-[11px] text-[#707070] mt-0.5">{srv.vehicleModel} ({srv.plateNumber})</div>
                       </div>
                     ))}
@@ -653,13 +730,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         onClick={() => handleNavigateTab('workshop')}
                         className="p-3 rounded-[16px] bg-[#f3f3f3] hover:bg-[#e0e0e0] cursor-pointer transition-colors"
                       >
-                        <div className="font-semibold text-[#141414]">{stats.readyJobCardsCount} سيارات جاهزة للتسليم بالورشة</div>
-                        <div className="text-[11px] text-[#707070] mt-0.5">اضغط لإصدار الفاتورة وتسليم العميل</div>
+                        <div className="font-semibold text-[#141414]">{language === 'ar' ? `${stats.readyJobCardsCount} سيارات جاهزة للتسليم بالورشة` : `${stats.readyJobCardsCount} Vehicles Ready for Handover`}</div>
+                        <div className="text-[11px] text-[#707070] mt-0.5">{language === 'ar' ? 'اضغط لإصدار الفاتورة وتسليم العميل' : 'Click to issue invoice & handover'}</div>
                       </div>
                     )}
                     {unreadAlertsCount === 0 && (
                       <div className="text-center py-4 text-[#adadad] text-xs">
-                        لا توجد تنبيهات معلقة حالياً
+                        {language === 'ar' ? 'لا توجد تنبيهات معلقة حالياً' : 'No pending alerts'}
                       </div>
                     )}
                   </div>
@@ -675,7 +752,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 }
               }}
               title={language === 'ar' ? 'استعادة البيانات الافتراضية' : 'Reset Demo Data'}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
+              className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <RotateCcw className="w-3.5 h-3.5 text-[#707070]" />
               <span className="hidden 2xl:inline">{language === 'ar' ? 'استعادة الافتراضي' : 'Reset'}</span>
@@ -684,16 +761,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              title={language === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
             >
               <Globe className="w-3.5 h-3.5 text-[#707070]" />
-              <span className="hidden sm:inline">{language === 'ar' ? 'EN' : 'AR'}</span>
+              <span>{language === 'ar' ? 'EN' : 'عربي'}</span>
             </button>
 
             {/* Return to Public Showroom */}
             <button
               onClick={onClose}
-              className="mobbin-ink-pill flex items-center gap-2 bg-[#141414] hover:bg-[#262626] text-[#ffffff] font-semibold text-xs md:text-sm px-4 py-2 rounded-full transition-colors cursor-pointer"
+              className="mobbin-ink-pill flex items-center gap-2 bg-[#141414] hover:bg-[#262626] text-[#ffffff] font-semibold text-xs md:text-sm px-4 py-1.5 rounded-full transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <span>{language === 'ar' ? 'الموقع العام' : 'Showroom'}</span>
               {isRTL ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
@@ -708,13 +786,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         
         {/* Sidebar Navigation (Collapsible on Desktop, Drawer on Mobile) */}
         <aside className={`bg-[#ffffff] rounded-[24px] border border-[#f0f0f0] space-y-1.5 sticky top-20 transition-all duration-200 shrink-0 ${
-          sidebarCollapsedDesktop ? 'lg:w-[82px] p-3' : 'lg:w-[275px] xl:w-[295px] p-4'
+          sidebarCollapsedDesktop ? 'lg:w-[82px] p-3' : 'lg:w-[300px] xl:w-[315px] p-4'
         } ${
           sidebarOpenMobile ? 'fixed inset-x-4 top-16 z-50 block max-h-[84vh] overflow-y-auto mobbin-modal-card p-5' : 'hidden lg:block'
         }`}>
           {sidebarOpenMobile && (
             <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#f0f0f0] lg:hidden">
-              <span className="font-semibold text-xs text-[#707070]">القائمة الإدارية — سولينا.</span>
+              <span className="font-semibold text-xs text-[#707070]">{language === 'ar' ? 'القائمة الإدارية — سولينا.' : 'Admin Navigation — Solina.'}</span>
               <button onClick={() => setSidebarOpenMobile(false)} className="p-1 text-[#707070]">
                 <X className="w-4 h-4" />
               </button>
@@ -727,11 +805,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <div className="flex items-center justify-between text-[11px]">
                 <span className="font-bold text-[#141414] flex items-center gap-1.5">
                   <UserCheck className="w-3.5 h-3.5 text-[#141414]" />
-                  <span>الدور الوظيفي:</span>
+                  <span>{language === 'ar' ? 'الدور الوظيفي:' : 'Active Role:'}</span>
                 </span>
-                <span className="mobbin-badge-popular">{ADMIN_ROLES_META[adminRole].badgeAr}</span>
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">
+                  {language === 'ar' ? ADMIN_ROLES_META[adminRole].badgeAr : adminRole.toUpperCase()}
+                </span>
               </div>
               <select
+                id="admin-role-select"
+                name="adminRole"
+                aria-label={language === 'ar' ? 'الدور الوظيفي' : 'Active Role'}
                 value={adminRole}
                 onChange={(e) => {
                   const nextRole = e.target.value as AdminRoleType;
@@ -745,7 +828,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               >
                 {(Object.keys(ADMIN_ROLES_META) as AdminRoleType[]).map(r => (
                   <option key={r} value={r}>
-                    {ADMIN_ROLES_META[r].titleAr}
+                    {language === 'ar'
+                      ? ADMIN_ROLES_META[r].titleAr
+                      : r === 'gm'
+                        ? 'General Manager (Full Access)'
+                        : r === 'sales'
+                          ? 'Sales & Showrooms Director'
+                          : r === 'workshop'
+                            ? 'Workshop & Parts Manager'
+                            : 'Finance & ZATCA Auditor'}
                   </option>
                 ))}
               </select>
@@ -758,10 +849,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <button
                 onClick={() => setSidebarCollapsedDesktop(true)}
                 className="hidden lg:inline-flex items-center gap-1 text-[10px] text-[#707070] hover:text-[#141414] cursor-pointer"
-                title="توسيع مساحة العمل"
+                title={language === 'ar' ? 'توسيع مساحة العمل' : 'Maximize Workspace'}
               >
                 <Maximize2 className="w-3 h-3" />
-                <span>توسيع العرض</span>
+                <span>{language === 'ar' ? 'توسيع العرض' : 'Expand'}</span>
               </button>
             </div>
           )}
@@ -776,25 +867,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 title={language === 'ar' ? item.labelAr : item.labelEn}
                 className={`mobbin-shell-row w-full flex items-center ${
                   sidebarCollapsedDesktop ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
-                } text-[13px] font-semibold transition-colors cursor-pointer text-start ${
+                } text-[13px] font-semibold transition-colors cursor-pointer text-start gap-2 ${
                   isActive
                     ? 'bg-[#141414] text-[#ffffff] mobbin-ink-pill'
                     : 'bg-transparent text-[#141414] hover:bg-[#f3f3f3]'
                 }`}
               >
-                <div className="flex items-center gap-2.5 truncate">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <span className={`w-7 h-7 mobbin-squircle flex items-center justify-center shrink-0 ${
                     isActive ? 'bg-[#262626] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#141414]'
                   }`}>
                     <Icon className="w-3.5 h-3.5" />
                   </span>
                   {!sidebarCollapsedDesktop && (
-                    <span className="truncate">{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                    <span className="whitespace-nowrap truncate">{language === 'ar' ? item.labelAr : item.labelEn}</span>
                   )}
                 </div>
 
                 {!sidebarCollapsedDesktop && item.badge && (
-                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full font-mono shrink-0 ${
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full font-mono shrink-0 whitespace-nowrap ${
                     item.isPopularSignal
                       ? 'mobbin-badge-popular'
                       : isActive 
@@ -815,11 +906,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 onClick={() => setExportModalRequest('all_erp')}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] mobbin-ink-pill font-semibold text-xs transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-2">
-                  <Download className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <Download className="w-3.5 h-3.5 shrink-0" />
                   <span>{language === 'ar' ? 'مركز التصدير بكل الصيغ' : 'Universal Export Hub'}</span>
                 </div>
-                <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">7 صيغ</span>
+                <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">{language === 'ar' ? '10 صيغ' : '10 Formats'}</span>
               </button>
 
               <button
@@ -829,11 +920,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 }}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] font-semibold text-xs transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-2">
-                  <Eye className="w-3.5 h-3.5 text-[#141414]" />
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <Eye className="w-3.5 h-3.5 text-[#141414] shrink-0" />
                   <span>{language === 'ar' ? 'معاينة التعديلات حياً' : 'Live Site Preview'}</span>
                 </div>
-                <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">مباشر</span>
+                <span className="mobbin-badge-popular px-2 py-0.5 text-[10px]">{language === 'ar' ? 'مباشر' : 'Live'}</span>
               </button>
 
               <button
@@ -843,8 +934,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 }}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] font-semibold text-xs transition-colors cursor-pointer border border-[#e0e0e0]"
               >
-                <div className="flex items-center gap-2">
-                  <History className="w-3.5 h-3.5 text-[#707070]" />
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <History className="w-3.5 h-3.5 text-[#707070] shrink-0" />
                   <span>{language === 'ar' ? 'سجل المراجعة والتدقيق' : 'Audit & Review Log'}</span>
                 </div>
                 <span className="text-[11px] font-mono bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded-full">
@@ -856,14 +947,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <div className="pt-3 border-t border-[#f0f0f0] flex flex-col items-center gap-2 mt-2">
               <button
                 onClick={() => setExportModalRequest('all_erp')}
-                title="مركز التصدير بكل الصيغ"
+                title={language === 'ar' ? 'مركز التصدير بكل الصيغ' : 'Universal Export Hub'}
                 className="p-2.5 rounded-full bg-[#141414] text-[#ffffff] mobbin-ink-pill cursor-pointer"
               >
                 <Download className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setSidebarCollapsedDesktop(false)}
-                title="توسيع القائمة الجانبية"
+                title={language === 'ar' ? 'توسيع القائمة الجانبية' : 'Expand Sidebar'}
                 className="p-2.5 rounded-full bg-[#f3f3f3] text-[#141414] cursor-pointer"
               >
                 <PanelRightOpen className="w-4 h-4" />
@@ -874,53 +965,65 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
         {/* Content Tab Stage — Stretches to 100% of remaining viewport width */}
         <main className="flex-1 min-w-0 w-full">
-          {activeTab === 'overview' && (
-            <AdminOverviewTab onSwitchTab={handleNavigateTab} />
-          )}
+          <Suspense
+            fallback={
+              <div className="p-12 text-center bg-[#ffffff] rounded-[24px] border border-[#f0f0f0] text-xs font-bold text-[#707070]">
+                جاري تحميل القسم...
+              </div>
+            }
+          >
+            {activeTab === 'overview' && (
+              <AdminOverviewTab onSwitchTab={handleNavigateTab} />
+            )}
 
-          {activeTab === 'fleet' && (
-            <AdminFleetTab />
-          )}
+            {activeTab === 'fleet' && (
+              <AdminFleetTab />
+            )}
 
-          {activeTab === 'vin_inventory' && (
-            <AdminVINInventoryTab />
-          )}
+            {activeTab === 'vin_inventory' && (
+              <AdminVINInventoryTab />
+            )}
 
-          {activeTab === 'leads' && (
-            <AdminLeadsTab 
-              initialSubTab={leadsSubTab} 
-              onSubTabChange={setLeadsSubTab}
-              onNavigateTab={handleNavigateTab}
-            />
-          )}
+            {activeTab === 'leads' && (
+              <AdminLeadsTab 
+                initialSubTab={leadsSubTab} 
+                onSubTabChange={setLeadsSubTab}
+                onNavigateTab={handleNavigateTab}
+              />
+            )}
 
-          {activeTab === 'workshop' && (
-            <AdminWorkshopJobCardsTab onNavigateTab={handleNavigateTab} />
-          )}
+            {activeTab === 'workshop' && (
+              <AdminWorkshopJobCardsTab onNavigateTab={handleNavigateTab} />
+            )}
 
-          {activeTab === 'zatca' && (
-            <AdminZatcaInvoicingTab />
-          )}
+            {activeTab === 'zatca' && (
+              <AdminZatcaInvoicingTab />
+            )}
 
-          {activeTab === 'offers' && (
-            <AdminOffersTab />
-          )}
+            {activeTab === 'accounting' && (
+              <AdminAccountingTab />
+            )}
 
-          {activeTab === 'cpo' && (
-            <AdminCPOTab />
-          )}
+            {activeTab === 'offers' && (
+              <AdminOffersTab />
+            )}
 
-          {activeTab === 'parts' && (
-            <AdminPartsTab />
-          )}
+            {activeTab === 'cpo' && (
+              <AdminCPOTab />
+            )}
 
-          {activeTab === 'showrooms' && (
-            <AdminShowroomsTab />
-          )}
+            {activeTab === 'parts' && (
+              <AdminPartsTab />
+            )}
 
-          {activeTab === 'settings' && (
-            <AdminSettingsTab />
-          )}
+            {activeTab === 'showrooms' && (
+              <AdminShowroomsTab />
+            )}
+
+            {activeTab === 'settings' && (
+              <AdminSettingsTab />
+            )}
+          </Suspense>
         </main>
 
       </div>
@@ -946,7 +1049,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
           <div className="flex flex-wrap items-center gap-5 text-xs font-semibold">
             <button onClick={() => setExportModalRequest('all_erp')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
-              {language === 'ar' ? 'تصدير شامل (7 صيغ)' : 'Multi-Format Export'}
+              {language === 'ar' ? 'تصدير شامل (10 صيغ)' : 'Multi-Format Export'}
             </button>
             <button onClick={() => handleNavigateTab('overview')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
               {language === 'ar' ? 'المؤشرات التنفيذية' : 'Executive Overview'}
@@ -955,13 +1058,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               {language === 'ar' ? 'أسطول 2026' : '2026 Fleet'}
             </button>
             <button onClick={() => handleNavigateTab('vin_inventory')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
-              {language === 'ar' ? 'مخزون VIN' : 'VIN Inventory'}
+              {language === 'ar' ? 'مخزون المركبات' : 'VIN Inventory'}
             </button>
             <button onClick={() => handleNavigateTab('zatca')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
-              {language === 'ar' ? 'الفوترة ZATCA' : 'ZATCA Phase 2'}
+              {language === 'ar' ? 'الفوترة الضريبية' : 'ZATCA Phase 2'}
             </button>
-            <button onClick={onClose} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
-              {language === 'ar' ? 'الواجهة العامة ↗' : 'Public Storefront ↗'}
+            <button onClick={() => handleNavigateTab('accounting')} className="mobbin-footer-link hover:opacity-80 cursor-pointer">
+              {language === 'ar' ? 'المحاسبة والعُهد' : 'Accounting & Custodies'}
+            </button>
+            <button onClick={onClose} className="mobbin-footer-link hover:opacity-80 cursor-pointer inline-flex items-center gap-1">
+              <span>{language === 'ar' ? 'الواجهة العامة' : 'Public Storefront'}</span>
+              <ExternalLink className="w-3 h-3" />
             </button>
           </div>
         </div>
@@ -971,7 +1078,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             © 2026 {language === 'ar' ? 'شركة سولينا للسيارات — جميع الحقوق محفوظة.' : 'Solina Motors Co. All rights reserved.'}
           </span>
           <span className="mobbin-footer-muted font-mono">
-            VATIN: 310984729100003 • ZATCA Phase 2 Connected • Full-Viewport Responsive
+            {language === 'ar'
+              ? 'الرقم الضريبي: 310984729100003 • الفوترة الإلكترونية المعتمدة (المرحلة الثانية)'
+              : 'VATIN: 310984729100003 • ZATCA Phase 2 Connected • Full-Viewport Responsive'}
           </span>
         </div>
       </footer>
@@ -995,18 +1104,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="mobbin-heading text-base md:text-lg text-[#141414]">
-                      مركز تصدير الملفات والتقارير بجميع الصيغ.
+                      {language === 'ar' ? 'مركز تصدير الملفات والتقارير بجميع الصيغ.' : 'Universal Multi-Format Export Hub.'}
                     </h3>
-                    <span className="mobbin-badge-popular">7 صيغ معتمدة</span>
+                    <span className="mobbin-badge-popular px-2.5 py-0.5 text-[11px]">{language === 'ar' ? '10 صيغ معتمدة' : '10 Formats'}</span>
                   </div>
                   <p className="mobbin-subtitle-light text-xs mt-0.5">
-                    اختر القسم أو الجدول المطلوب وحمّله فوراً بصيغة Excel أو CSV أو PDF أو JSON أو XML أو HTML أو TXT
+                    {language === 'ar'
+                      ? 'اختر القسم أو الجدول المطلوب وحمّله فوراً بجميع الصيغ الرسمية المعتمدة'
+                      : 'Select any dataset and download immediately in 10 enterprise formats'}
                   </p>
                 </div>
               </div>
 
               <button
                 onClick={() => setExportModalRequest(null)}
+                title="إغلاق نافذة التصدير"
+                aria-label="إغلاق نافذة التصدير"
                 className="w-9 h-9 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] flex items-center justify-center text-[#141414] cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -1017,10 +1130,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <div className="p-6 overflow-y-auto space-y-6 bg-[#ffffff]">
               {/* Step 1: Dataset Selector */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-[#141414] block">
-                  1. اختر القسم أو قاعدة البيانات المطلوب تصديرها:
+                <label htmlFor="export-dataset-select" className="text-xs font-bold text-[#141414] block">
+                  {language === 'ar' ? '1. اختر القسم أو قاعدة البيانات المطلوب تصديرها:' : '1. Select Dataset to Export:'}
                 </label>
                 <select
+                  id="export-dataset-select"
+                  name="exportDataset"
                   value={selectedExportDataset}
                   onChange={(e) => setSelectedExportDataset(e.target.value as ExportDatasetType)}
                   className="w-full p-3 rounded-2xl bg-[#f0f0f0] text-[#141414] text-xs md:text-sm font-bold cursor-pointer"
@@ -1037,7 +1152,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-[#141414]">
-                    2. اختر صيغة التصدير المطلوبة للتحميل الفوري:
+                    {language === 'ar' ? '2. اختر صيغة التصدير المطلوبة للتحميل الفوري:' : '2. Choose Export Format:'}
                   </label>
                   <button
                     type="button"
@@ -1045,7 +1160,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                     className="mobbin-ink-pill px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>تحميل بجميع الصيغ دفعة واحدة (All 6 Files)</span>
+                    <span>{language === 'ar' ? 'تحميل بجميع الصيغ دفعة واحدة (9 ملفات)' : 'Download All Formats at Once (9 Files)'}</span>
                   </button>
                 </div>
 
@@ -1120,6 +1235,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 <Command className="w-4 h-4" />
               </div>
               <input
+                id="command-search-input"
+                name="commandQuery"
+                aria-label="بحث الأوامر الشامل"
                 type="text"
                 autoFocus
                 value={commandQuery}
@@ -1174,8 +1292,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
       {/* 6. Live Preview & Audit Review Modal (Full-Viewport Responsive) */}
       {previewDrawerOpen && (
-        <div className="fixed inset-0 z-50 bg-[#141414]/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
-          <div className="mobbin-modal-card max-w-[96vw] w-full h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+        <div
+          className="fixed inset-0 z-50 bg-[#141414]/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
+          onClick={() => setPreviewDrawerOpen(false)}
+        >
+          <div
+            className="mobbin-modal-card max-w-[96vw] w-full h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             
             {/* Modal Header */}
             <div className="bg-[#ffffff] px-6 py-4 border-b border-[#f0f0f0] flex flex-wrap items-center justify-between gap-4">
@@ -1191,8 +1315,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   </h3>
                   <p className="mobbin-subtitle-light text-xs">
                     {language === 'ar'
-                      ? 'عاين كيف تظهر التعديلات للعملاء على الموقع العام أو راجع سجل العمليات الإدارية مع التراجع الفوري'
-                      : 'Preview how changes appear on the public storefront or inspect the administrative audit trail'}
+                      ? 'عاين كيف تظهر التعديلات للعملاء على الموقع العام وتطبيق الجوال أو راجع سجل العمليات الإدارية مع التراجع الفوري'
+                      : 'Preview how changes appear on the public storefront and mobile app or inspect the administrative audit trail'}
                   </p>
                 </div>
               </div>
@@ -1221,6 +1345,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
                 <button
                   onClick={() => setPreviewDrawerOpen(false)}
+                  title="إغلاق المعاينة"
+                  aria-label="إغلاق المعاينة"
                   className="w-9 h-9 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] flex items-center justify-center text-[#141414] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
@@ -1232,13 +1358,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             {previewMode === 'live_preview' && (
               <div className="flex-1 flex flex-col overflow-hidden bg-[#f3f3f3]">
                 <div className="bg-[#ffffff] px-6 py-3 border-b border-[#e0e0e0] flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-1.5 overflow-x-auto">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
                     {[
                       { id: 'fleet', label: `الأسطول والأسعار (${vehicles.length})` },
+                      { id: 'live_site', label: 'الموقع التفاعلي الكامل' },
+                      { id: 'live_app', label: 'تطبيق الجوال التفاعلي' },
                       { id: 'offers', label: `العروض الترويجية (${offers.length})` },
                       { id: 'cpo', label: `المستعمل المعتمد (${cpoVehicles.length})` },
                       { id: 'parts', label: `قطع الغيار (${spareParts.length})` },
-                      { id: 'showrooms', label: `الفروع (${showrooms.length})` }
+                      { id: 'showrooms', label: `الفروع (${showrooms.length})` },
+                      { id: 'zatca', label: `الفواتير الضريبية (${zatcaInvoices.length})` },
+                      { id: 'accounting', label: `السندات والعُهد (${vouchers.length + custodies.length})` }
                     ].map(sec => (
                       <button
                         key={sec.id}
@@ -1289,44 +1419,96 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 flex justify-center">
-                  <div className={`bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] p-6 transition-all duration-300 w-full ${
-                    previewDevice === 'mobile' ? 'max-w-[400px]' : 'max-w-full'
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex justify-center">
+                  <div className={`bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] p-4 sm:p-6 transition-all duration-300 w-full ${
+                    previewDevice === 'mobile' || previewSection === 'live_app' ? 'max-w-[430px]' : 'max-w-full'
                   }`}>
-                    <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#f0f0f0]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-[#f0f0f0]">
                       <div className="flex items-center gap-2.5">
                         <img src="/solina-logo.png" alt="سولينا" className="h-7 w-auto object-contain" />
                         <span className="font-semibold text-sm text-[#141414]">معاينة الواجهة العامة — سولينا للسيارات.</span>
                       </div>
-                      <span className="mobbin-badge-popular px-3 py-1">
-                        ✓ متزامن لحظياً
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {previewSection === 'fleet' && (
+                          <input
+                            id="preview-fleet-search"
+                            name="previewFleetSearch"
+                            aria-label="بحث في الأسطول"
+                            type="text"
+                            value={previewSearchQuery}
+                            onChange={(e) => setPreviewSearchQuery(e.target.value)}
+                            placeholder="ابحث عن مركبة في المعاينة..."
+                            className="px-3.5 py-1.5 rounded-full bg-[#f3f3f3] text-xs font-semibold text-[#141414] outline-none w-48 sm:w-64"
+                          />
+                        )}
+                        <span className="mobbin-badge-popular px-3 py-1">
+                          متزامن لحظياً ({vehicles.length} مركبة)
+                        </span>
+                      </div>
                     </div>
+
+                    {previewSection === 'live_site' && (
+                      <div className="w-full h-[70vh] rounded-[20px] overflow-hidden border border-[#e0e0e0] bg-[#ffffff]">
+                        <iframe
+                          src="/?view=storefront"
+                          title="المعاينة التفاعلية للموقع العام"
+                          className="w-full h-full border-0"
+                        />
+                      </div>
+                    )}
+
+                    {previewSection === 'live_app' && (
+                      <div className="w-full h-[72vh] rounded-[28px] overflow-hidden border-4 border-[#141414] bg-[#f3f3f3] shadow-xl">
+                        <iframe
+                          src="/?view=mobile-native"
+                          title="معاينة تطبيق سولينا للجوال"
+                          className="w-full h-full border-0"
+                        />
+                      </div>
+                    )}
 
                     {previewSection === 'fleet' && (
                       <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
-                        {vehicles.slice(0, 12).map(v => (
+                        {vehicles
+                          .filter(v => {
+                            if (!previewSearchQuery.trim()) return true;
+                            const q = previewSearchQuery.toLowerCase();
+                            return v.nameAr.toLowerCase().includes(q) || v.nameEn.toLowerCase().includes(q) || v.bodyTypeAr.toLowerCase().includes(q);
+                          })
+                          .map(v => (
                           <div key={v.id} className="p-5 rounded-[24px] border border-[#f0f0f0] hover:border-[#141414] transition-colors flex flex-col justify-between bg-[#ffffff]">
                             <div>
                               <div className="flex items-center justify-between text-[11px] font-semibold mb-2">
                                 <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070]">{v.bodyTypeAr}</span>
-                                {v.isFeatured && <span className="mobbin-badge-popular px-2.5 py-0.5">★ مميزة</span>}
+                                {v.isFeatured && <span className="mobbin-badge-popular px-2.5 py-0.5">مميزة</span>}
                               </div>
                               <div className="h-28 flex items-center justify-center my-2 bg-[#f3f3f3] rounded-[16px] p-2">
-                                <img src={v.cardImage} alt={v.nameAr} className="max-h-full max-w-full object-contain" />
+                                <img src={v.cardImage} alt={v.nameAr} className="max-h-full max-w-full object-contain" loading="lazy" width={220} height={96} />
                               </div>
                               <h4 className="mobbin-heading text-[#141414] text-sm mt-2">{v.nameAr}</h4>
                               <p className="text-[12px] text-[#707070]">{v.engineSpec} • {v.fuelEconomy}</p>
                             </div>
-                            <div className="pt-3 mt-3 border-t border-[#f0f0f0] flex items-center justify-between">
-                              <div>
-                                <span className="text-[11px] text-[#adadad] block">يبدأ من</span>
-                                <strong className="text-sm font-semibold text-[#141414] font-mono">{formatPrice(v.priceStartingFrom)} ر.س</strong>
+                            <div className="pt-3 mt-3 border-t border-[#f0f0f0] space-y-2.5">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <span className="text-[11px] text-[#adadad] block">يبدأ من</span>
+                                  <strong className="text-sm font-semibold text-[#141414] font-mono">{formatPrice(v.priceStartingFrom)} ر.س</strong>
+                                </div>
+                                <div className="text-end">
+                                  <span className="text-[11px] text-[#adadad] block">القسط الشهري</span>
+                                  <span className="text-xs font-semibold text-[#707070] font-mono">{formatPrice(v.monthlyInstallmentStartingFrom)} ر.س</span>
+                                </div>
                               </div>
-                              <div className="text-end">
-                                <span className="text-[11px] text-[#adadad] block">القسط الشهري</span>
-                                <span className="text-xs font-semibold text-[#707070] font-mono">{formatPrice(v.monthlyInstallmentStartingFrom)} ر.س</span>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPreviewDrawerOpen(false);
+                                  handleNavigateTab('fleet');
+                                }}
+                                className="w-full py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-[#ffffff] text-[11px] font-bold transition-colors cursor-pointer"
+                              >
+                                تعديل السعر والبيانات في الأسطول
+                              </button>
                             </div>
                           </div>
                         ))}
@@ -1397,6 +1579,70 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         ))}
                       </div>
                     )}
+
+                    {previewSection === 'zatca' && (
+                      <div className={`grid gap-4 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+                        {zatcaInvoices.map(inv => (
+                          <div key={inv.id} className="p-5 rounded-[24px] border border-[#f0f0f0] bg-[#ffffff] space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-xs font-bold text-[#141414]">{inv.invoiceNumber}</span>
+                              <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">ZATCA Phase 2</span>
+                            </div>
+                            <h4 className="mobbin-heading text-[#141414] text-sm">{inv.customerName}</h4>
+                            <p className="text-xs text-[#707070]">{inv.vehicleModel} • {inv.vinNumber}</p>
+                            <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between">
+                              <span className="text-[11px] text-[#707070] font-mono">{inv.date}</span>
+                              <strong className="text-sm font-bold text-[#141414] font-mono">{formatPrice(inv.totalAmount)} ر.س</strong>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {previewSection === 'accounting' && (
+                      <div className="space-y-6">
+                        <div>
+                          <h4 className="mobbin-heading text-sm text-[#141414] mb-3">سندات القبض والصرف والقيود ({vouchers.length})</h4>
+                          <div className={`grid gap-3 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+                            {vouchers.map(vch => (
+                              <div key={vch.id} className="p-4 rounded-[20px] border border-[#f0f0f0] bg-[#ffffff] space-y-1.5">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-mono text-xs font-bold text-[#141414]">{vch.voucherNumber}</span>
+                                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414]">
+                                    {vch.type === 'receipt' ? 'سند قبض' : vch.type === 'payment' ? 'سند صرف' : 'قيد يومية'}
+                                  </span>
+                                </div>
+                                <p className="text-xs font-bold text-[#141414]">{vch.partyName}</p>
+                                <p className="text-[11px] text-[#707070]">{vch.description}</p>
+                                <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between">
+                                  <span className="text-[11px] text-[#707070] font-mono">{vch.date}</span>
+                                  <strong className="text-xs font-bold text-[#141414] font-mono">{formatPrice(vch.totalAmount)} ر.س</strong>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="mobbin-heading text-sm text-[#141414] mb-3">العُهد المالية وصناديق المصروفات النثرية ({custodies.length})</h4>
+                          <div className={`grid gap-3 ${previewDevice === 'mobile' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+                            {custodies.map(cst => (
+                              <div key={cst.id} className="p-4 rounded-[20px] border border-[#f0f0f0] bg-[#ffffff] space-y-1.5">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-mono text-xs font-bold text-[#141414]">{cst.custodyNumber}</span>
+                                  <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">{cst.branchName}</span>
+                                </div>
+                                <p className="text-xs font-bold text-[#141414]">{cst.employeeName} — {cst.employeeRole}</p>
+                                <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between text-xs font-mono">
+                                  <span className="text-[#707070]">المتبقي: <strong className="text-[#141414]">{formatPrice(cst.remainingBalance)} ر.س</strong></span>
+                                  <span className="text-[#707070]">من {formatPrice(cst.allocatedAmount)} ر.س</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1450,7 +1696,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 {language === 'ar' ? log.summaryAr : log.summaryEn}
                               </span>
                               {log.reverted && (
-                                <span className="mobbin-badge-popular">تم التراجع ✓</span>
+                                <span className="mobbin-badge-popular">تم التراجع</span>
                               )}
                             </div>
 

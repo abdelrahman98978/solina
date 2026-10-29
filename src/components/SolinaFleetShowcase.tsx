@@ -39,7 +39,7 @@ export const SolinaFleetShowcase: React.FC<SolinaFleetShowcaseProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onOpenTestDrive && onOpenTestDrive('لاند كروزر 2026')}
-              className="px-6 py-3 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs md:text-sm font-bold shadow-lg transition-all cursor-pointer inline-flex items-center gap-2 hover:scale-105"
+              className="px-6 py-3 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs md:text-sm font-bold shadow-lg transition-all cursor-pointer inline-flex items-center gap-2 hover:scale-105"
             >
               <span>{language === 'ar' ? 'حجز تجربة قيادة' : 'Book Test Drive'}</span>
               <ArrowLeft className="w-4 h-4" />
@@ -95,21 +95,21 @@ export const SolinaFleetShowcase: React.FC<SolinaFleetShowcaseProps> = ({
           {[
             {
               icon: Zap,
-              badgeBg: 'bg-amber-50 border-amber-200/80 text-amber-600',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]',
               titleAr: 'تسليم فوري ومباشر',
               titleEn: 'Immediate Handover',
               descAr: 'استلم سيارتك الجديدة خلال 48 ساعة من إتمام إجراءات الشراء'
             },
             {
               icon: BadgePercent,
-              badgeBg: 'bg-emerald-50 border-emerald-200/80 text-emerald-600',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]',
               titleAr: 'عروض تمويل إسلامي 0%',
               titleEn: '0% Down Payment Finance',
               descAr: 'باقات تمويل تأجيري متوافقة مع الشريعة بأقل هامش ربح'
             },
             {
               icon: ShieldCheck,
-              badgeBg: 'bg-blue-50 border-blue-200/80 text-blue-600',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]',
               titleAr: 'ضمان سولينا 10 سنوات',
               titleEn: '10-Year Solina Warranty',
               descAr: 'تغطية مصنعية كاملة للمحرك، ناقل الحركة، وبطاريات الهايبرد'

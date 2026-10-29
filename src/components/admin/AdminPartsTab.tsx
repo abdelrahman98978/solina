@@ -119,38 +119,38 @@ export const AdminPartsTab: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* 1. Header Bar */}
-      <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-            <Wrench className="w-5 h-5 text-blue-600" />
-            <span>{language === 'ar' ? 'إدارة قطع غيار سولينا الأصلية والإكسسوارات (Genuine Parts)' : 'Solina Genuine Parts Inventory'}</span>
+          <h2 className="text-xl font-bold text-[#141414] font-display flex items-center gap-2">
+            <Wrench className="w-5 h-5 text-[#141414]" />
+            <span>{language === 'ar' ? 'إدارة قطع غيار سولينا الأصلية والإكسسوارات' : 'Solina Genuine Parts Inventory'}</span>
           </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-[#707070] mt-0.5">
             {language === 'ar' 
-              ? 'متابعة أرقام القطع الأصلية (Part Numbers)، الأسعار، والتوافق مع موديلات سولينا وكروت الصيانة.' 
+              ? 'متابعة أرقام القطع الأصلية، الأسعار، الأرصدة المخزنية، والتوافق مع موديلات سولينا وأوامر الصيانة.' 
               : 'Manage OEM part numbers, pricing, and vehicle compatibility.'}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold px-3 py-2 rounded-xl bg-gray-100 text-gray-700 font-mono">
+          <span className="text-xs font-bold px-3 py-2 rounded-xl bg-[#f0f0f0] text-[#707070] font-mono">
             {spareParts.length} قطعة مسجلة
           </span>
           {stats.lowStockPartsCount > 0 && (
-            <span className="mobbin-badge-popular">
+            <span className="mobbin-badge-popular px-2.5 py-1 text-[11px]">
               {stats.lowStockPartsCount} قطع تحت حد الطلب (≤10)
             </span>
           )}
           <button
             onClick={() => exportDataToCSV('parts')}
-            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#f0f0f0] hover:bg-[#e0e0e0] text-[#707070] font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>تصدير القطع (كل الصيغ)</span>
+            <span>تصدير القطع (10 صيغ)</span>
           </button>
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-blue-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-2 bg-[#141414] hover:bg-black text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-none  transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>إضافة قطعة غيار أصلية</span>
@@ -161,34 +161,34 @@ export const AdminPartsTab: React.FC = () => {
       {/* 2. Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#adadad] absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="ابحث باسم القطعة، رقم القطعة (Part #)، أو الموديل المتوافق..."
+            placeholder="ابحث باسم القطعة، رقم القطعة الأصلي، أو الموديل المتوافق..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-10 pl-3 focus:ring-2 focus:ring-blue-600 outline-none"
+            className="w-full bg-white border border-[#e0e0e0] text-[#141414] text-xs rounded-xl py-2.5 pr-10 pl-3 focus:border-[#141414] outline-none"
           />
         </div>
 
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full sm:w-64 bg-white border border-gray-200 text-gray-800 text-xs rounded-xl py-2.5 px-3 font-medium outline-none cursor-pointer"
+          className="w-full sm:w-64 bg-white border border-[#e0e0e0] text-[#141414] text-xs rounded-xl py-2.5 px-3 font-medium outline-none cursor-pointer"
         >
           <option value="all">كافة التصنيفات ({spareParts.length})</option>
           <option value="مكابح وفلاتر">المكابح والفلاتر الأصلية</option>
-          <option value="إكسسوارات GR">إكسسوارات GR Sport</option>
+          <option value="إكسسوارات GR">الإكسسوارات الرياضية</option>
           <option value="حماية وعناية">أطقم الحماية والفرشات</option>
           <option value="زيوت وسوائل">الزيوت والسوائل التخليقية</option>
         </select>
       </div>
 
       {/* 3. Parts Table */}
-      <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#e0e0e0] shadow-none overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-start text-xs">
-            <thead className="bg-gray-50 text-gray-500 font-bold border-b border-gray-200 uppercase tracking-wider">
+            <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0] uppercase tracking-wider">
               <tr>
                 <th className="py-4 px-6 text-start">القطعة ورقمها الأصلي</th>
                 <th className="py-4 px-4 text-start">التصنيف والضمان</th>
@@ -203,30 +203,30 @@ export const AdminPartsTab: React.FC = () => {
                 const qty = partQuantities[part.id] ?? 20;
                 const isLowStock = qty <= 10;
                 return (
-                <tr key={part.id} className="hover:bg-gray-50/60 transition-colors">
+                <tr key={part.id} className="hover:bg-[#f3f3f3] transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-xl bg-gray-100 p-1 flex items-center justify-center border border-gray-200 shrink-0">
-                        <img src={part.image} alt={part.nameAr} className="max-h-full max-w-full object-contain" />
+                      <div className="w-12 h-12 rounded-xl bg-[#f0f0f0] p-1 flex items-center justify-center border border-[#e0e0e0] shrink-0">
+                        <img src={part.image} alt={part.nameAr} width={44} height={44} className="max-h-full max-w-full object-contain" />
                       </div>
                       <div>
-                        <span className="font-bold text-gray-900 text-sm block">{part.nameAr}</span>
-                        <span className="text-[11px] text-gray-500 font-mono block">Part #: {part.partNumber}</span>
+                        <span className="font-bold text-[#141414] text-sm block">{part.nameAr}</span>
+                        <span className="text-[11px] text-[#707070] font-mono block">رقم القطعة: {part.partNumber}</span>
                       </div>
                     </div>
                   </td>
 
                   <td className="py-4 px-4">
-                    <span className="inline-flex px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 font-medium text-[11px]">
+                    <span className="inline-flex px-2.5 py-1 rounded-lg bg-[#f0f0f0] text-[#707070] font-medium text-[11px]">
                       {part.category}
                     </span>
-                    <span className="block text-[10px] text-emerald-600 mt-1">{part.warranty}</span>
+                    <span className="block text-[10px] text-[#141414] mt-1">{part.warranty}</span>
                   </td>
 
                   <td className="py-4 px-4">
                     <div className="flex flex-wrap gap-1">
                       {part.compatibleModels.map((m, i) => (
-                        <span key={i} className="text-[10px] bg-blue-50 text-blue-600 border border-blue-200 font-semibold px-2 py-0.5 rounded">
+                        <span key={i} className="text-[10px] bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-semibold px-2 py-0.5 rounded">
                           {m}
                         </span>
                       ))}
@@ -263,9 +263,9 @@ export const AdminPartsTab: React.FC = () => {
                   </td>
 
                   <td className="py-4 px-4">
-                    <div className="font-mono font-bold text-gray-900 text-sm">{formatPrice(part.price)} ر.س</div>
+                    <div className="font-mono font-bold text-[#141414] text-sm">{formatPrice(part.price)} ر.س</div>
                     {part.originalPrice && part.originalPrice > part.price && (
-                      <span className="text-[10px] text-gray-400 line-through font-mono">
+                      <span className="text-[10px] text-[#adadad] line-through font-mono">
                         {formatPrice(part.originalPrice)} ر.س
                       </span>
                     )}
@@ -275,7 +275,7 @@ export const AdminPartsTab: React.FC = () => {
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => openEditModal(part)}
-                        className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-[#f0f0f0] hover:bg-black hover:text-white text-[#707070] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                         title="تعديل بيانات القطعة"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
@@ -286,7 +286,7 @@ export const AdminPartsTab: React.FC = () => {
                         onClick={() => {
                           if (confirm('هل تريد حذف هذه القطعة من الكتالوج؟')) deleteSparePart(part.id);
                         }}
-                        className="p-2 rounded-xl bg-gray-100 hover:bg-red-600 hover:text-white text-gray-400 transition-colors cursor-pointer"
+                        className="p-2 rounded-xl bg-[#f0f0f0] hover:bg-red-600 hover:text-white text-[#adadad] transition-colors cursor-pointer"
                         title="حذف"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -304,15 +304,15 @@ export const AdminPartsTab: React.FC = () => {
       {/* 4. Add / Edit Spare Part Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-gray-200 animate-in zoom-in-95 space-y-4 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
-                <Wrench className="w-4 h-4 text-blue-600" />
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-none border border-[#e0e0e0] animate-in zoom-in-95 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#e0e0e0]">
+              <h3 className="font-bold text-[#141414] text-base flex items-center gap-2">
+                <Wrench className="w-4 h-4 text-[#141414]" />
                 <span>{editingPart ? `تعديل القطعة: ${editingPart.nameAr}` : 'إضافة قطعة غيار سولينا أصلية'}</span>
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:text-black flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#f0f0f0] text-[#707070] hover:text-black flex items-center justify-center cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -320,34 +320,34 @@ export const AdminPartsTab: React.FC = () => {
 
             <form onSubmit={handleSavePart} className="space-y-3.5 text-xs">
               <div>
-                <label className="font-bold text-gray-700 block mb-1">اسم القطعة بالعربية *</label>
+                <label className="font-bold text-[#707070] block mb-1">اسم القطعة بالعربية *</label>
                 <input
                   type="text"
                   required
                   value={nameAr}
                   onChange={(e) => setNameAr(e.target.value)}
                   placeholder="مثال: طقم فحمات فرامل أمامية أصلية - سولينا"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none focus:border-blue-600"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">الرقم المرجعي للقطعة (Part #) *</label>
+                  <label className="font-bold text-[#707070] block mb-1">الرقم المرجعي للقطعة (Part #) *</label>
                   <input
                     type="text"
                     required
                     value={partNumber}
                     onChange={(e) => setPartNumber(e.target.value.toUpperCase())}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">التصنيف</label>
+                  <label className="font-bold text-[#707070] block mb-1">التصنيف</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as any)}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                   >
                     <option value="مكابح وفلاتر">مكابح وفلاتر</option>
                     <option value="إكسسوارات GR">إكسسوارات GR</option>
@@ -359,54 +359,54 @@ export const AdminPartsTab: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">سعر البيع الشامل للضريبة (ر.س) *</label>
+                  <label className="font-bold text-[#707070] block mb-1">سعر البيع الشامل للضريبة (ر.س) *</label>
                   <input
                     type="number"
                     required
                     value={price}
                     onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 font-mono font-bold text-blue-600 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 font-mono font-bold text-[#141414] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">السعر قبل الخصم (اختياري)</label>
+                  <label className="font-bold text-[#707070] block mb-1">السعر قبل الخصم (اختياري)</label>
                   <input
                     type="number"
                     value={originalPrice}
                     onChange={(e) => setOriginalPrice(Number(e.target.value))}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 font-mono text-gray-600 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 font-mono text-[#707070] outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-bold text-gray-700 block mb-1">الموديلات المتوافقة (مفصولة بفاصلة ,)</label>
+                <label className="font-bold text-[#707070] block mb-1">الموديلات المتوافقة (مفصولة بفاصلة ,)</label>
                 <input
                   type="text"
                   value={compatibleModelsText}
                   onChange={(e) => setCompatibleModelsText(e.target.value)}
                   placeholder="كامري, كراون, لاند كروزر"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">الضمان</label>
+                  <label className="font-bold text-[#707070] block mb-1">الضمان</label>
                   <input
                     type="text"
                     value={warranty}
                     onChange={(e) => setWarranty(e.target.value)}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">رابط الصورة (URL)</label>
+                  <label className="font-bold text-[#707070] block mb-1">رابط الصورة (URL)</label>
                   <input
                     type="text"
                     value={image}
                     onChange={(e) => setImage(e.target.value)}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-mono text-gray-900 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs font-mono text-[#141414] outline-none"
                   />
                 </div>
               </div>
@@ -414,14 +414,14 @@ export const AdminPartsTab: React.FC = () => {
               <div className="flex items-center gap-2 pt-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs cursor-pointer shadow-sm"
+                  className="flex-1 bg-[#141414] hover:bg-black text-white font-bold py-3 rounded-xl text-xs cursor-pointer shadow-none"
                 >
                   {editingPart ? 'حفظ التعديلات' : 'إضافة القطعة إلى كتالوج سولينا'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl text-xs cursor-pointer"
+                  className="px-4 py-3 bg-[#f0f0f0] text-[#707070] font-bold rounded-xl text-xs cursor-pointer"
                 >
                   إلغاء
                 </button>

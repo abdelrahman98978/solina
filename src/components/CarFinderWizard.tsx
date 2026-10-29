@@ -51,14 +51,14 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
   return (
     <section className="py-20 bg-[#12141A] text-white relative overflow-hidden border-t border-white/10">
       {/* Ambient background styling */}
-      <div className="absolute top-0 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-10 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-10 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-xs font-bold text-blue-400 mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/15 border border-red-600/40 text-xs font-bold text-red-500 mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-[#dc2626]" />
             <span>{language === 'ar' ? 'المستشار الذكي لاختيار السيارة' : 'Smart AI Car Matcher'}</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-3 font-display">
@@ -75,7 +75,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {/* Question 1: Budget */}
           <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl">
-            <div className="flex items-center gap-2 text-xs font-bold text-blue-400 mb-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-red-500 mb-3">
               <DollarSign className="w-4 h-4" />
               <span>{language === 'ar' ? '1. الميزانية المستهدفة:' : '1. Target Budget:'}</span>
             </div>
@@ -91,7 +91,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
                   onClick={() => setBudgetTier(opt.id as any)}
                   className={`w-full text-right sm:text-inherit p-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-between cursor-pointer ${
                     budgetTier === opt.id
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                      ? 'bg-[#141414] text-white shadow-md '
                       : 'bg-white/5 text-gray-300 hover:bg-white/10'
                   }`}
                 >
@@ -104,7 +104,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
 
           {/* Question 2: Passengers */}
           <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 mb-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-red-500 mb-3">
               <Users className="w-4 h-4" />
               <span>{language === 'ar' ? '2. سعة المقاعد والركاب:' : '2. Passenger Capacity:'}</span>
             </div>
@@ -120,7 +120,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
                   onClick={() => setPassengers(opt.id as any)}
                   className={`w-full text-right sm:text-inherit p-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-between cursor-pointer ${
                     passengers === opt.id
-                      ? 'bg-emerald-600 text-white shadow-md'
+                      ? 'bg-[#141414] text-white shadow-md'
                       : 'bg-white/5 text-gray-300 hover:bg-white/10'
                   }`}
                 >
@@ -133,7 +133,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
 
           {/* Question 3: Primary Terrain & Usage */}
           <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl">
-            <div className="flex items-center gap-2 text-xs font-bold text-amber-400 mb-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-red-500 mb-3">
               <Compass className="w-4 h-4" />
               <span>{language === 'ar' ? '3. طبيعة الاستخدام والقيادة:' : '3. Driving Purpose:'}</span>
             </div>
@@ -150,7 +150,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
                   onClick={() => setUsage(opt.id as any)}
                   className={`w-full text-right sm:text-inherit p-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-between cursor-pointer ${
                     usage === opt.id
-                      ? 'bg-amber-600 text-white shadow-md'
+                      ? 'bg-[#141414] text-white shadow-md'
                       : 'bg-white/5 text-gray-300 hover:bg-white/10'
                   }`}
                 >
@@ -176,7 +176,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
         {/* Matching Recommendations Result Header */}
         <div className="mb-6 flex items-center justify-between">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-blue-400" />
+            <Sparkles className="w-4 h-4 text-red-500" />
             <span>{language === 'ar' ? 'أفضل الترشيحات المتطابقة مع اختياراتك:' : 'Top Matched Vehicles for You:'}</span>
           </h3>
         </div>
@@ -186,11 +186,11 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
           {scoredVehicles.map(car => (
             <div
               key={car.id}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-3xl p-6 backdrop-blur-xl transition-all duration-300 flex flex-col justify-between group"
+              className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#141414] rounded-3xl p-6 backdrop-blur-xl transition-all duration-300 flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-blue-600 text-white shadow-sm shadow-blue-500/30">
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-[#141414] text-white shadow-sm ">
                     {language === 'ar' ? `تطابق بنسبة ${car.matchScore}%` : `${car.matchScore}% Match`}
                   </span>
                   <span className="text-xs text-gray-400">{car.bodyTypeAr}</span>
@@ -212,7 +212,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
                   </div>
                   <div className="text-left">
                     <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'القسط الشهري' : 'Installment'}</span>
-                    <span className="font-bold text-blue-400 font-mono">{formatPrice(car.monthlyInstallmentStartingFrom)} ر.س/شهر</span>
+                    <span className="font-bold text-red-500 font-mono">{formatPrice(car.monthlyInstallmentStartingFrom)} ر.س/شهر</span>
                   </div>
                 </div>
               </div>
@@ -226,7 +226,7 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
                 </button>
                 <button
                   onClick={() => onOpenTestDrive(car.nameAr)}
-                  className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs text-center transition-colors cursor-pointer shadow-sm shadow-blue-600/30"
+                  className="py-2.5 px-3 rounded-xl bg-[#141414] hover:bg-red-600 text-white font-bold text-xs text-center transition-colors cursor-pointer shadow-sm "
                 >
                   {language === 'ar' ? 'حجز تجربة' : 'Test Drive'}
                 </button>

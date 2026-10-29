@@ -197,7 +197,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
           <div className="relative z-20 max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 pb-12 w-full flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => onOpenQuotation(vehicle, activeGrade)}
-              className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-base shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer text-center"
+              className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-base shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer text-center"
             >
               {language === 'ar' ? 'خيارات الشراء' : 'Buying Options'}
             </button>
@@ -206,7 +206,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
               onClick={() => setIsCatalogOpen(true)}
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-gray-100 text-gray-900 font-bold text-base shadow-lg transition-all duration-200 cursor-pointer text-center flex items-center justify-center gap-2"
             >
-              <BookOpen className="w-5 h-5 text-[#0056B3]" />
+              <BookOpen className="w-5 h-5 text-[#141414]" />
               <span>{language === 'ar' ? 'الكتالوج الرسمي والداخلية PDF' : 'Official Catalog & Interior PDF'}</span>
             </button>
 
@@ -224,7 +224,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
           <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 flex items-center justify-between h-14 overflow-x-auto no-scrollbar">
             {/* Model Name Badge */}
             <div className="text-sm md:text-base font-bold tracking-wider font-mono text-white flex-shrink-0 flex items-center gap-2">
-              <span className="text-[#0056B3] font-black">{language === 'ar' ? brandMeta.brandName : brandMeta.brandNameEn}</span>
+              <span className="text-[#141414] font-black">{language === 'ar' ? brandMeta.brandName : brandMeta.brandNameEn}</span>
               <span className="text-gray-400">|</span>
               <span>{vehicle.nameEn.replace('2026', '').trim()}</span>
             </div>
@@ -253,7 +253,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                   >
                     {item.label}
                     {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3]"></span>
+                      <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414]"></span>
                     )}
                   </button>
                 );
@@ -268,7 +268,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-6 space-y-6">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-3 py-1 rounded-full bg-blue-50 text-[#0056B3] text-xs font-bold border border-blue-200">
+                  <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] text-xs font-bold border border-[#e0e0e0]">
                     {language === 'ar' ? brandMeta.brandName : brandMeta.brandNameEn}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-bold">
@@ -290,8 +290,8 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 </p>
 
                 {/* Brand Tagline Badge */}
-                <div className="p-3 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-xl border border-gray-200/80 text-xs font-semibold text-gray-700 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#0056B3] flex-shrink-0" />
+                <div className="p-3 bg-gradient-to-r from-gray-50 to-black rounded-xl border border-gray-200/80 text-xs font-semibold text-gray-700 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#141414] flex-shrink-0" />
                   <span>{language === 'ar' ? brandMeta.taglineAr : brandMeta.taglineEn}</span>
                 </div>
 
@@ -299,13 +299,13 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 font-mono">
                   <div className="bg-gray-50 p-4 rounded-xl text-center">
                     <span className="text-[10px] text-gray-500 font-arabic block mb-1">السعر يبدأ من</span>
-                    <span className="text-lg font-black text-[#0056B3]">{formatPrice(vehicle.priceStartingFrom)}</span>
-                    <span className="text-xs font-bold text-[#0056B3] mr-1">﷼</span>
+                    <span className="text-lg font-black text-[#141414]">{formatPrice(vehicle.priceStartingFrom)}</span>
+                    <span className="text-xs font-bold text-[#141414] mr-1">﷼</span>
                   </div>
 
                   <div className="bg-gray-50 p-4 rounded-xl text-center">
                     <span className="text-[10px] text-gray-500 font-arabic block mb-1">استهلاك الوقود</span>
-                    <span className="text-base font-bold text-emerald-600">{vehicle.fuelEconomy}</span>
+                    <span className="text-base font-bold text-[#141414]">{vehicle.fuelEconomy}</span>
                   </div>
 
                   <div className="bg-gray-50 p-4 rounded-xl text-center">
@@ -318,7 +318,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <button
                     onClick={() => setIsCatalogOpen(true)}
-                    className="px-6 py-3 rounded-xl bg-[#0056B3] hover:bg-[#004085] text-white text-xs md:text-sm font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
+                    className="px-6 py-3 rounded-xl bg-[#141414] hover:bg-[#262626] text-white text-xs md:text-sm font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
                     <span>{language === 'ar' ? 'استعراض الكتالوج الرقمي الكامل والداخلية' : 'Open Interactive Digital Catalog & Interior'}</span>
@@ -327,7 +327,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     onClick={() => scrollToAnchor('gallery')}
                     className="px-5 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs md:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer"
                   >
-                    <Camera className="w-4 h-4 text-[#0056B3]" />
+                    <Camera className="w-4 h-4 text-[#141414]" />
                     <span>{language === 'ar' ? `معرض المقصورة الداخلية (${interiorShots.length} زوايا)` : `Interior Cabin Gallery (${interiorShots.length} Views)`}</span>
                   </button>
                 </div>
@@ -372,7 +372,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     >
                       {t.label}
                       {isActive && (
-                        <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3]"></span>
+                        <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414]"></span>
                       )}
                     </button>
                   );
@@ -385,7 +385,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
               {(featuresList[featureTab] || featuresList.exterior).map((feat, idx) => (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-[#0056B3]/30 hover:shadow-lg transition-all duration-300 group flex flex-col"
+                  className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-[#141414]/30 hover:shadow-lg transition-all duration-300 group flex flex-col"
                 >
                   <div className="h-48 bg-gray-100 flex items-center justify-center p-4 overflow-hidden">
                     <img
@@ -396,7 +396,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                   </div>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-base font-bold text-gray-900 mb-2 font-arabic group-hover:text-[#0056B3] transition-colors">
+                      <h3 className="text-base font-bold text-gray-900 mb-2 font-arabic group-hover:text-[#141414] transition-colors">
                         {language === 'ar' ? feat.titleAr : feat.titleEn}
                       </h3>
                       <p className="text-xs text-gray-600 leading-relaxed">
@@ -447,7 +447,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
               {vehicle.grades.map((grade, idx) => (
                 <div
                   key={idx}
-                  className="bg-gray-50 hover:bg-white rounded-2xl p-6 md:p-8 border border-gray-200 hover:border-[#0056B3] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group text-center"
+                  className="bg-gray-50 hover:bg-white rounded-2xl p-6 md:p-8 border border-gray-200 hover:border-[#141414] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group text-center"
                 >
                   <div>
                     {/* Fuel Badge Top Right */}
@@ -466,10 +466,10 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     <div className="mb-4">
                       <span className="text-[11px] text-gray-500 block mb-1">السعر</span>
                       <div className="flex items-center justify-center gap-1">
-                        <span className="text-2xl md:text-3xl font-black font-mono text-[#0056B3]">
+                        <span className="text-2xl md:text-3xl font-black font-mono text-[#141414]">
                           {formatPrice(grade.price)}
                         </span>
-                        <span className="text-xs font-bold text-[#0056B3]">﷼</span>
+                        <span className="text-xs font-bold text-[#141414]">﷼</span>
                       </div>
                       <span className="text-[10px] text-gray-400 mt-1 block">
                         شاملة مصاريف الشحن وضريبة القيمة المضافة 15%
@@ -502,7 +502,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">كفاءة استهلاك الوقود:</span>
-                        <span className="font-bold text-emerald-600">{vehicle.fuelEconomy}</span>
+                        <span className="font-bold text-[#141414]">{vehicle.fuelEconomy}</span>
                       </div>
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                   <div className="mt-8 space-y-2.5">
                     <button
                       onClick={() => onOpenQuotation(vehicle, grade)}
-                      className="w-full py-3 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs shadow transition-colors cursor-pointer"
+                      className="w-full py-3 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs shadow transition-colors cursor-pointer"
                     >
                       {language === 'ar' ? 'خيارات الشراء' : 'Buying Options'}
                     </button>
@@ -549,7 +549,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                   style={{ backgroundColor: col.hex }}
                   className={`w-10 h-10 rounded-full border-2 transition-all cursor-pointer shadow-sm ${
                     selectedColorIndex === idx
-                      ? 'scale-125 border-[#0056B3] ring-2 ring-blue-300'
+                      ? 'scale-125 border-[#141414] ring-2 ring-red-600/30'
                       : 'border-white hover:scale-110'
                   }`}
                 />
@@ -597,7 +597,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 <button
                   onClick={() => setGalleryTab('interior')}
                   className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
-                    galleryTab === 'interior' ? 'bg-[#0056B3] text-white shadow-sm' : 'text-gray-700 hover:text-black'
+                    galleryTab === 'interior' ? 'bg-[#141414] text-white shadow-sm' : 'text-gray-700 hover:text-black'
                   }`}
                 >
                   {language === 'ar' ? `المقصورة الداخلية (${interiorShots.length})` : `Interior Cabin (${interiorShots.length})`}
@@ -605,7 +605,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 <button
                   onClick={() => setGalleryTab('exterior')}
                   className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
-                    galleryTab === 'exterior' ? 'bg-[#0056B3] text-white shadow-sm' : 'text-gray-700 hover:text-black'
+                    galleryTab === 'exterior' ? 'bg-[#141414] text-white shadow-sm' : 'text-gray-700 hover:text-black'
                   }`}
                 >
                   {language === 'ar' ? `الصور والألوان الخارجية (${vehicle.colors.length})` : `Exterior Gallery (${vehicle.colors.length})`}
@@ -632,7 +632,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                   <div className="absolute bottom-6 right-6 left-6 text-white flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold mb-2">
+                      <span className="inline-block px-3 py-1 rounded-full bg-[#141414] text-white text-xs font-bold mb-2">
                         {language === 'ar'
                           ? `زاوية المقصورة ${selectedInteriorShotIndex + 1} من ${interiorShots.length}`
                           : `Cabin View ${selectedInteriorShotIndex + 1} of ${interiorShots.length}`}
@@ -659,7 +659,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                       onClick={() => setSelectedInteriorShotIndex(idx)}
                       className={`group rounded-2xl overflow-hidden border-2 text-start transition-all cursor-pointer bg-gray-50 ${
                         selectedInteriorShotIndex === idx
-                          ? 'border-[#0056B3] ring-2 ring-blue-300 shadow-md'
+                          ? 'border-[#141414] ring-2 ring-red-600/30 shadow-md'
                           : 'border-gray-200 opacity-80 hover:opacity-100'
                       }`}
                     >
@@ -686,7 +686,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     key={col.id}
                     onClick={() => setSelectedColorIndex(idx)}
                     className={`rounded-2xl p-5 border transition-all cursor-pointer bg-gray-50 hover:bg-white ${
-                      selectedColorIndex === idx ? 'border-[#0056B3] shadow-md' : 'border-gray-200'
+                      selectedColorIndex === idx ? 'border-[#141414] shadow-md' : 'border-gray-200'
                     }`}
                   >
                     <div className="h-44 flex items-center justify-center mb-4">
@@ -712,8 +712,8 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
             <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-md">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
                 <div className="space-y-4 max-w-2xl">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0056B3]/30 border border-[#0056B3]/50 text-blue-300 text-xs font-bold">
-                    <ShieldCheck className="w-4 h-4 text-[#0056B3]" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141414]/30 border border-[#141414]/50 text-red-500 text-xs font-bold">
+                    <ShieldCheck className="w-4 h-4 text-[#141414]" />
                     <span>{language === 'ar' ? `شهادة المصنع الرسمية • ${brandMeta.brandName}` : `Official Manufacturer Certificate • ${brandMeta.brandNameEn}`}</span>
                   </div>
 
@@ -723,7 +723,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
 
                   <div className="space-y-3 pt-2 text-sm text-gray-300">
                     <div className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                       <div>
                         <strong className="text-white font-bold block mb-0.5">{language === 'ar' ? 'الضمان الرسمي المعتمد:' : 'Certified Factory Warranty:'}</strong>
                         <span>{language === 'ar' ? brandMeta.warranty : brandMeta.warrantyEn}</span>
@@ -731,7 +731,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                       <div>
                         <strong className="text-white font-bold block mb-0.5">{language === 'ar' ? 'باقة أنظمة الأمان المتطورة:' : 'Active Safety Suite:'}</strong>
                         <span>{language === 'ar' ? brandMeta.safetySuite : brandMeta.safetySuiteEn}</span>
@@ -739,7 +739,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                       <div>
                         <strong className="text-white font-bold block mb-0.5">{language === 'ar' ? 'باقة خدمة كبار الشخصيات والدعم:' : 'VIP Service & Roadside Care:'}</strong>
                         <span>{language === 'ar' ? brandMeta.carePackage : brandMeta.carePackageEn}</span>
@@ -753,13 +753,13 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     onClick={() => setIsCatalogOpen(true)}
                     className="px-8 py-3.5 rounded-full bg-white text-gray-900 hover:bg-gray-100 font-bold text-sm shadow-lg transition-all text-center cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <BookOpen className="w-4 h-4 text-[#0056B3]" />
+                    <BookOpen className="w-4 h-4 text-[#141414]" />
                     <span>{language === 'ar' ? 'فتح الكتالوج الرسمي والداخلية PDF' : 'Open Official Catalog PDF'}</span>
                   </button>
 
                   <button
                     onClick={() => onOpenTestDrive(vehicle.nameAr)}
-                    className="px-8 py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm shadow-lg transition-all text-center cursor-pointer"
+                    className="px-8 py-3.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-sm shadow-lg transition-all text-center cursor-pointer"
                   >
                     {language === 'ar' ? 'حجز تجربة قيادة رسمية' : 'Book Official Test Drive'}
                   </button>
@@ -793,16 +793,16 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 <div
                   key={sim.id}
                   onClick={() => onSelectOtherVehicle(sim.id)}
-                  className="bg-gray-50 hover:bg-white rounded-2xl p-5 border border-gray-200 hover:border-[#0056B3] hover:shadow-lg transition-all duration-300 cursor-pointer text-center group flex flex-col justify-between"
+                  className="bg-gray-50 hover:bg-white rounded-2xl p-5 border border-gray-200 hover:border-[#141414] hover:shadow-lg transition-all duration-300 cursor-pointer text-center group flex flex-col justify-between"
                 >
                   <div>
-                    <h3 className="font-bold text-base text-gray-900 mb-1 group-hover:text-[#0056B3] transition-colors">
+                    <h3 className="font-bold text-base text-gray-900 mb-1 group-hover:text-[#141414] transition-colors">
                       {sim.nameAr}
                     </h3>
                     <div className="text-xs text-gray-600 mb-3">
                       <span>تبدأ من </span>
-                      <span className="font-bold text-[#0056B3] font-mono">{formatPrice(sim.priceStartingFrom)}</span>
-                      <span className="text-[10px] font-bold text-[#0056B3]"> ﷼</span>
+                      <span className="font-bold text-[#141414] font-mono">{formatPrice(sim.priceStartingFrom)}</span>
+                      <span className="text-[10px] font-bold text-[#141414]"> ﷼</span>
                     </div>
                     <div className="h-28 flex items-center justify-center">
                       <img
@@ -813,7 +813,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-gray-200 text-xs font-bold text-[#0056B3] flex items-center justify-center gap-1">
+                  <div className="mt-4 pt-3 border-t border-gray-200 text-xs font-bold text-[#141414] flex items-center justify-center gap-1">
                     <span>استكشف الطراز</span>
                     <span>›</span>
                   </div>

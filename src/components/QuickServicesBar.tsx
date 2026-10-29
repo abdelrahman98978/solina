@@ -1,4 +1,5 @@
 import React from 'react';
+import { Wrench, MapPin, Tag } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface QuickServicesBarProps {
@@ -7,7 +8,6 @@ interface QuickServicesBarProps {
 }
 
 export const QuickServicesBar: React.FC<QuickServicesBarProps> = ({
-  onOpenTestDrive,
   onOpenServiceBooking
 }) => {
   const { language } = useLanguage();
@@ -16,19 +16,19 @@ export const QuickServicesBar: React.FC<QuickServicesBarProps> = ({
     {
       id: 'book-service',
       title: language === 'ar' ? 'حجز خدمة' : 'Book a Service',
-      iconUrl: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/navigation/quick-links/bookservice.png?w=64&q=75&f=webp',
+      icon: Wrench,
       action: 'service'
     },
     {
       id: 'find-center',
       title: language === 'ar' ? 'ابحث عن مركز' : 'Find a Centre',
-      iconUrl: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/navigation/quick-links/findacentre-latest.png?w=64&q=75&f=webp',
+      icon: MapPin,
       action: 'showrooms'
     },
     {
       id: 'offers',
       title: language === 'ar' ? 'إكتشف العروض' : 'Discover Offers',
-      iconUrl: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/navigation/quick-links/offers-latest.png?w=64&q=75&f=webp',
+      icon: Tag,
       action: 'offers'
     }
   ];
@@ -49,28 +49,27 @@ export const QuickServicesBar: React.FC<QuickServicesBarProps> = ({
     <section className="py-14 bg-white">
       <div className="max-w-[1720px] mx-auto px-4 text-center">
         {/* Solina SA Official Heading */}
-        <h2 className="text-3xl md:text-4xl font-normal text-black font-arabic mb-10 tracking-tight">
+        <h2 className="text-3xl md:text-4xl font-normal text-[#141414] font-arabic mb-10 tracking-tight">
           {language === 'ar' ? 'كيف يمكننا مساعدتك اليوم؟' : 'How can we help you today?'}
         </h2>
 
         {/* 3 Pills in a clean flex row */}
         <div className="flex flex-wrap items-center justify-center gap-5">
-          {services.map((srv) => (
-            <button
-              key={srv.id}
-              onClick={() => handleAction(srv.action)}
-              className="group flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-white hover:bg-gray-50 border border-gray-300 hover:border-black text-black transition-all duration-200 shadow-none cursor-pointer min-w-[210px]"
-            >
-              <img 
-                src={srv.iconUrl} 
-                alt={srv.title} 
-                className="w-5 h-5 object-contain"
-              />
-              <span className="text-base font-normal text-black font-arabic">
-                {srv.title}
-              </span>
-            </button>
-          ))}
+          {services.map((srv) => {
+            const Icon = srv.icon;
+            return (
+              <button
+                key={srv.id}
+                onClick={() => handleAction(srv.action)}
+                className="group flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-white hover:bg-[#f3f3f3] border border-[#e0e0e0] hover:border-[#141414] text-[#141414] transition-all duration-200 shadow-none cursor-pointer min-w-[210px]"
+              >
+                <Icon className="w-4 h-4 text-[#141414] group-hover:text-red-600 transition-colors" strokeWidth={1.75} />
+                <span className="text-base font-normal text-[#141414] font-arabic">
+                  {srv.title}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -46,7 +46,7 @@ export const SolinaQualitySection: React.FC<SolinaQualitySectionProps> = ({
             <div className="flex items-center gap-3 w-full md:w-auto">
               <button
                 onClick={onOpenTestDrive}
-                className="flex-1 md:flex-none px-6 py-3 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white text-xs md:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer text-center"
+                className="flex-1 md:flex-none px-6 py-3 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs md:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer text-center"
               >
                 {language === 'ar' ? 'طلب تجربة قيادة' : 'Book Test Drive'}
               </button>
@@ -67,27 +67,27 @@ export const SolinaQualitySection: React.FC<SolinaQualitySectionProps> = ({
           {[
             {
               icon: ShieldCheck,
-              gradient: 'from-blue-600 to-indigo-700',
-              iconColor: 'text-blue-500',
-              badgeBg: 'bg-blue-50 border-blue-200/80',
+              gradient: 'from-[#141414] to-black',
+              iconColor: 'text-[#141414]',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0]',
               titleAr: 'ضمان ممتد 10 سنوات',
               titleEn: '10-Year Extended Warranty',
               descAr: 'تغطية شاملة للمحرك، ناقل الحركة، وبطاريات الهايبرد'
             },
             {
               icon: Clock,
-              gradient: 'from-amber-500 to-orange-600',
-              iconColor: 'text-amber-500',
-              badgeBg: 'bg-amber-50 border-amber-200/80',
+              gradient: 'from-[#141414] to-black',
+              iconColor: 'text-[#141414]',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0]',
               titleAr: 'صيانة سريعة 45 دقيقة',
               titleEn: '45-Min Express Care',
               descAr: 'خدمة فائقة السرعة بأيدي فنيين معتمدين من سولينا العالمية'
             },
             {
               icon: Award,
-              gradient: 'from-emerald-500 to-teal-700',
-              iconColor: 'text-emerald-500',
-              badgeBg: 'bg-emerald-50 border-emerald-200/80',
+              gradient: 'from-[#141414] to-black',
+              iconColor: 'text-[#141414]',
+              badgeBg: 'bg-[#f3f3f3] border-[#e0e0e0]',
               titleAr: 'قطع غيار أصلية 100%',
               titleEn: '100% Genuine Parts',
               descAr: 'مستودعات مركزية متكاملة تضمن توفر كل قطع الغيار الأصلية'

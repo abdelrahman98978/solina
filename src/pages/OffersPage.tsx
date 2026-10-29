@@ -126,7 +126,7 @@ export const OffersPage: React.FC<OffersPageProps> = ({
           </div>
 
           <div className="relative z-20 max-w-3xl px-4 space-y-4">
-            <span className="inline-block px-4 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold tracking-wider">
+            <span className="inline-block px-4 py-1 rounded-full bg-[#141414] text-white text-xs font-bold tracking-wider">
               {language === 'ar' ? 'عروض حصرية معتمدة' : 'Official Exclusive Campaigns'}
             </span>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight font-arabic">
@@ -160,7 +160,7 @@ export const OffersPage: React.FC<OffersPageProps> = ({
                 >
                   {tab.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#0056B3] rounded-t-full"></span>
+                    <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414] rounded-t-full"></span>
                   )}
                 </button>
               );
@@ -174,7 +174,7 @@ export const OffersPage: React.FC<OffersPageProps> = ({
             {filteredOffers.map(offer => (
               <div
                 key={offer.id}
-                className="bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#0056B3] hover:shadow-2xl transition-all duration-300 flex flex-col group"
+                className="bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#141414] hover:shadow-2xl transition-all duration-300 flex flex-col group"
               >
                 {/* Image Stage */}
                 <div className="h-56 bg-gray-100 relative overflow-hidden flex items-center justify-center">
@@ -192,11 +192,11 @@ export const OffersPage: React.FC<OffersPageProps> = ({
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
                     <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2">
-                      <Calendar className="w-3.5 h-3.5 text-[#0056B3]" />
+                      <Calendar className="w-3.5 h-3.5 text-[#141414]" />
                       <span>{language === 'ar' ? offer.expiryAr : offer.expiryEn}</span>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0056B3] transition-colors leading-snug mb-2 font-arabic">
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#141414] transition-colors leading-snug mb-2 font-arabic">
                       {language === 'ar' ? offer.titleAr : offer.titleEn}
                     </h3>
 
@@ -215,7 +215,7 @@ export const OffersPage: React.FC<OffersPageProps> = ({
                           onOpenTestDrive(offer.modelName);
                         }
                       }}
-                      className="w-full py-3.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-3.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <span>{language === 'ar' ? offer.actionLabelAr : offer.actionLabelEn}</span>
                       <ChevronLeft className="w-4 h-4" />

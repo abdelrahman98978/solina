@@ -3561,7 +3561,38 @@ function enrichFleetVehicle(v: Vehicle): Vehicle {
   };
 }
 
-export const VEHICLES: Vehicle[] = RAW_VEHICLES.map(enrichFleetVehicle);
+const FLAGSHIP_PRIORITY_IDS: string[] = [
+  'lc300-2026',
+  'camry-2026',
+  'prado-2026',
+  'crown-2026',
+  'rav4-2026',
+  'jetour-t2-2026',
+  'hyundai-azera-2026',
+  'lexus-lx600-2026',
+  'byd-han-2026',
+  'byd-seal-2026',
+  'jetour-dashing-2026',
+  'hyundai-palisade-2026',
+  'fortuner-2026',
+  'highlander-2026',
+  'corolla-2026',
+  'yaris-2026',
+  'hilux-2026',
+  'gr-supra-2026',
+  'gr86-2026'
+];
+
+export const VEHICLES: Vehicle[] = RAW_VEHICLES.map(enrichFleetVehicle).sort((a, b) => {
+  const idxA = FLAGSHIP_PRIORITY_IDS.indexOf(a.id);
+  const idxB = FLAGSHIP_PRIORITY_IDS.indexOf(b.id);
+  if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+  if (idxA !== -1) return -1;
+  if (idxB !== -1) return 1;
+  if (a.isFeatured && !b.isFeatured) return -1;
+  if (!a.isFeatured && b.isFeatured) return 1;
+  return 0;
+});
 
 // -------------------------------------------------------------
 // 3. MAINTENANCE PACKAGES & SERVICE COSTS (Approved Schedule)
@@ -3884,7 +3915,7 @@ export const SHOWROOMS: Showroom[] = [
     region: 'central',
     city: 'الرياض',
     cityEn: 'Riyadh',
-    name: 'مركز سولينا سولينا للسيارات الرئيسي - طريق خريص',
+    name: 'مركز سولينا للسيارات الرئيسي - طريق خريص',
     nameEn: 'ALJ Solina Flagship Center - Khurais Road',
     address: 'طريق خريص، تقاطع شارع الأحساء، حي الروضة، الرياض',
     addressEn: 'Khurais Road, Al Rawdah District, Riyadh',
@@ -3920,7 +3951,7 @@ export const SHOWROOMS: Showroom[] = [
     region: 'western',
     city: 'جدة',
     cityEn: 'Jeddah',
-    name: 'مركز سولينا سولينا للسيارات الرئيسي - طريق المدينة',
+    name: 'مركز سولينا للسيارات الرئيسي - طريق المدينة',
     nameEn: 'ALJ Solina Flagship Center - Madinah Road',
     address: 'طريق المدينة المنورة، حي الفيصلية، جدة',
     addressEn: 'Madinah Road, Al Faisaliyah, Jeddah',
@@ -3956,7 +3987,7 @@ export const SHOWROOMS: Showroom[] = [
     region: 'eastern',
     city: 'الدمام والخبر',
     cityEn: 'Dammam & Khobar',
-    name: 'مركز سولينا سولينا للسيارات الإقليمي - طريق الملك فهد',
+    name: 'مركز سولينا للسيارات الإقليمي - طريق الملك فهد',
     nameEn: 'ALJ Solina Regional Center - King Fahd Road',
     address: 'طريق الملك فهد، حي القشلة، الظهران / الخبر',
     addressEn: 'King Fahd Road, Al Qushlah, Khobar / Dammam',
@@ -3975,7 +4006,7 @@ export const SHOWROOMS: Showroom[] = [
     region: 'southern',
     city: 'خميس مشيط وأبها',
     cityEn: 'Khamis Mushait & Abha',
-    name: 'مركز سولينا سولينا للسيارات - طريق الملك خالد',
+    name: 'مركز سولينا للسيارات - طريق الملك خالد',
     nameEn: 'ALJ Solina Center - King Khalid Road',
     address: 'طريق الملك خالد، حي الرونة، خميس مشيط',
     addressEn: 'King Khalid Road, Al Rawnah, Khamis Mushait',
@@ -3993,7 +4024,7 @@ export const SHOWROOMS: Showroom[] = [
     region: 'northern',
     city: 'تبوك',
     cityEn: 'Tabuk',
-    name: 'مركز سولينا سولينا للسيارات - طريق الملك فهد',
+    name: 'مركز سولينا للسيارات - طريق الملك فهد',
     nameEn: 'ALJ Solina Center - King Fahd Road Tabuk',
     address: 'طريق الملك فهد، حي المروج، تبوك',
     addressEn: 'King Fahd Road, Al Murooj, Tabuk',

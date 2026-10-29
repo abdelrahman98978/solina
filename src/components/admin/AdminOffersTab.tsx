@@ -123,13 +123,13 @@ export const AdminOffersTab: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* 1. Header Bar */}
-      <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-            <Tag className="w-5 h-5 text-blue-600" />
+          <h2 className="text-xl font-bold text-[#141414] font-display flex items-center gap-2">
+            <Tag className="w-5 h-5 text-[#141414]" />
             <span>{language === 'ar' ? 'إدارة عروض سولينا الترويجية والحملات التمويلية' : 'Solina Campaigns & Promotional Offers'}</span>
           </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-[#707070] mt-0.5">
             {language === 'ar' 
               ? 'إضافة وتعديل ومعاينة بنرات العروض، برامج التمويل بدون دفعة أولى، وباقات الصيانة المعتمدة.' 
               : 'Create, update, preview, and manage seasonal retail and financing campaigns.'}
@@ -139,15 +139,15 @@ export const AdminOffersTab: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => exportDataToCSV('offers')}
-            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>تصدير CSV</span>
+            <span>تصدير العروض (10 صيغ)</span>
           </button>
 
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-blue-600/25 transition-all cursor-pointer"
+            className="flex items-center gap-2 bg-[#141414] hover:bg-black text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-none  transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>{language === 'ar' ? 'إضافة عرض جديد' : 'New Campaign'}</span>
@@ -156,15 +156,15 @@ export const AdminOffersTab: React.FC = () => {
       </div>
 
       {/* 2. Search & Category Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#adadad] absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="ابحث بعنوان العرض، المزايا، أو الشارة..."
-            className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl py-2.5 pr-10 pl-3 focus:ring-2 focus:ring-blue-600 outline-none"
+            className="w-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs rounded-xl py-2.5 pr-10 pl-3 focus:border-[#141414] outline-none"
           />
         </div>
 
@@ -180,8 +180,8 @@ export const AdminOffersTab: React.FC = () => {
               onClick={() => setCategoryFilter(cat.id as any)}
               className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 categoryFilter === cat.id
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-[#141414] text-white shadow-none'
+                  : 'bg-[#f0f0f0] text-[#707070] hover:bg-[#e0e0e0]'
               }`}
             >
               {cat.label}
@@ -195,16 +195,16 @@ export const AdminOffersTab: React.FC = () => {
         {filteredOffers.map((offer) => (
           <div 
             key={offer.id}
-            className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+            className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-none hover:shadow-none transition-all flex flex-col justify-between group"
           >
             <div>
-              <div className="h-44 relative overflow-hidden bg-gray-100">
+              <div className="h-44 relative overflow-hidden bg-[#f0f0f0]">
                 <img 
                   src={offer.image} 
                   alt={offer.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                 />
-                <span className="absolute top-3 right-3 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">
+                <span className="absolute top-3 right-3 bg-[#141414] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-none">
                   {offer.badge}
                 </span>
                 <span className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
@@ -213,30 +213,30 @@ export const AdminOffersTab: React.FC = () => {
               </div>
 
               <div className="p-5 space-y-2">
-                <h3 className="font-bold text-gray-900 text-sm">{offer.title}</h3>
-                <p className="text-xs text-gray-600 font-medium">{offer.subtitle}</p>
+                <h3 className="font-bold text-[#141414] text-sm">{offer.title}</h3>
+                <p className="text-xs text-[#707070] font-medium">{offer.subtitle}</p>
                 {offer.features && offer.features.length > 0 && (
                   <div className="flex flex-wrap gap-1 pt-1">
                     {offer.features.slice(0, 3).map((feat, i) => (
-                      <span key={i} className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-semibold">
-                        ✓ {feat}
+                      <span key={i} className="text-[10px] bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded-md font-semibold">
+                        {feat}
                       </span>
                     ))}
                   </div>
                 )}
-                <span className="text-[11px] text-gray-400 flex items-center gap-1 font-mono pt-1">
-                  <Calendar className="w-3 h-3 text-blue-600" />
+                <span className="text-[11px] text-[#adadad] flex items-center gap-1 font-mono pt-1">
+                  <Calendar className="w-3 h-3 text-[#141414]" />
                   {offer.validUntil}
                 </span>
               </div>
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-              <span className="text-[11px] text-gray-500 font-mono">ID: {offer.id}</span>
+            <div className="p-4 bg-[#f3f3f3] border-t border-[#e0e0e0] flex items-center justify-between">
+              <span className="text-[11px] text-[#707070] font-mono">ID: {offer.id}</span>
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => openEditModal(offer)}
-                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white text-gray-700 border border-gray-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-black hover:text-white text-[#707070] border border-[#e0e0e0] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                   title="تعديل ومعاينة العرض"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
@@ -248,7 +248,7 @@ export const AdminOffersTab: React.FC = () => {
                       deleteOffer(offer.id);
                     }
                   }}
-                  className="p-2 rounded-xl bg-white hover:bg-red-600 hover:text-white text-gray-400 border border-gray-200 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-white hover:bg-red-600 hover:text-white text-[#adadad] border border-[#e0e0e0] transition-colors cursor-pointer"
                   title="حذف العرض"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -262,15 +262,15 @@ export const AdminOffersTab: React.FC = () => {
       {/* 4. Add / Edit Offer Modal with Live Preview */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl border border-gray-200 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
-              <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
-                <Tag className="w-4 h-4 text-blue-600" />
+          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-none border border-[#e0e0e0] animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-[#e0e0e0] mb-5">
+              <h3 className="font-bold text-[#141414] text-base flex items-center gap-2">
+                <Tag className="w-4 h-4 text-[#141414]" />
                 <span>{editingOffer ? `تعديل العرض: ${editingOffer.title}` : 'إضافة عرض ترويجي جديد في سولينا'}</span>
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:text-black flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#f0f0f0] text-[#707070] hover:text-black flex items-center justify-center cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -279,36 +279,36 @@ export const AdminOffersTab: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <form onSubmit={handleSaveOffer} className="lg:col-span-7 space-y-3.5 text-xs">
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">عنوان العرض الرئيسي *</label>
+                  <label className="font-bold text-[#707070] block mb-1">عنوان العرض الرئيسي *</label>
                   <input
                     type="text"
                     required
                     placeholder="مثال: عروض الصيف التمويلية على سولينا برادو 2026"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] focus:border-[#141414] outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">العنوان الفرعي والمزايا المختصرة *</label>
+                  <label className="font-bold text-[#707070] block mb-1">العنوان الفرعي والمزايا المختصرة *</label>
                   <input
                     type="text"
                     required
                     placeholder="مثال: 0% دفعة أولى وبدون رسوم إدارية مع ضمان سولينا الممتد"
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] focus:border-[#141414] outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">تصنيف العرض</label>
+                    <label className="font-bold text-[#707070] block mb-1">تصنيف العرض</label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value as any)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-800 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                     >
                       <option value="سيارات">سيارات ومبيعات</option>
                       <option value="تمويل">برامج التمويل</option>
@@ -317,70 +317,70 @@ export const AdminOffersTab: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">شارة العرض (Badge)</label>
+                    <label className="font-bold text-[#707070] block mb-1">شارة العرض (Badge)</label>
                     <input
                       type="text"
                       value={badge}
                       onChange={(e) => setBadge(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">تاريخ سريان العرض</label>
+                    <label className="font-bold text-[#707070] block mb-1">تاريخ سريان العرض</label>
                     <input
                       type="text"
                       value={validUntil}
                       onChange={(e) => setValidUntil(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">رابط صورة العرض (URL)</label>
+                    <label className="font-bold text-[#707070] block mb-1">رابط صورة العرض (URL)</label>
                     <input
                       type="text"
                       value={image}
                       onChange={(e) => setImage(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 font-mono outline-none"
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] font-mono outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">نقاط المزايا (مفصولة بفاصلة ,)</label>
+                  <label className="font-bold text-[#707070] block mb-1">نقاط المزايا (مفصولة بفاصلة ,)</label>
                   <input
                     type="text"
                     value={featuresText}
                     onChange={(e) => setFeaturesText(e.target.value)}
                     placeholder="بدون دفعة أولى, صيانة مجانية سنتين, تأمين شامل"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">الوصف التفصيلي والشروط</label>
+                  <label className="font-bold text-[#707070] block mb-1">الوصف التفصيلي والشروط</label>
                   <textarea
                     rows={2}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="تفاصيل الحملة الترويجية في صالات سولينا للسيارات..."
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl p-2.5 text-xs text-[#141414] outline-none"
                   />
                 </div>
 
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md shadow-blue-600/25 transition-all cursor-pointer"
+                    className="flex-1 bg-[#141414] hover:bg-black text-white font-bold py-3 rounded-xl shadow-none  transition-all cursor-pointer"
                   >
                     {editingOffer ? 'حفظ التعديلات وتحديث الموقع' : 'حفظ ونشر العرض فوراً'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all cursor-pointer"
+                    className="px-5 py-3 bg-[#f0f0f0] hover:bg-[#e0e0e0] text-[#707070] font-bold rounded-xl transition-all cursor-pointer"
                   >
                     إلغاء
                   </button>
@@ -388,17 +388,17 @@ export const AdminOffersTab: React.FC = () => {
               </form>
 
               {/* Live Offer Card Preview */}
-              <div className="lg:col-span-5 bg-slate-50 rounded-2xl p-4 border border-gray-200 flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between text-xs font-bold text-gray-500">
+              <div className="lg:col-span-5 bg-[#f3f3f3] rounded-2xl p-4 border border-[#e0e0e0] flex flex-col justify-between space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-[#707070]">
                   <span className="flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5 text-blue-600" />
+                    <Eye className="w-3.5 h-3.5 text-[#141414]" />
                     <span>معاينة حية لبطاقة العرض</span>
                   </span>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">مباشر</span>
+                  <span className="text-[10px] bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded-full">مباشر</span>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                  <div className="h-36 relative bg-gray-100">
+                <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-none">
+                  <div className="h-36 relative bg-[#f0f0f0]">
                     <img
                       src={image}
                       alt="Preview"
@@ -407,7 +407,7 @@ export const AdminOffersTab: React.FC = () => {
                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80';
                       }}
                     />
-                    <span className="absolute top-2.5 right-2.5 bg-blue-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                    <span className="absolute top-2.5 right-2.5 bg-[#141414] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
                       {badge || 'عرض سولينا'}
                     </span>
                     <span className="absolute bottom-2.5 left-2.5 bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded">
@@ -415,24 +415,24 @@ export const AdminOffersTab: React.FC = () => {
                     </span>
                   </div>
                   <div className="p-4 space-y-2">
-                    <h4 className="font-bold text-gray-900 text-xs">{title || 'عنوان العرض الترويجي يظهر هنا'}</h4>
-                    <p className="text-[11px] text-gray-500">{subtitle || 'العنوان الفرعي والمزايا التمويلية من سولينا للسيارات'}</p>
+                    <h4 className="font-bold text-[#141414] text-xs">{title || 'عنوان العرض الترويجي يظهر هنا'}</h4>
+                    <p className="text-[11px] text-[#707070]">{subtitle || 'العنوان الفرعي والمزايا التمويلية من سولينا للسيارات'}</p>
                     <div className="flex flex-wrap gap-1 pt-1">
                       {featuresText.split(',').map(s => s.trim()).filter(Boolean).map((f, idx) => (
-                        <span key={idx} className="text-[9px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-bold flex items-center gap-0.5">
+                        <span key={idx} className="text-[9px] bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded font-bold flex items-center gap-0.5">
                           <CheckCircle2 className="w-2.5 h-2.5" />
                           {f}
                         </span>
                       ))}
                     </div>
-                    <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
+                    <div className="pt-2 border-t border-[#e0e0e0] flex items-center justify-between text-[10px] text-[#adadad]">
                       <span>{validUntil}</span>
-                      <span className="text-blue-600 font-bold">سولينا للسيارات</span>
+                      <span className="text-[#141414] font-bold">سولينا للسيارات</span>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[10px] text-gray-400 text-center">
+                <p className="text-[10px] text-[#adadad] text-center">
                   ينعكس هذا العرض تلقائياً في الصفحة الرئيسية وصفحة العروض الخاصة بمجرد الحفظ.
                 </p>
               </div>

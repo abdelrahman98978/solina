@@ -120,7 +120,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
           <td style="padding:10px;border:1px solid #d1d5db;font-weight:700;">${g.name}<div style="font-size:10px;color:#6b7280;">${g.nameEn}</div></td>
           <td style="padding:10px;border:1px solid #d1d5db;">${g.engine} — ${g.transmission}</td>
           <td style="padding:10px;border:1px solid #d1d5db;">${g.features.join(' • ')}</td>
-          <td style="padding:10px;border:1px solid #d1d5db;font-weight:800;color:#0056B3;font-family:monospace;">${g.price.toLocaleString()} ر.س</td>
+          <td style="padding:10px;border:1px solid #d1d5db;font-weight:800;color:#141414;font-family:monospace;">${g.price.toLocaleString()} ر.س</td>
         </tr>`
       )
       .join('');
@@ -133,12 +133,12 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
     body { font-family: 'Cairo', sans-serif; margin: 0; padding: 24px; color: #111827; background: #fff; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0056B3; padding-bottom: 16px; margin-bottom: 20px; }
-    .badge { background: #eff6ff; color: #0056B3; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid #bfdbfe; display: inline-block; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #141414; padding-bottom: 16px; margin-bottom: 20px; }
+    .badge { background: #f3f3f3; color: #141414; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid #e0e0e0; display: inline-block; }
     .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
     .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
     .kpi { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; text-align: center; }
-    .section-title { font-size: 16px; font-weight: 800; color: #0056B3; border-right: 4px solid #0056B3; padding-right: 10px; margin: 22px 0 12px; }
+    .section-title { font-size: 16px; font-weight: 800; color: #141414; border-right: 4px solid #141414; padding-right: 10px; margin: 22px 0 12px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
     th { background: #111827; color: #fff; padding: 10px; border: 1px solid #111827; text-align: right; }
     @media print { .no-print { display: none; } }
@@ -152,7 +152,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
       <div style="font-size:12px;color:#6b7280;">رمز الكتالوج الرسمي: ${catalog?.brochureCode || vehicle.id.toUpperCase()} • موديل ${vehicle.year}</div>
     </div>
     <div style="text-align:left;">
-      <div style="font-weight:800;font-size:18px;color:#0056B3;">سولينا للسيارات</div>
+      <div style="font-weight:800;font-size:18px;color:#141414;">سولينا للسيارات</div>
       <div style="font-size:11px;color:#6b7280;">SOLINA MOTORS OFFICIAL BROCHURE</div>
     </div>
   </div>
@@ -163,7 +163,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
       <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 12px;">
         ${brandMeta.taglineAr} — ${vehicle.bodyTypeAr} مزودة بمحرك ${vehicle.engineSpec} بقوة ${vehicle.horsepower} وعزم ${vehicle.torque} مع ${vehicle.drivetrain}.
       </p>
-      <div style="font-size:14px;font-weight:800;color:#0056B3;">
+      <div style="font-size:14px;font-weight:800;color:#141414;">
         السعر يبدأ من: ${vehicle.priceStartingFrom.toLocaleString()} ر.س (شامل الضريبة) • القسط الشهري من: ${vehicle.monthlyInstallmentStartingFrom.toLocaleString()} ر.س
       </div>
     </div>
@@ -175,7 +175,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
   <div class="kpi-grid">
     <div class="kpi"><div style="font-size:10px;color:#6b7280;">القوة الحصانية</div><div style="font-weight:800;font-size:14px;">${vehicle.horsepower}</div></div>
     <div class="kpi"><div style="font-size:10px;color:#6b7280;">عزم الدوران</div><div style="font-weight:800;font-size:14px;">${vehicle.torque}</div></div>
-    <div class="kpi"><div style="font-size:10px;color:#6b7280;">كفاءة الطاقة / المدى</div><div style="font-weight:800;font-size:14px;color:#059669;">${vehicle.fuelEconomy}</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#6b7280;">كفاءة الطاقة / المدى</div><div style="font-weight:800;font-size:14px;color:#141414;">${vehicle.fuelEconomy}</div></div>
     <div class="kpi"><div style="font-size:10px;color:#6b7280;">عدد المقاعد</div><div style="font-weight:800;font-size:14px;">${vehicle.seats} مقاعد</div></div>
   </div>
 
@@ -227,12 +227,12 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
         {/* Top Catalog Header Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-gradient-to-r from-gray-900 via-slate-900 to-black text-white border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#0056B3] flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-[#141414] flex items-center justify-center shadow-md">
               <BookOpen className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-600/15 text-red-500 border border-red-600/40">
                   {language === 'ar' ? `الكتالوج الرقمي الرسمي • ${brandMeta.brandName}` : `Official Digital Brochure • ${brandMeta.brandNameEn}`}
                 </span>
                 <span className="text-[11px] font-mono text-gray-400 hidden sm:inline">
@@ -248,7 +248,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrintFullCatalog}
-              className="px-4 py-2 rounded-xl bg-[#0056B3] hover:bg-blue-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'طباعة / حفظ الكتالوج PDF' : 'Print / Save Catalog PDF'}</span>
@@ -258,7 +258,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
               onClick={() => window.open(vehicle.brochureUrl || '/1.pdf', '_blank')}
               className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/15 flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-blue-300" />
+              <Download className="w-3.5 h-3.5 text-red-500" />
               <span className="hidden sm:inline">{language === 'ar' ? 'ملف البروشور' : 'Brochure File'}</span>
             </button>
 
@@ -288,7 +288,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                 onClick={() => setActivePage(tab.id as any)}
                 className={`py-3.5 px-4 text-xs md:text-sm font-bold border-b-2 flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isAct
-                    ? 'border-[#0056B3] text-[#0056B3] bg-white'
+                    ? 'border-[#141414] text-[#141414] bg-white'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -313,7 +313,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                     <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold border border-white/20">
                       {language === 'ar' ? `${brandMeta.brandName} • ${brandMeta.originCountry}` : `${brandMeta.brandNameEn} • ${brandMeta.originCountryEn}`}
                     </span>
-                    <span className="px-3 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold">
+                    <span className="px-3 py-1 rounded-full bg-[#141414] text-white text-xs font-bold">
                       {vehicle.powertrain} • {vehicle.year}
                     </span>
                   </div>
@@ -328,7 +328,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
 
                   <div className="relative z-10 flex flex-wrap items-end justify-between gap-4 pt-4 border-t border-white/15">
                     <div>
-                      <p className="text-xs text-blue-300 font-semibold">{language === 'ar' ? brandMeta.taglineAr : brandMeta.taglineEn}</p>
+                      <p className="text-xs text-red-500 font-semibold">{language === 'ar' ? brandMeta.taglineAr : brandMeta.taglineEn}</p>
                       <h3 className="text-2xl md:text-3xl font-black text-white mt-0.5">
                         {language === 'ar' ? vehicle.nameAr : vehicle.nameEn}
                       </h3>
@@ -338,7 +338,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                         {language === 'ar' ? 'يبدأ السعر النقدي من' : 'Starting Price'}
                       </span>
                       <span className="text-2xl font-black text-white">
-                        {formatPrice(vehicle.priceStartingFrom)} <span className="text-xs text-blue-400">ر.س</span>
+                        {formatPrice(vehicle.priceStartingFrom)} <span className="text-xs text-red-500">ر.س</span>
                       </span>
                     </div>
                   </div>
@@ -353,7 +353,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                   <div className="relative z-10 p-6 space-y-3">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/15 border border-red-600/40 text-red-500 text-xs font-bold">
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>{language === 'ar' ? 'المقصورة الداخلية الفاخرة' : 'Luxury Interior Cabin'}</span>
                     </span>
@@ -365,9 +365,9 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                     </p>
                     <button
                       onClick={() => setActivePage('interior')}
-                      className="w-full py-2.5 rounded-xl bg-white text-gray-900 hover:bg-blue-50 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow"
+                      className="w-full py-2.5 rounded-xl bg-white text-gray-900 hover:bg-[#f3f3f3] font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow"
                     >
-                      <Eye className="w-4 h-4 text-[#0056B3]" />
+                      <Eye className="w-4 h-4 text-[#141414]" />
                       <span>{language === 'ar' ? `استعراض جميع صور الداخلية (${interiorList.length} زوايا)` : `Explore All ${interiorList.length} Interior Photos`}</span>
                     </button>
                   </div>
@@ -389,7 +389,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                     <div key={i} className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex flex-col justify-between">
                       <div className="flex items-center justify-between text-gray-400 mb-2">
                         <span className="text-[11px] font-bold text-gray-500">{language === 'ar' ? k.labelAr : k.labelEn}</span>
-                        <Icon className="w-4 h-4 text-[#0056B3]" />
+                        <Icon className="w-4 h-4 text-[#141414]" />
                       </div>
                       <div className="text-xs md:text-sm font-black text-gray-900 leading-snug">{k.val}</div>
                     </div>
@@ -399,15 +399,15 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
 
               {/* Key Brochure Highlights */}
               {catalog && (
-                <div className="bg-blue-50/50 rounded-3xl p-6 border border-blue-100">
+                <div className="bg-[#f3f3f3] rounded-3xl p-6 border border-[#e0e0e0]">
                   <h4 className="text-sm font-black text-gray-900 mb-4 flex items-center gap-2">
-                    <Award className="w-4 h-4 text-[#0056B3]" />
+                    <Award className="w-4 h-4 text-[#141414]" />
                     <span>{language === 'ar' ? 'أبرز مزايا الطراز في الكتالوج الرسمي:' : 'Official Brochure Key Highlights:'}</span>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {(language === 'ar' ? catalog.keyHighlightsAr : catalog.keyHighlightsEn).map((item, idx) => (
                       <div key={idx} className="flex items-start gap-2.5 bg-white p-3.5 rounded-xl border border-gray-200/80 shadow-2xs">
-                        <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <Check className="w-4 h-4 text-[#141414] shrink-0 mt-0.5" />
                         <span className="text-xs font-semibold text-gray-800 leading-relaxed">{item}</span>
                       </div>
                     ))}
@@ -434,19 +434,19 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                     {/* Navigation Arrows */}
                     <button
                       onClick={() => setSelectedInteriorIdx((prev) => (prev - 1 + interiorList.length) % interiorList.length)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#0056B3] text-white flex items-center justify-center border border-white/20 transition-all cursor-pointer"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#141414] text-white flex items-center justify-center border border-white/20 transition-all cursor-pointer"
                     >
                       <ChevronRight className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => setSelectedInteriorIdx((prev) => (prev + 1) % interiorList.length)}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#0056B3] text-white flex items-center justify-center border border-white/20 transition-all cursor-pointer"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#141414] text-white flex items-center justify-center border border-white/20 transition-all cursor-pointer"
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
 
                     <div className="absolute bottom-5 right-6 left-6 text-white">
-                      <span className="px-3 py-1 rounded-full bg-[#0056B3] text-[11px] font-bold inline-block mb-2">
+                      <span className="px-3 py-1 rounded-full bg-[#141414] text-[11px] font-bold inline-block mb-2">
                         {language === 'ar' ? `زاوية داخلية ${selectedInteriorIdx + 1} من ${interiorList.length}` : `Interior View ${selectedInteriorIdx + 1} of ${interiorList.length}`}
                       </span>
                       <h3 className="text-lg md:text-2xl font-black">
@@ -466,7 +466,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                         onClick={() => setSelectedInteriorIdx(idx)}
                         className={`rounded-2xl overflow-hidden border-2 text-start transition-all cursor-pointer group ${
                           selectedInteriorIdx === idx
-                            ? 'border-[#0056B3] ring-2 ring-blue-400/40 shadow-md'
+                            ? 'border-[#141414] ring-2 ring-red-600/30 shadow-md'
                             : 'border-gray-200 opacity-75 hover:opacity-100'
                         }`}
                       >
@@ -486,7 +486,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                 {/* Right Column: Interior Upholstery & Cabin Specs */}
                 <div className="lg:col-span-4 space-y-5 bg-gray-50 p-6 rounded-3xl border border-gray-200">
                   <div>
-                    <span className="text-xs font-bold text-[#0056B3] block mb-1">
+                    <span className="text-xs font-bold text-[#141414] block mb-1">
                       {language === 'ar' ? 'تخصيص المقصورة والفرش الداخلي' : 'Cabin Trim & Upholstery'}
                     </span>
                     <h4 className="text-lg font-black text-gray-900">
@@ -502,7 +502,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                         onClick={() => setSelectedUpholstery(opt.id as any)}
                         className={`w-full p-3 rounded-2xl border flex items-center justify-between transition-all cursor-pointer ${
                           selectedUpholstery === opt.id
-                            ? 'bg-white border-[#0056B3] shadow-sm'
+                            ? 'bg-white border-[#141414] shadow-sm'
                             : 'bg-white/60 border-gray-200 hover:bg-white'
                         }`}
                       >
@@ -515,7 +515,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                             {language === 'ar' ? opt.nameAr : opt.nameEn}
                           </span>
                         </div>
-                        {selectedUpholstery === opt.id && <Check className="w-4 h-4 text-[#0056B3]" />}
+                        {selectedUpholstery === opt.id && <Check className="w-4 h-4 text-[#141414]" />}
                       </button>
                     ))}
                   </div>
@@ -596,7 +596,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                         onClick={() => setSelectedColorIdx(idx)}
                         className={`p-3.5 rounded-2xl border flex items-center justify-between transition-all cursor-pointer ${
                           selectedColorIdx === idx
-                            ? 'bg-blue-50/60 border-[#0056B3] shadow-sm'
+                            ? 'bg-[#f3f3f3] border-[#141414] shadow-sm'
                             : 'bg-white hover:bg-gray-50 border-gray-200'
                         }`}
                       >
@@ -615,7 +615,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                           </div>
                         </div>
                         {selectedColorIdx === idx && (
-                          <span className="px-2.5 py-1 rounded-full bg-[#0056B3] text-white text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-[#141414] text-white text-[10px] font-bold">
                             {language === 'ar' ? 'معروض الآن' : 'Active'}
                           </span>
                         )}
@@ -633,7 +633,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
               {/* Grades Comparison Table */}
               <div>
                 <h3 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-[#0056B3]" />
+                  <Layers className="w-5 h-5 text-[#141414]" />
                   <span>{language === 'ar' ? 'مقارنة الفئات والأسعار الرسمية المعتمدة' : 'Official Grades & Pricing Matrix'}</span>
                 </h3>
                 <div className="overflow-x-auto rounded-2xl border border-gray-200">
@@ -648,11 +648,11 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
                       {vehicle.grades.map((g, i) => (
-                        <tr key={i} className="hover:bg-blue-50/30">
+                        <tr key={i} className="hover:bg-[#f3f3f3]">
                           <td className="p-4 font-black text-gray-900">{language === 'ar' ? g.name : g.nameEn}</td>
                           <td className="p-4 text-gray-700 font-medium">{language === 'ar' ? `${g.engine} • ${g.transmission}` : `${g.engineEn} • ${g.transmissionEn}`}</td>
                           <td className="p-4 text-gray-600">{(language === 'ar' ? g.features : g.featuresEn).join(' • ')}</td>
-                          <td className="p-4 font-mono font-black text-sm text-[#0056B3] whitespace-nowrap">{formatPrice(g.price)} ر.س</td>
+                          <td className="p-4 font-mono font-black text-sm text-[#141414] whitespace-nowrap">{formatPrice(g.price)} ر.س</td>
                         </tr>
                       ))}
                     </tbody>
@@ -663,7 +663,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
               {/* Engineering Specifications Matrix */}
               <div>
                 <h3 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
-                  <Ruler className="w-5 h-5 text-[#0056B3]" />
+                  <Ruler className="w-5 h-5 text-[#141414]" />
                   <span>{language === 'ar' ? 'البيانات الهندسية والأبعاد والضمان المصنعي' : 'Engineering Dimensions, Chassis & Warranty'}</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -696,7 +696,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
         {/* Bottom Actions Footer */}
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
           <div className="flex items-center gap-2 text-xs text-gray-600 font-semibold">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-[#141414]" />
             <span>{language === 'ar' ? brandMeta.warranty : brandMeta.warrantyEn}</span>
           </div>
 
@@ -707,7 +707,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                   onClose();
                   onOpenQuotation(vehicle, vehicle.grades[0]);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#0056B3] font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? 'طلب عرض سعر رسمي' : 'Official Quotation'}</span>
@@ -720,7 +720,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                   onClose();
                   onOpenTestDrive(vehicle.nameAr);
                 }}
-                className="px-6 py-2.5 rounded-xl bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
+                className="px-6 py-2.5 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
               >
                 <Car className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? 'حجز تجربة قيادة' : 'Book Test Drive'}</span>

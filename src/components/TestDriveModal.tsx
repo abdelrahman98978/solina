@@ -68,7 +68,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-red-50 text-[#0056B3] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-red-50 text-[#141414] flex items-center justify-center font-bold">
               <Car className="w-5 h-5" />
             </div>
             <div>
@@ -90,7 +90,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
 
         {isSuccess ? (
           <div className="text-center py-6 space-y-4">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 animate-in zoom-in-50">
+            <div className="w-16 h-16 bg-[#f3f3f3] text-[#141414] rounded-full flex items-center justify-center mx-auto mb-2 animate-in zoom-in-50">
               <CheckCircle2 className="w-9 h-9" />
             </div>
 
@@ -101,7 +101,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 max-w-md mx-auto text-xs space-y-2 text-start">
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-500">{language === 'ar' ? 'رقم المرجع:' : 'Reference ID:'}</span>
-                <span className="font-bold text-[#0056B3] font-mono">{bookingRef}</span>
+                <span className="font-bold text-[#141414] font-mono">{bookingRef}</span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-500">{language === 'ar' ? 'السيارة المختارة:' : 'Vehicle:'}</span>
@@ -125,7 +125,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
 
             <button
               onClick={onClose}
-              className="px-8 py-3 bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-md"
+              className="px-8 py-3 bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-md"
             >
               {language === 'ar' ? 'إغلاق ومتابعة التصفح' : 'Close & Continue'}
             </button>
@@ -139,7 +139,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
               <select
                 value={selectedVehicle}
                 onChange={(e) => setSelectedVehicle(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-3.5 text-xs text-gray-900 font-bold focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-3.5 text-xs text-gray-900 font-bold focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none"
               >
                 {toyotaVehicles.map((v) => (
                   <option key={v.id} value={v.nameAr}>
@@ -156,7 +156,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
               <select
                 value={selectedShowroom}
                 onChange={(e) => setSelectedShowroom(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-3.5 text-xs text-gray-900 font-bold focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-3.5 text-xs text-gray-900 font-bold focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none"
               >
                 {showrooms.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -176,7 +176,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                   required
                   value={driveDate}
                   onChange={(e) => setDriveDate(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none"
                 />
               </div>
 
@@ -187,7 +187,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                 <select
                   value={timeSlot}
                   onChange={(e) => setTimeSlot(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none"
                 >
                   <option value="morning">{language === 'ar' ? 'صباحاً (10 ص - 12 م)' : 'Morning (10 AM - 12 PM)'}</option>
                   <option value="afternoon">{language === 'ar' ? 'عصراً (4 م - 6 م)' : 'Afternoon (4 PM - 6 PM)'}</option>
@@ -207,7 +207,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                   placeholder={language === 'ar' ? 'محمد عبدالله' : 'Mohammed Abdullah'}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none"
                 />
               </div>
 
@@ -221,7 +221,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                   placeholder="05XXXXXXXX"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#0056B3] focus:bg-white outline-none font-mono"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none font-mono"
                 />
               </div>
             </div>
@@ -232,7 +232,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                 id="license"
                 checked={hasLicense}
                 onChange={(e) => setHasLicense(e.target.checked)}
-                className="w-4 h-4 text-[#0056B3] accent-[#0056B3] rounded"
+                className="w-4 h-4 text-[#141414] accent-[#141414] rounded"
               />
               <label htmlFor="license" className="text-xs text-gray-700 cursor-pointer">
                 {language === 'ar' ? 'أؤكد امتلاكي رخصة قيادة سعودية أو دولية سارية المفعول' : 'I confirm holding a valid driving license'}
@@ -241,7 +241,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-white" />
               <span>{language === 'ar' ? 'تأكيد وحجز تجربة القيادة' : 'Confirm & Book Test Drive'}</span>

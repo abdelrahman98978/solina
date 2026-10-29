@@ -11,10 +11,13 @@ import {
   Percent,
   Sparkles,
   Plus,
-  Trash2
+  Trash2,
+  Globe,
+  BookOpen
 } from 'lucide-react';
 import { useAdminData, BankPartnerConfig } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { AUTOMOTIVE_DICTIONARY, ERP_ZATCA_DICTIONARY } from '../../utils/autoTranslation';
 
 export const AdminSettingsTab: React.FC = () => {
   const {
@@ -23,11 +26,27 @@ export const AdminSettingsTab: React.FC = () => {
     exportFullBackupJSON,
     importFullBackupJSON,
     resetToDefaultData,
+    exportDataToCSV,
     vehicles
   } = useAdminData();
-  const { language, formatPrice } = useLanguage();
+  const {
+    language,
+    setLanguage,
+    formatPrice,
+    autoTranslate,
+    autoTranslateEnabled,
+    toggleAutoTranslateEngine,
+    customGlossary,
+    addGlossaryTerm,
+    removeGlossaryTerm,
+    translationStats
+  } = useLanguage();
 
-  const [activeSubSection, setActiveSubSection] = useState<'financing' | 'identity' | 'backup'>('financing');
+  const [activeSubSection, setActiveSubSection] = useState<'financing' | 'identity' | 'translation' | 'backup'>('financing');
+  const [testPhraseInput, setTestPhraseInput] = useState('إجمالي المقبوضات 268,295 ر.س');
+  const [newGlossAr, setNewGlossAr] = useState('');
+  const [newGlossEn, setNewGlossEn] = useState('');
+  const [newGlossCat, setNewGlossCat] = useState<'automotive' | 'erp' | 'accounting' | 'ui'>('ui');
   const [savedBanner, setSavedBanner] = useState(false);
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -155,6 +174,7 @@ export const AdminSettingsTab: React.FC = () => {
           {[
             { id: 'financing' as const, label: 'محرك التمويل والبنوك' },
             { id: 'identity' as const, label: 'الهوية والربط الضريبي' },
+            { id: 'translation' as const, label: 'مكتبة الترجمة التلقائية' },
             { id: 'backup' as const, label: 'النسخ الاحتياطي' }
           ].map(tab => (
             <button
@@ -440,6 +460,223 @@ export const AdminSettingsTab: React.FC = () => {
         </form>
       )}
 
+      {/* SECTION 2.5: SMART AUTO-TRANSLATION LIBRARY (مكتبة الترجمة التلقائية الذكية) */}
+      {activeSubSection === 'translation' && (
+        <div className="space-y-6">
+          {/* Top Overview & Engine Toggle */}
+          <div className="bg-[#ffffff] rounded-[24px] p-6 border border-[#f0f0f0] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-2">
+                <span className="w-9 h-9 mobbin-squircle bg-[#141414] text-[#ffffff] flex items-center justify-center">
+                  <Globe className="w-4 h-4" />
+                </span>
+                <span className="mobbin-badge-popular px-3 py-1 text-[11px]">
+                  {autoTranslateEnabled ? 'الترجمة التلقائية الفورية نشطة' : 'الترجمة التلقائية متوقفة'}
+                </span>
+                <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#707070] text-xs font-mono font-semibold">
+                  {translationStats.totalTerms} مصطلح وعبارة معتمدة
+                </span>
+              </div>
+              <h3 className="mobbin-heading text-lg md:text-xl text-[#141414]">
+                مكتبة الترجمة التلقائية الذكية وقاموس مصطلحات سولينا (عربي ⇄ English)
+              </h3>
+              <p className="mobbin-subtitle-light text-xs md:text-sm">
+                محرك ترجمة ثنائي الاتجاه يعمل تلقائياً عبر مراقب الواجهات الحية (DOM MutationObserver) لترجمة كافة الجداول، الأزرار، الأرقام، العملات، والمصطلحات المحاسبية والضريبية دون أي فقدان للبيانات.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+                className="mobbin-ink-pill px-5 py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-semibold flex items-center gap-2 cursor-pointer"
+              >
+                <Globe className="w-4 h-4" />
+                <span>{language === 'ar' ? 'تبديل النظام إلى الإنجليزية (Switch to EN)' : 'التبديل إلى العربية (Switch to AR)'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  toggleAutoTranslateEngine(!autoTranslateEnabled);
+                  triggerSaveFeedback();
+                }}
+                className="px-4 py-2.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+              >
+                {autoTranslateEnabled ? 'إيقاف الترجمة التلقائية مؤقتاً' : 'تفعيل الترجمة التلقائية الفورية'}
+              </button>
+            </div>
+          </div>
+
+          {/* Dictionary Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-[#ffffff] p-4 rounded-[20px] border border-[#f0f0f0]">
+              <span className="text-[11px] font-semibold text-[#707070] block">مصطلحات السيارات والمحركات</span>
+              <strong className="text-xl font-black text-[#141414] font-mono">{translationStats.automotiveCount}</strong>
+              <span className="text-[10px] text-[#707070] block mt-0.5">الفئات، الدفع، المواصفات</span>
+            </div>
+            <div className="bg-[#ffffff] p-4 rounded-[20px] border border-[#f0f0f0]">
+              <span className="text-[11px] font-semibold text-[#707070] block">مصطلحات المحاسبة والضريبة</span>
+              <strong className="text-xl font-black text-[#141414] font-mono">{translationStats.erpZatcaCount}</strong>
+              <span className="text-[10px] text-[#707070] block mt-0.5">السندات، العُهد، الفواتير</span>
+            </div>
+            <div className="bg-[#ffffff] p-4 rounded-[20px] border border-[#f0f0f0]">
+              <span className="text-[11px] font-semibold text-[#707070] block">عبارات الواجهات والجداول</span>
+              <strong className="text-xl font-black text-[#141414] font-mono">{translationStats.uiPhrasesCount}</strong>
+              <span className="text-[10px] text-[#707070] block mt-0.5">لوحة الإدارة والواجهة العامة</span>
+            </div>
+            <div className="bg-[#f3f3f3] p-4 rounded-[20px] border border-[#e0e0e0]">
+              <span className="text-[11px] font-semibold text-[#141414] block">المصطلحات المخصصة المضافة</span>
+              <strong className="text-xl font-black text-[#141414] font-mono">{translationStats.customCount}</strong>
+              <span className="text-[10px] text-[#707070] block mt-0.5">محفوظة محلياً بالقاموس</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left: Live Bidirectional Translator Sandbox */}
+            <div className="lg:col-span-6 bg-[#ffffff] rounded-[24px] p-6 border border-[#f0f0f0] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#f0f0f0]">
+                <h4 className="mobbin-heading text-base text-[#141414] flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>اختبار المترجم التلقائي الفوري</span>
+                </h4>
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">فوري</span>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="font-semibold text-[#141414] block mb-1.5">
+                    أدخل نصاً أو رقماً أو مصطلحاً (بالعربية أو الإنجليزية):
+                  </label>
+                  <input
+                    type="text"
+                    value={testPhraseInput}
+                    onChange={(e) => setTestPhraseInput(e.target.value)}
+                    placeholder="مثال: إجمالي المقبوضات، مرحّل بالدفاتر، 57 موديل..."
+                    className="w-full"
+                    data-no-auto-translate="true"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1" data-no-auto-translate="true">
+                  <div className="p-4 rounded-[18px] bg-[#f3f3f3] space-y-1">
+                    <span className="text-[10px] font-bold text-[#707070] block">الترجمة إلى العربية (AR):</span>
+                    <div className="text-sm font-bold text-[#141414]">
+                      {autoTranslate(testPhraseInput, 'ar')}
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-[18px] bg-[#141414] text-[#ffffff] space-y-1">
+                    <span className="text-[10px] font-bold text-[#adadad] block">Translation to English (EN):</span>
+                    <div className="text-sm font-bold text-[#ffffff]">
+                      {autoTranslate(testPhraseInput, 'en')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Add Custom Term to Auto-Translation Dictionary */}
+            <div className="lg:col-span-6 bg-[#ffffff] rounded-[24px] p-6 border border-[#f0f0f0] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#f0f0f0]">
+                <h4 className="mobbin-heading text-base text-[#141414] flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  <span>إضافة مصطلح جديد لقاموس الترجمة التلقائية</span>
+                </h4>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label className="font-semibold text-[#141414] block mb-1">النص أو المصطلح بالعربية</label>
+                  <input
+                    type="text"
+                    value={newGlossAr}
+                    onChange={(e) => setNewGlossAr(e.target.value)}
+                    placeholder="مثال: صالة كبار الشخصيات"
+                    className="w-full"
+                    data-no-auto-translate="true"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold text-[#141414] block mb-1">المقابل بالإنجليزية (English)</label>
+                  <input
+                    type="text"
+                    value={newGlossEn}
+                    onChange={(e) => setNewGlossEn(e.target.value)}
+                    placeholder="e.g. VIP Executive Lounge"
+                    className="w-full"
+                    data-no-auto-translate="true"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <select
+                  value={newGlossCat}
+                  onChange={(e) => setNewGlossCat(e.target.value as any)}
+                  className="text-xs font-semibold"
+                >
+                  <option value="ui">مصطلحات الواجهات والإدارة</option>
+                  <option value="automotive">مصطلحات السيارات والمواصفات</option>
+                  <option value="accounting">المحاسبة والعُهد</option>
+                  <option value="erp">الفوترة والعمليات</option>
+                </select>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!newGlossAr.trim() || !newGlossEn.trim()) return;
+                    addGlossaryTerm(newGlossAr, newGlossEn, newGlossCat);
+                    setNewGlossAr('');
+                    setNewGlossEn('');
+                    triggerSaveFeedback();
+                  }}
+                  className="mobbin-ink-pill px-5 py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>إضافة للقاموس وتعميمها فوراً</span>
+                </button>
+              </div>
+
+              {customGlossary.length > 0 && (
+                <div className="pt-3 border-t border-[#f0f0f0] space-y-2 max-h-40 overflow-y-auto" data-no-auto-translate="true">
+                  {customGlossary.map(item => (
+                    <div key={item.id} className="p-2.5 rounded-[14px] bg-[#f3f3f3] flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#141414]">{item.ar}</span>
+                        <span className="text-[#707070]">⇄</span>
+                        <span className="font-mono text-[#141414]">{item.en}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeGlossaryTerm(item.id)}
+                        className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Built-in Core Dictionary Preview */}
+          <div className="bg-[#ffffff] rounded-[24px] p-6 border border-[#f0f0f0] space-y-4">
+            <h4 className="mobbin-heading text-base text-[#141414]">
+              عينة من القاموس التلقائي المدمج (السيارات، المحاسبة، والفوترة الضريبية)
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 text-xs max-h-64 overflow-y-auto" data-no-auto-translate="true">
+              {Object.entries({ ...AUTOMOTIVE_DICTIONARY, ...ERP_ZATCA_DICTIONARY }).slice(0, 24).map(([en, ar]) => (
+                <div key={en} className="p-3 rounded-[14px] bg-[#f3f3f3] flex items-center justify-between gap-2">
+                  <span className="font-bold text-[#141414]">{ar}</span>
+                  <span className="font-mono text-[11px] text-[#707070]">{en}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SECTION 3: FULL DATABASE BACKUP & RESTORE */}
       {activeSubSection === 'backup' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -449,18 +686,27 @@ export const AdminSettingsTab: React.FC = () => {
               <div className="w-11 h-11 mobbin-squircle bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                 <Download className="w-5 h-5" />
               </div>
-              <h3 className="mobbin-heading text-base text-[#141414]">تصدير نسخة احتياطية كاملة (JSON).</h3>
+              <h3 className="mobbin-heading text-base text-[#141414]">تصدير نسخة احتياطية كاملة (JSON و10 صيغ).</h3>
               <p className="mobbin-subtitle-light text-xs">
-                تحميل ملف JSON شامل يحتوي على كافة طرازات الأسطول، الشاسيهات، الطلبات، أوامر العمل، الفواتير الضريبية، والإعدادات.
+                تحميل ملف JSON شامل يحتوي على كافة طرازات الأسطول، الشاسيهات، الطلبات، أوامر العمل، الفواتير الضريبية، السندات المحاسبية، العُهد، والإعدادات.
               </p>
             </div>
-            <button
-              onClick={exportFullBackupJSON}
-              className="mobbin-ink-pill w-full py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>تحميل النسخة الاحتياطية (.JSON)</span>
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={exportFullBackupJSON}
+                className="mobbin-ink-pill w-full py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>تحميل النسخة الاحتياطية الكاملة (.JSON)</span>
+              </button>
+              <button
+                onClick={() => exportDataToCSV('all_erp')}
+                className="w-full py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>فتح مركز التصدير الشامل (10 صيغ)</span>
+              </button>
+            </div>
           </div>
 
           {/* Card 2: Import / Restore Backup */}
@@ -478,12 +724,12 @@ export const AdminSettingsTab: React.FC = () => {
               </p>
               {importStatus === 'success' && (
                 <div className="p-2.5 rounded-[16px] bg-[#ffffff] text-[#141414] text-xs font-semibold">
-                  ✓ تم استيراد واستعادة قاعدة البيانات بنجاح.
+                  تم استيراد واستعادة قاعدة البيانات بنجاح.
                 </div>
               )}
               {importStatus === 'error' && (
                 <div className="p-2.5 rounded-[16px] bg-[#ffffff] text-[#141414] text-xs font-semibold">
-                  ✕ تعذر قراءة ملف النسخة الاحتياطية، تأكد من صيغة JSON.
+                  تعذر قراءة ملف النسخة الاحتياطية، تأكد من صيغة JSON.
                 </div>
               )}
             </div>

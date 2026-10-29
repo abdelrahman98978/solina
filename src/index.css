@@ -2,12 +2,12 @@
 @import "tailwindcss";
 
 :root {
-  --brand-primary: #0056B3;
-  --brand-primary-hover: #004085;
-  --brand-primary-active: #002752;
+  --brand-primary: #141414;
+  --brand-primary-hover: #262626;
+  --brand-primary-active: #000000;
   --brand-secondary: #000000;
   --brand-dark: #0F172A;
-  --brand-light: #EFF6FF;
+  --brand-light: #f3f3f3;
   --background-primary: #FFFFFF;
   --background-secondary: #F8F9FA;
   --surface: #FFFFFF;
@@ -15,21 +15,21 @@
   --text-primary: #000000;
   --text-secondary: #555555;
   --border: #E5E7EB;
-  --success: #10B981;
-  --warning: #F59E0B;
+  --success: #141414;
+  --warning: #707070;
   --danger: #EF4444;
 }
 
 @theme {
-  --color-brand-primary: #0056B3;
-  --color-brand-primaryHover: #004085;
-  --color-brand-primaryActive: #002752;
+  --color-brand-primary: #141414;
+  --color-brand-primaryHover: #262626;
+  --color-brand-primaryActive: #000000;
   --color-brand-secondary: #000000;
   --color-brand-dark: #0F172A;
-  --color-brand-light: #EFF6FF;
+  --color-brand-light: #f3f3f3;
   
-  --color-toyota-red: #0056B3;
-  --color-toyota-darkRed: #004085;
+  --color-toyota-red: #141414;
+  --color-toyota-darkRed: #262626;
   --color-toyota-black: #000000;
   --color-toyota-dark: #0F172A;
   --color-toyota-gray: #475569;
@@ -38,25 +38,32 @@
   --font-arabic: "Cairo", "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
   --font-display: "Cairo", "Inter", sans-serif;
   --font-sans: "Cairo", "IBM Plex Sans Arabic", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cairo", "IBM Plex Sans Arabic", "Inter", ui-monospace, SFMono-Regular, monospace;
   --shadow-toyota: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
-  --shadow-toyota-hover: 0 12px 30px -4px rgba(0, 86, 179, 0.2), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+  --shadow-toyota-hover: 0 12px 30px -4px rgba(20, 20, 20, 0.14), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
     font-family: 'Cairo', 'IBM Plex Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif;
   }
   
   body {
     background-color: #FFFFFF;
     color: #000000;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   [dir="ltr"] {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Cairo', system-ui, -apple-system, sans-serif;
   }
+}
+
+.font-mono {
+  font-family: 'Cairo', 'IBM Plex Sans Arabic', 'Inter', ui-monospace, SFMono-Regular, monospace !important;
+  font-variant-numeric: tabular-nums !important;
 }
 
 /* Custom Scrollbar */
@@ -75,7 +82,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0056B3;
+  background: #141414;
 }
 
 /* Glassmorphism */

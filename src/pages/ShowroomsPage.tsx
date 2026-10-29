@@ -88,7 +88,7 @@ export const ShowroomsPage: React.FC<ShowroomsPageProps> = ({
           </div>
 
           <div className="relative z-20 max-w-3xl px-4 space-y-4">
-            <span className="inline-block px-4 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold tracking-wider">
+            <span className="inline-block px-4 py-1 rounded-full bg-[#141414] text-white text-xs font-bold tracking-wider">
               {language === 'ar' ? 'المقر الرئيسي وصالات العرض' : 'Headquarters & Showroom Network'}
             </span>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight font-arabic">
@@ -135,7 +135,7 @@ export const ShowroomsPage: React.FC<ShowroomsPageProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث بالمدينة أو الحي أو اسم الفرع..."
-                className="w-full pl-4 pr-10 py-2 rounded-full border border-gray-300 focus:border-[#0056B3] focus:outline-none text-xs bg-white"
+                className="w-full pl-4 pr-10 py-2 rounded-full border border-gray-300 focus:border-[#141414] focus:outline-none text-xs bg-white"
               />
               <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-2.5" />
             </div>
@@ -148,11 +148,11 @@ export const ShowroomsPage: React.FC<ShowroomsPageProps> = ({
             {filteredBranches.map(branch => (
               <div
                 key={branch.id}
-                className="bg-white rounded-3xl p-6 border border-gray-200 hover:border-[#0056B3] hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                className="bg-white rounded-3xl p-6 border border-gray-200 hover:border-[#141414] hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs font-bold text-[#0056B3] bg-red-50 px-3 py-1 rounded-full">
+                    <span className="text-xs font-bold text-[#141414] bg-red-50 px-3 py-1 rounded-full">
                       {branch.cityAr}
                     </span>
                     <span className="text-[11px] text-gray-400">فرع معتمد</span>
@@ -163,7 +163,7 @@ export const ShowroomsPage: React.FC<ShowroomsPageProps> = ({
                   </h3>
 
                   <p className="text-xs text-gray-600 mb-4 flex items-start gap-1.5 leading-relaxed">
-                    <MapPin className="w-4 h-4 text-[#0056B3] flex-shrink-0 mt-0.5" />
+                    <MapPin className="w-4 h-4 text-[#141414] flex-shrink-0 mt-0.5" />
                     <span>{branch.addressAr}</span>
                   </p>
 
@@ -197,13 +197,13 @@ export const ShowroomsPage: React.FC<ShowroomsPageProps> = ({
                     rel="noreferrer"
                     className="py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors text-center"
                   >
-                    <Navigation className="w-3.5 h-3.5 text-[#0056B3]" />
+                    <Navigation className="w-3.5 h-3.5 text-[#141414]" />
                     <span>الاتجاهات</span>
                   </a>
 
                   <button
                     onClick={onOpenServiceBooking}
-                    className="py-2.5 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-xs transition-colors cursor-pointer text-center"
+                    className="py-2.5 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs transition-colors cursor-pointer text-center"
                   >
                     <span>حجز موعد</span>
                   </button>

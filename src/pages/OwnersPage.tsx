@@ -117,7 +117,7 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
           </div>
 
           <div className="relative z-20 max-w-3xl px-4 space-y-4">
-            <span className="inline-block px-4 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold tracking-wider">
+            <span className="inline-block px-4 py-1 rounded-full bg-[#141414] text-white text-xs font-bold tracking-wider">
               {language === 'ar' ? 'خدمات سولينا للسيارات' : 'Official ALJ Ownership Services'}
             </span>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight font-arabic">
@@ -132,7 +132,7 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
             <div className="pt-2">
               <button
                 onClick={onOpenServiceBooking}
-                className="px-8 py-3 rounded-full bg-[#0056B3] hover:bg-[#004085] text-white font-bold text-sm shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-8 py-3 rounded-full bg-[#141414] hover:bg-[#262626] text-white font-bold text-sm shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <Calendar className="w-4 h-4" />
                 <span>{language === 'ar' ? 'حجز موعد صيانة إلكتروني' : 'Book Service Online'}</span>
@@ -174,13 +174,13 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
                 <div
                   key={idx}
                   onClick={pill.action}
-                  className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-[#0056B3] hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between group"
+                  className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-[#141414] hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between group"
                 >
                   <div className="space-y-3">
-                    <div className="w-12 h-12 rounded-xl bg-red-50 group-hover:bg-[#0056B3] text-[#0056B3] group-hover:text-white flex items-center justify-center transition-colors">
+                    <div className="w-12 h-12 rounded-xl bg-red-50 group-hover:bg-[#141414] text-[#141414] group-hover:text-white flex items-center justify-center transition-colors">
                       <pill.icon className="w-6 h-6" />
                     </div>
-                    <h3 className="text-base font-bold text-gray-900 group-hover:text-[#0056B3] transition-colors">
+                    <h3 className="text-base font-bold text-gray-900 group-hover:text-[#141414] transition-colors">
                       {pill.titleAr}
                     </h3>
                     <p className="text-xs text-gray-500 leading-relaxed">
@@ -210,16 +210,16 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
             {maintenanceSchedule.map((sch) => (
               <div
                 key={sch.km}
-                className="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:border-[#0056B3] hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                className="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:border-[#141414] hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-xs font-bold text-[#0056B3] bg-red-50 px-2.5 py-1 rounded-full font-mono">
+                    <span className="text-xs font-bold text-[#141414] bg-red-50 px-2.5 py-1 rounded-full font-mono">
                       {sch.km.toLocaleString()} كم
                     </span>
                     <div className="text-lg font-black text-gray-900 font-mono">
                       <span>{sch.price}</span>
-                      <span className="text-xs text-[#0056B3] mr-1">﷼</span>
+                      <span className="text-xs text-[#141414] mr-1">﷼</span>
                     </div>
                   </div>
 
@@ -230,7 +230,7 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
                   <ul className="space-y-2.5 text-xs text-gray-600 mb-6">
                     {sch.itemsAr.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 text-[#141414] flex-shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -239,7 +239,7 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
 
                 <button
                   onClick={onOpenServiceBooking}
-                  className="w-full py-2.5 rounded-full bg-white hover:bg-[#0056B3] text-gray-900 hover:text-white font-bold text-xs border border-gray-300 hover:border-[#0056B3] transition-all cursor-pointer shadow-sm"
+                  className="w-full py-2.5 rounded-full bg-white hover:bg-[#141414] text-gray-900 hover:text-white font-bold text-xs border border-gray-300 hover:border-[#141414] transition-all cursor-pointer shadow-sm"
                 >
                   {language === 'ar' ? 'حجز هذه الصيانة' : 'Book This Interval'}
                 </button>

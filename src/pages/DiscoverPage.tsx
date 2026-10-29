@@ -99,7 +99,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({
           </div>
 
           <div className="relative z-20 max-w-3xl px-4 space-y-4">
-            <span className="inline-block px-4 py-1 rounded-full bg-[#0056B3] text-white text-xs font-bold tracking-wider">
+            <span className="inline-block px-4 py-1 rounded-full bg-[#141414] text-white text-xs font-bold tracking-wider">
               {language === 'ar' ? 'ابتكار تثق به' : 'Innovation You Can Trust'}
             </span>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight font-arabic">
@@ -119,7 +119,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({
             {innovationPillars.map((p) => (
               <div
                 key={p.id}
-                className="bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#0056B3] hover:shadow-2xl transition-all duration-300 flex flex-col group"
+                className="bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#141414] hover:shadow-2xl transition-all duration-300 flex flex-col group"
               >
                 <div className="h-64 bg-gray-100 overflow-hidden relative">
                   <img
@@ -131,7 +131,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({
                 </div>
                 <div className="p-8 flex-1 flex flex-col justify-between">
                   <div className="space-y-3">
-                    <h3 className="text-2xl font-bold text-gray-900 group-hover:text-[#0056B3] transition-colors font-arabic">
+                    <h3 className="text-2xl font-bold text-gray-900 group-hover:text-[#141414] transition-colors font-arabic">
                       {language === 'ar' ? p.titleAr : p.titleEn}
                     </h3>
                     <p className="text-sm text-gray-600 leading-relaxed font-light">
@@ -142,7 +142,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({
                   <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
                     <button
                       onClick={() => onOpenTestDrive()}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0056B3] hover:text-black transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#141414] hover:text-black transition-colors"
                     >
                       <span>{language === 'ar' ? 'استكشف طرازات الهايبرد' : 'Explore Hybrid Models'}</span>
                       <ChevronLeft className="w-4 h-4" />

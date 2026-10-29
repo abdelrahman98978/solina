@@ -57,6 +57,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
     updateQuotationStatus,
     deleteQuotation,
     convertQuotationToInvoice,
+    exportSingleDocument,
     exportDataToCSV
   } = useAdminData();
 
@@ -454,9 +455,9 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
       {viewMode === 'kanban' && subTab === 'services' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {([
-            { status: 'pending' as const, title: '1. بانتظار التأكيد (Pending)' },
-            { status: 'in_progress' as const, title: '2. قيد الفحص بالورشة (In Progress)' },
-            { status: 'completed' as const, title: '3. مكتمل وتم التسليم (Completed)' }
+            { status: 'pending' as const, title: '1. بانتظار التأكيد' },
+            { status: 'in_progress' as const, title: '2. قيد الفحص بالورشة' },
+            { status: 'completed' as const, title: '3. مكتمل وتم التسليم' }
           ]).map(col => {
             const colItems = filteredServices.filter(s => s.status === col.status);
             return (
@@ -498,10 +499,10 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
       {viewMode === 'kanban' && subTab === 'quotations' && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {([
-            { status: 'draft' as const, title: '1. مسودة (Draft)' },
-            { status: 'sent' as const, title: '2. تم الإرسال للعميل (Sent)' },
-            { status: 'approved' as const, title: '3. موافق عليه (Approved)' },
-            { status: 'deal_closed' as const, title: '4. تم إبرام العقد والفوترة (Closed)' }
+            { status: 'draft' as const, title: '1. مسودة' },
+            { status: 'sent' as const, title: '2. تم الإرسال للعميل' },
+            { status: 'approved' as const, title: '3. موافق عليه' },
+            { status: 'deal_closed' as const, title: '4. تم إبرام العقد والفوترة' }
           ]).map(col => {
             const colItems = filteredQuotations.filter(q => q.status === col.status);
             return (
@@ -635,7 +636,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                         onChange={(e) => updateTestDriveStatus(td.id, e.target.value as any)}
                         className="text-xs font-semibold cursor-pointer"
                       >
-                        <option value="new">جديد (New)</option>
+                        <option value="new">جديد</option>
                         <option value="contacted">تم التواصل</option>
                         <option value="confirmed">موعد مؤكد</option>
                         <option value="completed">تمت التجربة</option>
@@ -1130,7 +1131,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                 <span className="font-mono font-semibold">{formatPrice(previewQuotation.vehiclePrice)} ر.س</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#707070]">ضريبة القيمة المضافة (15% VAT):</span>
+                <span className="text-[#707070]">ضريبة القيمة المضافة (15%):</span>
                 <span className="font-mono font-semibold">{formatPrice(previewQuotation.vatAmount)} ر.س</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-[#f0f0f0] text-sm">
@@ -1145,13 +1146,63 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+              {(['word', 'excel', 'xml', 'csv'] as const).map(fmt => (
+                <button
+                  key={fmt}
+                  type="button"
+                  onClick={() =>
+                    exportSingleDocument(
+                      'عرض سعر رسمي — شركة سولينا للسيارات',
+                      previewQuotation.quotationNumber,
+                      [
+                        ['اسم العميل', previewQuotation.fullName],
+                        ['رقم الجوال والمدينة', `${previewQuotation.phone} — ${previewQuotation.city}`],
+                        ['المركبة والفئة', `${previewQuotation.vehicleName} (${previewQuotation.gradeName})`],
+                        ['نظام الدفع', previewQuotation.financeType === 'lease' ? `تمويل تأجيري (${previewQuotation.bankName || 'مصرف الراجحي'})` : 'شراء نقدي مباشر']
+                      ],
+                      ['البيان والمواصفات', 'السعر قبل الضريبة (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي الشامل (ر.س)', 'القسط الشهري (ر.س)'],
+                      [[
+                        `${previewQuotation.vehicleName} — ${previewQuotation.gradeName}`,
+                        formatPrice(previewQuotation.vehiclePrice),
+                        formatPrice(previewQuotation.vatAmount),
+                        formatPrice(previewQuotation.totalWithVat),
+                        previewQuotation.monthlyInstallment ? formatPrice(previewQuotation.monthlyInstallment) : '-'
+                      ]],
+                      fmt
+                    )
+                  }
+                  className="px-3 py-2 bg-[#f3f3f3] hover:bg-[#141414] hover:text-white text-[#141414] border border-[#e0e0e0] text-[11px] font-bold rounded-full cursor-pointer transition-colors"
+                >
+                  {fmt === 'word' ? 'Word .DOC' : fmt === 'excel' ? 'Excel .XLS' : fmt.toUpperCase()}
+                </button>
+              ))}
               <button
-                onClick={() => window.print()}
+                onClick={() =>
+                  exportSingleDocument(
+                    'عرض سعر رسمي — شركة سولينا للسيارات',
+                    previewQuotation.quotationNumber,
+                    [
+                      ['اسم العميل', previewQuotation.fullName],
+                      ['رقم الجوال والمدينة', `${previewQuotation.phone} — ${previewQuotation.city}`],
+                      ['المركبة والفئة', `${previewQuotation.vehicleName} (${previewQuotation.gradeName})`],
+                      ['نظام الدفع', previewQuotation.financeType === 'lease' ? `تمويل تأجيري (${previewQuotation.bankName || 'مصرف الراجحي'})` : 'شراء نقدي مباشر']
+                    ],
+                    ['البيان والمواصفات', 'السعر قبل الضريبة (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي الشامل (ر.س)', 'القسط الشهري (ر.س)'],
+                    [[
+                      `${previewQuotation.vehicleName} — ${previewQuotation.gradeName}`,
+                      formatPrice(previewQuotation.vehiclePrice),
+                      formatPrice(previewQuotation.vatAmount),
+                      formatPrice(previewQuotation.totalWithVat),
+                      previewQuotation.monthlyInstallment ? formatPrice(previewQuotation.monthlyInstallment) : '-'
+                    ]],
+                    'pdf_print'
+                  )
+                }
                 className="px-4 py-2 bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] font-semibold rounded-full flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
-                <span>طباعة العرض</span>
+                <span>طباعة العرض PDF</span>
               </button>
               <button
                 onClick={() => {

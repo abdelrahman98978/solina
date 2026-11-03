@@ -22,6 +22,7 @@ import {
 import { useAdminData } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { AdminTabType, LeadsSubTabType } from './AdminDashboard';
+import { SaudiRiyalPrice } from '../SaudiRiyalSymbol';
 
 interface AdminOverviewTabProps {
   onSwitchTab: (tab: AdminTabType | LeadsSubTabType) => void;
@@ -71,9 +72,9 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       id: 'zatca-sales',
       titleAr: `مبيعات الفواتير الضريبية (${activeFactor.labelAr})`,
       titleEn: `ZATCA Invoiced Sales (${activeFactor.labelEn})`,
-      value: language === 'ar' ? `${formatPrice(scaledSalesSAR)} ر.س` : `SAR ${formatPrice(scaledSalesSAR)}`,
-      subtextAr: `${stats.totalInvoicesCount} فاتورة معتمدة • ضريبة القيمة المضافة: ${formatPrice(scaledVatSAR)} ر.س`,
-      subtextEn: `${stats.totalInvoicesCount} cleared invoices • VAT: SAR ${formatPrice(scaledVatSAR)}`,
+      value: <SaudiRiyalPrice amount={formatPrice(scaledSalesSAR)} />,
+      subtextAr: <>{stats.totalInvoicesCount} فاتورة معتمدة • ضريبة القيمة المضافة: <SaudiRiyalPrice amount={formatPrice(scaledVatSAR)} /></>,
+      subtextEn: <>{stats.totalInvoicesCount} cleared invoices • VAT: <SaudiRiyalPrice amount={formatPrice(scaledVatSAR)} /></>,
       icon: QrCode,
       isFeatured: true,
       popularBadge: language === 'ar' ? 'ربط مباشر' : 'ZATCA Live',
@@ -107,8 +108,8 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       titleAr: 'عروض الأسعار والتمويل',
       titleEn: 'Quotations & Finance',
       value: stats.totalQuotations,
-      subtextAr: `خط المبيعات: ${formatPrice(scaledPipelineSAR)} ر.س`,
-      subtextEn: `Pipeline: SAR ${formatPrice(scaledPipelineSAR)}`,
+      subtextAr: <>خط المبيعات: <SaudiRiyalPrice amount={formatPrice(scaledPipelineSAR)} /></>,
+      subtextEn: <>Pipeline: <SaudiRiyalPrice amount={formatPrice(scaledPipelineSAR)} /></>,
       icon: FileText,
       isFeatured: false,
       tab: 'quotations' as const
@@ -130,7 +131,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       titleAr: 'أوامر العمل بالورشة',
       titleEn: 'Active Workshop Job Cards',
       value: language === 'ar' ? `${stats.activeJobCardsCount + stats.readyJobCardsCount} أمر عمل` : `${stats.activeJobCardsCount + stats.readyJobCardsCount} Job Cards`,
-      subtextAr: `${stats.readyJobCardsCount} جاهزة للتسليم • الإيراد: ${formatPrice(scaledWorkshopSAR)} ر.س`,
+      subtextAr: <>{stats.readyJobCardsCount} جاهزة للتسليم • الإيراد: <SaudiRiyalPrice amount={formatPrice(scaledWorkshopSAR)} /></>,
       subtextEn: `${stats.readyJobCardsCount} ready for handover`,
       icon: Wrench,
       isFeatured: false,
@@ -151,8 +152,8 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
       id: 'accounting-treasury',
       titleAr: 'الخزينة والعُهد المالية',
       titleEn: 'Treasury & Petty Cash Custodies',
-      value: language === 'ar' ? `${formatPrice(stats.netCashFlowSAR)} ر.س` : `SAR ${formatPrice(stats.netCashFlowSAR)}`,
-      subtextAr: `${vouchers.length} سند محاسبي • ${stats.activeCustodiesCount} عُهد نشطة (${formatPrice(stats.totalCustodiesRemainingSAR)} ر.س)`,
+      value: <SaudiRiyalPrice amount={formatPrice(stats.netCashFlowSAR)} />,
+      subtextAr: <>{vouchers.length} سند محاسبي • {stats.activeCustodiesCount} عُهد نشطة (<SaudiRiyalPrice amount={formatPrice(stats.totalCustodiesRemainingSAR)} />)</>,
       subtextEn: `${vouchers.length} vouchers • ${stats.activeCustodiesCount} active custodies`,
       icon: Wallet,
       isFeatured: true,
@@ -485,7 +486,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
             </div>
             <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
               <span className="text-[10px] text-[#707070] block">{language === 'ar' ? 'إيراد الصيانة' : 'Service Revenue'}</span>
-              <strong className="font-mono text-[#141414]">{language === 'ar' ? `${formatPrice(scaledWorkshopSAR)} ر.س` : `SAR ${formatPrice(scaledWorkshopSAR)}`}</strong>
+              <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={formatPrice(scaledWorkshopSAR)} /></strong>
             </div>
           </div>
         </div>
@@ -560,7 +561,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                   <div className="text-[#707070] mt-0.5">{inv.customerName} — {inv.vehicleModel}</div>
                 </div>
                 <div className="text-end font-mono font-semibold text-[#141414]">
-                  {formatPrice(inv.totalAmount)} ر.س
+                  <SaudiRiyalPrice amount={formatPrice(inv.totalAmount)} />
                 </div>
               </div>
             ))}
@@ -669,7 +670,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                       {srv.vehicleModel} • لوحة: <span className="font-mono font-semibold text-[#141414]">{srv.plateNumber}</span>
                     </p>
                     <p className="text-[11px] text-[#707070] font-semibold">
-                      {srv.serviceType} ({formatPrice(srv.estimatedCost)} ر.س)
+                      {srv.serviceType} (<SaudiRiyalPrice amount={formatPrice(srv.estimatedCost)} />)
                     </p>
                   </div>
 
@@ -720,7 +721,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
                 className="h-14 w-auto mx-auto object-contain" 
               />
               <span className="text-xs font-semibold text-[#141414] block truncate">{language === 'ar' ? v.nameAr : v.nameEn}</span>
-              <span className="text-[11px] font-semibold text-[#707070] font-mono block">{formatPrice(v.priceStartingFrom)} ر.س</span>
+              <span className="text-[11px] font-semibold text-[#707070] font-mono block"><SaudiRiyalPrice amount={formatPrice(v.priceStartingFrom)} /></span>
             </div>
           ))}
         </div>

@@ -31,8 +31,8 @@ export default {
         }
       },
       fontFamily: {
-        arabic: ['"Cairo"', '"Readex Pro"', 'sans-serif'],
-        display: ['"Cairo"', 'sans-serif'],
+        arabic: ['"saudi_riyal"', '"Cairo"', '"Readex Pro"', 'sans-serif'],
+        display: ['"saudi_riyal"', '"Cairo"', 'sans-serif'],
       },
       boxShadow: {
         'toyota': '0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04)',

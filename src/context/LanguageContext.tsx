@@ -153,12 +153,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const formatPrice = useCallback(
     (amount: number): string => {
-      if (language === 'ar') {
-        return amount.toLocaleString('ar-SA');
-      }
       return amount.toLocaleString('en-US');
     },
-    [language]
+    []
   );
 
   const translationStats = getTranslationLibraryStats();

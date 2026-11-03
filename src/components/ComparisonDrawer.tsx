@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Layers, ArrowLeft, ArrowRight, Check, Trash2, Fuel, Gauge, Users, Car, Zap } from 'lucide-react';
 import type { Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface ComparisonDrawerProps {
   isOpen: boolean;
@@ -112,7 +113,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                   <td className="p-4 font-bold text-gray-700 bg-gray-50/50">{language === 'ar' ? 'السعر النقدي (شامل الضريبة)' : 'Cash Price (Incl. VAT)'}</td>
                   {comparedVehicles.map((car) => (
                     <td key={car.id} className="p-4 text-center font-black text-base text-gray-900 font-mono">
-                      {formatPrice(car.priceStartingFrom)} ر.س
+                      <SaudiRiyalPrice amount={car.priceStartingFrom} />
                     </td>
                   ))}
                 </tr>
@@ -122,7 +123,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                   <td className="p-4 font-bold text-gray-700 bg-gray-50/50">{language === 'ar' ? 'القسط الشهري التقديري' : 'Monthly Installment'}</td>
                   {comparedVehicles.map((car) => (
                     <td key={car.id} className="p-4 text-center font-black text-sm text-[#141414] font-mono">
-                      {formatPrice(car.monthlyInstallmentStartingFrom)} ر.س/شهر
+                      <SaudiRiyalPrice amount={car.monthlyInstallmentStartingFrom} suffix={language === 'ar' ? '/شهر' : '/mo'} />
                     </td>
                   ))}
                 </tr>

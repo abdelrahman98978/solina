@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { MAINTENANCE_PACKAGES } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface ServiceBookingModalProps {
   isOpen: boolean;
@@ -165,10 +166,7 @@ export const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 
                 <div className="text-right sm:text-left">
                   <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'التكلفة التقديرية (شامل الضريبة والزيوت):' : 'Estimated Cost (Incl. VAT & Oils):'}</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-[#141414] font-mono">{formatPrice(estimatedCost)}</span>
-                    <span className="text-xs font-bold text-gray-700">﷼</span>
-                  </div>
+                  <SaudiRiyalPrice amount={estimatedCost} className="text-2xl font-black text-[#141414] font-mono" />
                 </div>
               </div>
 

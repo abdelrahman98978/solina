@@ -22,7 +22,7 @@ export const TRANSLATIONS = {
     searchPlaceholder: 'ابحث عن سيارة (مثلاً: برادو، كامري، لاند كروزر، راف فور)...',
     availableModelsCount: 'طراز متوفر',
     startsFrom: 'يبدأ من',
-    sar: 'ر.س',
+    sar: '\u200E\u20C1',
     vatIncluded: '(شامل ضريبة القيمة المضافة 15%)',
     
     // Categories
@@ -86,7 +86,7 @@ export const TRANSLATIONS = {
     searchPlaceholder: 'Search vehicle (e.g., Prado, Camry, Land Cruiser, RAV4)...',
     availableModelsCount: 'Models Available',
     startsFrom: 'Starts From',
-    sar: 'SAR',
+    sar: '\u200E\u20C1',
     vatIncluded: '(15% VAT Included)',
     
     // Categories

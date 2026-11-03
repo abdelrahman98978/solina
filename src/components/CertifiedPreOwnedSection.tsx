@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, CheckCircle2, Car, MapPin, Gauge, Calendar, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface CertifiedPreOwnedSectionProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -115,11 +116,11 @@ export const CertifiedPreOwnedSection: React.FC<CertifiedPreOwnedSectionProps> =
                   <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-center justify-between">
                     <div>
                       <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'السعر النقدي' : 'Cash Price'}</span>
-                      <span className="text-base font-bold text-gray-900 font-mono">{formatPrice(car.price)} ﷼</span>
+                      <SaudiRiyalPrice amount={car.price} className="text-base font-bold text-gray-900 font-mono" />
                     </div>
                     <div className="text-left">
                       <span className="text-[10px] text-gray-500 block">{language === 'ar' ? 'أقساط تبدأ من' : 'Installment from'}</span>
-                      <span className="text-xs font-bold text-[#141414] font-mono">{formatPrice(car.monthlyInstallment)} ﷼/ش</span>
+                      <SaudiRiyalPrice amount={car.monthlyInstallment} suffix={language === 'ar' ? '/ش' : '/mo'} className="text-xs font-bold text-[#141414] font-mono" />
                     </div>
                   </div>
                 </div>

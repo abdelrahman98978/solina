@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Wrench, ShieldCheck, CheckCircle2, Search, ShoppingBag, ArrowLeft, Tag, Layers } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface PartsAccessoriesSectionProps {
   onOpenTestDrive: (partTitle?: string) => void;
@@ -131,7 +132,7 @@ export const PartsAccessoriesSection: React.FC<PartsAccessoriesSectionProps> = (
               <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'السعر الرسمي' : 'Official Price'}</span>
-                  <span className="text-lg font-bold text-gray-900 font-mono">{formatPrice(part.price)} ﷼</span>
+                  <SaudiRiyalPrice amount={part.price} className="text-lg font-bold text-gray-900 font-mono" />
                 </div>
 
                 <button

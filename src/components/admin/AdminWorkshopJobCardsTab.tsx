@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAdminData, JobCard } from '../../context/AdminDataContext';
 import { AdminTabType, LeadsSubTabType } from './AdminDashboard';
+import { SaudiRiyalPrice, SaudiRiyalSymbol, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
 
 interface AdminWorkshopJobCardsTabProps {
   onNavigateTab?: (tab: AdminTabType | LeadsSubTabType) => void;
@@ -188,7 +189,7 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
         <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none space-y-1">
           <span className="text-[11px] font-bold text-[#707070]">إيرادات الورشة المسجلة</span>
           <div className="text-xl font-black text-[#141414]">
-            {jobCards.reduce((acc, c) => acc + c.totalCost, 0).toLocaleString('ar-SA')} ريال
+            <SaudiRiyalPrice amount={jobCards.reduce((acc, c) => acc + c.totalCost, 0).toLocaleString('ar-SA')} />
           </div>
           <span className="text-[10px] text-[#adadad] font-light">قطع غيار سولينا + أجور يد</span>
         </div>
@@ -304,7 +305,7 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
               <div className="pt-3 border-t border-[#e0e0e0] space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#adadad]">إجمالي التكلفة:</span>
-                  <strong className="text-sm font-black text-[#141414] font-mono">{card.totalCost.toLocaleString('ar-SA')} ريال</strong>
+                  <strong className="text-sm font-black text-[#141414] font-mono"><SaudiRiyalPrice amount={card.totalCost.toLocaleString('ar-SA')} /></strong>
                 </div>
 
                 <div className="flex items-center gap-1.5">
@@ -473,7 +474,7 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
                   >
                     <option value="">بدون قطع إضافية</option>
                     {spareParts.map(p => (
-                      <option key={p.id} value={p.nameAr}>{p.nameAr} (+{p.price} ر.س)</option>
+                      <option key={p.id} value={p.nameAr}>{p.nameAr} (+{formatSaudiRiyalText(p.price)})</option>
                     ))}
                   </select>
                 </div>
@@ -507,7 +508,7 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
                   </select>
                 </div>
                 <div>
-                  <label className="font-bold text-[#707070] block mb-1">التكلفة (ر.س):</label>
+                  <label className="font-bold text-[#707070] block mb-1">التكلفة (<SaudiRiyalSymbol />):</label>
                   <input
                     type="number"
                     value={newCardForm.cost}
@@ -570,7 +571,7 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
                 </div>
               </div>
               <div>
-                <label className="font-bold text-[#707070] block mb-1">إجمالي التكلفة (ر.س):</label>
+                <label className="font-bold text-[#707070] block mb-1">إجمالي التكلفة (<SaudiRiyalSymbol />):</label>
                 <input
                   type="number"
                   value={editingJobCard.totalCost}
@@ -637,7 +638,7 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
               </ul>
               <div className="flex justify-between pt-2 border-t border-[#e0e0e0] text-sm">
                 <strong>إجمالي أمر العمل (شامل الضريبة):</strong>
-                <strong className="font-mono text-[#141414] font-black">{previewJobCard.totalCost.toLocaleString('ar-SA')} ريال</strong>
+                <strong className="font-mono text-[#141414] font-black"><SaudiRiyalPrice amount={previewJobCard.totalCost.toLocaleString('ar-SA')} /></strong>
               </div>
             </div>
 
@@ -658,11 +659,11 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
                         ['المهندس المسؤول', previewJobCard.technicianName],
                         ['مسار الخدمة', previewJobCard.bayNumber]
                       ],
-                      ['نوع الصيانة', 'قطع الغيار والفحوصات المعتمدة', 'إجمالي التكلفة شامل الضريبة (ر.س)'],
+                      ['نوع الصيانة', 'قطع الغيار والفحوصات المعتمدة', 'إجمالي التكلفة شامل الضريبة (\u200E\u20C1)'],
                       [[
                         previewJobCard.serviceType,
                         previewJobCard.partsUsed.join(' • '),
-                        previewJobCard.totalCost.toLocaleString('ar-SA')
+                        formatSaudiRiyalText(previewJobCard.totalCost.toLocaleString('ar-SA'))
                       ]],
                       fmt
                     )
@@ -685,11 +686,11 @@ export const AdminWorkshopJobCardsTab: React.FC<AdminWorkshopJobCardsTabProps> =
                       ['المهندس المسؤول', previewJobCard.technicianName],
                       ['مسار الخدمة', previewJobCard.bayNumber]
                     ],
-                    ['نوع الصيانة', 'قطع الغيار والفحوصات المعتمدة', 'إجمالي التكلفة شامل الضريبة (ر.س)'],
+                    ['نوع الصيانة', 'قطع الغيار والفحوصات المعتمدة', 'إجمالي التكلفة شامل الضريبة (\u200E\u20C1)'],
                     [[
                       previewJobCard.serviceType,
                       previewJobCard.partsUsed.join(' • '),
-                      previewJobCard.totalCost.toLocaleString('ar-SA')
+                      formatSaudiRiyalText(previewJobCard.totalCost.toLocaleString('ar-SA'))
                     ]],
                     'pdf_print'
                   )

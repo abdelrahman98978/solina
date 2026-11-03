@@ -21,12 +21,12 @@ import {
   ArrowRight,
   ExternalLink,
   PhoneCall,
-  Scale,
-  Smartphone
+  Scale
 } from 'lucide-react';
 import { type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface HeaderProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -46,20 +46,10 @@ export const Header: React.FC<HeaderProps> = ({
   comparisonCount,
   onSelectCategory,
   onSelectVehicle,
-  onOpenAdmin,
   onNavigate
 }) => {
   const { language, toggleLanguage, isRTL } = useLanguage();
   const { vehicles } = useAdminData();
-  const handleTriggerAdmin = () => {
-    if (onOpenAdmin) {
-      onOpenAdmin();
-    } else if (onNavigate) {
-      onNavigate('admin');
-    } else {
-      window.location.href = '/admin';
-    }
-  };
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -267,27 +257,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Left Side: Language Toggle, User Profile, and Red Solina Logo */}
         <div className="flex items-center gap-3 md:gap-4">
-          {/* Direct Quick Access Buttons: Mobile App & Dealership ERP */}
-          <div className="hidden md:flex items-center gap-2">
-            <button
-              onClick={() => { if (onNavigate) onNavigate('app'); else window.location.href = '/app'; }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-xs font-bold transition-colors cursor-pointer"
-              title="تطبيق سولينا التفاعلي للجوال"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-red-600" />
-              <span>{language === 'ar' ? 'تطبيق الجوال' : 'Mobile App'}</span>
-            </button>
-
-            <button
-              onClick={() => handleTriggerAdmin()}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold transition-colors cursor-pointer"
-              title="لوحة التحكم ونظام الـ ERP والمحاسبة"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-              <span>{language === 'ar' ? 'لوحة التحكم ERP' : 'ERP Admin'}</span>
-            </button>
-          </div>
-
           {/* Compare Shortcut Badge */}
           {comparisonCount > 0 && (
             <button 
@@ -331,17 +300,6 @@ export const Header: React.FC<HeaderProps> = ({
                   <button onClick={() => { if (onNavigate) onNavigate('showrooms'); else window.location.href = '#showrooms'; setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-[#141414] transition-colors text-right cursor-pointer">
                     <MapPin className="w-4 h-4" />
                     <span>{language === 'ar' ? 'أقرب فرع وصالة عرض' : 'Find Showroom'}</span>
-                  </button>
-                  <button onClick={() => { if (onNavigate) onNavigate('app'); else window.location.href = '#solina-app'; setUserDropdownOpen(false); }} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors text-right cursor-pointer">
-                    <Smartphone className="w-4 h-4 text-red-600" />
-                    <span>{language === 'ar' ? 'تطبيق سولينا التفاعلي' : 'Solina Interactive App'}</span>
-                  </button>
-                  <button onClick={() => { handleTriggerAdmin(); setUserDropdownOpen(false); }} className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-[#141414] bg-[#f3f3f3] hover:bg-[#f3f3f3] transition-colors text-right rounded-xl my-1 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-[#141414]" />
-                      <span>{language === 'ar' ? 'نظام إدارة الوكالة والـ ERP' : 'Dealership ERP & DMS'}</span>
-                    </div>
-                    <span className="px-1.5 py-0.5 rounded-md bg-[#141414] text-white text-[9px] font-mono">ZATCA 2</span>
                   </button>
                 </div>
               </div>
@@ -430,10 +388,9 @@ export const Header: React.FC<HeaderProps> = ({
                           <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#141414] transition-colors leading-tight">
                             {getModelTitle(v)}
                           </h4>
-                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
-                            <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
-                            <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
-                            <span className="text-[#141414] mr-1"> ﷼</span>
+                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3 flex items-center justify-center gap-1.5">
+                            <span>{language === 'ar' ? 'تبدأ من' : 'Starting from'}</span>
+                            <SaudiRiyalPrice amount={v.priceStartingFrom} className="font-bold text-gray-900 font-mono" />
                           </p>
                           <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
                             <img 
@@ -470,10 +427,9 @@ export const Header: React.FC<HeaderProps> = ({
                           <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#141414] transition-colors leading-tight">
                             {getModelTitle(v)}
                           </h4>
-                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
-                            <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
-                            <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
-                            <span className="text-[#141414] mr-1"> ﷼</span>
+                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3 flex items-center justify-center gap-1.5">
+                            <span>{language === 'ar' ? 'تبدأ من' : 'Starting from'}</span>
+                            <SaudiRiyalPrice amount={v.priceStartingFrom} className="font-bold text-gray-900 font-mono" />
                           </p>
                           <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
                             <img 
@@ -510,10 +466,9 @@ export const Header: React.FC<HeaderProps> = ({
                           <h4 className="font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#141414] transition-colors leading-tight">
                             {getModelTitle(v)}
                           </h4>
-                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3">
-                            <span>{language === 'ar' ? 'تبدأ من ' : 'Starting from '}</span>
-                            <span className="font-bold text-gray-900">{v.priceStartingFrom.toLocaleString()}</span>
-                            <span className="text-[#141414] mr-1"> ﷼</span>
+                          <p className="text-xs md:text-sm font-semibold text-gray-600 mt-1 mb-3 flex items-center justify-center gap-1.5">
+                            <span>{language === 'ar' ? 'تبدأ من' : 'Starting from'}</span>
+                            <SaudiRiyalPrice amount={v.priceStartingFrom} className="font-bold text-gray-900 font-mono" />
                           </p>
                           <div className="w-full h-28 md:h-32 flex items-center justify-center overflow-hidden">
                             <img 
@@ -624,9 +579,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <label className="text-sm font-bold text-gray-900">
                       {language === 'ar' ? 'السعر' : 'Price'}
                     </label>
-                    <span className="text-xs font-mono font-bold text-[#141414]">
-                      {maxPrice.toLocaleString()} ﷼
-                    </span>
+                    <SaudiRiyalPrice amount={maxPrice} className="text-xs font-mono font-bold text-[#141414]" />
                   </div>
                   <input
                     type="range"
@@ -638,8 +591,8 @@ export const Header: React.FC<HeaderProps> = ({
                     className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#141414]"
                   />
                   <div className="flex justify-between text-[11px] text-gray-500 mt-1 font-mono">
-                    <span>66,987 ﷼</span>
-                    <span>1,500,000 ﷼</span>
+                    <SaudiRiyalPrice amount={66987} />
+                    <SaudiRiyalPrice amount={1500000} />
                   </div>
                 </div>
 
@@ -789,7 +742,7 @@ export const Header: React.FC<HeaderProps> = ({
                   باقات الصيانة الدورية
                 </h4>
                 <p className="text-xs text-gray-500 leading-relaxed">
-                  صيانة 10,000 كم بـ 99 ريال، وخدمة 30,000 كم مجانية بالكامل.
+                  صيانة 10,000 كم بـ <SaudiRiyalPrice amount={99} className="font-bold text-gray-800" />، وخدمة 30,000 كم مجانية بالكامل.
                 </p>
               </a>
 
@@ -1036,17 +989,6 @@ export const Header: React.FC<HeaderProps> = ({
               className="w-full bg-gray-900 text-white py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition-colors"
             >
               حجز خدمة صيانة
-            </button>
-            <button
-              onClick={() => {
-                handleTriggerAdmin();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full bg-slate-900 border border-red-600/40 text-white py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-            >
-              <ShieldCheck className="w-4 h-4 text-red-500" />
-              <span>نظام إدارة الوكالة والـ ERP</span>
-              <span className="px-1.5 py-0.2 rounded bg-[#141414] text-[10px]">ZATCA 2</span>
             </button>
           </div>
         </div>

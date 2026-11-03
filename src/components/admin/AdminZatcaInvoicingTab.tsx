@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAdminData, InvoiceItem } from '../../context/AdminDataContext';
+import { SaudiRiyalPrice, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
 
 export const AdminZatcaInvoicingTab: React.FC = () => {
   const { language } = useLanguage();
@@ -197,7 +198,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
         <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none space-y-1">
           <span className="text-[11px] font-bold text-[#707070]">إجمالي المبيعات المفوترة (شامل الضريبة)</span>
           <div className="text-xl font-black text-[#141414] font-mono">
-            {zatcaInvoices.reduce((acc, curr) => acc + curr.totalAmount, 0).toLocaleString('ar-SA')} ريال
+            <SaudiRiyalPrice amount={zatcaInvoices.reduce((acc, curr) => acc + curr.totalAmount, 0).toLocaleString('ar-SA')} />
           </div>
           <span className="text-[10px] text-[#adadad] font-medium">مبيعات وصيانة سولينا للسيارات</span>
         </div>
@@ -205,7 +206,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
         <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none space-y-1">
           <span className="text-[11px] font-bold text-[#707070]">ضريبة القيمة المضافة المحصلة (15%)</span>
           <div className="text-xl font-black text-[#141414] font-mono">
-            {zatcaInvoices.reduce((acc, curr) => acc + curr.vatAmount, 0).toLocaleString('ar-SA')} ريال
+            <SaudiRiyalPrice amount={zatcaInvoices.reduce((acc, curr) => acc + curr.vatAmount, 0).toLocaleString('ar-SA')} />
           </div>
           <span className="text-[10px] text-[#141414] font-bold">جاهزة للإقرار الضريبي الآلي</span>
         </div>
@@ -236,25 +237,25 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
           <div className="bg-white px-3.5 py-2.5 rounded-2xl border border-[#e0e0e0]">
             <span className="text-[10px] text-[#707070] block">المبيعات الخاضعة (قبل الضريبة)</span>
             <strong className="font-mono font-bold text-[#141414]">
-              {zatcaInvoices.filter(i => i.totalAmount > 0).reduce((a, b) => a + b.baseAmount, 0).toLocaleString('ar-SA')} ر.س
+              <SaudiRiyalPrice amount={zatcaInvoices.filter(i => i.totalAmount > 0).reduce((a, b) => a + b.baseAmount, 0).toLocaleString('ar-SA')} />
             </strong>
           </div>
           <div className="bg-white px-3.5 py-2.5 rounded-2xl border border-[#e0e0e0]">
             <span className="text-[10px] text-[#707070] block">ضريبة المخرجات (15%)</span>
             <strong className="font-mono font-bold text-[#141414]">
-              {zatcaInvoices.filter(i => i.totalAmount > 0).reduce((a, b) => a + b.vatAmount, 0).toLocaleString('ar-SA')} ر.س
+              <SaudiRiyalPrice amount={zatcaInvoices.filter(i => i.totalAmount > 0).reduce((a, b) => a + b.vatAmount, 0).toLocaleString('ar-SA')} />
             </strong>
           </div>
           <div className="bg-white px-3.5 py-2.5 rounded-2xl border border-[#e0e0e0]">
             <span className="text-[10px] text-[#707070] block">الإشعارات الدائنة (المرتجعات)</span>
             <strong className="font-mono font-bold text-[#141414]">
-              {Math.abs(zatcaInvoices.filter(i => i.totalAmount < 0).reduce((a, b) => a + b.vatAmount, 0)).toLocaleString('ar-SA')} ر.س
+              <SaudiRiyalPrice amount={Math.abs(zatcaInvoices.filter(i => i.totalAmount < 0).reduce((a, b) => a + b.vatAmount, 0)).toLocaleString('ar-SA')} />
             </strong>
           </div>
           <div className="bg-[#141414] text-white px-3.5 py-2.5 rounded-2xl">
             <span className="text-[10px] text-[#a0a0a0] block">صافي الضريبة المستحقة للسداد</span>
             <strong className="font-mono font-black text-white">
-              {zatcaInvoices.reduce((a, b) => a + b.vatAmount, 0).toLocaleString('ar-SA')} ر.س
+              <SaudiRiyalPrice amount={zatcaInvoices.reduce((a, b) => a + b.vatAmount, 0).toLocaleString('ar-SA')} />
             </strong>
           </div>
         </div>
@@ -335,9 +336,9 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                     <div className="font-bold text-[#141414]">{inv.vehicleModel}</div>
                     <span className="text-[10px] text-[#adadad] font-mono block">VIN: {inv.vinNumber}</span>
                   </td>
-                  <td className="p-3.5 font-mono text-[#707070]">{inv.baseAmount.toLocaleString('ar-SA')} ريال</td>
-                  <td className="p-3.5 font-mono font-bold text-[#707070]">{inv.vatAmount.toLocaleString('ar-SA')} ريال</td>
-                  <td className="p-3.5 font-mono font-black text-[#141414]">{inv.totalAmount.toLocaleString('ar-SA')} ريال</td>
+                  <td className="p-3.5 font-mono text-[#707070]"><SaudiRiyalPrice amount={inv.baseAmount.toLocaleString('ar-SA')} /></td>
+                  <td className="p-3.5 font-mono font-bold text-[#707070]"><SaudiRiyalPrice amount={inv.vatAmount.toLocaleString('ar-SA')} /></td>
+                  <td className="p-3.5 font-mono font-black text-[#141414]"><SaudiRiyalPrice amount={inv.totalAmount.toLocaleString('ar-SA')} /></td>
                   <td className="p-3.5">
                     <span className="px-2.5 py-1 rounded-full bg-[#f3f3f3] text-[#141414] text-[10px] font-bold border border-[#e0e0e0] flex items-center gap-1 w-fit">
                       <CheckCircle2 className="w-3 h-3" />
@@ -365,7 +366,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                           onClick={() => {
                             const vch = createReceiptFromInvoice(inv.id, 'bank_transfer');
                             if (vch) {
-                              alert(`تم إصدار وترحيل سند القبض رقم ${vch.voucherNumber} بمبلغ ${vch.totalAmount.toLocaleString('ar-SA')} ر.س في النظام المحاسبي بنجاح.`);
+                              alert(`تم إصدار وترحيل سند القبض رقم ${vch.voucherNumber} بمبلغ ${formatSaudiRiyalText(vch.totalAmount.toLocaleString('ar-SA'))} في النظام المحاسبي بنجاح.`);
                             }
                           }}
                           className="px-2.5 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#141414] hover:text-white text-[#141414] border border-[#e0e0e0] text-[10px] font-bold transition-colors cursor-pointer"
@@ -458,6 +459,14 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                 <span className="text-[#adadad] block text-[10px]">المعرف الفريد الموحد (UUID)</span>
                 <span className="text-[10px] font-mono text-[#707070] break-all">{selectedInvoice.uuid}</span>
               </div>
+              <div>
+                <span className="text-[#adadad] block text-[10px]">موعد التوصيل / تقديم الخدمة (نظام التجارة الإلكترونية)</span>
+                <strong className="text-[#141414] text-[11px]">خلال 3–5 أيام عمل كحد أقصى (الأجور الإضافية والشحن: <SaudiRiyalPrice amount={0} />)</strong>
+              </div>
+              <div>
+                <span className="text-[#adadad] block text-[10px]">اسم الناقل ورقم تتبع مسار التوصيل</span>
+                <strong className="text-[#141414] font-mono text-[11px]">ناقل سولينا المعتمد • TRK-{selectedInvoice.invoiceNumber}</strong>
+              </div>
             </div>
 
             {/* Line Items Table */}
@@ -476,9 +485,9 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                   <tr className="border-t border-[#e0e0e0]">
                     <td className="p-3 font-bold text-[#141414]">{selectedInvoice.vehicleModel}</td>
                     <td className="p-3 font-mono text-[#707070]">{selectedInvoice.vinNumber}</td>
-                    <td className="p-3 font-mono font-bold">{selectedInvoice.baseAmount.toLocaleString('ar-SA')} ريال</td>
-                    <td className="p-3 font-mono font-bold text-[#707070]">{selectedInvoice.vatAmount.toLocaleString('ar-SA')} ريال</td>
-                    <td className="p-3 font-mono font-black text-[#141414]">{selectedInvoice.totalAmount.toLocaleString('ar-SA')} ريال</td>
+                    <td className="p-3 font-mono font-bold"><SaudiRiyalPrice amount={selectedInvoice.baseAmount.toLocaleString('ar-SA')} /></td>
+                    <td className="p-3 font-mono font-bold text-[#707070]"><SaudiRiyalPrice amount={selectedInvoice.vatAmount.toLocaleString('ar-SA')} /></td>
+                    <td className="p-3 font-mono font-black text-[#141414]"><SaudiRiyalPrice amount={selectedInvoice.totalAmount.toLocaleString('ar-SA')} /></td>
                   </tr>
                 </tbody>
               </table>
@@ -502,7 +511,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
               <div className="text-end border-t sm:border-t-0 border-white/10 pt-3 sm:pt-0">
                 <span className="text-[10px] text-[#adadad] block">المجموع الإجمالي المستحق</span>
                 <strong className="text-2xl font-black text-white font-mono">
-                  {selectedInvoice.totalAmount.toLocaleString('ar-SA')} ريال
+                  <SaudiRiyalPrice amount={selectedInvoice.totalAmount.toLocaleString('ar-SA')} />
                 </strong>
                 <span className="text-[10px] text-[#adadad] block">شامل ضريبة القيمة المضافة 15%</span>
               </div>
@@ -524,13 +533,13 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                         ['اسم العميل / المنشأة', selectedInvoice.customerName],
                         ['رقم الجوال / الضريبي', selectedInvoice.vatNumber || selectedInvoice.customerPhone]
                       ],
-                      ['البيان والمواصفات', 'رقم الشاسيه VIN', 'المبلغ الخاضع (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي الشامل (ر.س)'],
+                      ['البيان والمواصفات', 'رقم الشاسيه VIN', 'المبلغ الخاضع (\u200E\u20C1)', 'ضريبة 15% (\u200E\u20C1)', 'الإجمالي الشامل (\u200E\u20C1)'],
                       [[
                         selectedInvoice.vehicleModel,
                         selectedInvoice.vinNumber,
-                        selectedInvoice.baseAmount.toLocaleString('ar-SA'),
-                        selectedInvoice.vatAmount.toLocaleString('ar-SA'),
-                        selectedInvoice.totalAmount.toLocaleString('ar-SA')
+                        formatSaudiRiyalText(selectedInvoice.baseAmount.toLocaleString('ar-SA')),
+                        formatSaudiRiyalText(selectedInvoice.vatAmount.toLocaleString('ar-SA')),
+                        formatSaudiRiyalText(selectedInvoice.totalAmount.toLocaleString('ar-SA'))
                       ]],
                       fmt
                     )
@@ -555,13 +564,13 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                       ['اسم العميل / المنشأة', selectedInvoice.customerName],
                       ['رقم الجوال / الضريبي', selectedInvoice.vatNumber || selectedInvoice.customerPhone]
                     ],
-                    ['البيان والمواصفات', 'رقم الشاسيه VIN', 'المبلغ الخاضع (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي الشامل (ر.س)'],
+                    ['البيان والمواصفات', 'رقم الشاسيه VIN', 'المبلغ الخاضع (\u200E\u20C1)', 'ضريبة 15% (\u200E\u20C1)', 'الإجمالي الشامل (\u200E\u20C1)'],
                     [[
                       selectedInvoice.vehicleModel,
                       selectedInvoice.vinNumber,
-                      selectedInvoice.baseAmount.toLocaleString('ar-SA'),
-                      selectedInvoice.vatAmount.toLocaleString('ar-SA'),
-                      selectedInvoice.totalAmount.toLocaleString('ar-SA')
+                      formatSaudiRiyalText(selectedInvoice.baseAmount.toLocaleString('ar-SA')),
+                      formatSaudiRiyalText(selectedInvoice.vatAmount.toLocaleString('ar-SA')),
+                      formatSaudiRiyalText(selectedInvoice.totalAmount.toLocaleString('ar-SA'))
                     ]],
                     'pdf_print'
                   )
@@ -675,7 +684,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                   <option value="">-- اختيار يدوي بدون سحب من المخزون --</option>
                   {vinStock.filter(v => v.status !== 'sold').map(v => (
                     <option key={v.id} value={v.id}>
-                      {v.vin} | {v.model} ({v.trim}) - {v.price.toLocaleString('ar-SA')} ريال
+                      {v.vin} | {v.model} ({v.trim}) - {formatSaudiRiyalText(v.price.toLocaleString('ar-SA'))}
                     </option>
                   ))}
                 </select>
@@ -699,7 +708,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                   >
                     {vehicles.map(v => (
                       <option key={v.id} value={`سولينا ${v.nameAr} ${v.year}`}>
-                        سولينا {v.nameAr} {v.year} ({v.priceStartingFrom.toLocaleString('ar-SA')} ريال)
+                        سولينا {v.nameAr} {v.year} ({formatSaudiRiyalText(v.priceStartingFrom.toLocaleString('ar-SA'))})
                       </option>
                     ))}
                   </select>
@@ -732,15 +741,15 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
               <div className="p-3.5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-between text-xs">
                 <div>
                   <span className="text-[#707070] block">المبلغ الصافي قبل الضريبة:</span>
-                  <strong className="font-mono text-[#141414]">{(newInvoiceForm.amount / 1.15).toFixed(2)} ر.س</strong>
+                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={(newInvoiceForm.amount / 1.15).toFixed(2)} /></strong>
                 </div>
                 <div>
                   <span className="text-[#707070] block">ضريبة القيمة المضافة (15%):</span>
-                  <strong className="font-mono text-[#141414]">{(newInvoiceForm.amount - newInvoiceForm.amount / 1.15).toFixed(2)} ر.س</strong>
+                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={(newInvoiceForm.amount - newInvoiceForm.amount / 1.15).toFixed(2)} /></strong>
                 </div>
                 <div className="text-end">
                   <span className="text-[#707070] block">الإجمالي النهائي:</span>
-                  <strong className="font-mono text-[#141414] text-sm">{newInvoiceForm.amount.toLocaleString('ar-SA')} ر.س</strong>
+                  <strong className="font-mono text-[#141414] text-sm"><SaudiRiyalPrice amount={newInvoiceForm.amount.toLocaleString('ar-SA')} /></strong>
                 </div>
               </div>
             </div>

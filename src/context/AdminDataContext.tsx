@@ -11,6 +11,7 @@ import {
   SparePart,
   Showroom
 } from '../data/toyotaData';
+import { formatSaudiRiyalText } from '../components/SaudiRiyalSymbol';
 
 export type AdminRoleType = 'gm' | 'sales' | 'workshop' | 'finance';
 
@@ -1143,7 +1144,7 @@ const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
     action: 'create',
     summaryAr: 'اعتماد ومطابقة فاتورة ضريبية SOL-INV-2026-00891 مع هيئة الزكاة ZATCA',
     summaryEn: 'Cleared tax invoice SOL-INV-2026-00891 with ZATCA Phase 2',
-    diffAr: 'إجمالي الفاتورة: 268,295 ر.س (شامل 15% ضريبة القيمة المضافة)',
+    diffAr: `إجمالي الفاتورة: ${formatSaudiRiyalText('268,295')} (شامل 15% ضريبة القيمة المضافة)`,
     actorAr: 'أ. فيصل القحطاني — المدير المالي ومسؤول ZATCA',
     actorEn: 'Faisal Al-Qahtani — Finance & ZATCA Tax Officer'
   },
@@ -1431,8 +1432,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'create',
       `إضافة موديل جديد للأسطول: ${vehicle.nameAr}`,
       `Added new fleet model: ${vehicle.nameEn}`,
-      `السعر الابتدائي: ${vehicle.priceStartingFrom.toLocaleString('ar-SA')} ر.س`,
-      `Starting Price: SAR ${vehicle.priceStartingFrom.toLocaleString()}`,
+      `السعر الابتدائي: ${formatSaudiRiyalText(vehicle.priceStartingFrom.toLocaleString('ar-SA'))}`,
+      `Starting Price: ${formatSaudiRiyalText(vehicle.priceStartingFrom.toLocaleString())}`,
       snap
     );
   };
@@ -1443,7 +1444,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const oldPrice = current?.priceStartingFrom;
     const newPrice = updated.priceStartingFrom;
     const diffAr = oldPrice && newPrice && oldPrice !== newPrice
-      ? `السعر: ${oldPrice.toLocaleString('ar-SA')} ر.س ← ${newPrice.toLocaleString('ar-SA')} ر.س`
+      ? `السعر: ${formatSaudiRiyalText(oldPrice.toLocaleString('ar-SA'))} ← ${formatSaudiRiyalText(newPrice.toLocaleString('ar-SA'))}`
       : `تحديث المواصفات والفئات للموديل ${current?.nameAr || vehicleId}`;
 
     setVehicles(prev => prev.map(v => {
@@ -1504,8 +1505,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `تعديل سعر ${target?.nameAr || vehicleId}`,
       `Updated ${target?.nameEn || vehicleId} price`,
-      `${oldPrice.toLocaleString('ar-SA')} ر.س ← ${newPrice.toLocaleString('ar-SA')} ر.س`,
-      `SAR ${oldPrice.toLocaleString()} -> SAR ${newPrice.toLocaleString()}`,
+      `${formatSaudiRiyalText(oldPrice.toLocaleString('ar-SA'))} ← ${formatSaudiRiyalText(newPrice.toLocaleString('ar-SA'))}`,
+      `${formatSaudiRiyalText(oldPrice.toLocaleString())} -> ${formatSaudiRiyalText(newPrice.toLocaleString())}`,
       snap
     );
   };
@@ -1653,7 +1654,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const addCPOVehicle = (cpo: PreOwnedVehicle) => {
     const snap = captureSnapshot();
     setCpoVehicles(prev => [cpo, ...prev]);
-    appendLog('cpo', 'create', `إضافة سيارة مستعملة معتمدة: ${cpo.titleAr}`, `Added CPO vehicle: ${cpo.titleEn}`, `${cpo.price.toLocaleString('ar-SA')} ر.س`, undefined, snap);
+    appendLog('cpo', 'create', `إضافة سيارة مستعملة معتمدة: ${cpo.titleAr}`, `Added CPO vehicle: ${cpo.titleEn}`, formatSaudiRiyalText(cpo.price.toLocaleString('ar-SA')), undefined, snap);
   };
 
   const updateCPOVehicle = (id: string, updated: Partial<PreOwnedVehicle>) => {
@@ -1674,7 +1675,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `تحديث سيارة مستعملة معتمدة: ${target?.titleAr || id}`,
       `Updated CPO vehicle: ${target?.titleEn || id}`,
-      updated.price && target ? `${target.price.toLocaleString('ar-SA')} ر.س ← ${updated.price.toLocaleString('ar-SA')} ر.س` : undefined,
+      updated.price && target ? `${formatSaudiRiyalText(target.price.toLocaleString('ar-SA'))} ← ${formatSaudiRiyalText(updated.price.toLocaleString('ar-SA'))}` : undefined,
       undefined,
       snap
     );
@@ -1694,7 +1695,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const snap = captureSnapshot();
     setSpareParts(prev => [part, ...prev]);
     setPartQuantities(prev => ({ ...prev, [part.id]: 25 }));
-    appendLog('parts', 'create', `إضافة قطعة غيار أصلية: ${part.nameAr} (${part.partNumber})`, `Added genuine part: ${part.nameEn}`, `${part.price} ر.س • الكمية: 25`, undefined, snap);
+    appendLog('parts', 'create', `إضافة قطعة غيار أصلية: ${part.nameAr} (${part.partNumber})`, `Added genuine part: ${part.nameEn}`, `${formatSaudiRiyalText(part.price)} • الكمية: 25`, undefined, snap);
   };
 
   const updateSparePart = (id: string, updated: Partial<SparePart>) => {
@@ -1706,7 +1707,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `تحديث قطعة الغيار: ${target?.nameAr || id}`,
       `Updated spare part: ${target?.nameEn || id}`,
-      updated.price && target ? `السعر: ${target.price} ر.س ← ${updated.price} ر.س` : undefined,
+      updated.price && target ? `السعر: ${formatSaudiRiyalText(target.price)} ← ${formatSaudiRiyalText(updated.price)}` : undefined,
       undefined,
       snap
     );
@@ -1721,7 +1722,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `تعديل سعر القطعة ${target?.nameAr || id}`,
       `Updated part ${target?.nameEn || id} price`,
-      `${target?.price || 0} ر.س ← ${newPrice} ر.س`,
+      `${formatSaudiRiyalText(target?.price || 0)} ← ${formatSaudiRiyalText(newPrice)}`,
       undefined,
       snap
     );
@@ -1947,7 +1948,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       createdAt: new Date().toISOString()
     };
     setQuotations(prev => [newEntry, ...prev]);
-    appendLog('leads', 'create', `إصدار عرض سعر جديد (${quotationNumber}) للعميل ${quotation.fullName}`, `Generated quotation (${quotationNumber}) for ${quotation.fullName}`, `${quotation.vehicleName} • ${quotation.totalWithVat.toLocaleString('ar-SA')} ر.س`, undefined, snap);
+    appendLog('leads', 'create', `إصدار عرض سعر جديد (${quotationNumber}) للعميل ${quotation.fullName}`, `Generated quotation (${quotationNumber}) for ${quotation.fullName}`, `${quotation.vehicleName} • ${formatSaudiRiyalText(quotation.totalWithVat.toLocaleString('ar-SA'))}`, undefined, snap);
     return quotationNumber;
   };
 
@@ -2106,7 +2107,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'create',
       `إصدار واعتماد فاتورة ضريبية ZATCA رقم ${invoiceNumber}`,
       `Issued ZATCA invoice ${invoiceNumber}`,
-      `${inv.customerName} • ${total.toLocaleString('ar-SA')} ر.س`,
+      `${inv.customerName} • ${formatSaudiRiyalText(total.toLocaleString('ar-SA'))}`,
       undefined,
       snap
     );
@@ -2139,7 +2140,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'create',
       `إصدار إشعار دائن ضريبي (${creditNote.invoiceNumber}) للفاتورة ${orig.invoiceNumber}`,
       `Issued ZATCA credit note (${creditNote.invoiceNumber}) for ${orig.invoiceNumber}`,
-      `استرداد ضريبي: ${orig.totalAmount.toLocaleString('ar-SA')} ر.س`,
+      `استرداد ضريبي: ${formatSaudiRiyalText(orig.totalAmount.toLocaleString('ar-SA'))}`,
       undefined,
       snap
     );
@@ -2252,7 +2253,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'create',
       `صرف عهدة مالية جديدة ${newCustody.custodyNumber} للموظف: ${custody.employeeName}`,
       `Issued new custody ${newCustody.custodyNumber} to ${custody.employeeName}`,
-      `المبلغ المعتمد: ${custody.allocatedAmount.toLocaleString('ar-SA')} ر.س • الفرع: ${custody.branchName}`,
+      `المبلغ المعتمد: ${formatSaudiRiyalText(custody.allocatedAmount.toLocaleString('ar-SA'))} • الفرع: ${custody.branchName}`,
       undefined,
       snap
     );
@@ -2312,7 +2313,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `تسوية مصروف من العهدة ${target.custodyNumber} (${target.employeeName})`,
       `Settled expense on custody ${target.custodyNumber}`,
-      `المبلغ المسوى: ${expenseAmount.toLocaleString('ar-SA')} ر.س • البيان: ${description}`,
+      `المبلغ المسوى: ${formatSaudiRiyalText(expenseAmount.toLocaleString('ar-SA'))} • البيان: ${description}`,
       undefined,
       snap
     );
@@ -2362,7 +2363,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'update',
       `تغذية وزيادة سقف العهدة ${target.custodyNumber} (${target.employeeName})`,
       `Replenished custody ${target.custodyNumber}`,
-      `مبلغ التغذية الإضافي: +${amountToAdd.toLocaleString('ar-SA')} ر.س`,
+      `مبلغ التغذية الإضافي: +${formatSaudiRiyalText(amountToAdd.toLocaleString('ar-SA'))}`,
       undefined,
       snap
     );
@@ -2393,7 +2394,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'status_change',
       `إقفال وإخلاء طرف العهدة المالية ${target.custodyNumber} (${target.employeeName})`,
       `Closed and cleared custody ${target.custodyNumber}`,
-      `إجمالي المبلغ المسوى: ${target.allocatedAmount.toLocaleString('ar-SA')} ر.س`,
+      `إجمالي المبلغ المسوى: ${formatSaudiRiyalText(target.allocatedAmount.toLocaleString('ar-SA'))}`,
       undefined,
       snap
     );
@@ -2436,7 +2437,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       'create',
       `إصدار ${voucher.type === 'receipt' ? 'سند قبض' : voucher.type === 'payment' ? 'سند صرف' : 'قيد يومية'} رقم ${newVoucher.voucherNumber}`,
       `Issued ${voucher.type} voucher ${newVoucher.voucherNumber}`,
-      `الطرف: ${voucher.partyName} • المبلغ: ${voucher.totalAmount.toLocaleString('ar-SA')} ر.س`,
+      `الطرف: ${voucher.partyName} • المبلغ: ${formatSaudiRiyalText(voucher.totalAmount.toLocaleString('ar-SA'))}`,
       undefined,
       snap
     );
@@ -2606,7 +2607,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'services') {
       return {
         titleAr: 'سجل مواعيد الصيانة الدورية — سولينا للسيارات',
-        headers: ['المعرف ID', 'اسم العميل', 'رقم الجوال', 'المدينة', 'الفرع', 'المركبة', 'رقم اللوحة', 'العداد (كم)', 'نوع الصيانة', 'التاريخ', 'التكلفة التقديرية (ر.س)', 'المهندس', 'الحالة'],
+        headers: ['المعرف ID', 'اسم العميل', 'رقم الجوال', 'المدينة', 'الفرع', 'المركبة', 'رقم اللوحة', 'العداد (كم)', 'نوع الصيانة', 'التاريخ', 'التكلفة التقديرية (\u200E\u20C1)', 'المهندس', 'الحالة'],
         rows: serviceAppointments.map(s => [
           s.id, s.fullName, s.phone, s.city, s.showroom, s.vehicleModel,
           s.plateNumber, s.currentMileage.toString(), s.serviceType,
@@ -2616,7 +2617,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'quotations') {
       return {
         titleAr: 'سجل عروض الأسعار والتمويل — سولينا للسيارات',
-        headers: ['رقم العرض', 'اسم العميل', 'رقم الجوال', 'المركبة', 'الفئة', 'السعر قبل الضريبة', 'ضريبة 15%', 'الإجمالي الشامل (ر.س)', 'نوع الدفع', 'القسط الشهري', 'الحالة'],
+        headers: ['رقم العرض', 'اسم العميل', 'رقم الجوال', 'المركبة', 'الفئة', 'السعر قبل الضريبة', 'ضريبة 15%', 'الإجمالي الشامل (\u200E\u20C1)', 'نوع الدفع', 'القسط الشهري', 'الحالة'],
         rows: quotations.map(q => [
           q.quotationNumber, q.fullName, q.phone, q.vehicleName, q.gradeName,
           q.vehiclePrice.toString(), q.vatAmount.toString(), q.totalWithVat.toString(),
@@ -2626,7 +2627,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'fleet') {
       return {
         titleAr: 'كتالوج أسطول سولينا 2026 والأسعار الرسمية',
-        headers: ['المعرف ID', 'الاسم بالعربية', 'الاسم بالإنجليزية', 'الموديل', 'الفئة', 'منظومة الدفع', 'السعر يبدأ من (ر.س)', 'القسط الشهري (ر.س)', 'كفاءة الوقود', 'مميز بالواجهة'],
+        headers: ['المعرف ID', 'الاسم بالعربية', 'الاسم بالإنجليزية', 'الموديل', 'الفئة', 'منظومة الدفع', 'السعر يبدأ من (\u200E\u20C1)', 'القسط الشهري (\u200E\u20C1)', 'كفاءة الوقود', 'مميز بالواجهة'],
         rows: vehicles.map(v => [
           v.id, v.nameAr, v.nameEn, v.year.toString(), v.category,
           v.powertrain, v.priceStartingFrom.toString(),
@@ -2637,7 +2638,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'vin_stock') {
       return {
         titleAr: 'مخزون الشاسيه والمستودعات (VIN Inventory) — سولينا',
-        headers: ['رقم الشاسيه VIN', 'الطراز', 'التصنيف', 'الفئة Trim', 'اللون', 'المحرك', 'الفرع / الموقع', 'السعر الرسمي (ر.س)', 'الحالة', 'أيام التخزين', 'تاريخ الوصول'],
+        headers: ['رقم الشاسيه VIN', 'الطراز', 'التصنيف', 'الفئة Trim', 'اللون', 'المحرك', 'الفرع / الموقع', 'السعر الرسمي (\u200E\u20C1)', 'الحالة', 'أيام التخزين', 'تاريخ الوصول'],
         rows: vinStock.map(s => [
           s.vin, s.model, s.category, s.trim, s.color, s.engine,
           s.location, s.price.toString(), s.status, s.daysInInventory.toString(), s.arrivalDate
@@ -2646,7 +2647,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'job_cards') {
       return {
         titleAr: 'أوامر العمل والمسار السريع للورشة — سولينا',
-        headers: ['رقم الكرت', 'اسم العميل', 'رقم الجوال', 'المركبة', 'رقم اللوحة', 'رقم الشاسيه VIN', 'العداد (كم)', 'نوع الصيانة', 'الفني المسؤول', 'المسار', 'إجمالي التكلفة (ر.س)', 'الحالة'],
+        headers: ['رقم الكرت', 'اسم العميل', 'رقم الجوال', 'المركبة', 'رقم اللوحة', 'رقم الشاسيه VIN', 'العداد (كم)', 'نوع الصيانة', 'الفني المسؤول', 'المسار', 'إجمالي التكلفة (\u200E\u20C1)', 'الحالة'],
         rows: jobCards.map(c => [
           c.cardNumber, c.customerName, c.customerPhone, c.vehicleModel,
           c.plateNumber, c.vinNumber, c.mileage.toString(), c.serviceType,
@@ -2656,7 +2657,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'zatca_invoices') {
       return {
         titleAr: 'سجل الفواتير الضريبية الإلكترونية (ZATCA Phase 2) — سولينا',
-        headers: ['رقم الفاتورة', 'المعرف الموحد UUID', 'اسم العميل / المنشأة', 'رقم الجوال', 'الرقم الضريبي للمشتري', 'البيان / المركبة', 'رقم الشاسيه VIN', 'المبلغ الخاضع (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي النهائي (ر.س)', 'التاريخ', 'نوع الفاتورة', 'حالة ZATCA'],
+        headers: ['رقم الفاتورة', 'المعرف الموحد UUID', 'اسم العميل / المنشأة', 'رقم الجوال', 'الرقم الضريبي للمشتري', 'البيان / المركبة', 'رقم الشاسيه VIN', 'المبلغ الخاضع (\u200E\u20C1)', 'ضريبة 15% (\u200E\u20C1)', 'الإجمالي النهائي (\u200E\u20C1)', 'التاريخ', 'نوع الفاتورة', 'حالة ZATCA'],
         rows: zatcaInvoices.map(inv => [
           inv.invoiceNumber, inv.uuid, inv.customerName, inv.customerPhone,
           inv.vatNumber || '-', inv.vehicleModel, inv.vinNumber,
@@ -2667,7 +2668,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'parts') {
       return {
         titleAr: 'كتالوج ومخزون قطع الغيار الأصلية (OEM Parts) — سولينا',
-        headers: ['المعرف ID', 'رقم القطعة Part #', 'اسم القطعة بالعربية', 'الاسم بالإنجليزية', 'التصنيف', 'السعر شامل الضريبة (ر.س)', 'الرصيد المخزني', 'الموديلات المتوافقة'],
+        headers: ['المعرف ID', 'رقم القطعة Part #', 'اسم القطعة بالعربية', 'الاسم بالإنجليزية', 'التصنيف', 'السعر شامل الضريبة (\u200E\u20C1)', 'الرصيد المخزني', 'الموديلات المتوافقة'],
         rows: spareParts.map(p => [
           p.id, p.partNumber, p.nameAr, p.nameEn, p.category, p.price.toString(), (partQuantities[p.id] ?? 20).toString(), p.compatibleModels.join(' | ')
         ])
@@ -2675,7 +2676,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'cpo') {
       return {
         titleAr: 'السيارات المستعملة المعتمدة (AutoHub CPO) — سولينا',
-        headers: ['المعرف ID', 'السيارة', 'الفئة', 'سنة الصنع', 'الممشى (كم)', 'السعر النقدي (ر.س)', 'القسط الشهري (ر.س)', 'الفرع', 'الضمان (شهر)'],
+        headers: ['المعرف ID', 'السيارة', 'الفئة', 'سنة الصنع', 'الممشى (كم)', 'السعر النقدي (\u200E\u20C1)', 'القسط الشهري (\u200E\u20C1)', 'الفرع', 'الضمان (شهر)'],
         rows: cpoVehicles.map(c => [
           c.id, c.titleAr, c.grade, c.year.toString(), c.mileage.toString(),
           c.price.toString(), c.monthlyInstallment.toString(), c.location, c.warrantyMonths.toString()
@@ -2700,7 +2701,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'accounting_vouchers') {
       return {
         titleAr: 'سجل سندات القبض والصرف والقيود المحاسبية — سولينا للسيارات',
-        headers: ['رقم السند', 'نوع السند', 'التاريخ', 'اسم العميل / المستفيد', 'البيان المحاسبي', 'رقم الحساب', 'اسم الحساب', 'مركز التكلفة', 'طريقة الدفع', 'المبلغ الأساسي (ر.س)', 'الضريبة 15% (ر.س)', 'الإجمالي (ر.س)', 'المرجع المرتبط', 'الحالة'],
+        headers: ['رقم السند', 'نوع السند', 'التاريخ', 'اسم العميل / المستفيد', 'البيان المحاسبي', 'رقم الحساب', 'اسم الحساب', 'مركز التكلفة', 'طريقة الدفع', 'المبلغ الأساسي (\u200E\u20C1)', 'الضريبة 15% (\u200E\u20C1)', 'الإجمالي (\u200E\u20C1)', 'المرجع المرتبط', 'الحالة'],
         rows: vouchers.map(v => [
           v.voucherNumber,
           v.type === 'receipt' ? 'سند قبض' : v.type === 'payment' ? 'سند صرف' : 'قيد يومية',
@@ -2721,7 +2722,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'custodies') {
       return {
         titleAr: 'سجل العُهد المالية والسلف التشغيلية للموظفين والفروع — سولينا',
-        headers: ['رقم العهدة', 'الموظف المستلم', 'المسمى الوظيفي', 'الفرع / القسم', 'نوع العهدة', 'المبلغ المعتمد (ر.س)', 'المبلغ المصروف والمسوى (ر.س)', 'الرصيد المتبقي (ر.س)', 'تاريخ الصرف', 'آخر تسوية', 'الحالة', 'ملاحظات'],
+        headers: ['رقم العهدة', 'الموظف المستلم', 'المسمى الوظيفي', 'الفرع / القسم', 'نوع العهدة', 'المبلغ المعتمد (\u200E\u20C1)', 'المبلغ المصروف والمسوى (\u200E\u20C1)', 'الرصيد المتبقي (\u200E\u20C1)', 'تاريخ الصرف', 'آخر تسوية', 'الحالة', 'ملاحظات'],
         rows: custodies.map(c => [
           c.custodyNumber,
           c.employeeName,
@@ -2740,7 +2741,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else if (type === 'chart_of_accounts') {
       return {
         titleAr: 'دليل الحسابات وميزان المراجعة المالي (Chart of Accounts & Trial Balance) — سولينا',
-        headers: ['كود الحساب', 'اسم الحساب المحاسبي', 'التصنيف المالي', 'إجمالي المدين (ر.س)', 'إجمالي الدائن (ر.س)', 'الرصيد الصافي (ر.س)'],
+        headers: ['كود الحساب', 'اسم الحساب المحاسبي', 'التصنيف المالي', 'إجمالي المدين (\u200E\u20C1)', 'إجمالي الدائن (\u200E\u20C1)', 'الرصيد الصافي (\u200E\u20C1)'],
         rows: chartOfAccounts.map(acc => [
           acc.code,
           acc.nameAr,
@@ -2762,7 +2763,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // 'all_erp' unified master summary table
       return {
         titleAr: 'التقرير الشامل الموحد لكافة بيانات وكالة سولينا للسيارات (Master ERP Report)',
-        headers: ['القسم', 'المرجع / الرقم', 'الاسم / البيان الرئيسي', 'التفاصيل الفرعية', 'القيمة المالية (ر.س)', 'الحالة / الموقع'],
+        headers: ['القسم', 'المرجع / الرقم', 'الاسم / البيان الرئيسي', 'التفاصيل الفرعية', 'القيمة المالية (\u200E\u20C1)', 'الحالة / الموقع'],
         rows: [
           ...vehicles.map(v => ['الأسطول الجديد 2026', v.id, v.nameAr, `${v.category} • ${v.engineSpec}`, v.priceStartingFrom.toString(), v.isFeatured ? 'مميز' : 'نشط']),
           ...vinStock.map(s => ['مخزون الشاسيه VIN', s.vin, s.model, `${s.trim} • ${s.color}`, s.price.toString(), `${s.location} (${s.status})`]),
@@ -2930,7 +2931,13 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   <meta charset="UTF-8" />
   <title>${escapeXml(titleAr)}</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #ffffff; color: #141414; margin: 0; padding: 32px; direction: rtl; }
+    @font-face {
+      font-family: 'SaudiRiyal';
+      src: url('/fonts/regular/saudi_riyal.woff2') format('woff2'), url('/fonts/regular/saudi_riyal.ttf') format('truetype');
+      font-weight: 100 900;
+      unicode-range: U+20C1, U+E900;
+    }
+    body { font-family: 'SaudiRiyal', 'Segoe UI', Tahoma, Arial, sans-serif; background: #ffffff; color: #141414; margin: 0; padding: 32px; direction: rtl; }
     .header { display: flex; justify-content: space-between; align-items: center; background: #f3f3f3; padding: 24px; border-radius: 20px; margin-bottom: 24px; border: 1px solid #e0e0e0; }
     h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 800; }
     .meta { font-size: 12px; color: #595959; }
@@ -3099,7 +3106,13 @@ ${tableRows.map((r, idx) => `    <Item index="${idx + 1}">\n${tableHeaders.map((
   <meta charset="UTF-8" />
   <title>${escapeXml(titleAr)} - ${escapeXml(docNumber)}</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #ffffff; color: #141414; margin: 0; padding: 36px; direction: rtl; }
+    @font-face {
+      font-family: 'SaudiRiyal';
+      src: url('/fonts/regular/saudi_riyal.woff2') format('woff2'), url('/fonts/regular/saudi_riyal.ttf') format('truetype');
+      font-weight: 100 900;
+      unicode-range: U+20C1, U+E900;
+    }
+    body { font-family: 'SaudiRiyal', 'Segoe UI', Tahoma, Arial, sans-serif; background: #ffffff; color: #141414; margin: 0; padding: 36px; direction: rtl; }
     .box { max-width: 860px; margin: 0 auto; border: 1px solid #141414; border-radius: 20px; padding: 28px; }
     .top { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #141414; padding-bottom: 16px; margin-bottom: 20px; }
     h1 { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; }

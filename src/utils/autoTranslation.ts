@@ -395,11 +395,12 @@ export function autoTranslate(text: string, targetLang: 'ar' | 'en'): string {
       return ARABIC_TO_ENGLISH_PHRASES[working];
     }
 
-    // 4. Smart Dynamic Metric & Currency Patterns (AR -> EN)
+    // 4. Smart Dynamic Metric & Currency Patterns (AR -> EN) following SAMA Saudi Riyal Symbol Guidelines
     working = working
-      .replace(/^([+-]?\s*[\d,.]+)\s*ر\.س\/ش$/g, 'SAR $1/mo')
-      .replace(/^([+-]?\s*[\d,.]+)\s*ر\.س$/g, 'SAR $1')
-      .replace(/^([+-]?\s*[\d,.]+)\s*ريال$/g, 'SAR $1')
+      .replace(/^([+-]?\s*[\d,.]+)\s*(?:ر\.س|ريال سعودي|ريال|﷼|\u20C1)\s*\/\s*(?:شهرياً|شهر|ش)$/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}/mo`)
+      .replace(/^\u200E?\u20C1\s*([+-]?\s*[\d,.]+)\s*\/\s*(?:شهرياً|شهر|ش)$/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}/mo`)
+      .replace(/^([+-]?\s*[\d,.]+)\s*(?:ر\.س|ريال سعودي|ريال|﷼|\u20C1)$/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/^SAR\s*([+-]?\s*[\d,.]+)$/gi, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
       .replace(/^(\d+)\s*موديل مسجل$/g, '$1 Registered Models')
       .replace(/^(\d+)\s*موديل$/g, '$1 Models')
       .replace(/^(\d+)\s*طراز$/g, '$1 Models')
@@ -422,7 +423,8 @@ export function autoTranslate(text: string, targetLang: 'ar' | 'en'): string {
       .replace(/^مرجع:\s*(.+)$/g, 'Ref: $1')
       .replace(/^المعرّف:\s*(.+)$/g, 'ID: $1')
       .replace(/^رقم القطعة:\s*(.+)$/g, 'Part #: $1')
-      .replace(/^الضريبة:\s*([\d,.]+)\s*ر\.س$/g, 'VAT: SAR $1')
+      .replace(/^الضريبة:\s*([\d,.]+)\s*(?:ر\.س|ريال|﷼|\u20C1)$/g, 'VAT: \u200E\u20C1 $1')
+      .replace(/^الضريبة:\s*\u200E?\u20C1\s*([\d,.]+)$/g, 'VAT: \u200E\u20C1 $1')
       .replace(/^نسبة الاستهلاك:\s*(\d+)%$/g, 'Utilization: $1%')
       .replace(/^آخر تسوية:\s*(.+)$/g, 'Last Settlement: $1')
       .replace(/^معدل التحويل\s*(\d+)%$/g, 'Conversion Rate $1%');
@@ -448,8 +450,14 @@ export function autoTranslate(text: string, targetLang: 'ar' | 'en'): string {
       }
     }
 
-    // Also replace inline ر.س or ريال in sentences
-    working = working.replace(/([\d,.]+)\s*ر\.س/g, 'SAR $1').replace(/([\d,.]+)\s*ريال/g, 'SAR $1');
+    // Also replace inline ر.س, ريال, ﷼, or SAR with SAMA Saudi Riyal symbol on the left of the numeral
+    working = working
+      .replace(/([+-]?\s*[\d,.]+)\s*(?:ر\.س|ريال سعودي|ريال|﷼)\s*\/\s*(?:شهرياً|شهر|ش)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}/mo`)
+      .replace(/\u200E?\u20C1\s*([+-]?\s*[\d,.]+)\s*\/\s*(?:شهرياً|شهر|ش)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}/mo`)
+      .replace(/([+-]?\s*[\d,.]+)\s*(?:ر\.س|ريال سعودي|ريال|﷼)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/\bSAR\s*([+-]?\s*[\d,.]+[kKmM]?)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/([+-]?\s*[\d,.]+[kKmM]?)\s*SAR\b/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/\((?:ر\.س|ريال سعودي|ريال|SAR)\)/g, '(\u200E\u20C1)');
 
     return working;
   } else {
@@ -463,8 +471,8 @@ export function autoTranslate(text: string, targetLang: 'ar' | 'en'): string {
     if (AUTOMOTIVE_DICTIONARY[lower]) return AUTOMOTIVE_DICTIONARY[lower];
     if (ERP_ZATCA_DICTIONARY[lower]) return ERP_ZATCA_DICTIONARY[lower];
 
-    // 3. Clean awkward English parentheticals inside Arabic text if any remain
-    let result = trimmed
+    // 3. Clean awkward English parentheticals inside Arabic text & enforce SAMA Saudi Riyal symbol rules
+    let result = normalizeDigitsToWestern(trimmed)
       .replace(/\s*\(Solina VIN Inventory\)/gi, '')
       .replace(/\s*\(Genuine Parts\)/gi, '')
       .replace(/\s*\(Workshop & Job Cards\)/gi, '')
@@ -475,7 +483,12 @@ export function autoTranslate(text: string, targetLang: 'ar' | 'en'): string {
       .replace(/\s*\(Credit\)/gi, '')
       .replace(/\s*\(Balance\)/gi, '')
       .replace(/^Part #:\s*/i, 'رقم القطعة: ')
-      .replace(/^ID:\s*/i, 'المعرّف: ');
+      .replace(/^ID:\s*/i, 'المعرّف: ')
+      .replace(/([+-]?\s*[\d,.]+)\s*(?:ر\.س|ريال سعودي|ريال|﷼)\s*\/\s*(?:شهرياً|شهر|ش)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')} / شهر`)
+      .replace(/([+-]?\s*[\d,.]+)\s*(?:ر\.س|ريال سعودي|ريال|﷼)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/\bSAR\s*([+-]?\s*[\d,.]+[kKmM]?)/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/([+-]?\s*[\d,.]+[kKmM]?)\s*SAR\b/g, (_, n) => `\u200E\u20C1 ${n.replace(/\s+/g, '')}`)
+      .replace(/\((?:ر\.س|ريال سعودي|ريال|SAR)\)/g, '(\u200E\u20C1)');
 
     // 4. Word/phrase replacement if pure English string
     if (detectLanguage(result) === 'en') {
@@ -573,12 +586,12 @@ export function translateDOMSubtree(root: Node, targetLang: 'ar' | 'en'): void {
 }
 
 /**
- *Format currency according to locale with live auto-converted label
+ * Format currency according to SAMA Saudi Riyal Symbol Guidelines (symbol to the left + space)
  */
-export function formatCurrencyWithLabel(amount: number, lang: 'ar' | 'en'): string {
-  const formattedNumber = lang === 'ar' ? amount.toLocaleString('ar-SA') : amount.toLocaleString('en-US');
-  const currencyLabel = lang === 'ar' ? 'ريال سعودي' : 'SAR';
-  return `${formattedNumber} ${currencyLabel}`;
+export function formatCurrencyWithLabel(amount: number, _lang: 'ar' | 'en'): string {
+  const isNeg = amount < 0;
+  const formattedNumber = Math.abs(amount).toLocaleString('en-US');
+  return `\u200E\u20C1 ${isNeg ? '-' : ''}${formattedNumber}`;
 }
 
 export function getTranslationLibraryStats() {

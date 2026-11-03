@@ -13,6 +13,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useAdminData, VehicleStockItem } from '../../context/AdminDataContext';
+import { SaudiRiyalPrice, SaudiRiyalSymbol, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
 
 export const AdminVINInventoryTab: React.FC = () => {
   const { 
@@ -144,7 +145,7 @@ export const AdminVINInventoryTab: React.FC = () => {
         <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none space-y-1">
           <span className="text-[11px] font-bold text-[#707070]">قيمة المخزون الإجمالية</span>
           <div className="text-xl font-black text-[#141414]">
-            {vinStock.reduce((acc, s) => acc + s.price, 0).toLocaleString('ar-SA')} ريال
+            <SaudiRiyalPrice amount={vinStock.reduce((acc, s) => acc + s.price, 0).toLocaleString('ar-SA')} />
           </div>
           <span className="text-[10px] text-[#adadad] font-light">أسطول موديلات سولينا 2026</span>
         </div>
@@ -284,7 +285,7 @@ export const AdminVINInventoryTab: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-3 font-black text-[#141414] font-mono">
-                    {car.price.toLocaleString('ar-SA')} ريال
+                    <SaudiRiyalPrice amount={car.price.toLocaleString('ar-SA')} />
                   </td>
                   <td className="p-3 text-center">
                     <select
@@ -443,7 +444,7 @@ export const AdminVINInventoryTab: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-[#707070] block mb-1">السعر الرسمي (ر.س):</label>
+                  <label className="font-bold text-[#707070] block mb-1">السعر الرسمي (<SaudiRiyalSymbol />):</label>
                   <input
                     type="number"
                     required
@@ -546,7 +547,7 @@ export const AdminVINInventoryTab: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="font-bold text-[#707070] block mb-1">السعر الرسمي (ر.س):</label>
+                <label className="font-bold text-[#707070] block mb-1">السعر الرسمي (<SaudiRiyalSymbol />):</label>
                 <input
                   type="number"
                   value={editingStock.price}
@@ -600,7 +601,7 @@ export const AdminVINInventoryTab: React.FC = () => {
                 <div>اللون: <strong className="text-white">{selectedVinSticker.color}</strong></div>
                 <div>المحرك: <strong className="text-white">{selectedVinSticker.engine}</strong></div>
                 <div>الفرع: <strong className="text-white">{selectedVinSticker.location}</strong></div>
-                <div>السعر: <strong className="text-white">{selectedVinSticker.price.toLocaleString('ar-SA')} ر.س</strong></div>
+                <div>السعر: <strong className="text-white"><SaudiRiyalPrice amount={selectedVinSticker.price.toLocaleString('ar-SA')} /></strong></div>
               </div>
             </div>
 
@@ -619,15 +620,15 @@ export const AdminVINInventoryTab: React.FC = () => {
                         ['اللون والمحرك', `${selectedVinSticker.color} • ${selectedVinSticker.engine}`],
                         ['الموقع / الفرع', selectedVinSticker.location],
                         ['تاريخ الوصول', selectedVinSticker.arrivalDate],
-                        ['السعر الرسمي (شامل الضريبة)', `${selectedVinSticker.price.toLocaleString('ar-SA')} ر.س`]
+                        ['السعر الرسمي (شامل الضريبة)', formatSaudiRiyalText(selectedVinSticker.price.toLocaleString('ar-SA'))]
                       ],
-                      ['رقم الشاسيه VIN', 'الطراز والفئة', 'اللون والمحرك', 'الفرع / المستودع', 'السعر الرسمي (ر.س)'],
+                      ['رقم الشاسيه VIN', 'الطراز والفئة', 'اللون والمحرك', 'الفرع / المستودع', 'السعر الرسمي (\u200E\u20C1)'],
                       [[
                         selectedVinSticker.vin,
                         `${selectedVinSticker.model} — ${selectedVinSticker.trim}`,
                         `${selectedVinSticker.color} (${selectedVinSticker.engine})`,
                         selectedVinSticker.location,
-                        selectedVinSticker.price.toLocaleString('ar-SA')
+                        formatSaudiRiyalText(selectedVinSticker.price.toLocaleString('ar-SA'))
                       ]],
                       fmt
                     )
@@ -648,15 +649,15 @@ export const AdminVINInventoryTab: React.FC = () => {
                       ['اللون والمحرك', `${selectedVinSticker.color} • ${selectedVinSticker.engine}`],
                       ['الموقع / الفرع', selectedVinSticker.location],
                       ['تاريخ الوصول', selectedVinSticker.arrivalDate],
-                      ['السعر الرسمي (شامل الضريبة)', `${selectedVinSticker.price.toLocaleString('ar-SA')} ر.س`]
+                      ['السعر الرسمي (شامل الضريبة)', formatSaudiRiyalText(selectedVinSticker.price.toLocaleString('ar-SA'))]
                     ],
-                    ['رقم الشاسيه VIN', 'الطراز والفئة', 'اللون والمحرك', 'الفرع / المستودع', 'السعر الرسمي (ر.س)'],
+                    ['رقم الشاسيه VIN', 'الطراز والفئة', 'اللون والمحرك', 'الفرع / المستودع', 'السعر الرسمي (\u200E\u20C1)'],
                     [[
                       selectedVinSticker.vin,
                       `${selectedVinSticker.model} — ${selectedVinSticker.trim}`,
                       `${selectedVinSticker.color} (${selectedVinSticker.engine})`,
                       selectedVinSticker.location,
-                      selectedVinSticker.price.toLocaleString('ar-SA')
+                      formatSaudiRiyalText(selectedVinSticker.price.toLocaleString('ar-SA'))
                     ]],
                     'pdf_print'
                   )

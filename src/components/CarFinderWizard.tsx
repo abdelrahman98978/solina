@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, Car, Users, Compass, DollarSign, Check, ArrowLeft, ArrowRight, RotateCcw, Zap, Shield, Flame } from 'lucide-react';
 import { VEHICLES, type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface CarFinderWizardProps {
   onSelectVehicle: (vehicleId: string) => void;
@@ -82,9 +83,9 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
             <div className="space-y-2">
               {[
                 { id: 'any', labelAr: 'كافة الميزانيات', labelEn: 'Any Budget' },
-                { id: 'economy', labelAr: 'اقتصادية (أقل من 85,000 ر.س)', labelEn: 'Economy (< SAR 85,000)' },
-                { id: 'mid', labelAr: 'متوسطة (85,000 - 180,000 ر.س)', labelEn: 'Mid-Range (SAR 85k - 180k)' },
-                { id: 'luxury', labelAr: 'فارهة & دفع رباعي (+180,000 ر.س)', labelEn: 'Luxury & 4x4 (> SAR 180k)' }
+                { id: 'economy', labelAr: 'اقتصادية (أقل من \u200E\u20C1 85,000)', labelEn: 'Economy (< \u200E\u20C1 85,000)' },
+                { id: 'mid', labelAr: 'متوسطة (\u200E\u20C1 85,000 - \u200E\u20C1 180,000)', labelEn: 'Mid-Range (\u200E\u20C1 85k - 180k)' },
+                { id: 'luxury', labelAr: 'فارهة & دفع رباعي (+\u200E\u20C1 180,000)', labelEn: 'Luxury & 4x4 (> \u200E\u20C1 180k)' }
               ].map(opt => (
                 <button
                   key={opt.id}
@@ -208,11 +209,11 @@ export const CarFinderWizard: React.FC<CarFinderWizardProps> = ({
                 <div className="bg-black/30 p-3 rounded-2xl border border-white/10 mb-6 flex items-center justify-between text-xs">
                   <div>
                     <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'السعر النقدي يبدأ من' : 'Starts From'}</span>
-                    <span className="font-bold text-white font-mono">{formatPrice(car.priceStartingFrom)} ر.س</span>
+                    <SaudiRiyalPrice amount={car.priceStartingFrom} className="font-bold text-white font-mono" />
                   </div>
                   <div className="text-left">
                     <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'القسط الشهري' : 'Installment'}</span>
-                    <span className="font-bold text-red-500 font-mono">{formatPrice(car.monthlyInstallmentStartingFrom)} ر.س/شهر</span>
+                    <SaudiRiyalPrice amount={car.monthlyInstallmentStartingFrom} suffix={language === 'ar' ? '/شهر' : '/mo'} className="font-bold text-red-500 font-mono" />
                   </div>
                 </div>
               </div>

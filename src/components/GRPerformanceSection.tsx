@@ -3,6 +3,7 @@ import { Flame, Gauge, Zap, Volume2, Shield, ArrowLeft, ArrowRight, Play, CheckC
 import { VEHICLES } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { soundEngine } from '../utils/soundEffects';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface GRPerformanceSectionProps {
   onSelectVehicle: (vehicleId: string) => void;
@@ -135,7 +136,7 @@ export const GRPerformanceSection: React.FC<GRPerformanceSectionProps> = ({
 
               <div className="bg-white/5 border border-white/10 p-3.5 rounded-2xl">
                 <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'السعر النقدي يبدأ من' : 'Price Starts From'}</span>
-                <span className="text-base font-black text-white font-mono">{formatPrice(selectedVehicle.priceStartingFrom)} ر.س</span>
+                <SaudiRiyalPrice amount={selectedVehicle.priceStartingFrom} className="text-base font-black text-white font-mono" />
               </div>
             </div>
 

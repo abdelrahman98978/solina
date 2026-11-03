@@ -48,6 +48,7 @@ import {
   ExportFormatType 
 } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { SaudiRiyalPrice, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
 import './mobbin-admin.css';
 
 // Tabs
@@ -415,7 +416,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `veh-${v.id}`,
           categoryAr: 'أسطول سولينا 2026',
           titleAr: `سولينا ${v.nameAr} (${v.year})`,
-          subtitleAr: `السعر يبدأ من ${v.priceStartingFrom.toLocaleString('ar-SA')} ر.س • ${v.engineSpec}`,
+          subtitleAr: `السعر يبدأ من ${formatSaudiRiyalText(v.priceStartingFrom.toLocaleString('ar-SA'))} • ${v.engineSpec}`,
           targetTab: 'fleet',
           badgeAr: v.bodyTypeAr
         });
@@ -428,7 +429,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `vin-${s.id}`,
           categoryAr: 'مخزون الشاسيه VIN',
           titleAr: `${s.vin} — ${s.model}`,
-          subtitleAr: `${s.location} • ${s.price.toLocaleString('ar-SA')} ر.س`,
+          subtitleAr: `${s.location} • ${formatSaudiRiyalText(s.price.toLocaleString('ar-SA'))}`,
           targetTab: 'vin_inventory',
           badgeAr: s.status
         });
@@ -467,7 +468,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `qt-${qt.id}`,
           categoryAr: 'عروض الأسعار والتمويل',
           titleAr: `${qt.quotationNumber} — ${qt.fullName}`,
-          subtitleAr: `${qt.vehicleName} • ${qt.totalWithVat.toLocaleString('ar-SA')} ر.س`,
+          subtitleAr: `${qt.vehicleName} • ${formatSaudiRiyalText(qt.totalWithVat.toLocaleString('ar-SA'))}`,
           targetTab: 'quotations',
           badgeAr: qt.financeType === 'lease' ? 'تمويل' : 'نقدي'
         });
@@ -493,7 +494,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `inv-${inv.id}`,
           categoryAr: 'فواتير ZATCA الضريبية',
           titleAr: `${inv.invoiceNumber} — ${inv.customerName}`,
-          subtitleAr: `${inv.vehicleModel} • الإجمالي: ${inv.totalAmount.toLocaleString('ar-SA')} ر.س`,
+          subtitleAr: `${inv.vehicleModel} • الإجمالي: ${formatSaudiRiyalText(inv.totalAmount.toLocaleString('ar-SA'))}`,
           targetTab: 'zatca',
           badgeAr: inv.status
         });
@@ -506,7 +507,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `part-${p.id}`,
           categoryAr: 'قطع الغيار الأصلية',
           titleAr: `${p.nameAr} (${p.partNumber})`,
-          subtitleAr: `${p.category} • ${p.price} ر.س`,
+          subtitleAr: `${p.category} • ${formatSaudiRiyalText(p.price)}`,
           targetTab: 'parts',
           badgeAr: 'OEM'
         });
@@ -519,7 +520,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `vch-${vch.id}`,
           categoryAr: 'السندات المحاسبية والخزينة',
           titleAr: `${vch.voucherNumber} — ${vch.partyName}`,
-          subtitleAr: `${vch.description} • ${vch.totalAmount.toLocaleString('ar-SA')} ر.س`,
+          subtitleAr: `${vch.description} • ${formatSaudiRiyalText(vch.totalAmount.toLocaleString('ar-SA'))}`,
           targetTab: 'accounting',
           badgeAr: vch.type === 'receipt' ? 'سند قبض' : vch.type === 'payment' ? 'سند صرف' : 'قيد يومية'
         });
@@ -532,7 +533,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           id: `cst-${cst.id}`,
           categoryAr: 'العُهد المالية والسلف',
           titleAr: `${cst.custodyNumber} — ${cst.employeeName}`,
-          subtitleAr: `${cst.branchName} • المتبقي: ${cst.remainingBalance.toLocaleString('ar-SA')} ر.س`,
+          subtitleAr: `${cst.branchName} • المتبقي: ${formatSaudiRiyalText(cst.remainingBalance.toLocaleString('ar-SA'))}`,
           targetTab: 'accounting',
           badgeAr: 'عهدة مالية'
         });
@@ -1492,11 +1493,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                               <div className="flex items-center justify-between">
                                 <div>
                                   <span className="text-[11px] text-[#adadad] block">يبدأ من</span>
-                                  <strong className="text-sm font-semibold text-[#141414] font-mono">{formatPrice(v.priceStartingFrom)} ر.س</strong>
+                                  <strong className="text-sm font-semibold text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(v.priceStartingFrom)} /></strong>
                                 </div>
                                 <div className="text-end">
                                   <span className="text-[11px] text-[#adadad] block">القسط الشهري</span>
-                                  <span className="text-xs font-semibold text-[#707070] font-mono">{formatPrice(v.monthlyInstallmentStartingFrom)} ر.س</span>
+                                  <span className="text-xs font-semibold text-[#707070] font-mono"><SaudiRiyalPrice amount={formatPrice(v.monthlyInstallmentStartingFrom)} /></span>
                                 </div>
                               </div>
                               <button
@@ -1544,7 +1545,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             </div>
                             <h4 className="mobbin-heading text-[#141414] text-sm">{c.titleAr}</h4>
                             <p className="text-xs text-[#707070]">{c.grade} • موديل {c.year} • {formatPrice(c.mileage)} كم</p>
-                            <div className="font-semibold text-[#141414] font-mono text-sm">{formatPrice(c.price)} ر.س</div>
+                            <div className="font-semibold text-[#141414] font-mono text-sm"><SaudiRiyalPrice amount={formatPrice(c.price)} /></div>
                           </div>
                         ))}
                       </div>
@@ -1558,7 +1559,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             <div className="flex-1 min-w-0">
                               <h4 className="font-semibold text-[#141414] text-xs truncate">{p.nameAr}</h4>
                               <span className="text-[11px] text-[#adadad] font-mono block">{p.partNumber}</span>
-                              <strong className="text-xs font-semibold text-[#141414] font-mono">{formatPrice(p.price)} ر.س</strong>
+                              <strong className="text-xs font-semibold text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(p.price)} /></strong>
                             </div>
                           </div>
                         ))}
@@ -1592,7 +1593,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             <p className="text-xs text-[#707070]">{inv.vehicleModel} • {inv.vinNumber}</p>
                             <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between">
                               <span className="text-[11px] text-[#707070] font-mono">{inv.date}</span>
-                              <strong className="text-sm font-bold text-[#141414] font-mono">{formatPrice(inv.totalAmount)} ر.س</strong>
+                              <strong className="text-sm font-bold text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(inv.totalAmount)} /></strong>
                             </div>
                           </div>
                         ))}
@@ -1616,7 +1617,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 <p className="text-[11px] text-[#707070]">{vch.description}</p>
                                 <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between">
                                   <span className="text-[11px] text-[#707070] font-mono">{vch.date}</span>
-                                  <strong className="text-xs font-bold text-[#141414] font-mono">{formatPrice(vch.totalAmount)} ر.س</strong>
+                                  <strong className="text-xs font-bold text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(vch.totalAmount)} /></strong>
                                 </div>
                               </div>
                             ))}
@@ -1634,8 +1635,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 </div>
                                 <p className="text-xs font-bold text-[#141414]">{cst.employeeName} — {cst.employeeRole}</p>
                                 <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between text-xs font-mono">
-                                  <span className="text-[#707070]">المتبقي: <strong className="text-[#141414]">{formatPrice(cst.remainingBalance)} ر.س</strong></span>
-                                  <span className="text-[#707070]">من {formatPrice(cst.allocatedAmount)} ر.س</span>
+                                  <span className="text-[#707070]">المتبقي: <strong className="text-[#141414]"><SaudiRiyalPrice amount={formatPrice(cst.remainingBalance)} /></strong></span>
+                                  <span className="text-[#707070]">من <SaudiRiyalPrice amount={formatPrice(cst.allocatedAmount)} /></span>
                                 </div>
                               </div>
                             ))}

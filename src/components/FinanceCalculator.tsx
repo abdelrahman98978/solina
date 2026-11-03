@@ -3,6 +3,7 @@ import { Calculator, ChevronDown, FileText, Sparkles, Printer, Building2 } from 
 import { VEHICLES } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import { SaudiRiyalPrice, formatSaudiRiyalText } from './SaudiRiyalSymbol';
 
 interface FinanceCalculatorProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -105,7 +106,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                   >
                     {toyotaVehicles.map((v) => (
                       <option key={v.id} value={v.id}>
-                        {language === 'ar' ? v.nameAr : v.nameEn} ({formatPrice(v.priceStartingFrom)} ﷼)
+                        {language === 'ar' ? v.nameAr : v.nameEn} ({formatSaudiRiyalText(v.priceStartingFrom)})
                       </option>
                     ))}
                   </select>
@@ -140,9 +141,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                 <label className="text-xs font-bold text-gray-700">
                   {language === 'ar' ? 'سعر السيارة النقدي (شامل الضريبة):' : 'Vehicle Cash Price (Incl. VAT):'}
                 </label>
-                <span className="text-xs font-bold text-[#141414] font-mono">
-                  {formatPrice(price)} ﷼
-                </span>
+                <SaudiRiyalPrice amount={price} className="text-xs font-bold text-[#141414] font-mono" />
               </div>
               <input
                 type="number"
@@ -160,7 +159,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                 </label>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500 font-semibold font-mono">
-                    ({formatPrice(downPaymentAmount)} ﷼)
+                    (<SaudiRiyalPrice amount={downPaymentAmount} />)
                   </span>
                   <span className="text-sm font-bold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md font-mono">
                     {downPaymentPercent}%
@@ -213,7 +212,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                 </label>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500 font-semibold font-mono">
-                    ({formatPrice(balloonPaymentAmount)} ﷼)
+                    (<SaudiRiyalPrice amount={balloonPaymentAmount} />)
                   </span>
                   <span className="text-sm font-bold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md font-mono">
                     {balloonPaymentPercent}%
@@ -253,12 +252,12 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                   {language === 'ar' ? 'القسط الشهري التقديري:' : 'Estimated Monthly Payment:'}
                 </span>
                 <div className="flex items-baseline justify-center gap-1.5">
-                  <span className="text-4xl md:text-5xl font-black text-white font-mono tracking-tight">
-                    {formatPrice(monthlyInstallment)}
-                  </span>
-                  <span className="text-lg font-bold text-[#141414] font-arabic">
-                    {language === 'ar' ? '﷼ / شهر' : 'SAR/mo'}
-                  </span>
+                  <SaudiRiyalPrice
+                    amount={monthlyInstallment}
+                    suffix={language === 'ar' ? '/ شهر' : '/mo'}
+                    className="text-4xl md:text-5xl font-black text-white font-mono tracking-tight"
+                    suffixClassName="text-lg font-bold text-[#141414] font-arabic ml-1"
+                  />
                 </div>
                 <span className="text-[11px] text-gray-400 mt-2 block">
                   {language === 'ar' ? `على مدار ${termMonths} شهراً • متوافق مع أحكام الشريعة الإسلامية` : `Over ${termMonths} Months • Sharia Compliant`}
@@ -269,11 +268,11 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
               <div className="space-y-3 text-xs text-gray-300">
                 <div className="flex justify-between pb-2 border-b border-white/10">
                   <span>{language === 'ar' ? 'الدفعة الأولى النقدية:' : 'Down Payment:'}</span>
-                  <span className="font-bold text-white font-mono">{formatPrice(downPaymentAmount)} ﷼</span>
+                  <SaudiRiyalPrice amount={downPaymentAmount} className="font-bold text-white font-mono" />
                 </div>
                 <div className="flex justify-between pb-2 border-b border-white/10">
                   <span>{language === 'ar' ? 'الدفعة الأخيرة (التملك):' : 'Final Balloon Payment:'}</span>
-                  <span className="font-bold text-white font-mono">{formatPrice(balloonPaymentAmount)} ﷼</span>
+                  <SaudiRiyalPrice amount={balloonPaymentAmount} className="font-bold text-white font-mono" />
                 </div>
                 <div className="flex justify-between pb-2 border-b border-white/10">
                   <span>{language === 'ar' ? 'معدل النسبة السنوي (APR):' : 'Annual Profit Rate (APR):'}</span>
@@ -295,7 +294,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
               )}
 
               <button
-                onClick={() => onOpenTestDrive(`طلب تمويل: ${selectedVehicle.nameAr} بقسط ${monthlyInstallment} ﷼`)}
+                onClick={() => onOpenTestDrive(`طلب تمويل: ${selectedVehicle.nameAr} بقسط ${formatSaudiRiyalText(monthlyInstallment)}`)}
                 className="w-full py-3.5 bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <FileText className="w-4 h-4" />

@@ -24,6 +24,7 @@ import {
 import { VEHICLES, type Vehicle } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { soundEngine } from '../utils/soundEffects';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface Vehicle360CustomizerProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -272,9 +273,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
               >
                 {isMdlLexus && <Crown className="w-3.5 h-3.5 text-[#dc2626]" />}
                 <span>{language === 'ar' ? m.nameAr : m.nameEn}</span>
-                <span className="text-[10px] opacity-70 font-mono">
-                  {formatPrice(m.priceStartingFrom)} ر.س
-                </span>
+                <SaudiRiyalPrice amount={m.priceStartingFrom} className="text-[10px] opacity-70 font-mono" />
               </button>
             );
           })}
@@ -423,9 +422,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                             </span>
                             {isGrdSelected && <CheckCircle2 className="w-4 h-4 text-red-500 shrink-0" />}
                           </div>
-                          <span className="text-sm font-black text-[#dc2626] font-mono block mb-2">
-                            {formatPrice(grd.price)} ر.س
-                          </span>
+                          <SaudiRiyalPrice amount={grd.price} className="text-sm font-black text-[#dc2626] font-mono block mb-2" />
                           <ul className="text-[10px] text-gray-300 space-y-1 font-sans">
                             {(language === 'ar' ? grd.features : grd.featuresEn).slice(0, 3).map((f, i) => (
                               <li key={i} className="flex items-center gap-1.5">
@@ -551,9 +548,7 @@ export const Vehicle360Customizer: React.FC<Vehicle360CustomizerProps> = ({
                   {language === 'ar' ? 'السعر النقدي (الفئة المحددة):' : 'Cash Price (Selected Trim):'}
                 </span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-black text-white font-mono">
-                    {formatPrice(activeGrade?.price || activeVehicle.priceStartingFrom)} <span className="text-xs text-red-500">ر.س</span>
-                  </span>
+                  <SaudiRiyalPrice amount={activeGrade?.price || activeVehicle.priceStartingFrom} className="text-2xl font-black text-white font-mono" />
                   <span className="text-xs text-gray-400 font-sans">
                     {language === 'ar' ? 'شامل الضريبة 15%' : '15% VAT Incl.'}
                   </span>

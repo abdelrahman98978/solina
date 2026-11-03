@@ -20,6 +20,7 @@ import { useAdminData } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Vehicle, VehicleGrade, getBrandMeta } from '../../data/toyotaData';
 import { VehicleCatalogModal } from '../VehicleCatalogModal';
+import { SaudiRiyalPrice, SaudiRiyalSymbol } from '../SaudiRiyalSymbol';
 
 export const AdminFleetTab: React.FC = () => {
   const { 
@@ -315,7 +316,7 @@ export const AdminFleetTab: React.FC = () => {
                 <th className="py-4 px-6 text-start">{language === 'ar' ? 'السيارة والعلامة' : 'Vehicle'}</th>
                 <th className="py-4 px-4 text-start">{language === 'ar' ? 'الألوان والداخلية' : 'Colors & Interior'}</th>
                 <th className="py-4 px-4 text-start">{language === 'ar' ? 'الفئة والمحرك' : 'Category & Powertrain'}</th>
-                <th className="py-4 px-4 text-start">{language === 'ar' ? 'السعر النقدي الأساسي' : 'Starting Price (SAR)'}</th>
+                <th className="py-4 px-4 text-start">{language === 'ar' ? 'السعر النقدي الأساسي' : <>Starting Price (<SaudiRiyalSymbol />)</>}</th>
                 <th className="py-4 px-4 text-center">{language === 'ar' ? 'الفئات المتاحة' : 'Grades/Trims'}</th>
                 <th className="py-4 px-4 text-center">{language === 'ar' ? 'مميزة بالرئيسية' : 'Featured'}</th>
                 <th className="py-4 px-6 text-center">{language === 'ar' ? 'الكتالوج والإجراءات' : 'Actions'}</th>
@@ -402,9 +403,9 @@ export const AdminFleetTab: React.FC = () => {
 
                   {/* Starting Price */}
                   <td className="py-4 px-4 font-mono font-bold text-[#141414] text-sm">
-                    {formatPrice(v.priceStartingFrom)} ر.س
+                    <SaudiRiyalPrice amount={formatPrice(v.priceStartingFrom)} />
                     <span className="block text-[10px] font-semibold text-[#141414] mt-0.5">
-                      {formatPrice(v.monthlyInstallmentStartingFrom)} ر.س/ش
+                      <SaudiRiyalPrice amount={formatPrice(v.monthlyInstallmentStartingFrom)} suffix="/ش" />
                     </span>
                   </td>
 
@@ -519,7 +520,7 @@ export const AdminFleetTab: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-[#707070] block mb-1">السعر النقدي الأساسي (ر.س):</label>
+                    <label className="font-bold text-[#707070] block mb-1">السعر النقدي الأساسي (<SaudiRiyalSymbol />):</label>
                     <input
                       type="number"
                       required
@@ -582,17 +583,19 @@ export const AdminFleetTab: React.FC = () => {
                       {editGrades.map((grade, idx) => (
                         <div key={idx} className="flex items-center justify-between gap-2 bg-[#f3f3f3] p-2 rounded-xl border border-[#e0e0e0]">
                           <span className="font-bold text-[#141414] truncate flex-1">{grade.name}</span>
-                          <input
-                            type="number"
-                            value={idx === 0 ? editPriceInput : grade.price}
-                            onChange={(e) => {
-                              const val = Number(e.target.value);
-                              if (idx === 0) setEditPriceInput(e.target.value);
-                              setEditGrades(prev => prev.map((g, i) => i === idx ? { ...g, price: val } : g));
-                            }}
-                            className="w-28 bg-white border border-[#e0e0e0] rounded-lg p-1.5 font-mono font-bold text-[#141414] text-end"
-                          />
-                          <span className="text-[10px] text-[#707070]">ر.س</span>
+                          <div className="flex items-center gap-1.5" dir="ltr">
+                            <SaudiRiyalSymbol className="text-[11px] text-[#707070]" />
+                            <input
+                              type="number"
+                              value={idx === 0 ? editPriceInput : grade.price}
+                              onChange={(e) => {
+                                const val = Number(e.target.value);
+                                if (idx === 0) setEditPriceInput(e.target.value);
+                                setEditGrades(prev => prev.map((g, i) => i === idx ? { ...g, price: val } : g));
+                              }}
+                              className="w-28 bg-white border border-[#e0e0e0] rounded-lg p-1.5 font-mono font-bold text-[#141414] text-start"
+                            />
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -630,13 +633,13 @@ export const AdminFleetTab: React.FC = () => {
                       <div>
                         <span className="text-[10px] text-[#adadad] block">يبدأ من</span>
                         <strong className="text-sm font-black text-[#141414] font-mono">
-                          {formatPrice(Number(editPriceInput) || 0)} ر.س
+                          <SaudiRiyalPrice amount={formatPrice(Number(editPriceInput) || 0)} />
                         </strong>
                       </div>
                       <div className="text-end">
                         <span className="text-[10px] text-[#adadad] block">القسط التقديري</span>
                         <span className="text-xs font-bold text-[#141414] font-mono">
-                          {formatPrice(Math.round(((Number(editPriceInput) || 0) * 0.9) / 60))} ر.س/ش
+                          <SaudiRiyalPrice amount={formatPrice(Math.round(((Number(editPriceInput) || 0) * 0.9) / 60))} suffix="/ش" />
                         </span>
                       </div>
                     </div>
@@ -738,7 +741,7 @@ export const AdminFleetTab: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="font-bold text-[#707070] block mb-1">السعر الأساسي (ر.س):</label>
+                <label className="font-bold text-[#707070] block mb-1">السعر الأساسي (<SaudiRiyalSymbol />):</label>
                 <input
                   type="number"
                   required

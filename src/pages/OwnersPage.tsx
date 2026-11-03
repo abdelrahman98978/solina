@@ -17,6 +17,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { NavigationControls } from '../components/NavigationControls';
+import { SaudiRiyalPrice } from '../components/SaudiRiyalSymbol';
 
 interface OwnersPageProps {
   onBackToHome: () => void;
@@ -217,10 +218,7 @@ export const OwnersPage: React.FC<OwnersPageProps> = ({
                     <span className="text-xs font-bold text-[#141414] bg-red-50 px-2.5 py-1 rounded-full font-mono">
                       {sch.km.toLocaleString()} كم
                     </span>
-                    <div className="text-lg font-black text-gray-900 font-mono">
-                      <span>{sch.price}</span>
-                      <span className="text-xs text-[#141414] mr-1">﷼</span>
-                    </div>
+                    <SaudiRiyalPrice amount={sch.price} className="text-lg font-black text-gray-900 font-mono" />
                   </div>
 
                   <h3 className="font-bold text-base text-gray-900 mb-4 font-arabic">

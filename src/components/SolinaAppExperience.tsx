@@ -12,6 +12,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
 import { SolinaAIAssistant } from './SolinaAIAssistant';
 import { VehicleCatalogModal } from './VehicleCatalogModal';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface SolinaAppExperienceProps {
   onSelectVehicle?: (vehicleId: string) => void;
@@ -315,7 +316,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       category: 'finance',
       title: 'عرض الهايبرد الحصري 2026',
       badge: '0% دفعة أولى',
-      discount: 'توفير يصل إلى 15,000 ريال',
+      discount: 'توفير يصل إلى \u200E\u20C1 15,000',
       desc: 'احصل على سولينا كامري أو كراون 2026 مع 0% رسوم إدارية وضمان صيانة 3 سنوات مجاناً.',
       daysLeft: 6,
       bg: 'from-[#141414] via-red-950 to-black',
@@ -326,7 +327,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       category: 'finance',
       title: 'عرض جيتور T2 وداشينج 2026',
       badge: 'ضمان 10 سنوات / مليون كم',
-      discount: 'قسط يبدأ من 1,450 ريال/شهر',
+      discount: 'قسط يبدأ من \u200E\u20C1 1,450 /شهر',
       desc: 'امتلك جيتور T2 الدفع الرباعي أو داشينج تيربو بدون دفعة أولى مع تظليل عازل حراري مجاناً.',
       daysLeft: 9,
       bg: 'from-[#141414] via-[#1c1c1e] to-black',
@@ -359,7 +360,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
       category: 'cashback',
       title: 'برنامج استبدال سيارتك القديمة',
       badge: 'استرداد نقدي فوري',
-      discount: 'مكافأة 7,000 ريال فوق قيمة التثمين',
+      discount: 'مكافأة \u200E\u20C1 7,000 فوق قيمة التثمين',
       desc: 'استبدل سيارتك الحالية مهما كان نوعها واحصل على تقييم فوري وأعلى سعر سوقي.',
       daysLeft: 18,
       bg: 'from-[#141414] via-red-950/80 to-black',
@@ -755,16 +756,11 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         
                         {/* Price Display */}
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xs font-black text-red-600">
-                            {displayPrice}
-                          </span>
-                          <span className="text-[9px] font-bold text-gray-500">
-                            ريال
-                          </span>
+                          <SaudiRiyalPrice amount={displayPrice} className="text-xs font-black text-red-600" />
                         </div>
 
                         <p className="text-[9px] text-gray-400 font-light">
-                          قسط يبدأ من: {monthlyInstallment} ريال/شهر
+                          قسط يبدأ من: <SaudiRiyalPrice amount={monthlyInstallment} suffix="/شهر" />
                         </p>
                       </div>
 
@@ -1058,7 +1054,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     <img src={v.cardImage || v.heroImage || ''} alt={v.nameAr} className="h-12 w-16 object-contain rounded-lg" />
                     <div className="flex-1 text-start">
                       <h5 className="text-xs font-black text-[#141414]">{formatVehicleTitle(v)}</h5>
-                      <span className="text-xs font-black text-red-600">{v.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
+                      <SaudiRiyalPrice amount={v.priceStartingFrom} className="text-xs font-black text-red-600" />
                     </div>
                     <div className="flex items-center gap-1">
                       <button 
@@ -1120,19 +1116,6 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   <strong className="text-[#141414]">تثبيت التطبيق على الهاتف (iOS & Android)</strong>
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-white text-[9px] font-bold">PWA</span>
-              </button>
-              <button 
-                onClick={() => {
-                  window.location.hash = 'erp';
-                  window.location.reload();
-                }} 
-                className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors"
-              >
-                <span className="flex items-center gap-2.5">
-                  <SlidersHorizontal className="w-4 h-4 text-[#141414]" strokeWidth={1.75} />
-                  <strong className="text-[#141414]">نظام إدارة الوكالة والـ ERP المتكامل</strong>
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[9px] font-bold">ZATCA & DMS</span>
               </button>
               <button onClick={() => setServiceBookingOpen(true)} className="w-full p-3.5 flex items-center justify-between text-[#141414] hover:bg-[#f3f3f3] cursor-pointer transition-colors">
                 <span className="flex items-center gap-2.5">
@@ -1383,7 +1366,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                         >
                           <div className="text-[10px] font-black">{grade.name}</div>
                           <div className={`text-[9px] font-bold ${detailGradeIndex === gIdx ? 'text-red-100' : 'text-red-600'}`}>
-                            {grade.price.toLocaleString('ar-SA')} ريال
+                            <SaudiRiyalPrice amount={grade.price} />
                           </div>
                         </button>
                       ))}
@@ -1447,9 +1430,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     <span className="text-[10px] text-[#707070] block">
                       سعر فئة ({activeGrade?.name || 'القياسية'}) شامل الضريبة
                     </span>
-                    <strong className="text-base font-black text-red-600">
-                      {currentPrice.toLocaleString('ar-SA')} ريال
-                    </strong>
+                    <SaudiRiyalPrice amount={currentPrice} className="text-base font-black text-red-600" />
                   </div>
                   <button
                     onClick={() => {
@@ -1476,7 +1457,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                     className="flex-1 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-black cursor-pointer text-center flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                   >
                     <CreditCard className="w-4 h-4" strokeWidth={1.75} />
-                    <span>حجز فوري بعربون (2,500 ريال)</span>
+                    <span>حجز فوري بعربون (<SaudiRiyalPrice amount={2500} />)</span>
                   </button>
                   <button
                     onClick={() => toggleFavorite(selectedVehicleDetail.id)}
@@ -1735,7 +1716,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               <div>
                 <div className="flex justify-between text-xs mb-1 font-bold">
                   <span>الدفعة الأولى ({downPaymentPercent}%)</span>
-                  <span className="text-red-600 font-bold">{Math.round((financeCalcVehicle.priceStartingFrom * downPaymentPercent) / 100).toLocaleString('ar-SA')} ريال</span>
+                  <SaudiRiyalPrice amount={Math.round((financeCalcVehicle.priceStartingFrom * downPaymentPercent) / 100)} className="text-red-600 font-bold" />
                 </div>
                 <input
                   type="range"
@@ -1785,7 +1766,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
               <div className="p-3.5 bg-[#141414] rounded-2xl text-white text-center space-y-1">
                 <span className="text-[10px] text-[#adadad]">القسط الشهري التقديري (شامل التأمين)</span>
                 <div className="text-xl font-black text-white">
-                  {Math.round(((financeCalcVehicle.priceStartingFrom * (1 - downPaymentPercent / 100)) * 1.15) / (loanYears * 12)).toLocaleString('ar-SA')} ريال / شهر
+                  <SaudiRiyalPrice amount={Math.round(((financeCalcVehicle.priceStartingFrom * (1 - downPaymentPercent / 100)) * 1.15) / (loanYears * 12))} suffix="/ شهر" />
                 </div>
                 <span className="text-[9px] text-[#adadad] block">بدون رسوم إدارية بمناسبة عروض 2026</span>
               </div>
@@ -1923,7 +1904,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   <div key={carId} className="p-2.5 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] space-y-2">
                     <img src={carObj.cardImage || carObj.heroImage} alt={carObj.nameAr} className="h-14 object-contain mx-auto rounded-lg" />
                     <h5 className="text-[11px] font-black text-[#141414] line-clamp-1">{formatVehicleTitle(carObj)}</h5>
-                    <div className="text-xs font-black text-red-600">{carObj.priceStartingFrom.toLocaleString('ar-SA')} ريال</div>
+                    <div className="text-xs font-black text-red-600"><SaudiRiyalPrice amount={carObj.priceStartingFrom} /></div>
                     <div className="text-[10px] space-y-1 text-[#141414] border-t border-[#e0e0e0] pt-1.5">
                       <div className="flex items-center justify-center gap-1">
                         <Zap className="w-3 h-3 text-[#707070]" strokeWidth={1.75} />
@@ -2376,9 +2357,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 </div>
                 <div>
                   <span className="text-[10px] text-[#707070] block">القيمة التقديرية المعتمدة لاستبدال سيارتك:</span>
-                  <strong className="text-2xl font-black text-[#141414] font-mono">
-                    {tradeInEstimatedValue.toLocaleString('ar-SA')} ريال
-                  </strong>
+                  <SaudiRiyalPrice amount={tradeInEstimatedValue} className="text-2xl font-black text-[#141414] font-mono" />
                 </div>
                 <p className="text-xs text-[#141414] bg-[#f3f3f3] p-2.5 rounded-2xl border border-[#e0e0e0]">
                   كوبون خصم الاستبدال: <strong className="text-red-600 font-mono">TRADE-SOLINA-2026</strong> يتم خصم هذا المبلغ فوراً من الدفعة الأولى لأي سيارة جديدة.
@@ -2502,7 +2481,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#707070]">مبلغ العربون المدفوع:</span>
-                    <strong className="text-[#141414]">2,500 ريال سعودي</strong>
+                    <SaudiRiyalPrice amount={2500} className="font-bold text-[#141414]" />
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#707070]">طريقة الدفع:</span>
@@ -2527,7 +2506,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   <img src={depositVehicle.cardImage || depositVehicle.heroImage} alt={depositVehicle.nameAr} className="h-12 w-auto object-contain rounded-lg" />
                   <div>
                     <h5 className="text-xs font-black text-[#141414]">{formatVehicleTitle(depositVehicle)}</h5>
-                    <span className="text-[10px] text-[#707070]">السعر الإجمالي: {depositVehicle.priceStartingFrom.toLocaleString('ar-SA')} ريال</span>
+                    <span className="text-[10px] text-[#707070]">السعر الإجمالي: <SaudiRiyalPrice amount={depositVehicle.priceStartingFrom} /></span>
                   </div>
                 </div>
 
@@ -2551,7 +2530,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                 {/* Amount Due */}
                 <div className="p-3 bg-[#141414] text-white rounded-2xl flex items-center justify-between">
                   <span className="text-xs font-bold text-[#adadad]">عربون الحجز الفوري المسترد:</span>
-                  <strong className="text-base font-black text-white font-mono">2,500 ريال</strong>
+                  <SaudiRiyalPrice amount={2500} className="text-base font-black text-white font-mono" />
                 </div>
 
                 {/* Payment Methods */}
@@ -2599,7 +2578,7 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
                   className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-full cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                 >
                   <Lock className="w-3.5 h-3.5" strokeWidth={1.75} />
-                  <span>تأكيد ودفع 2,500 ريال عبر {paymentMethod.toUpperCase()}</span>
+                  <span>تأكيد ودفع <SaudiRiyalPrice amount={2500} /> عبر {paymentMethod.toUpperCase()}</span>
                 </button>
               </div>
             )}

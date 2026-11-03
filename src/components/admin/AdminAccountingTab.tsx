@@ -20,6 +20,7 @@ import {
   CustodyRecord,
   ExportFormatType
 } from '../../context/AdminDataContext';
+import { SaudiRiyalPrice, SaudiRiyalSymbol, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
 
 type AccountingSubTab = 'vouchers' | 'custodies' | 'ledger' | 'vat_return';
 
@@ -204,8 +205,8 @@ export const AdminAccountingTab: React.FC = () => {
         ['الحساب المحاسبي', `${v.accountCode} — ${v.accountName}`],
         ['المرجع المرتبط', v.referenceNumber || 'غير مرتبط']
       ],
-      ['البيان والتفاصيل المحاسبية', 'المبلغ قبل الضريبة (ر.س)', 'ضريبة القيمة المضافة 15% (ر.س)', 'الإجمالي النهائي (ر.س)'],
-      [[v.description, v.baseAmount.toLocaleString('ar-SA'), v.vatAmount.toLocaleString('ar-SA'), v.totalAmount.toLocaleString('ar-SA')]],
+      ['البيان والتفاصيل المحاسبية', 'المبلغ قبل الضريبة (\u200E\u20C1)', 'ضريبة القيمة المضافة 15% (\u200E\u20C1)', 'الإجمالي النهائي (\u200E\u20C1)'],
+      [[v.description, formatSaudiRiyalText(v.baseAmount.toLocaleString('ar-SA')), formatSaudiRiyalText(v.vatAmount.toLocaleString('ar-SA')), formatSaudiRiyalText(v.totalAmount.toLocaleString('ar-SA'))]],
       format
     );
   };
@@ -222,12 +223,12 @@ export const AdminAccountingTab: React.FC = () => {
         ['تاريخ صرف العهدة', c.issueDate],
         ['تاريخ آخر مطابقة وتسوية', c.lastSettlementDate]
       ],
-      ['البيان والملاحظات', 'المبلغ المعتمد (ر.س)', 'المبلغ المصروف والمسوى (ر.س)', 'الرصيد المتبقي بالعهدة (ر.س)', 'حالة العهدة'],
+      ['البيان والملاحظات', 'المبلغ المعتمد (\u200E\u20C1)', 'المبلغ المصروف والمسوى (\u200E\u20C1)', 'الرصيد المتبقي بالعهدة (\u200E\u20C1)', 'حالة العهدة'],
       [[
         c.notes || 'عهدة تشغيلية معتمدة وفق اللائحة المالية لشركة سولينا للسيارات',
-        c.allocatedAmount.toLocaleString('ar-SA'),
-        c.spentAmount.toLocaleString('ar-SA'),
-        c.remainingBalance.toLocaleString('ar-SA'),
+        formatSaudiRiyalText(c.allocatedAmount.toLocaleString('ar-SA')),
+        formatSaudiRiyalText(c.spentAmount.toLocaleString('ar-SA')),
+        formatSaudiRiyalText(c.remainingBalance.toLocaleString('ar-SA')),
         c.status === 'active' ? 'نشطة' : c.status === 'pending_settlement' ? 'قيد التسوية' : 'مسددة ومقفلة (إخلاء طرف)'
       ]],
       format
@@ -246,11 +247,11 @@ export const AdminAccountingTab: React.FC = () => {
         ['رقم السجل التجاري', settings.crNumber],
         ['الفترة الضريبية', 'الربع الثالث 2026 — هيئة الزكاة والضريبة والجمارك']
       ],
-      ['البند الضريبي', 'المبلغ الخاضع للضريبة (ر.س)', 'نسبة الضريبة', 'قيمة الضريبة (ر.س)'],
+      ['البند الضريبي', 'المبلغ الخاضع للضريبة (\u200E\u20C1)', 'نسبة الضريبة', 'قيمة الضريبة (\u200E\u20C1)'],
       [
-        ['1. إجمالي المبيعات والفواتير الضريبية الخاضعة للنسبة الأساسية', taxableSalesBase.toLocaleString('ar-SA'), '15%', stats.totalVatCollectedSAR.toLocaleString('ar-SA')],
-        ['2. إجمالي المشتريات والمصروفات التشغيلية والعُهد الخاضعة للضريبة', taxablePurchasesBase.toLocaleString('ar-SA'), '15%', stats.totalInputVatSAR.toLocaleString('ar-SA')],
-        ['3. صافي ضريبة القيمة المضافة المستحقة للسداد لـ ZATCA', '—', 'صافي التسوية', stats.netVatPayableSAR.toLocaleString('ar-SA')]
+        ['1. إجمالي المبيعات والفواتير الضريبية الخاضعة للنسبة الأساسية', formatSaudiRiyalText(taxableSalesBase.toLocaleString('ar-SA')), '15%', formatSaudiRiyalText(stats.totalVatCollectedSAR.toLocaleString('ar-SA'))],
+        ['2. إجمالي المشتريات والمصروفات التشغيلية والعُهد الخاضعة للضريبة', formatSaudiRiyalText(taxablePurchasesBase.toLocaleString('ar-SA')), '15%', formatSaudiRiyalText(stats.totalInputVatSAR.toLocaleString('ar-SA'))],
+        ['3. صافي ضريبة القيمة المضافة المستحقة للسداد لـ ZATCA', '—', 'صافي التسوية', formatSaudiRiyalText(stats.netVatPayableSAR.toLocaleString('ar-SA'))]
       ],
       format
     );
@@ -278,25 +279,25 @@ export const AdminAccountingTab: React.FC = () => {
           <div className="bg-white/5 border border-white/10 rounded-[18px] p-3.5 whitespace-nowrap">
             <span className="text-[10px] text-[#adadad] block mb-1">إجمالي المقبوضات</span>
             <strong className="text-base font-black text-white font-mono block">
-              {stats.totalReceiptsSAR.toLocaleString('ar-SA')} <span className="text-[10px] font-normal">ر.س</span>
+              <SaudiRiyalPrice amount={stats.totalReceiptsSAR.toLocaleString('ar-SA')} />
             </strong>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-[18px] p-3.5 whitespace-nowrap">
             <span className="text-[10px] text-[#adadad] block mb-1">إجمالي المصروفات</span>
             <strong className="text-base font-black text-white font-mono block">
-              {stats.totalPaymentsSAR.toLocaleString('ar-SA')} <span className="text-[10px] font-normal">ر.س</span>
+              <SaudiRiyalPrice amount={stats.totalPaymentsSAR.toLocaleString('ar-SA')} />
             </strong>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-[18px] p-3.5 whitespace-nowrap">
             <span className="text-[10px] text-[#adadad] block mb-1">الرصيد المتبقي بالعُهد</span>
             <strong className="text-base font-black text-white font-mono block">
-              {stats.totalCustodiesRemainingSAR.toLocaleString('ar-SA')} <span className="text-[10px] font-normal">ر.س</span>
+              <SaudiRiyalPrice amount={stats.totalCustodiesRemainingSAR.toLocaleString('ar-SA')} />
             </strong>
           </div>
           <div className="bg-white/10 border border-white/20 rounded-[18px] p-3.5 whitespace-nowrap">
             <span className="text-[10px] text-[#adadad] block mb-1">صافي ضريبة القيمة المضافة</span>
             <strong className="text-base font-black text-white font-mono block">
-              {stats.netVatPayableSAR.toLocaleString('ar-SA')} <span className="text-[10px] font-normal">ر.س</span>
+              <SaudiRiyalPrice amount={stats.netVatPayableSAR.toLocaleString('ar-SA')} />
             </strong>
           </div>
         </div>
@@ -482,10 +483,13 @@ export const AdminAccountingTab: React.FC = () => {
 
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <span className="font-black text-[#141414] font-mono block text-sm whitespace-nowrap">
-                          {v.type === 'payment' ? '-' : '+'}{v.totalAmount.toLocaleString('ar-SA')} ر.س
+                          <SaudiRiyalPrice
+                            amount={v.type === 'payment' ? `-${v.totalAmount.toLocaleString('ar-SA')}` : v.totalAmount.toLocaleString('ar-SA')}
+                            showPlus={v.type !== 'payment'}
+                          />
                         </span>
                         <span className="text-[10px] text-[#707070] font-mono whitespace-nowrap">
-                          الضريبة: {v.vatAmount.toLocaleString('ar-SA')} ر.س
+                          الضريبة: <SaudiRiyalPrice amount={v.vatAmount.toLocaleString('ar-SA')} />
                         </span>
                       </td>
 
@@ -620,15 +624,15 @@ export const AdminAccountingTab: React.FC = () => {
                     <div className="grid grid-cols-3 gap-2 text-xs">
                       <div>
                         <span className="text-[10px] text-[#707070] block">المبلغ المعتمد</span>
-                        <strong className="font-mono text-[#141414]">{c.allocatedAmount.toLocaleString('ar-SA')} ر.س</strong>
+                        <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={c.allocatedAmount.toLocaleString('ar-SA')} /></strong>
                       </div>
                       <div>
                         <span className="text-[10px] text-[#707070] block">المصروف والمسوى</span>
-                        <strong className="font-mono text-[#141414]">{c.spentAmount.toLocaleString('ar-SA')} ر.س</strong>
+                        <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={c.spentAmount.toLocaleString('ar-SA')} /></strong>
                       </div>
                       <div>
                         <span className="text-[10px] text-[#707070] block">الرصيد المتبقي</span>
-                        <strong className="font-mono text-[#141414]">{c.remainingBalance.toLocaleString('ar-SA')} ر.س</strong>
+                        <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={c.remainingBalance.toLocaleString('ar-SA')} /></strong>
                       </div>
                     </div>
 
@@ -753,9 +757,9 @@ export const AdminAccountingTab: React.FC = () => {
                           {acc.categoryAr}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-[#141414] whitespace-nowrap">{acc.debit.toLocaleString('ar-SA')} ر.س</td>
-                      <td className="py-3.5 px-4 font-mono text-[#141414] whitespace-nowrap">{acc.credit.toLocaleString('ar-SA')} ر.س</td>
-                      <td className="py-3.5 px-4 font-mono font-black text-[#141414] whitespace-nowrap">{acc.balance.toLocaleString('ar-SA')} ر.س</td>
+                      <td className="py-3.5 px-4 font-mono text-[#141414] whitespace-nowrap"><SaudiRiyalPrice amount={acc.debit.toLocaleString('ar-SA')} /></td>
+                      <td className="py-3.5 px-4 font-mono text-[#141414] whitespace-nowrap"><SaudiRiyalPrice amount={acc.credit.toLocaleString('ar-SA')} /></td>
+                      <td className="py-3.5 px-4 font-mono font-black text-[#141414] whitespace-nowrap"><SaudiRiyalPrice amount={acc.balance.toLocaleString('ar-SA')} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -806,27 +810,27 @@ export const AdminAccountingTab: React.FC = () => {
             <div className="p-5 rounded-[20px] bg-[#f3f3f3] border border-[#e0e0e0] space-y-1">
               <span className="text-xs text-[#707070] font-bold block">1. ضريبة المخرجات (المبيعات والفواتير)</span>
               <strong className="text-2xl font-black text-[#141414] font-mono block">
-                {stats.totalVatCollectedSAR.toLocaleString('ar-SA')} ر.س
+                <SaudiRiyalPrice amount={stats.totalVatCollectedSAR.toLocaleString('ar-SA')} />
               </strong>
               <span className="text-[11px] text-[#707070] block">
-                إجمالي المبيعات شاملة الضريبة: {stats.totalInvoicedSalesSAR.toLocaleString('ar-SA')} ر.س ({zatcaInvoices.length} فاتورة)
+                إجمالي المبيعات شاملة الضريبة: <SaudiRiyalPrice amount={stats.totalInvoicedSalesSAR.toLocaleString('ar-SA')} /> ({zatcaInvoices.length} فاتورة)
               </span>
             </div>
 
             <div className="p-5 rounded-[20px] bg-[#f3f3f3] border border-[#e0e0e0] space-y-1">
               <span className="text-xs text-[#707070] font-bold block">2. ضريبة المدخلات المستردة (المشتريات والعُهد)</span>
               <strong className="text-2xl font-black text-[#141414] font-mono block">
-                {stats.totalInputVatSAR.toLocaleString('ar-SA')} ر.س
+                <SaudiRiyalPrice amount={stats.totalInputVatSAR.toLocaleString('ar-SA')} />
               </strong>
               <span className="text-[11px] text-[#707070] block">
-                إجمالي المصروفات وسندات الصرف: {stats.totalPaymentsSAR.toLocaleString('ar-SA')} ر.س
+                إجمالي المصروفات وسندات الصرف: <SaudiRiyalPrice amount={stats.totalPaymentsSAR.toLocaleString('ar-SA')} />
               </span>
             </div>
 
             <div className="p-5 rounded-[20px] bg-[#141414] text-white space-y-1">
               <span className="text-xs text-[#adadad] font-bold block">3. صافي الضريبة المستحقة للسداد لـ ZATCA</span>
               <strong className="text-2xl font-black text-white font-mono block">
-                {stats.netVatPayableSAR.toLocaleString('ar-SA')} ر.س
+                <SaudiRiyalPrice amount={stats.netVatPayableSAR.toLocaleString('ar-SA')} />
               </strong>
               <span className="text-[11px] text-[#adadad] block">
                 الرقم الضريبي الموحد: {settings.vatNumber}
@@ -914,7 +918,7 @@ export const AdminAccountingTab: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-[#141414] block mb-1">المبلغ الإجمالي (ر.س) *</label>
+                  <label className="font-bold text-[#141414] block mb-1">المبلغ الإجمالي (<SaudiRiyalSymbol />) *</label>
                   <input
                     type="number"
                     required
@@ -1026,15 +1030,15 @@ export const AdminAccountingTab: React.FC = () => {
               <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#e0e0e0]">
                 <div>
                   <span className="text-[10px] text-[#707070] block">المبلغ الأساسي</span>
-                  <strong className="font-mono text-[#141414]">{selectedVoucherPreview.baseAmount.toLocaleString('ar-SA')} ر.س</strong>
+                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={selectedVoucherPreview.baseAmount.toLocaleString('ar-SA')} /></strong>
                 </div>
                 <div>
                   <span className="text-[10px] text-[#707070] block">ضريبة 15%</span>
-                  <strong className="font-mono text-[#141414]">{selectedVoucherPreview.vatAmount.toLocaleString('ar-SA')} ر.س</strong>
+                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={selectedVoucherPreview.vatAmount.toLocaleString('ar-SA')} /></strong>
                 </div>
                 <div>
                   <span className="text-[10px] text-[#707070] block">الإجمالي المعتمد</span>
-                  <strong className="font-mono text-base font-black text-[#141414]">{selectedVoucherPreview.totalAmount.toLocaleString('ar-SA')} ر.س</strong>
+                  <strong className="font-mono text-base font-black text-[#141414]"><SaudiRiyalPrice amount={selectedVoucherPreview.totalAmount.toLocaleString('ar-SA')} /></strong>
                 </div>
               </div>
             </div>
@@ -1130,7 +1134,7 @@ export const AdminAccountingTab: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="font-bold text-[#141414] block mb-1">سقف مبلغ العهدة (ر.س) *</label>
+                  <label className="font-bold text-[#141414] block mb-1">سقف مبلغ العهدة (<SaudiRiyalSymbol />) *</label>
                   <input
                     type="number"
                     required
@@ -1207,11 +1211,11 @@ export const AdminAccountingTab: React.FC = () => {
             <div className="space-y-3 text-xs">
               <div className="p-3 rounded-[16px] bg-[#f3f3f3] border border-[#e0e0e0] flex justify-between">
                 <span className="text-[#707070]">الرصيد المتاح حالياً بالعهدة:</span>
-                <strong className="font-mono text-[#141414]">{selectedCustodyForSettle.remainingBalance.toLocaleString('ar-SA')} ر.س</strong>
+                <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={selectedCustodyForSettle.remainingBalance.toLocaleString('ar-SA')} /></strong>
               </div>
 
               <div>
-                <label className="font-bold text-[#141414] block mb-1">مبلغ الفاتورة / المصروف (ر.س) *</label>
+                <label className="font-bold text-[#141414] block mb-1">مبلغ الفاتورة / المصروف (<SaudiRiyalSymbol />) *</label>
                 <input
                   type="number"
                   required
@@ -1275,7 +1279,7 @@ export const AdminAccountingTab: React.FC = () => {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="font-bold text-[#141414] block mb-1">مبلغ التغذية الإضافي (ر.س) *</label>
+                <label className="font-bold text-[#141414] block mb-1">مبلغ التغذية الإضافي (<SaudiRiyalSymbol />) *</label>
                 <input
                   type="number"
                   required
@@ -1336,12 +1340,12 @@ export const AdminAccountingTab: React.FC = () => {
               </div>
               <div>
                 <span className="text-[10px] text-[#707070] block">المبلغ المعتمد</span>
-                <strong className="font-mono text-[#141414]">{selectedCustodyPreview.allocatedAmount.toLocaleString('ar-SA')} ر.س</strong>
+                <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={selectedCustodyPreview.allocatedAmount.toLocaleString('ar-SA')} /></strong>
               </div>
               <div>
                 <span className="text-[10px] text-[#707070] block">المصروف / المتبقي</span>
                 <strong className="font-mono text-[#141414]">
-                  مصروف: {selectedCustodyPreview.spentAmount.toLocaleString('ar-SA')} ر.س | متبقي: {selectedCustodyPreview.remainingBalance.toLocaleString('ar-SA')} ر.س
+                  مصروف: <SaudiRiyalPrice amount={selectedCustodyPreview.spentAmount.toLocaleString('ar-SA')} /> | متبقي: <SaudiRiyalPrice amount={selectedCustodyPreview.remainingBalance.toLocaleString('ar-SA')} />
                 </strong>
               </div>
             </div>

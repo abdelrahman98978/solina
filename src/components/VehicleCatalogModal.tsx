@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { type Vehicle, type VehicleGrade, getBrandMeta } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
+import { SaudiRiyalPrice, formatSaudiRiyalHtml } from './SaudiRiyalSymbol';
 
 interface VehicleCatalogModalProps {
   vehicle: Vehicle | null;
@@ -120,7 +121,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
           <td style="padding:10px;border:1px solid #d1d5db;font-weight:700;">${g.name}<div style="font-size:10px;color:#6b7280;">${g.nameEn}</div></td>
           <td style="padding:10px;border:1px solid #d1d5db;">${g.engine} — ${g.transmission}</td>
           <td style="padding:10px;border:1px solid #d1d5db;">${g.features.join(' • ')}</td>
-          <td style="padding:10px;border:1px solid #d1d5db;font-weight:800;color:#141414;font-family:monospace;">${g.price.toLocaleString()} ر.س</td>
+          <td style="padding:10px;border:1px solid #d1d5db;font-weight:800;color:#141414;font-family:monospace;">${formatSaudiRiyalHtml(g.price)}</td>
         </tr>`
       )
       .join('');
@@ -164,7 +165,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
         ${brandMeta.taglineAr} — ${vehicle.bodyTypeAr} مزودة بمحرك ${vehicle.engineSpec} بقوة ${vehicle.horsepower} وعزم ${vehicle.torque} مع ${vehicle.drivetrain}.
       </p>
       <div style="font-size:14px;font-weight:800;color:#141414;">
-        السعر يبدأ من: ${vehicle.priceStartingFrom.toLocaleString()} ر.س (شامل الضريبة) • القسط الشهري من: ${vehicle.monthlyInstallmentStartingFrom.toLocaleString()} ر.س
+        السعر يبدأ من: ${formatSaudiRiyalHtml(vehicle.priceStartingFrom)} (شامل الضريبة) • القسط الشهري من: ${formatSaudiRiyalHtml(vehicle.monthlyInstallmentStartingFrom)}
       </div>
     </div>
     <div style="text-align:center;">
@@ -337,9 +338,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                       <span className="text-[11px] text-gray-300 block font-arabic">
                         {language === 'ar' ? 'يبدأ السعر النقدي من' : 'Starting Price'}
                       </span>
-                      <span className="text-2xl font-black text-white">
-                        {formatPrice(vehicle.priceStartingFrom)} <span className="text-xs text-red-500">ر.س</span>
-                      </span>
+                      <SaudiRiyalPrice amount={vehicle.priceStartingFrom} className="text-2xl font-black text-white" />
                     </div>
                   </div>
                 </div>
@@ -652,7 +651,7 @@ export const VehicleCatalogModal: React.FC<VehicleCatalogModalProps> = ({
                           <td className="p-4 font-black text-gray-900">{language === 'ar' ? g.name : g.nameEn}</td>
                           <td className="p-4 text-gray-700 font-medium">{language === 'ar' ? `${g.engine} • ${g.transmission}` : `${g.engineEn} • ${g.transmissionEn}`}</td>
                           <td className="p-4 text-gray-600">{(language === 'ar' ? g.features : g.featuresEn).join(' • ')}</td>
-                          <td className="p-4 font-mono font-black text-sm text-[#141414] whitespace-nowrap">{formatPrice(g.price)} ر.س</td>
+                          <td className="p-4 font-mono font-black text-sm text-[#141414] whitespace-nowrap"><SaudiRiyalPrice amount={g.price} /></td>
                         </tr>
                       ))}
                     </tbody>

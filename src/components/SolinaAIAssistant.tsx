@@ -142,8 +142,8 @@ export const SolinaAIAssistant: React.FC<SolinaAIAssistantProps> = ({
         ];
       } else if (lower.includes('سعر') || lower.includes('قسط') || lower.includes('تمويل') || lower.includes('price') || lower.includes('finance')) {
         botResponse = language === 'ar'
-          ? 'نقدم حالياً عروض تمويلية استثنائية لعام 2026: 0% دفعة أولى وبدون رسوم إدارية مع أقساط تبدأ من 1,035 ريال/شهرياً.'
-          : 'We offer exclusive 2026 finance deals: 0% down payment, 0% admin fees, with monthly installments starting from 1,035 SAR.';
+          ? 'نقدم حالياً عروض تمويلية استثنائية لعام 2026: 0% دفعة أولى وبدون رسوم إدارية مع أقساط تبدأ من \u200E\u20C1 1,035 /شهرياً.'
+          : 'We offer exclusive 2026 finance deals: 0% down payment, 0% admin fees, with monthly installments starting from \u200E\u20C1 1,035 /mo.';
         actions = [
           {
             label: language === 'ar' ? 'صفحة العروض التمويلية' : 'View Financing Offers',

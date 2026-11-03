@@ -11,6 +11,7 @@ import {
 import { useAdminData } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { SparePart } from '../../data/toyotaData';
+import { SaudiRiyalPrice, SaudiRiyalSymbol } from '../SaudiRiyalSymbol';
 
 export const AdminPartsTab: React.FC = () => {
   const { spareParts, partQuantities, adjustPartQuantity, stats, updateSparePart, deleteSparePart, addSparePart, exportDataToCSV } = useAdminData();
@@ -263,10 +264,10 @@ export const AdminPartsTab: React.FC = () => {
                   </td>
 
                   <td className="py-4 px-4">
-                    <div className="font-mono font-bold text-[#141414] text-sm">{formatPrice(part.price)} ر.س</div>
+                    <div className="font-mono font-bold text-[#141414] text-sm"><SaudiRiyalPrice amount={formatPrice(part.price)} /></div>
                     {part.originalPrice && part.originalPrice > part.price && (
                       <span className="text-[10px] text-[#adadad] line-through font-mono">
-                        {formatPrice(part.originalPrice)} ر.س
+                        <SaudiRiyalPrice amount={formatPrice(part.originalPrice)} />
                       </span>
                     )}
                   </td>
@@ -359,7 +360,7 @@ export const AdminPartsTab: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-[#707070] block mb-1">سعر البيع الشامل للضريبة (ر.س) *</label>
+                  <label className="font-bold text-[#707070] block mb-1">سعر البيع الشامل للضريبة (<SaudiRiyalSymbol />) *</label>
                   <input
                     type="number"
                     required

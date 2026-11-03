@@ -15,6 +15,7 @@ import {
 import { useAdminData } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { PreOwnedVehicle } from '../../data/toyotaData';
+import { SaudiRiyalPrice, SaudiRiyalSymbol } from '../SaudiRiyalSymbol';
 
 export const AdminCPOTab: React.FC = () => {
   const { cpoVehicles, addCPOVehicle, deleteCPOVehicle, updateCPOVehicle, exportDataToCSV } = useAdminData();
@@ -217,11 +218,11 @@ export const AdminCPOTab: React.FC = () => {
                 <div className="pt-2 flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-[#adadad] block">السعر النقدي:</span>
-                    <span className="text-sm font-black text-[#141414] font-mono">{formatPrice(cpo.price)} ر.س</span>
+                    <span className="text-sm font-black text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(cpo.price)} /></span>
                   </div>
                   <div className="text-end">
                     <span className="text-[10px] text-[#adadad] block">القسط التقديري:</span>
-                    <span className="text-xs font-bold text-[#141414] font-mono">{formatPrice(cpo.monthlyInstallment)} ر.س/ش</span>
+                    <span className="text-xs font-bold text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(cpo.monthlyInstallment)} suffix="/ش" /></span>
                   </div>
                 </div>
               </div>
@@ -319,7 +320,7 @@ export const AdminCPOTab: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="font-bold text-[#707070] block mb-1">السعر النقدي (ر.س)</label>
+                    <label className="font-bold text-[#707070] block mb-1">السعر النقدي (<SaudiRiyalSymbol />)</label>
                     <input
                       type="number"
                       value={price}
@@ -419,9 +420,9 @@ export const AdminCPOTab: React.FC = () => {
                     <h4 className="font-bold text-[#141414] text-xs">{titleAr || 'اسم السيارة المستعملة المعتمدة'}</h4>
                     <p className="text-[11px] text-[#707070]">{grade} • {color} • موديل {year}</p>
                     <div className="pt-2 border-t border-[#e0e0e0] flex items-center justify-between">
-                      <strong className="text-sm font-black text-[#141414] font-mono">{formatPrice(price)} ر.س</strong>
+                      <strong className="text-sm font-black text-[#141414] font-mono"><SaudiRiyalPrice amount={formatPrice(price)} /></strong>
                       <span className="text-[11px] font-bold text-[#141414] font-mono">
-                        {formatPrice(Math.round((Number(price) * 0.9) / 60))} ر.س/شهرياً
+                        <SaudiRiyalPrice amount={formatPrice(Math.round((Number(price) * 0.9) / 60))} suffix="/شهرياً" />
                       </span>
                     </div>
                   </div>

@@ -10,6 +10,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
 import { type Vehicle, getBrandMeta } from '../data/toyotaData';
 import { VehicleCatalogModal } from './VehicleCatalogModal';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface ExploreVehiclesProps {
   selectedCategory: string;
@@ -285,10 +286,7 @@ export const ExploreVehicles: React.FC<ExploreVehiclesProps> = ({
                     
                     <div className="text-sm text-gray-700 font-medium mb-2 flex items-center justify-center gap-1.5">
                       <span>{language === 'ar' ? 'تبدأ من' : 'Starts from'}</span>
-                      <span className="text-base font-bold font-mono text-[#141414]">
-                        {vehicle.priceStartingFrom.toLocaleString()}
-                      </span>
-                      <span className="text-xs font-bold text-[#141414]">﷼</span>
+                      <SaudiRiyalPrice amount={vehicle.priceStartingFrom} className="text-base font-bold font-mono text-[#141414]" />
                     </div>
 
                     {/* Vehicle Cutout / Interior Image Stage */}

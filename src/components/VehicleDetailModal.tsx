@@ -28,6 +28,7 @@ import {
 import { type Vehicle, type VehicleGrade, getBrandMeta } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { VehicleCatalogModal } from './VehicleCatalogModal';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface VehicleDetailModalProps {
   vehicle: Vehicle | null;
@@ -312,9 +313,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                           </div>
                         </div>
 
-                        <span className="font-bold font-mono text-sm text-gray-900">
-                          {formatPrice(grade.price)} <span className="text-[10px] text-[#141414] font-bold">﷼</span>
-                        </span>
+                        <SaudiRiyalPrice amount={grade.price} className="font-bold font-mono text-sm text-gray-900" />
                       </div>
                     ))}
                   </div>
@@ -326,16 +325,12 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                     <span className="text-[11px] text-gray-300 block">
                       {language === 'ar' ? 'السعر النقدي للفئة المختارة (شامل الضريبة):' : 'Cash Price for Selected Trim:'}
                     </span>
-                    <span className="text-2xl font-black font-mono text-white">
-                      {formatPrice(currentGrade.price)} <span className="text-xs text-[#141414] font-bold">﷼</span>
-                    </span>
+                    <SaudiRiyalPrice amount={currentGrade.price} className="text-2xl font-black font-mono text-white" />
                   </div>
 
                   <div className="text-end">
                     <span className="text-[10px] text-gray-400 block">{language === 'ar' ? 'قسط شهري تقديري:' : 'Est. Monthly:'}</span>
-                    <span className="text-sm font-bold text-[#141414] font-mono">
-                      {formatPrice(monthlyInstallment)} {language === 'ar' ? '﷼/ش' : 'SAR/mo'}
-                    </span>
+                    <SaudiRiyalPrice amount={monthlyInstallment} suffix={language === 'ar' ? '/ش' : '/mo'} className="text-sm font-bold text-[#141414] font-mono" />
                   </div>
                 </div>
               </div>
@@ -404,7 +399,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                         <td className="p-3 font-bold text-gray-900">{language === 'ar' ? g.name : g.nameEn}</td>
                         <td className="p-3 text-gray-600">{language === 'ar' ? `${g.engine} - ${g.transmission}` : `${g.engineEn} - ${g.transmissionEn}`}</td>
                         <td className="p-3 text-gray-600">{(language === 'ar' ? g.features : g.featuresEn).join(' • ')}</td>
-                        <td className="p-3 font-mono font-bold text-[#141414]">{formatPrice(g.price)} ﷼</td>
+                        <td className="p-3 font-mono font-bold text-[#141414]"><SaudiRiyalPrice amount={g.price} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -420,7 +415,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                 <div>
                   <div className="flex justify-between text-xs font-bold text-gray-700 mb-1">
                     <span>{language === 'ar' ? 'الدفعة الأولى (%):' : 'Down Payment (%):'}</span>
-                    <span className="text-[#141414] font-mono">{downPaymentPercent}% ({formatPrice(downPaymentAmount)} ﷼)</span>
+                    <span className="text-[#141414] font-mono">{downPaymentPercent}% (<SaudiRiyalPrice amount={downPaymentAmount} />)</span>
                   </div>
                   <input
                     type="range"
@@ -472,17 +467,17 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                 
                 <div className="flex justify-between text-xs py-1 border-b border-gray-100">
                   <span className="text-gray-600">{language === 'ar' ? 'سعر السيارة:' : 'Vehicle Price:'}</span>
-                  <span className="font-bold font-mono">{formatPrice(carPrice)} ﷼</span>
+                  <SaudiRiyalPrice amount={carPrice} className="font-bold font-mono" />
                 </div>
 
                 <div className="flex justify-between text-xs py-1 border-b border-gray-100">
                   <span className="text-gray-600">{language === 'ar' ? 'مبلغ التمويل الصافي:' : 'Financed Principal:'}</span>
-                  <span className="font-bold font-mono">{formatPrice(principalAmount)} ﷼</span>
+                  <SaudiRiyalPrice amount={principalAmount} className="font-bold font-mono" />
                 </div>
 
                 <div className="pt-2">
                   <span className="text-[11px] text-gray-500 block">{language === 'ar' ? 'القسط الشهري التقديري:' : 'Estimated Monthly Payment:'}</span>
-                  <span className="text-2xl font-black text-[#141414] font-mono">{formatPrice(monthlyInstallment)} <span className="text-xs font-sans text-gray-800">{language === 'ar' ? '﷼/شهرياً' : 'SAR/month'}</span></span>
+                  <SaudiRiyalPrice amount={monthlyInstallment} suffix={language === 'ar' ? '/شهرياً' : '/month'} className="text-2xl font-black text-[#141414] font-mono" suffixClassName="text-xs font-sans text-gray-800 ml-1" />
                 </div>
               </div>
             </div>

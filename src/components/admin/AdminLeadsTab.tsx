@@ -24,6 +24,7 @@ import {
 import { useAdminData, QuotationRecord, TestDriveLead } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { AdminTabType, LeadsSubTabType } from './AdminDashboard';
+import { SaudiRiyalPrice, SaudiRiyalSymbol, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
 
 interface AdminLeadsTabProps {
   initialSubTab?: LeadsSubTabType;
@@ -471,7 +472,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                     <div key={srv.id} className="bg-[#ffffff] rounded-[16px] p-4 border border-[#e0e0e0] space-y-2 text-xs">
                       <div className="flex items-center justify-between">
                         <strong className="text-[#141414]">{srv.fullName}</strong>
-                        <span className="font-mono font-semibold text-[#141414]">{formatPrice(srv.estimatedCost)} ر.س</span>
+                        <span className="font-mono font-semibold text-[#141414]"><SaudiRiyalPrice amount={formatPrice(srv.estimatedCost)} /></span>
                       </div>
                       <div className="text-[#707070]">{srv.vehicleModel} ({srv.plateNumber})</div>
                       <div className="text-[11px] text-[#707070]">{srv.serviceType}</div>
@@ -516,7 +517,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                     <div key={q.id} className="bg-[#ffffff] rounded-[16px] p-4 border border-[#e0e0e0] space-y-2 text-xs">
                       <div className="flex items-center justify-between">
                         <span className="font-mono font-semibold text-[#707070]">{q.quotationNumber}</span>
-                        <strong className="font-mono text-[#141414]">{formatPrice(q.totalWithVat)} ر.س</strong>
+                        <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={formatPrice(q.totalWithVat)} /></strong>
                       </div>
                       <div className="font-semibold text-[#141414]">{q.fullName}</div>
                       <div className="text-[11px] text-[#707070]">{q.vehicleName} • {q.gradeName}</div>
@@ -746,7 +747,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                     </td>
 
                     <td className="py-4 px-4 font-mono font-semibold text-[#141414] text-sm">
-                      {formatPrice(srv.estimatedCost)} ر.س
+                      <SaudiRiyalPrice amount={formatPrice(srv.estimatedCost)} />
                     </td>
 
                     <td className="py-4 px-4 text-center">
@@ -850,14 +851,14 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                         </span>
                         {q.monthlyInstallment && (
                           <span className="text-xs font-mono font-semibold text-[#141414] block mt-1">
-                            {formatPrice(q.monthlyInstallment)} ر.س/شهر
+                            <SaudiRiyalPrice amount={formatPrice(q.monthlyInstallment)} suffix="/شهر" />
                           </span>
                         )}
                       </div>
                     </td>
 
                     <td className="py-4 px-4 font-mono font-semibold text-[#141414] text-sm">
-                      {formatPrice(q.totalWithVat)} ر.س
+                      <SaudiRiyalPrice amount={formatPrice(q.totalWithVat)} />
                     </td>
 
                     <td className="py-4 px-4 text-center">
@@ -1001,7 +1002,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                   className="w-full"
                 >
                   {vehicles.map(v => (
-                    <option key={v.id} value={v.nameAr}>{v.nameAr} ({formatPrice(v.priceStartingFrom)} ر.س)</option>
+                    <option key={v.id} value={v.nameAr}>{v.nameAr} ({formatSaudiRiyalText(formatPrice(v.priceStartingFrom))})</option>
                   ))}
                 </select>
               </div>
@@ -1027,7 +1028,7 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="font-semibold text-[#141414] block mb-1">التكلفة (ر.س):</label>
+                    <label className="font-semibold text-[#141414] block mb-1">التكلفة (<SaudiRiyalSymbol />):</label>
                     <input
                       type="number"
                       value={leadForm.cost}
@@ -1128,20 +1129,20 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
             <div className="p-4 rounded-[16px] border border-[#e0e0e0] space-y-2">
               <div className="flex justify-between">
                 <span className="text-[#707070]">السعر الأساسي قبل الضريبة:</span>
-                <span className="font-mono font-semibold">{formatPrice(previewQuotation.vehiclePrice)} ر.س</span>
+                <span className="font-mono font-semibold"><SaudiRiyalPrice amount={formatPrice(previewQuotation.vehiclePrice)} /></span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#707070]">ضريبة القيمة المضافة (15%):</span>
-                <span className="font-mono font-semibold">{formatPrice(previewQuotation.vatAmount)} ر.س</span>
+                <span className="font-mono font-semibold"><SaudiRiyalPrice amount={formatPrice(previewQuotation.vatAmount)} /></span>
               </div>
               <div className="flex justify-between pt-2 border-t border-[#f0f0f0] text-sm">
                 <strong className="text-[#141414]">الإجمالي الشامل للضريبة:</strong>
-                <strong className="font-mono font-semibold text-[#141414]">{formatPrice(previewQuotation.totalWithVat)} ر.س</strong>
+                <strong className="font-mono font-semibold text-[#141414]"><SaudiRiyalPrice amount={formatPrice(previewQuotation.totalWithVat)} /></strong>
               </div>
               {previewQuotation.monthlyInstallment && (
                 <div className="flex justify-between pt-1 text-[#141414] font-semibold">
                   <span>القسط الشهري التقديري:</span>
-                  <span className="font-mono">{formatPrice(previewQuotation.monthlyInstallment)} ر.س / شهرياً</span>
+                  <span className="font-mono"><SaudiRiyalPrice amount={formatPrice(previewQuotation.monthlyInstallment)} suffix="/ شهرياً" /></span>
                 </div>
               )}
             </div>
@@ -1161,13 +1162,13 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                         ['المركبة والفئة', `${previewQuotation.vehicleName} (${previewQuotation.gradeName})`],
                         ['نظام الدفع', previewQuotation.financeType === 'lease' ? `تمويل تأجيري (${previewQuotation.bankName || 'مصرف الراجحي'})` : 'شراء نقدي مباشر']
                       ],
-                      ['البيان والمواصفات', 'السعر قبل الضريبة (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي الشامل (ر.س)', 'القسط الشهري (ر.س)'],
+                      ['البيان والمواصفات', 'السعر قبل الضريبة (\u200E\u20C1)', 'ضريبة 15% (\u200E\u20C1)', 'الإجمالي الشامل (\u200E\u20C1)', 'القسط الشهري (\u200E\u20C1)'],
                       [[
                         `${previewQuotation.vehicleName} — ${previewQuotation.gradeName}`,
-                        formatPrice(previewQuotation.vehiclePrice),
-                        formatPrice(previewQuotation.vatAmount),
-                        formatPrice(previewQuotation.totalWithVat),
-                        previewQuotation.monthlyInstallment ? formatPrice(previewQuotation.monthlyInstallment) : '-'
+                        formatSaudiRiyalText(formatPrice(previewQuotation.vehiclePrice)),
+                        formatSaudiRiyalText(formatPrice(previewQuotation.vatAmount)),
+                        formatSaudiRiyalText(formatPrice(previewQuotation.totalWithVat)),
+                        previewQuotation.monthlyInstallment ? formatSaudiRiyalText(formatPrice(previewQuotation.monthlyInstallment)) : '-'
                       ]],
                       fmt
                     )
@@ -1188,13 +1189,13 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
                       ['المركبة والفئة', `${previewQuotation.vehicleName} (${previewQuotation.gradeName})`],
                       ['نظام الدفع', previewQuotation.financeType === 'lease' ? `تمويل تأجيري (${previewQuotation.bankName || 'مصرف الراجحي'})` : 'شراء نقدي مباشر']
                     ],
-                    ['البيان والمواصفات', 'السعر قبل الضريبة (ر.س)', 'ضريبة 15% (ر.س)', 'الإجمالي الشامل (ر.س)', 'القسط الشهري (ر.س)'],
+                    ['البيان والمواصفات', 'السعر قبل الضريبة (\u200E\u20C1)', 'ضريبة 15% (\u200E\u20C1)', 'الإجمالي الشامل (\u200E\u20C1)', 'القسط الشهري (\u200E\u20C1)'],
                     [[
                       `${previewQuotation.vehicleName} — ${previewQuotation.gradeName}`,
-                      formatPrice(previewQuotation.vehiclePrice),
-                      formatPrice(previewQuotation.vatAmount),
-                      formatPrice(previewQuotation.totalWithVat),
-                      previewQuotation.monthlyInstallment ? formatPrice(previewQuotation.monthlyInstallment) : '-'
+                      formatSaudiRiyalText(formatPrice(previewQuotation.vehiclePrice)),
+                      formatSaudiRiyalText(formatPrice(previewQuotation.vatAmount)),
+                      formatSaudiRiyalText(formatPrice(previewQuotation.totalWithVat)),
+                      previewQuotation.monthlyInstallment ? formatSaudiRiyalText(formatPrice(previewQuotation.monthlyInstallment)) : '-'
                     ]],
                     'pdf_print'
                   )

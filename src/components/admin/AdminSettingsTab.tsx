@@ -18,6 +18,7 @@ import {
 import { useAdminData, BankPartnerConfig } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { AUTOMOTIVE_DICTIONARY, ERP_ZATCA_DICTIONARY } from '../../utils/autoTranslation';
+import { SaudiRiyalPrice } from '../SaudiRiyalSymbol';
 
 export const AdminSettingsTab: React.FC = () => {
   const {
@@ -43,7 +44,7 @@ export const AdminSettingsTab: React.FC = () => {
   } = useLanguage();
 
   const [activeSubSection, setActiveSubSection] = useState<'financing' | 'identity' | 'translation' | 'backup'>('financing');
-  const [testPhraseInput, setTestPhraseInput] = useState('إجمالي المقبوضات 268,295 ر.س');
+  const [testPhraseInput, setTestPhraseInput] = useState('إجمالي المقبوضات \u200E\u20C1 268,295');
   const [newGlossAr, setNewGlossAr] = useState('');
   const [newGlossEn, setNewGlossEn] = useState('');
   const [newGlossCat, setNewGlossCat] = useState<'automotive' | 'erp' | 'accounting' | 'ui'>('ui');
@@ -362,24 +363,24 @@ export const AdminSettingsTab: React.FC = () => {
                     <span className="text-[11px] text-[#707070] block">طراز المحاكاة القياسي</span>
                     <h4 className="mobbin-heading text-sm text-[#141414]">{sampleVehicle?.nameAr || 'سولينا كامري 2026'}</h4>
                   </div>
-                  <span className="font-mono font-semibold text-sm text-[#141414]">{formatPrice(samplePrice)} ر.س</span>
+                  <span className="font-mono font-semibold text-sm text-[#141414]"><SaudiRiyalPrice amount={formatPrice(samplePrice)} /></span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
                     <span className="text-[#707070] block text-[11px]">الدفعة الأولى ({minDownPaymentPercent}%)</span>
-                    <strong className="font-mono text-[#141414] text-sm">{formatPrice(downPaymentSAR)} ر.س</strong>
+                    <strong className="font-mono text-[#141414] text-sm"><SaudiRiyalPrice amount={formatPrice(downPaymentSAR)} /></strong>
                   </div>
                   <div className="p-3 rounded-[16px] bg-[#f3f3f3]">
                     <span className="text-[#707070] block text-[11px]">الدفعة الأخيرة ({defaultBalloonPercent}%)</span>
-                    <strong className="font-mono text-[#141414] text-sm">{formatPrice(balloonSAR)} ر.س</strong>
+                    <strong className="font-mono text-[#141414] text-sm"><SaudiRiyalPrice amount={formatPrice(balloonSAR)} /></strong>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-[16px] bg-[#141414] text-[#ffffff] mobbin-ink-pill flex items-center justify-between">
                   <div>
                     <span className="text-[11px] opacity-80 block">القسط الشهري التقديري (60 شهراً)</span>
-                    <strong className="text-xl font-mono font-semibold">{formatPrice(estimatedMonthly)} ر.س / شهرياً</strong>
+                    <strong className="text-xl font-mono font-semibold"><SaudiRiyalPrice amount={formatPrice(estimatedMonthly)} suffix="/ شهرياً" /></strong>
                   </div>
                   <span className="mobbin-badge-popular px-2.5 py-1">APR {defaultAprPercent}%</span>
                 </div>
@@ -447,6 +448,36 @@ export const AdminSettingsTab: React.FC = () => {
           <div className="text-xs">
             <label className="font-semibold text-[#141414] block mb-1.5">شريط الإعلانات التنفيذي للموقع العام (Storefront Announcement)</label>
             <input type="text" value={announcementAr} onChange={(e) => setAnnouncementAr(e.target.value)} className="w-full" />
+          </div>
+
+          {/* Ministry of Commerce E-Commerce System Compliance Card (نظام التجارة الإلكترونية - mc.gov.sa/ar/ECC) */}
+          <div className="p-5 rounded-[20px] bg-[#f8f9fa] border border-[#e0e0e0] space-y-3 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#141414]" />
+                <h4 className="font-bold text-[#141414]">
+                  امتثال نظام التجارة الإلكترونية ولائحته التنفيذية — وزارة التجارة (20/20 بنداً)
+                </h4>
+              </div>
+              <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">ممتثل 100% • mc.gov.sa/ar/ECC</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px]">
+              <div className="p-3 bg-white rounded-xl border border-[#e0e0e0]">
+                <span className="text-[#707070] block">رقم الترخيص والجهة المانحة (بند 18)</span>
+                <strong className="font-mono text-[#141414]">4401982736 • ينتهي 2029/12/31</strong>
+                <span className="text-[10px] text-[#707070] block">وزارة التجارة والهيئة العامة للنقل</span>
+              </div>
+              <div className="p-3 bg-white rounded-xl border border-[#e0e0e0]">
+                <span className="text-[#707070] block">قيد المتجر بالسجل التجاري (بند 16 و19)</span>
+                <strong className="font-mono text-[#141414]">https://solina.sa • CR {crNumber}</strong>
+                <span className="text-[10px] text-[#707070] block">موثق بالمركز السعودي للأعمال</span>
+              </div>
+              <div className="p-3 bg-white rounded-xl border border-[#e0e0e0]">
+                <span className="text-[#707070] block">حقوق المستهلك والأمن السيبراني (بند 4–15 و20)</span>
+                <strong className="text-[#141414]">فسخ العقد 7 أيام • إلغاء التأخير 15 يوماً</strong>
+                <span className="text-[10px] text-[#707070] block">إتاحة إلغاء الحساب ووقف الإعلانات الفوري</span>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end">

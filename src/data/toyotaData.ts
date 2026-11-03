@@ -3876,8 +3876,8 @@ export const OFFERS: Offer[] = [
   },
   {
     id: 'trade-in-bonus',
-    title: 'برنامج استبدال سيارتك القديمة بمكافأة 5,000 ر.س',
-    titleEn: 'Trade-In Program: Bonus SAR 5,000 on Any Car',
+    title: 'برنامج استبدال سيارتك القديمة بمكافأة \u200E\u20C1 5,000',
+    titleEn: 'Trade-In Program: Bonus \u200E\u20C1 5,000 on Any Car',
     subtitle: 'استبدل سيارتك الحالية من أي نوع أو موديل واحصل على تقييم فوري ومكافأة نقدية إضافية',
     subtitleEn: 'Trade in your existing vehicle regardless of make and receive top market valuation + cash bonus',
     category: 'سيارات',
@@ -3887,17 +3887,17 @@ export const OFFERS: Offer[] = [
     validUntilEn: 'April 30, 2026',
     badge: 'مكافأة استبدال فورية',
     badgeEn: 'Instant Trade-In Bonus',
-    description: 'نشتري سيارتك الحالية بأعلى سعر في السوق وندفع لك مكافأة قدرها 5,000 ر.س تضاف كدفعة أولى لسيارتك الجديدة.',
-    descriptionEn: 'We evaluate and purchase your current vehicle at best market rates plus a bonus SAR 5,000 toward your new Solina.',
+    description: 'نشتري سيارتك الحالية بأعلى سعر في السوق وندفع لك مكافأة قدرها \u200E\u20C1 5,000 تضاف كدفعة أولى لسيارتك الجديدة.',
+    descriptionEn: 'We evaluate and purchase your current vehicle at best market rates plus a bonus \u200E\u20C1 5,000 toward your new Solina.',
     features: [
       'فحص وتقييم مجاني فوري في المعرض',
-      'مكافأة إضافية 5,000 ر.س فوق قيمة التقييم',
+      'مكافأة إضافية \u200E\u20C1 5,000 فوق قيمة التقييم',
       'إنهاء إجراءات نقل الملكية والإسقاط مجاناً',
       'إمكانية تحويل القيمة كدفعة أولى للتمويل'
     ],
     featuresEn: [
       'Instant Complimentary Vehicle Appraisal',
-      'SAR 5,000 Cash Bonus on top of valuation',
+      '\u200E\u20C1 5,000 Cash Bonus on top of valuation',
       'Free ownership transfer and admin paperwork',
       'Use trade-in value as down payment directly'
     ],

@@ -29,6 +29,7 @@ import { Footer } from './Footer';
 import { NavigationControls } from './NavigationControls';
 import { SectionDivider } from './SectionDivider';
 import { VehicleCatalogModal } from './VehicleCatalogModal';
+import { SaudiRiyalPrice } from './SaudiRiyalSymbol';
 
 interface VehicleModelPageProps {
   vehicle: Vehicle;
@@ -299,8 +300,7 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                 <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 font-mono">
                   <div className="bg-gray-50 p-4 rounded-xl text-center">
                     <span className="text-[10px] text-gray-500 font-arabic block mb-1">السعر يبدأ من</span>
-                    <span className="text-lg font-black text-[#141414]">{formatPrice(vehicle.priceStartingFrom)}</span>
-                    <span className="text-xs font-bold text-[#141414] mr-1">﷼</span>
+                    <SaudiRiyalPrice amount={vehicle.priceStartingFrom} className="text-lg font-black text-[#141414]" />
                   </div>
 
                   <div className="bg-gray-50 p-4 rounded-xl text-center">
@@ -465,11 +465,8 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     {/* Price with SAR Symbol */}
                     <div className="mb-4">
                       <span className="text-[11px] text-gray-500 block mb-1">السعر</span>
-                      <div className="flex items-center justify-center gap-1">
-                        <span className="text-2xl md:text-3xl font-black font-mono text-[#141414]">
-                          {formatPrice(grade.price)}
-                        </span>
-                        <span className="text-xs font-bold text-[#141414]">﷼</span>
+                      <div className="flex items-center justify-center">
+                        <SaudiRiyalPrice amount={grade.price} className="text-2xl md:text-3xl font-black font-mono text-[#141414]" />
                       </div>
                       <span className="text-[10px] text-gray-400 mt-1 block">
                         شاملة مصاريف الشحن وضريبة القيمة المضافة 15%
@@ -799,10 +796,9 @@ export const VehicleModelPage: React.FC<VehicleModelPageProps> = ({
                     <h3 className="font-bold text-base text-gray-900 mb-1 group-hover:text-[#141414] transition-colors">
                       {sim.nameAr}
                     </h3>
-                    <div className="text-xs text-gray-600 mb-3">
-                      <span>تبدأ من </span>
-                      <span className="font-bold text-[#141414] font-mono">{formatPrice(sim.priceStartingFrom)}</span>
-                      <span className="text-[10px] font-bold text-[#141414]"> ﷼</span>
+                    <div className="text-xs text-gray-600 mb-3 flex items-center justify-center gap-1">
+                      <span>تبدأ من</span>
+                      <SaudiRiyalPrice amount={sim.priceStartingFrom} className="font-bold text-[#141414] font-mono" />
                     </div>
                     <div className="h-28 flex items-center justify-center">
                       <img

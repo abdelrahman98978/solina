@@ -3,6 +3,7 @@ import { X, Printer, Download, CheckCircle2, Shield, Calendar, Phone, MapPin, Fi
 import type { Vehicle, VehicleGrade } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import { SaudiRiyalPrice, SaudiRiyalSymbol } from './SaudiRiyalSymbol';
 
 interface QuotationModalProps {
   isOpen: boolean;
@@ -124,7 +125,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                   {language === 'ar' ? 'الموزع المعتمد لسيارات سولينا في المملكة العربية السعودية' : 'Authorized Distributor of Solina in Saudi Arabia'}
                 </p>
                 <p className="text-[10px] text-gray-500 font-mono">
-                  {language === 'ar' ? 'سجل تجاري: 4030794548 | الرقم الضريبي: 300159478400003' : 'CR: 4030794548 | VAT: 300159478400003'}
+                  {language === 'ar' ? 'سجل تجاري: 4030794548 | الرقم الضريبي: 310984729100003 | ترخيص: 4401982736 (ينتهي 2029/12/31)' : 'CR: 4030794548 | VATIN: 310984729100003 | License: 4401982736 (Exp. 31/12/2029)'}
                 </p>
               </div>
             </div>
@@ -194,32 +195,53 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 <tr className="bg-gray-100 text-gray-700 border-b border-gray-200">
                   <th className="p-2.5 text-start">{language === 'ar' ? 'البند والتفاصيل' : 'Item Description'}</th>
                   <th className="p-2.5 text-center">{language === 'ar' ? 'النسبة' : 'Rate'}</th>
-                  <th className="p-2.5 text-end">{language === 'ar' ? 'المبلغ (ريال سعودي)' : 'Amount (SAR)'}</th>
+                  <th className="p-2.5 text-end">{language === 'ar' ? 'المبلغ' : 'Amount'} (<SaudiRiyalSymbol className="inline-block mx-0.5" />)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 <tr>
                   <td className="p-2.5 text-gray-700">{language === 'ar' ? 'سعر السيارة الأساسي (قبل ضريبة القيمة المضافة)' : 'Vehicle Base Price (Excl. VAT)'}</td>
                   <td className="p-2.5 text-center font-mono">-</td>
-                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(priceExcludingVat)} {language === 'ar' ? '﷼' : 'SAR'}</td>
+                  <td className="p-2.5 text-end font-mono font-semibold"><SaudiRiyalPrice amount={priceExcludingVat} /></td>
                 </tr>
                 <tr>
                   <td className="p-2.5 text-gray-700">{language === 'ar' ? 'ضريبة القيمة المضافة (VAT)' : 'Value Added Tax (VAT)'}</td>
                   <td className="p-2.5 text-center font-mono text-[#141414] font-bold">15%</td>
-                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(vatAmount)} {language === 'ar' ? '﷼' : 'SAR'}</td>
+                  <td className="p-2.5 text-end font-mono font-semibold"><SaudiRiyalPrice amount={vatAmount} /></td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 text-gray-700">{language === 'ar' ? 'رسوم اللوحات والاستمارة وإصدار رخصة السير' : 'Registration & License Plate Fees'}</td>
+                  <td className="p-2.5 text-gray-700">{language === 'ar' ? 'الأجور الإضافية (رسوم اللوحات والاستمارة وإصدار رخصة السير)' : 'Additional Fees (Registration & License Plate Fees)'}</td>
                   <td className="p-2.5 text-center font-mono">-</td>
-                  <td className="p-2.5 text-end font-mono font-semibold">{formatPrice(registrationFees)} {language === 'ar' ? '﷼' : 'SAR'}</td>
+                  <td className="p-2.5 text-end font-mono font-semibold"><SaudiRiyalPrice amount={registrationFees} /></td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 text-gray-700">{language === 'ar' ? 'أجور الشحن والنقل والتوصيل للمنزل أو الفرع' : 'Shipping, Transport & Delivery Fees'}</td>
+                  <td className="p-2.5 text-center font-mono text-gray-500">{language === 'ar' ? 'مجاني' : 'Free'}</td>
+                  <td className="p-2.5 text-end font-mono font-semibold"><SaudiRiyalPrice amount={0} /></td>
                 </tr>
                 <tr className="bg-red-50/50 font-bold text-gray-900">
-                  <td className="p-3 text-xs">{language === 'ar' ? 'إجمالي السعر النقدي الشامل على الطريق:' : 'Total On-Road Cash Price:'}</td>
+                  <td className="p-3 text-xs">{language === 'ar' ? 'إجمالي سعر الطلب النقدي الشامل على الطريق:' : 'Total On-Road Order Price:'}</td>
                   <td className="p-3 text-center font-mono">-</td>
-                  <td className="p-3 text-end font-mono text-sm text-[#141414]">{formatPrice(totalPriceOnRoad)} {language === 'ar' ? '﷼' : 'SAR'}</td>
+                  <td className="p-3 text-end font-mono text-sm text-[#141414]"><SaudiRiyalPrice amount={totalPriceOnRoad} /></td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          {/* E-Commerce Law Delivery, Carrier Tracking & Return Rights Box (Points 4, 5, 8, 14, 15 of MC Checklist) */}
+          <div className="bg-gray-50 p-3.5 rounded-2xl border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px]">
+            <div>
+              <span className="text-gray-500 block">{language === 'ar' ? 'الوقت الأقصى وموعد التوصيل:' : 'Max Delivery Time:'}</span>
+              <strong className="text-gray-900">{language === 'ar' ? 'خلال 3 إلى 5 أيام عمل كحد أقصى' : 'Within 3–5 Business Days Max'}</strong>
+            </div>
+            <div>
+              <span className="text-gray-500 block">{language === 'ar' ? 'اسم الناقل ورقم تتبع المسار:' : 'Carrier & Tracking No:'}</span>
+              <strong className="text-gray-900 font-mono">سولينا اللوجستية • SLN-TRK-2026-8841</strong>
+            </div>
+            <div>
+              <span className="text-gray-500 block">{language === 'ar' ? 'حق الاستبدال والاسترجاع والإلغاء:' : 'Return & Delay Cancellation:'}</span>
+              <strong className="text-gray-900">{language === 'ar' ? '7 أيام للاسترجاع • إلغاء فوري بعد 15 يوم تأخير' : '7-Day Return • 15-Day Delay Cancel'}</strong>
+            </div>
           </div>
 
           {/* Financing Plan if available */}
@@ -229,7 +251,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
               <div className="grid grid-cols-3 gap-3 text-[11px]">
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'الدفعة الأولى:' : 'Down Payment:'}</span>
-                  <span className="font-bold text-gray-900 font-mono">{formatPrice(financingDetails.downPaymentAmount)} ﷼ ({financingDetails.downPaymentPercent}%)</span>
+                  <span className="font-bold text-gray-900 font-mono"><SaudiRiyalPrice amount={financingDetails.downPaymentAmount} suffix={`(${financingDetails.downPaymentPercent}%)`} /></span>
                 </div>
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'مدة التمويل:' : 'Tenure:'}</span>
@@ -237,7 +259,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 </div>
                 <div>
                   <span className="text-gray-500 block">{language === 'ar' ? 'القسط الشهري التقديري:' : 'Est. Monthly Payment:'}</span>
-                  <span className="font-bold text-[#141414] font-mono text-sm">{formatPrice(financingDetails.monthlyInstallment)} ﷼/ش</span>
+                  <SaudiRiyalPrice amount={financingDetails.monthlyInstallment} suffix={language === 'ar' ? '/ش' : '/mo'} className="font-bold text-[#141414] font-mono text-sm" />
                 </div>
               </div>
             </div>

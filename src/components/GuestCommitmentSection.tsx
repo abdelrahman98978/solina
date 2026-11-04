@@ -8,7 +8,7 @@ export const GuestCommitmentSection: React.FC = () => {
     <section id="guest-commitment" className="relative w-full min-h-[540px] flex items-center overflow-hidden bg-black font-arabic">
       {/* Background Car Image (Official Solina 2026 Banner) */}
       <img
-        src="/solina-quality-banner.png"
+        src="/solina-quality-banner.png" width={1600} height={900}
         alt="التزامنا نحو ضيوفنا - شركة سولينا للسيارات"
         className="absolute inset-0 w-full h-full object-cover object-center"
         loading="lazy"

@@ -4,6 +4,7 @@ import { VEHICLES } from '../data/toyotaData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
 import { SaudiRiyalPrice, formatSaudiRiyalText } from './SaudiRiyalSymbol';
+import { calculateMurabahaFinance } from '../utils/erpCore';
 
 interface FinanceCalculatorProps {
   onOpenTestDrive: (modelName?: string) => void;
@@ -49,16 +50,18 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
     }
   };
 
-  // Financial Calculations
-  const downPaymentAmount = Math.round((price * downPaymentPercent) / 100);
-  const balloonPaymentAmount = Math.round((price * balloonPaymentPercent) / 100);
-  const financedPrincipal = price - downPaymentAmount;
-
-  const termYears = termMonths / 12;
-  const totalProfit = Math.round(financedPrincipal * (annualProfitRate / 100) * termYears);
-  const totalPayable = financedPrincipal + totalProfit;
-  const totalMonthlyRepayable = totalPayable - balloonPaymentAmount;
-  const monthlyInstallment = Math.max(100, Math.round(totalMonthlyRepayable / termMonths));
+  // Financial Calculations (SAMA-compliant Murabaha + Effective APR disclosure — #61, #62)
+  const murabaha = calculateMurabahaFinance({
+    vehiclePriceInclVat: price,
+    downPaymentPercent,
+    balloonPercent: balloonPaymentPercent,
+    annualProfitRatePercent: annualProfitRate,
+    adminFeePercent: settings.adminFeePercent || 1,
+    tenureMonths: termMonths
+  });
+  const downPaymentAmount = murabaha.downPaymentAmount;
+  const balloonPaymentAmount = murabaha.balloonPaymentAmount;
+  const monthlyInstallment = murabaha.monthlyInstallment;
 
   const financeDetailsObj = {
     downPaymentAmount,
@@ -66,7 +69,10 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
     termMonths,
     monthlyInstallment,
     balloonPaymentAmount,
-    annualProfitRate
+    annualProfitRate,
+    effectiveAprPercent: murabaha.approximateAprPercent,
+    adminFeeSAR: murabaha.adminFeeAmount,
+    totalCostSAR: murabaha.totalCustomerPayable
   };
 
   return (
@@ -275,9 +281,22 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
                   <SaudiRiyalPrice amount={balloonPaymentAmount} className="font-bold text-white font-mono" />
                 </div>
                 <div className="flex justify-between pb-2 border-b border-white/10">
-                  <span>{language === 'ar' ? 'معدل النسبة السنوي (APR):' : 'Annual Profit Rate (APR):'}</span>
-                  <span className="font-bold text-red-500 font-mono">{annualProfitRate}%</span>
+                  <span>{language === 'ar' ? 'هامش المرابحة السنوي الثابت:' : 'Flat Annual Margin:'}</span>
+                  <span className="font-bold text-white font-mono">{annualProfitRate}%</span>
                 </div>
+                <div className="flex justify-between pb-2 border-b border-white/10">
+                  <span>{language === 'ar' ? 'معدل النسبة السنوي الفعلي (APR):' : 'Effective APR:'}</span>
+                  <span className="font-bold text-red-400 font-mono">{murabaha.approximateAprPercent}%</span>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-white/10">
+                  <span>{language === 'ar' ? 'الرسوم الإدارية (بسقف ساما 5,000 ر.س):' : 'Admin Fee (SAMA Capped):'}</span>
+                  <SaudiRiyalPrice amount={murabaha.adminFeeAmount} className="font-bold text-white font-mono" />
+                </div>
+                <p className="text-[10px] text-gray-400 leading-relaxed pt-1">
+                  {language === 'ar'
+                    ? 'إفصاح البنك المركزي السعودي (SAMA): الأرقام تقديرية، ويخضع العرض النهائي للتقييم الائتماني (سمة) ورسوم التأمين الشامل.'
+                    : 'SAMA Disclosure: Figures are indicative and subject to SIMAH credit check and comprehensive insurance rate.'}
+                </p>
               </div>
             </div>
 

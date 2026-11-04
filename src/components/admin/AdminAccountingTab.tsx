@@ -21,6 +21,7 @@ import {
   ExportFormatType
 } from '../../context/AdminDataContext';
 import { SaudiRiyalPrice, SaudiRiyalSymbol, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
+import { DEFAULT_VAT_RATE_PERCENT, splitVatInclusive } from '../../utils/erpCore';
 
 type AccountingSubTab = 'vouchers' | 'custodies' | 'ledger' | 'vat_return';
 
@@ -124,8 +125,10 @@ export const AdminAccountingTab: React.FC = () => {
     e.preventDefault();
     if (!voucherForm.partyName.trim() || !voucherForm.description.trim()) return;
     const total = Number(voucherForm.totalAmount) || 0;
-    const base = voucherForm.vatIncluded ? Number((total / 1.15).toFixed(2)) : total;
-    const vat = voucherForm.vatIncluded ? Number((total - base).toFixed(2)) : 0;
+    // Halala-accurate split: base + vat always equals total.
+    const split = splitVatInclusive(total, settings.vatRatePercent ?? DEFAULT_VAT_RATE_PERCENT);
+    const base = voucherForm.vatIncluded ? split.base : total;
+    const vat = voucherForm.vatIncluded ? split.vat : 0;
 
     addVoucher({
       type: voucherForm.type,

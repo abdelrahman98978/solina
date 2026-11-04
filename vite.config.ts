@@ -23,6 +23,9 @@ export default defineConfig({
           if (normId.includes('/src/data/toyotaData')) {
             return 'fleet-data';
           }
+          if (normId.includes('/src/components/admin/')) {
+            return 'admin-erp';
+          }
         },
       },
     },

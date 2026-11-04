@@ -12,6 +12,37 @@ import {
   Showroom
 } from '../data/toyotaData';
 import { formatSaudiRiyalText } from '../components/SaudiRiyalSymbol';
+import {
+  DEFAULT_VAT_RATE_PERCENT,
+  ZATCA_GENESIS_PIH,
+  ZatcaTaxCategory,
+  applyDiscountBeforeVat,
+  buildZatcaQrBase64,
+  buildZatcaUblXml,
+  computeAuditChainHash,
+  computeInvoiceHashBase64,
+  defaultQuotationValidUntil,
+  effectiveVatRate,
+  formatKsaDate,
+  formatKsaDateTime,
+  generateId,
+  generateUuid,
+  isDateInLockedPeriod,
+  isIsoDateExpired,
+  isValidSaudiVatNumber,
+  isValidVin,
+  isValidVinStatusTransition,
+  isoTimestampUtc,
+  nextDocumentNumber,
+  nextZatcaIcv,
+  normalizeSaudiPhone,
+  normalizeVin,
+  safeSetItem,
+  sanitizeText,
+  splitVatInclusive,
+  toHalalas,
+  validateWorkshopSlot
+} from '../utils/erpCore';
 
 export type AdminRoleType = 'gm' | 'sales' | 'workshop' | 'finance';
 
@@ -84,6 +115,10 @@ export interface DealershipSettings {
   defaultBalloonPercent: number;
   adminFeePercent: number;
   expressServiceMinutes: number;
+  /** VAT rate in percent (defaults to 15 when missing from older saved settings). */
+  vatRatePercent?: number;
+  /** Accounting period lock date (YYYY-MM-DD): blocks issuing/modifying financial records on or before this date. */
+  lockedThroughDate?: string;
   announcementAr: string;
   announcementEn: string;
   bankPartners: BankPartnerConfig[];
@@ -105,6 +140,10 @@ export interface TestDriveLead {
   createdAt: string;
   notes?: string;
   assignedAdvisor?: string;
+  sourceChannel?: string;
+  slaDueAt?: string;
+  pdplConsentAt?: string;
+  marketingConsent?: boolean;
 }
 
 export interface ServiceAppointmentLead {
@@ -125,6 +164,8 @@ export interface ServiceAppointmentLead {
   createdAt: string;
   assignedTechnician?: string;
   jobCardId?: string;
+  pdplConsentAt?: string;
+  marketingConsent?: boolean;
 }
 
 export interface QuotationRecord {
@@ -146,6 +187,9 @@ export interface QuotationRecord {
   monthlyInstallment?: number;
   bankName?: string;
   createdAt: string;
+  /** Quotation expiry date (YYYY-MM-DD in KSA time). */
+  validUntil?: string;
+  reservedVin?: string;
   status: 'draft' | 'sent' | 'approved' | 'deal_closed';
   invoiceId?: string;
 }
@@ -161,8 +205,12 @@ export interface VehicleStockItem {
   location: string;
   status: 'in_stock' | 'reserved' | 'in_transit' | 'sold';
   price: number;
+  costPrice?: number;
   daysInInventory: number;
   arrivalDate: string;
+  reservedForQuotationId?: string;
+  reservedUntil?: string;
+  lastTransferRef?: string;
 }
 
 export interface JobCard {
@@ -174,12 +222,16 @@ export interface JobCard {
   plateNumber: string;
   vinNumber: string;
   mileage: number;
+  nextServiceMileage?: number;
   serviceType: string;
   technicianName: string;
   bayNumber: string;
   status: 'received' | 'in_progress' | 'quality_check' | 'ready' | 'delivered';
   timeRemainingMinutes: number;
   partsUsed: string[];
+  partsDeducted?: boolean;
+  billingType?: 'customer_paid' | 'manufacturer_warranty' | 'service_package';
+  customerApprovedExtraCost?: boolean;
   totalCost: number;
   createdAt?: string;
   sourceAppointmentId?: string;
@@ -198,10 +250,18 @@ export interface InvoiceItem {
   baseAmount: number;
   vatAmount: number;
   totalAmount: number;
+  discountAmount?: number;
+  taxCategory?: ZatcaTaxCategory;
   date: string;
   type: 'tax_invoice' | 'simplified_invoice' | 'credit_note';
   status: 'reported' | 'cleared' | 'draft' | 'refunded';
   zatcaQrBase64: string;
+  /** ZATCA Phase 2 Invoice Counter Value (1, 2, 3, …). */
+  icv?: number;
+  /** ZATCA Phase 2 Previous Invoice Hash (Base64 SHA-256). */
+  previousInvoiceHash?: string;
+  /** ZATCA Phase 2 SHA-256 hash of this invoice (Base64). */
+  invoiceHash?: string;
   sourceQuotationId?: string;
   sourceJobCardId?: string;
   referenceInvoiceNumber?: string;
@@ -232,6 +292,8 @@ export interface AccountingVoucher {
   description: string;
   accountCode: string;
   accountName: string;
+  debitAccountCode?: string;
+  creditAccountCode?: string;
   costCenter: string;
   paymentMethod: 'bank_transfer' | 'mada_pos' | 'cash' | 'cheque' | 'custody_deduction';
   baseAmount: number;
@@ -239,6 +301,7 @@ export interface AccountingVoucher {
   totalAmount: number;
   referenceNumber?: string;
   status: 'posted' | 'draft' | 'cancelled';
+  deletedAt?: string;
 }
 
 export interface AccountLedgerItem {
@@ -264,6 +327,8 @@ export interface AuditLogEntry {
   actorEn?: string;
   canUndo?: boolean;
   reverted?: boolean;
+  prevHash?: string;
+  chainHash?: string;
 }
 
 export type ExportCSVType = 
@@ -487,13 +552,12 @@ interface AdminDataContextType {
 
 const AdminDataContext = createContext<AdminDataContextType | undefined>(undefined);
 
-function generateZatcaBase64(sellerName: string, vatNo: string, timestamp: string, total: number, vat: number): string {
-  try {
-    const raw = `1:${sellerName}|2:${vatNo}|3:${timestamp}|4:${total.toFixed(2)}|5:${vat.toFixed(2)}`;
-    return btoa(unescape(encodeURIComponent(raw)));
-  } catch {
-    return 'AQ9zb2xpbmEtbW90b3JzAg8zMTA5ODQ3MjkxMDAwMDMDEDIwMjYtMDgtMjZUMTU6MDA6MDA=';
-  }
+/**
+ * Builds the ZATCA QR payload as binary TLV → Base64 (tags 1–5).
+ * Intentionally throws on invalid input: an invoice must never be issued with a placeholder QR.
+ */
+function generateZatcaBase64(sellerName: string, vatNo: string, timestampIso: string, total: number, vat: number): string {
+  return buildZatcaQrBase64({ sellerName, vatNumber: vatNo, timestamp: timestampIso, total, vat });
 }
 
 export const INITIAL_SETTINGS: DealershipSettings = {
@@ -511,6 +575,8 @@ export const INITIAL_SETTINGS: DealershipSettings = {
   defaultBalloonPercent: 25,
   adminFeePercent: 1.0,
   expressServiceMinutes: 45,
+  vatRatePercent: 15,
+  lockedThroughDate: '2026-07-31',
   announcementAr: 'عروض سولينا للسيارات 2026: 0% دفعة أولى وصيانة مجانية حتى 50,000 كم على طرازات الهايبرد المختارة.',
   announcementEn: 'Solina Motors 2026 Offers: 0% Down Payment & Free 50,000 KM Service on Select Hybrid Models.',
   bankPartners: [
@@ -916,6 +982,50 @@ const INITIAL_JOB_CARDS: JobCard[] = [
   }
 ];
 
+/** Seed-data QR built with the real TLV encoder (the previous hard-coded payloads had invalid TLV lengths). */
+function seedInvoiceQr(ksaDateTime: string, total: number, vat: number): string {
+  const issuedAt = new Date(ksaDateTime.replace(' ', 'T') + '+03:00');
+  return buildZatcaQrBase64({
+    sellerName: INITIAL_SETTINGS.companyNameAr,
+    vatNumber: INITIAL_SETTINGS.vatNumber,
+    timestamp: isoTimestampUtc(issuedAt),
+    total,
+    vat
+  });
+}
+
+/** Builds the initial ZATCA Phase 2 PIH hash chain for seed invoices (inv-003 → inv-002 → inv-001). */
+const SEED_HASH_3 = computeInvoiceHashBase64({
+  icv: 1,
+  invoiceNumber: 'SOL-INV-2026-00893',
+  uuid: 'e71c8a45-3f63-4b92-92e8-9c5f820193c3',
+  issueDateTimeKsa: '2026-08-25 18:30:10',
+  sellerVatNumber: INITIAL_SETTINGS.vatNumber,
+  totalAmount: 178480,
+  vatAmount: 23280,
+  previousInvoiceHash: ZATCA_GENESIS_PIH
+});
+const SEED_HASH_2 = computeInvoiceHashBase64({
+  icv: 2,
+  invoiceNumber: 'SOL-INV-2026-00892',
+  uuid: 'd82b9f34-1e52-4a81-80c7-7a3f619082b2',
+  issueDateTimeKsa: '2026-08-26 12:45:00',
+  sellerVatNumber: INITIAL_SETTINGS.vatNumber,
+  totalAmount: 105450,
+  vatAmount: 13754.35,
+  previousInvoiceHash: SEED_HASH_3
+});
+const SEED_HASH_1 = computeInvoiceHashBase64({
+  icv: 3,
+  invoiceNumber: 'SOL-INV-2026-00891',
+  uuid: 'c39a8e12-7f41-4c92-91d8-8b4e728091a1',
+  issueDateTimeKsa: '2026-08-26 14:22:15',
+  sellerVatNumber: INITIAL_SETTINGS.vatNumber,
+  totalAmount: 268295,
+  vatAmount: 34995,
+  previousInvoiceHash: SEED_HASH_2
+});
+
 const INITIAL_INVOICES: InvoiceItem[] = [
   {
     id: 'inv-001',
@@ -929,10 +1039,14 @@ const INITIAL_INVOICES: InvoiceItem[] = [
     baseAmount: 233300,
     vatAmount: 34995,
     totalAmount: 268295,
+    taxCategory: 'S',
     date: '2026-08-26 14:22:15',
     type: 'tax_invoice',
     status: 'cleared',
-    zatcaQrBase64: 'AQ9zb2xpbmEtbW90b3JzAg8zMTA5ODQ3MjkxMDAwMDMDEDIwMjYtMDgtMjZUMTQ6MjI6MTUFBjI2ODI5NQYFMzQ5OTU='
+    icv: 3,
+    previousInvoiceHash: SEED_HASH_2,
+    invoiceHash: SEED_HASH_1,
+    zatcaQrBase64: seedInvoiceQr('2026-08-26 14:22:15', 268295, 34995)
   },
   {
     id: 'inv-002',
@@ -945,10 +1059,14 @@ const INITIAL_INVOICES: InvoiceItem[] = [
     baseAmount: 91695.65,
     vatAmount: 13754.35,
     totalAmount: 105450,
+    taxCategory: 'S',
     date: '2026-08-26 12:45:00',
     type: 'simplified_invoice',
     status: 'reported',
-    zatcaQrBase64: 'AQ9zb2xpbmEtbW90b3JzAg8zMTA5ODQ3MjkxMDAwMDMDEDIwMjYtMDgtMjZUMTI6NDU6MDAFBjEwNTQ1MAYFMTM3NTQ='
+    icv: 2,
+    previousInvoiceHash: SEED_HASH_3,
+    invoiceHash: SEED_HASH_2,
+    zatcaQrBase64: seedInvoiceQr('2026-08-26 12:45:00', 105450, 13754.35)
   },
   {
     id: 'inv-003',
@@ -961,10 +1079,14 @@ const INITIAL_INVOICES: InvoiceItem[] = [
     baseAmount: 155200,
     vatAmount: 23280,
     totalAmount: 178480,
+    taxCategory: 'S',
     date: '2026-08-25 18:30:10',
     type: 'simplified_invoice',
     status: 'reported',
-    zatcaQrBase64: 'AQ9zb2xpbmEtbW90b3JzAg8zMTA5ODQ3MjkxMDAwMDMDEDIwMjYtMDgtMjVUMTg6MzA6MTABFjE3ODQ4MAYFMjMyODA='
+    icv: 1,
+    previousInvoiceHash: ZATCA_GENESIS_PIH,
+    invoiceHash: SEED_HASH_3,
+    zatcaQrBase64: seedInvoiceQr('2026-08-25 18:30:10', 178480, 23280)
   }
 ];
 
@@ -1161,7 +1283,59 @@ const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
   }
 ];
 
+const STORAGE_SCHEMA_VERSION_KEY = 'solina_schema_version';
+const CURRENT_STORAGE_SCHEMA_VERSION = '2';
+
+/**
+ * Upgrades saved localStorage records from older schema versions (e.g. fixing legacy
+ * broken TLV QRs, backfilling ZATCA ICV/PIH hashes, and setting quotation expiry dates).
+ */
+function runStorageMigrationsOnce(): void {
+  try {
+    if (localStorage.getItem(STORAGE_SCHEMA_VERSION_KEY) === CURRENT_STORAGE_SCHEMA_VERSION) return;
+    const rawInvs = localStorage.getItem('solina_admin_zatca_invoices');
+    if (rawInvs) {
+      const parsed: InvoiceItem[] = JSON.parse(rawInvs);
+      if (Array.isArray(parsed)) {
+        let pih = ZATCA_GENESIS_PIH;
+        const chronological = [...parsed].reverse();
+        chronological.forEach((inv, idx) => {
+          const icv = inv.icv ?? idx + 1;
+          // Regenerate legacy broken QRs that started with 'AQ9zb2xpbmEtbW90b3Jz'
+          const qr =
+            !inv.zatcaQrBase64 || inv.zatcaQrBase64.startsWith('AQ9zb2xpbmEtbW90b3Jz')
+              ? seedInvoiceQr(inv.date || '2026-08-26 12:00:00', inv.totalAmount, inv.vatAmount)
+              : inv.zatcaQrBase64;
+          const hash =
+            inv.invoiceHash ||
+            computeInvoiceHashBase64({
+              icv,
+              invoiceNumber: inv.invoiceNumber,
+              uuid: inv.uuid,
+              issueDateTimeKsa: inv.date,
+              sellerVatNumber: INITIAL_SETTINGS.vatNumber,
+              totalAmount: inv.totalAmount,
+              vatAmount: inv.vatAmount,
+              previousInvoiceHash: pih
+            });
+          inv.icv = icv;
+          inv.previousInvoiceHash = inv.previousInvoiceHash || pih;
+          inv.invoiceHash = hash;
+          inv.zatcaQrBase64 = qr;
+          inv.taxCategory = inv.taxCategory || 'S';
+          pih = hash;
+        });
+        safeSetItem('solina_admin_zatca_invoices', JSON.stringify(chronological.reverse()));
+      }
+    }
+    safeSetItem(STORAGE_SCHEMA_VERSION_KEY, CURRENT_STORAGE_SCHEMA_VERSION);
+  } catch (e) {
+    console.error('[migration] Storage schema migration failed:', e);
+  }
+}
+
 function loadFromStorage<T>(key: string, legacyKey: string | null, fallback: T): T {
+  runStorageMigrationsOnce();
   try {
     const saved = localStorage.getItem(key) || (legacyKey ? localStorage.getItem(legacyKey) : null);
     if (saved) {
@@ -1220,8 +1394,9 @@ function loadAndMergeVehicles(): Vehicle[] {
 }
 
 export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Default role follows least-privilege ('sales') rather than granting 'gm' by default.
   const [adminRole, setAdminRole] = useState<AdminRoleType>(() =>
-    loadFromStorage('solina_admin_role', null, 'gm')
+    loadFromStorage('solina_admin_role', null, 'sales')
   );
   const [settings, setSettings] = useState<DealershipSettings>(() =>
     loadFromStorage('solina_admin_settings', null, INITIAL_SETTINGS)
@@ -1304,25 +1479,32 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     snapshot?: StateSnapshot
   ) => {
     const roleMeta = ADMIN_ROLES_META[adminRole];
-    const logId = `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const logId = generateId('log');
     if (snapshot) {
       undoSnapshotsRef.current[logId] = snapshot;
     }
-    const entry: AuditLogEntry = {
-      id: logId,
-      timestamp: new Date().toISOString(),
-      module,
-      action,
-      summaryAr,
-      summaryEn,
-      diffAr,
-      diffEn,
-      actorAr: `${roleMeta.staffNameAr} — ${roleMeta.titleAr}`,
-      actorEn: `${roleMeta.staffNameEn} — ${roleMeta.titleEn}`,
-      canUndo: Boolean(snapshot),
-      reverted: false
-    };
-    setAuditLogs(prev => [entry, ...prev.slice(0, 99)]);
+    const timestamp = new Date().toISOString();
+    setAuditLogs(prev => {
+      const prevHash = prev[0]?.chainHash || '0000000000000000000000000000000000000000000000000000000000000000';
+      const chainHash = computeAuditChainHash(prevHash, { id: logId, timestamp, module, action, summaryAr });
+      const entry: AuditLogEntry = {
+        id: logId,
+        timestamp,
+        module,
+        action,
+        summaryAr,
+        summaryEn,
+        diffAr,
+        diffEn,
+        actorAr: `${roleMeta.staffNameAr} — ${roleMeta.titleAr}`,
+        actorEn: `${roleMeta.staffNameEn} — ${roleMeta.titleEn}`,
+        canUndo: Boolean(snapshot),
+        reverted: false,
+        prevHash,
+        chainHash
+      };
+      return [entry, ...prev.slice(0, 99)];
+    });
   };
 
   const undoAuditLog = (logId: string): boolean => {
@@ -1354,71 +1536,71 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem('solina_admin_role', JSON.stringify(adminRole));
+    safeSetItem('solina_admin_role', JSON.stringify(adminRole));
   }, [adminRole]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_settings', JSON.stringify(settings));
+    safeSetItem('solina_admin_settings', JSON.stringify(settings));
   }, [settings]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_part_quantities', JSON.stringify(partQuantities));
+    safeSetItem('solina_admin_part_quantities', JSON.stringify(partQuantities));
   }, [partQuantities]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_vehicles', JSON.stringify(vehicles));
+    safeSetItem('solina_admin_vehicles', JSON.stringify(vehicles));
   }, [vehicles]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_offers', JSON.stringify(offers));
+    safeSetItem('solina_admin_offers', JSON.stringify(offers));
   }, [offers]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_cpo', JSON.stringify(cpoVehicles));
+    safeSetItem('solina_admin_cpo', JSON.stringify(cpoVehicles));
   }, [cpoVehicles]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_parts', JSON.stringify(spareParts));
+    safeSetItem('solina_admin_parts', JSON.stringify(spareParts));
   }, [spareParts]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_showrooms', JSON.stringify(showrooms));
+    safeSetItem('solina_admin_showrooms', JSON.stringify(showrooms));
   }, [showrooms]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_test_drives', JSON.stringify(testDrives));
+    safeSetItem('solina_admin_test_drives', JSON.stringify(testDrives));
   }, [testDrives]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_services', JSON.stringify(serviceAppointments));
+    safeSetItem('solina_admin_services', JSON.stringify(serviceAppointments));
   }, [serviceAppointments]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_quotations', JSON.stringify(quotations));
+    safeSetItem('solina_admin_quotations', JSON.stringify(quotations));
   }, [quotations]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_vin_stock', JSON.stringify(vinStock));
+    safeSetItem('solina_admin_vin_stock', JSON.stringify(vinStock));
   }, [vinStock]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_job_cards', JSON.stringify(jobCards));
+    safeSetItem('solina_admin_job_cards', JSON.stringify(jobCards));
   }, [jobCards]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_zatca_invoices', JSON.stringify(zatcaInvoices));
+    safeSetItem('solina_admin_zatca_invoices', JSON.stringify(zatcaInvoices));
   }, [zatcaInvoices]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_custodies', JSON.stringify(custodies));
+    safeSetItem('solina_admin_custodies', JSON.stringify(custodies));
   }, [custodies]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_vouchers', JSON.stringify(vouchers));
+    safeSetItem('solina_admin_vouchers', JSON.stringify(vouchers));
   }, [vouchers]);
 
   useEffect(() => {
-    localStorage.setItem('solina_admin_audit_logs', JSON.stringify(auditLogs));
+    safeSetItem('solina_admin_audit_logs', JSON.stringify(auditLogs));
   }, [auditLogs]);
 
   // -------------------------------------------------------------
@@ -1546,17 +1728,32 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // 2. VIN Stock Methods
   // -------------------------------------------------------------
   const addVinStock = (item: Omit<VehicleStockItem, 'id'>) => {
+    const cleanVin = normalizeVin(item.vin);
+    if (!isValidVin(cleanVin)) {
+      if (typeof window !== 'undefined') {
+        window.alert('رقم الهيكل (VIN) غير صالح: يجب أن يكون 17 خانة (أحرف إنجليزية وأرقام بدون I و O و Q).');
+      }
+      return;
+    }
+    if (vinStock.some(s => normalizeVin(s.vin) === cleanVin)) {
+      if (typeof window !== 'undefined') {
+        window.alert(`رقم الهيكل (${cleanVin}) مسجل مسبقاً في المخزون — لا يمكن تكرار نفس رقم الشاسيه.`);
+      }
+      return;
+    }
     const snap = captureSnapshot();
     const newItem: VehicleStockItem = {
       ...item,
-      id: `stk-${Date.now()}`
+      vin: cleanVin,
+      costPrice: item.costPrice ?? Math.round(item.price * 0.86),
+      id: generateId('stk')
     };
     setVinStock(prev => [newItem, ...prev]);
     appendLog(
       'vin_inventory',
       'create',
-      `تسجيل شاسيه جديد بالمخزون: ${item.vin}`,
-      `Added VIN to stock: ${item.vin}`,
+      `تسجيل شاسيه جديد بالمخزون: ${cleanVin}`,
+      `Added VIN to stock: ${cleanVin}`,
       `${item.model} (${item.trim}) • ${item.location}`,
       undefined,
       snap
@@ -1564,8 +1761,20 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateVinStock = (id: string, updated: Partial<VehicleStockItem>) => {
-    const snap = captureSnapshot();
     const target = vinStock.find(s => s.id === id);
+    if (updated.vin) {
+      const cleanVin = normalizeVin(updated.vin);
+      if (!isValidVin(cleanVin)) {
+        if (typeof window !== 'undefined') window.alert('رقم الهيكل (VIN) غير صالح.');
+        return;
+      }
+      if (vinStock.some(s => s.id !== id && normalizeVin(s.vin) === cleanVin)) {
+        if (typeof window !== 'undefined') window.alert(`رقم الهيكل (${cleanVin}) مستخدم لمركبة أخرى.`);
+        return;
+      }
+      updated = { ...updated, vin: cleanVin };
+    }
+    const snap = captureSnapshot();
     setVinStock(prev => prev.map(s => s.id === id ? { ...s, ...updated } : s));
     appendLog(
       'vin_inventory',
@@ -1579,8 +1788,18 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateVinStatus = (id: string, status: VehicleStockItem['status']) => {
-    const snap = captureSnapshot();
     const target = vinStock.find(s => s.id === id);
+    if (target && !isValidVinStatusTransition(target.status, status, false)) {
+      if (typeof window !== 'undefined') {
+        window.alert(
+          target.status === 'sold'
+            ? `لا يمكن إعادة المركبة المباعة (${target.vin}) إلى المخزون يدوياً — يجب إصدار إشعار دائن للفاتورة.`
+            : `لا يمكن بيع المركبة (${target.vin}) وهي في مرحلة الشحن قبل استلامها بالمستودع.`
+        );
+      }
+      return;
+    }
+    const snap = captureSnapshot();
     setVinStock(prev => prev.map(s => s.id === id ? { ...s, status } : s));
     appendLog(
       'vin_inventory',
@@ -1598,14 +1817,15 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const target = vinStock.find(s => s.id === id);
     if (!target) return;
     const oldBranch = target.location;
-    setVinStock(prev => prev.map(s => s.id === id ? { ...s, location: targetBranch } : s));
+    const transferRef = nextDocumentNumber('TRF', vinStock.map(s => s.lastTransferRef), 4);
+    setVinStock(prev => prev.map(s => s.id === id ? { ...s, location: targetBranch, lastTransferRef: transferRef } : s));
     appendLog(
       'vin_inventory',
       'update',
-      `نقل لوجستي للشاسيه ${target.vin} بين الفروع`,
-      `Inter-branch transfer for VIN ${target.vin}`,
-      `${oldBranch} ← ${targetBranch}`,
-      `${oldBranch} -> ${targetBranch}`,
+      `نقل لوجستي للشاسيه ${target.vin} بين الفروع (سند نقل ${transferRef})`,
+      `Inter-branch transfer for VIN ${target.vin} (${transferRef})`,
+      `${oldBranch} ← ${targetBranch} • سند: ${transferRef}`,
+      `${oldBranch} -> ${targetBranch} (${transferRef})`,
       snap
     );
   };
@@ -1692,6 +1912,12 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // 5. Spare Parts Methods
   // -------------------------------------------------------------
   const addSparePart = (part: SparePart) => {
+    if (spareParts.some(p => p.partNumber.trim().toUpperCase() === part.partNumber.trim().toUpperCase())) {
+      if (typeof window !== 'undefined') {
+        window.alert(`رقم القطعة (${part.partNumber}) مسجل مسبقاً في كتالوج قطع الغيار.`);
+      }
+      return;
+    }
     const snap = captureSnapshot();
     setSpareParts(prev => [part, ...prev]);
     setPartQuantities(prev => ({ ...prev, [part.id]: 25 }));
@@ -1729,10 +1955,16 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const adjustPartQuantity = (partId: string, delta: number) => {
-    const snap = captureSnapshot();
     const target = spareParts.find(p => p.id === partId);
     const oldQty = partQuantities[partId] ?? 20;
-    const nextQty = Math.max(0, oldQty + delta);
+    if (oldQty + delta < 0) {
+      if (typeof window !== 'undefined') {
+        window.alert(`الكمية المتاحة من (${target?.nameAr || partId}) هي ${oldQty} فقط — لا يمكن أن يصبح المخزون سالباً.`);
+      }
+      return;
+    }
+    const snap = captureSnapshot();
+    const nextQty = oldQty + delta;
     setPartQuantities(prev => ({ ...prev, [partId]: nextQty }));
     appendLog(
       'parts',
@@ -1778,17 +2010,33 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // -------------------------------------------------------------
   // 7. Test Drive Methods & Bulk Operations
   // -------------------------------------------------------------
+  const SALES_ADVISORS_POOL = ['أ. تركي العتيبي', 'أ. فهد الدوسري', 'أ. نورة القحطاني', 'أ. سلطان المالكي'];
+
   const addTestDrive = (lead: Omit<TestDriveLead, 'id' | 'createdAt' | 'status'>) => {
     const snap = captureSnapshot();
-    const randomId = `TD-${Math.floor(10000 + Math.random() * 90000)}`;
+    const randomId = nextDocumentNumber('TD', testDrives.map(td => td.id), 5);
+    const normalizedPhone = normalizeSaudiPhone(lead.phone) || sanitizeText(lead.phone, 20);
+    const autoAdvisor = lead.assignedAdvisor || SALES_ADVISORS_POOL[testDrives.length % SALES_ADVISORS_POOL.length];
+    const now = new Date();
+    const slaDueAt = new Date(now.getTime() + 2 * 3600_000).toISOString();
+    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const utmSource = urlParams?.get('utm_source') || lead.sourceChannel || 'website_direct';
+
     const newEntry: TestDriveLead = {
       ...lead,
+      fullName: sanitizeText(lead.fullName, 120),
+      phone: normalizedPhone,
+      notes: lead.notes ? sanitizeText(lead.notes, 500) : undefined,
+      assignedAdvisor: autoAdvisor,
+      sourceChannel: utmSource,
+      slaDueAt,
+      pdplConsentAt: lead.pdplConsentAt || now.toISOString(),
       id: randomId,
       status: 'new',
-      createdAt: new Date().toISOString()
+      createdAt: now.toISOString()
     };
     setTestDrives(prev => [newEntry, ...prev]);
-    appendLog('leads', 'create', `تسجيل طلب تجربة قيادة جديد: ${lead.fullName}`, `New test drive lead: ${lead.fullName}`, `${lead.modelName} • ${lead.preferredShowroom}`, undefined, snap);
+    appendLog('leads', 'create', `تسجيل طلب تجربة قيادة جديد: ${newEntry.fullName}`, `New test drive lead: ${newEntry.fullName}`, `${lead.modelName} • ${lead.preferredShowroom} • المستشار: ${autoAdvisor}`, undefined, snap);
   };
 
   const updateTestDrive = (id: string, updated: Partial<TestDriveLead>) => {
@@ -1855,16 +2103,39 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // 8. Service Booking Methods & Workshop Conversion
   // -------------------------------------------------------------
   const addServiceAppointment = (appointment: Omit<ServiceAppointmentLead, 'id' | 'createdAt' | 'status'>) => {
+    const slotCheck = validateWorkshopSlot(appointment.preferredDate, appointment.preferredTime);
+    if (!slotCheck.valid) {
+      if (typeof window !== 'undefined') window.alert(slotCheck.reasonAr);
+      return;
+    }
+    const conflictingSlot = serviceAppointments.find(
+      s =>
+        s.status !== 'cancelled' &&
+        s.showroom === appointment.showroom &&
+        s.preferredDate === appointment.preferredDate &&
+        s.preferredTime === appointment.preferredTime
+    );
+    if (conflictingSlot) {
+      if (typeof window !== 'undefined') {
+        window.alert(`الموعد (${appointment.preferredDate} — ${appointment.preferredTime}) محجوز مسبقاً في ${appointment.showroom}. يرجى اختيار وقت آخر.`);
+      }
+      return;
+    }
     const snap = captureSnapshot();
-    const randomId = `SRV-${Math.floor(1000 + Math.random() * 9000)}`;
+    const randomId = nextDocumentNumber('SRV', serviceAppointments.map(s => s.id), 5);
+    const now = new Date();
     const newEntry: ServiceAppointmentLead = {
       ...appointment,
+      fullName: sanitizeText(appointment.fullName, 120),
+      phone: normalizeSaudiPhone(appointment.phone) || sanitizeText(appointment.phone, 20),
+      plateNumber: sanitizeText(appointment.plateNumber, 30),
+      pdplConsentAt: appointment.pdplConsentAt || now.toISOString(),
       id: randomId,
       status: 'pending',
-      createdAt: new Date().toISOString()
+      createdAt: now.toISOString()
     };
     setServiceAppointments(prev => [newEntry, ...prev]);
-    appendLog('leads', 'create', `حجز موعد صيانة جديد: ${appointment.fullName}`, `New service booking: ${appointment.fullName}`, `${appointment.vehicleModel} (${appointment.plateNumber})`, undefined, snap);
+    appendLog('leads', 'create', `حجز موعد صيانة جديد: ${newEntry.fullName}`, `New service booking: ${newEntry.fullName}`, `${appointment.vehicleModel} (${newEntry.plateNumber})`, undefined, snap);
   };
 
   const updateServiceAppointment = (id: string, updated: Partial<ServiceAppointmentLead>) => {
@@ -1892,15 +2163,16 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!srv) return null;
 
     const snap = captureSnapshot();
-    const cardNumber = `JC-2026-0${Math.floor(500 + Math.random() * 499)}`;
+    const cardNumber = nextDocumentNumber('JC', jobCards.map(c => c.cardNumber), 4);
     const newCard: JobCard = {
-      id: `job-${Date.now()}`,
+      id: generateId('job'),
       cardNumber,
       customerName: srv.fullName,
       customerPhone: srv.phone,
       vehicleModel: srv.vehicleModel,
       plateNumber: srv.plateNumber,
-      vinNumber: 'JT3' + Math.random().toString(36).substring(2, 10).toUpperCase(),
+      // VIN must come from the vehicle itself — never invent one. Left empty until captured at reception.
+      vinNumber: '',
       mileage: srv.currentMileage,
       serviceType: srv.serviceType,
       technicianName: technicianName || srv.assignedTechnician || 'م. أحمد الشريف',
@@ -1938,17 +2210,37 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // -------------------------------------------------------------
   const addQuotation = (quotation: Omit<QuotationRecord, 'id' | 'createdAt' | 'quotationNumber'>): string => {
     const snap = captureSnapshot();
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    const quotationNumber = `SOL-QUO-${randomNum}`;
-    const id = `QUO-2026-${randomNum}`;
+    const quotationNumber = nextDocumentNumber('SOL-QUO', quotations.map(q => q.quotationNumber), 5);
+    const id = generateId('quo');
+    const now = new Date();
+    const validUntil = quotation.validUntil || defaultQuotationValidUntil(now, 7);
+
+    // Reserve a matching in-stock VIN temporarily for this quotation (prevents race condition)
+    const candidateStock = vinStock.find(
+      s => s.status === 'in_stock' && (s.model.includes(quotation.vehicleName) || quotation.vehicleName.includes(s.model))
+    );
+    if (candidateStock) {
+      setVinStock(prev =>
+        prev.map(s =>
+          s.id === candidateStock.id
+            ? { ...s, status: 'reserved', reservedForQuotationId: id, reservedUntil: validUntil }
+            : s
+        )
+      );
+    }
+
     const newEntry: QuotationRecord = {
       ...quotation,
+      fullName: sanitizeText(quotation.fullName, 120),
+      phone: normalizeSaudiPhone(quotation.phone) || sanitizeText(quotation.phone, 20),
+      validUntil,
+      reservedVin: candidateStock?.vin || quotation.reservedVin,
       id,
       quotationNumber,
-      createdAt: new Date().toISOString()
+      createdAt: now.toISOString()
     };
     setQuotations(prev => [newEntry, ...prev]);
-    appendLog('leads', 'create', `إصدار عرض سعر جديد (${quotationNumber}) للعميل ${quotation.fullName}`, `Generated quotation (${quotationNumber}) for ${quotation.fullName}`, `${quotation.vehicleName} • ${formatSaudiRiyalText(quotation.totalWithVat.toLocaleString('ar-SA'))}`, undefined, snap);
+    appendLog('leads', 'create', `إصدار عرض سعر جديد (${quotationNumber}) للعميل ${newEntry.fullName}`, `Generated quotation (${quotationNumber}) for ${newEntry.fullName}`, `${quotation.vehicleName} • صالح حتى ${validUntil} • ${formatSaudiRiyalText(quotation.totalWithVat.toLocaleString('ar-SA'))}`, undefined, snap);
     return quotationNumber;
   };
 
@@ -1976,20 +2268,60 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // 10. Workshop Job Cards Methods
   // -------------------------------------------------------------
   const addJobCard = (card: Omit<JobCard, 'id' | 'cardNumber'>): JobCard => {
+    // Prevent double-booking the same active bay
+    const busyInBay = jobCards.find(c => c.status === 'in_progress' && c.bayNumber === card.bayNumber);
+    if (busyInBay) {
+      if (typeof window !== 'undefined') {
+        window.alert(`المسار (${card.bayNumber}) مشغول حالياً بأمر العمل ${busyInBay.cardNumber}. يرجى اختيار مسار آخر أو إنهاء العمل الحالي.`);
+      }
+      return busyInBay;
+    }
+    // Validate odometer reading against previous job cards for the same plate/VIN
+    const previousForVehicle = jobCards.find(
+      c =>
+        (card.vinNumber && c.vinNumber === card.vinNumber) ||
+        (card.plateNumber && c.plateNumber === card.plateNumber)
+    );
+    if (previousForVehicle && card.mileage > 0 && card.mileage < previousForVehicle.mileage) {
+      if (typeof window !== 'undefined') {
+        window.alert(`قراءة العداد المدخلة (${card.mileage} كم) أقل من القراءة المسجلة سابقاً (${previousForVehicle.mileage} كم) لنفس المركبة.`);
+      }
+      return previousForVehicle;
+    }
+
     const snap = captureSnapshot();
-    const cardNumber = `JC-2026-0${Math.floor(500 + Math.random() * 499)}`;
+    const cardNumber = nextDocumentNumber('JC', jobCards.map(c => c.cardNumber), 4);
     const newCard: JobCard = {
       ...card,
-      id: `job-${Date.now()}`,
+      customerName: sanitizeText(card.customerName, 120),
+      customerPhone: normalizeSaudiPhone(card.customerPhone) || sanitizeText(card.customerPhone, 20),
+      nextServiceMileage: (card.mileage || 0) + 10000,
+      billingType: card.billingType || (card.totalCost === 0 ? 'service_package' : 'customer_paid'),
+      id: generateId('job'),
       cardNumber,
       createdAt: new Date().toISOString()
     };
     setJobCards(prev => [newCard, ...prev]);
-    appendLog('workshop', 'create', `فتح أمر عمل صيانة جديد (${cardNumber}) للعميل ${card.customerName}`, `Opened new Job Card (${cardNumber}) for ${card.customerName}`, `${card.vehicleModel} • ${card.bayNumber}`, undefined, snap);
+    appendLog('workshop', 'create', `فتح أمر عمل صيانة جديد (${cardNumber}) للعميل ${newCard.customerName}`, `Opened new Job Card (${cardNumber}) for ${newCard.customerName}`, `${card.vehicleModel} • ${card.bayNumber}`, undefined, snap);
     return newCard;
   };
 
   const updateJobCard = (id: string, updated: Partial<JobCard>) => {
+    const target = jobCards.find(c => c.id === id);
+    if (
+      target &&
+      updated.totalCost !== undefined &&
+      updated.totalCost > target.totalCost &&
+      !updated.customerApprovedExtraCost &&
+      !target.customerApprovedExtraCost
+    ) {
+      const approved =
+        typeof window !== 'undefined'
+          ? window.confirm(`تم رفع تكلفة أمر العمل (${target.cardNumber}) من ${target.totalCost} إلى ${updated.totalCost} ريال. هل تم أخذ موافقة العميل المسبقة على التكلفة الإضافية؟`)
+          : true;
+      if (!approved) return;
+      updated = { ...updated, customerApprovedExtraCost: true };
+    }
     const snap = captureSnapshot();
     setJobCards(prev => prev.map(c => c.id === id ? { ...c, ...updated } : c));
     appendLog('workshop', 'update', `تحديث بيانات أمر العمل (${id})`, `Updated Job Card (${id})`, undefined, undefined, snap);
@@ -1998,10 +2330,33 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const updateJobCardStatus = (id: string, status: JobCard['status']) => {
     const snap = captureSnapshot();
     const target = jobCards.find(c => c.id === id);
+
+    // Automatically deduct used spare parts from inventory once when job reaches 'ready' or 'delivered'
+    const shouldDeductParts = target && !target.partsDeducted && (status === 'ready' || status === 'delivered');
+    if (shouldDeductParts && target.partsUsed.length > 0) {
+      setPartQuantities(prev => {
+        const next = { ...prev };
+        for (const usedLabel of target.partsUsed) {
+          const matchedPart = spareParts.find(
+            p => usedLabel.includes(p.nameAr) || p.nameAr.includes(usedLabel) || usedLabel.includes(p.partNumber)
+          );
+          if (matchedPart) {
+            next[matchedPart.id] = Math.max(0, (next[matchedPart.id] ?? 20) - 1);
+          }
+        }
+        return next;
+      });
+    }
+
     setJobCards(prev => prev.map(c => {
       if (c.id === id) {
         const nextTime = status === 'ready' || status === 'delivered' ? 0 : status === 'quality_check' ? 5 : c.timeRemainingMinutes;
-        return { ...c, status, timeRemainingMinutes: nextTime };
+        return {
+          ...c,
+          status,
+          timeRemainingMinutes: nextTime,
+          partsDeducted: c.partsDeducted || Boolean(shouldDeductParts)
+        };
       }
       return c;
     }));
@@ -2028,32 +2383,89 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   ): InvoiceItem => {
     const snap = captureSnapshot();
+    const taxCategory: ZatcaTaxCategory = inv.taxCategory ?? 'S';
+    const vatRate = effectiveVatRate(taxCategory, settings.vatRatePercent ?? DEFAULT_VAT_RATE_PERCENT);
     const total = Number(inv.totalAmount);
-    const base = inv.baseAmount !== undefined ? inv.baseAmount : Number((total / 1.15).toFixed(2));
-    const vat = inv.vatAmount !== undefined ? inv.vatAmount : Number((total - base).toFixed(2));
-    const dateStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
-    const prefix = inv.type === 'credit_note' ? 'SOL-CN-2026-00' : 'SOL-INV-2026-00';
-    const invoiceNumber = `${prefix}${Math.floor(100 + Math.random() * 899)}`;
-    const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `f91a2b3c-${Math.floor(1000 + Math.random() * 9000)}-4f7a-8b9c-0d1e2f3a4b5c`;
+    if (!Number.isFinite(total) || total === 0) {
+      throw new Error('مبلغ الفاتورة غير صالح — لا يمكن إصدار فاتورة بمبلغ صفري أو غير رقمي.');
+    }
+    if (inv.type === 'tax_invoice' && !isValidSaudiVatNumber(inv.vatNumber)) {
+      throw new Error('الرقم الضريبي للعميل غير صالح — الفاتورة الضريبية (B2B) تتطلب رقماً من 15 خانة يبدأ وينتهي بـ 3.');
+    }
 
-    const newInv: InvoiceItem = {
-      id: `inv-${Date.now()}`,
+    // Prevent selling a VIN that is already sold in inventory (race condition / double sale protection)
+    if (inv.type !== 'credit_note' && inv.vinNumber) {
+      const cleanVin = normalizeVin(inv.vinNumber);
+      const stockMatch = vinStock.find(s => normalizeVin(s.vin) === cleanVin);
+      if (stockMatch && stockMatch.status === 'sold') {
+        throw new Error(`المركبة ذات رقم الهيكل (${cleanVin}) مباعة مسبقاً — لا يمكن إصدار فاتورة بيع ثانية لنفس الشاسيه.`);
+      }
+    }
+
+    const issuedAt = new Date();
+    const dateStr = formatKsaDateTime(issuedAt); // Saudi local time (Asia/Riyadh)
+    if (isDateInLockedPeriod(dateStr, settings.lockedThroughDate)) {
+      throw new Error(`الفترة المحاسبية مقفلة حتى تاريخ ${settings.lockedThroughDate} — لا يمكن إصدار مستندات مالية في فترة مقفلة.`);
+    }
+
+    // Base/VAT are computed in integer halalas so base + vat === total exactly.
+    // If a pre-VAT discount is supplied, apply it before computing VAT.
+    const providedReconciles =
+      inv.baseAmount !== undefined &&
+      inv.vatAmount !== undefined &&
+      toHalalas(inv.baseAmount) + toHalalas(inv.vatAmount) === toHalalas(total);
+    const split =
+      inv.discountAmount && inv.discountAmount > 0 && inv.baseAmount !== undefined
+        ? applyDiscountBeforeVat(inv.baseAmount + inv.discountAmount, inv.discountAmount, vatRate)
+        : providedReconciles
+        ? { base: inv.baseAmount as number, vat: inv.vatAmount as number, total }
+        : splitVatInclusive(total, vatRate);
+    const base = split.base;
+    const vat = split.vat;
+    const finalTotal = split.total ?? total;
+
+    const invoiceNumber = nextDocumentNumber(
+      inv.type === 'credit_note' ? 'SOL-CN' : 'SOL-INV',
+      zatcaInvoices.map(i => i.invoiceNumber),
+      5
+    );
+    const uuid = generateUuid();
+    const icv = nextZatcaIcv(zatcaInvoices.map(i => i.icv));
+    const previousInvoiceHash = zatcaInvoices[0]?.invoiceHash || ZATCA_GENESIS_PIH;
+    const sellerName = settings.companyNameAr?.trim() || settings.companyNameEn;
+    const zatcaQrBase64 = generateZatcaBase64(sellerName, settings.vatNumber, isoTimestampUtc(issuedAt), finalTotal, vat);
+    const invoiceHash = computeInvoiceHashBase64({
+      icv,
       invoiceNumber,
       uuid,
-      customerName: inv.customerName,
-      customerPhone: inv.customerPhone,
+      issueDateTimeKsa: dateStr,
+      sellerVatNumber: settings.vatNumber,
+      totalAmount: finalTotal,
+      vatAmount: vat,
+      previousInvoiceHash
+    });
+
+    const newInv: InvoiceItem = {
+      id: generateId('inv'),
+      invoiceNumber,
+      uuid,
+      customerName: sanitizeText(inv.customerName, 120),
+      customerPhone: normalizeSaudiPhone(inv.customerPhone) || sanitizeText(inv.customerPhone, 20),
       vatNumber: inv.vatNumber,
       vehicleModel: inv.vehicleModel,
-      vinNumber: inv.vinNumber,
+      vinNumber: inv.vinNumber ? normalizeVin(inv.vinNumber) : '',
       baseAmount: base,
       vatAmount: vat,
-      totalAmount: total,
+      totalAmount: finalTotal,
+      discountAmount: inv.discountAmount,
+      taxCategory,
       date: dateStr,
       type: inv.type,
-      status: inv.status || 'cleared',
-      zatcaQrBase64: generateZatcaBase64(settings.companyNameEn, settings.vatNumber, dateStr, total, vat),
+      status: inv.status || (inv.type === 'tax_invoice' ? 'cleared' : 'reported'),
+      zatcaQrBase64,
+      icv,
+      previousInvoiceHash,
+      invoiceHash,
       sourceQuotationId: inv.sourceQuotationId,
       sourceJobCardId: inv.sourceJobCardId,
       referenceInvoiceNumber: inv.referenceInvoiceNumber
@@ -2064,8 +2476,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (inv.type !== 'credit_note') {
       setVinStock(prev => prev.map(item => item.vin === inv.vinNumber ? { ...item, status: 'sold' } : item));
       const autoReceipt: AccountingVoucher = {
-        id: `vch-${Date.now()}-inv`,
-        voucherNumber: `RV-2026-${501 + vouchers.length}`,
+        id: generateId('vch'),
+        voucherNumber: nextDocumentNumber('RV', vouchers.map(v => v.voucherNumber), 3),
         type: 'receipt',
         date: dateStr,
         partyName: inv.customerName,
@@ -2083,8 +2495,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setVouchers(prev => [autoReceipt, ...prev]);
     } else {
       const autoRefundVoucher: AccountingVoucher = {
-        id: `vch-${Date.now()}-cn`,
-        voucherNumber: `PV-2026-${301 + vouchers.length}`,
+        id: generateId('vch'),
+        voucherNumber: nextDocumentNumber('PV', vouchers.map(v => v.voucherNumber), 3),
         type: 'payment',
         date: dateStr,
         partyName: inv.customerName,
@@ -2114,12 +2526,25 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return newInv;
   };
 
+  /** Issues an invoice and reports validation errors to the user instead of crashing the UI. */
+  const tryIssueInvoice = (args: Parameters<typeof addZatcaInvoice>[0]): InvoiceItem | null => {
+    try {
+      return addZatcaInvoice(args);
+    } catch (err) {
+      console.error('[ZATCA] Invoice issuance failed', err);
+      if (typeof window !== 'undefined') {
+        window.alert(`تعذّر إصدار الفاتورة: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      return null;
+    }
+  };
+
   const issueCreditNote = (invoiceId: string): InvoiceItem | null => {
     const orig = zatcaInvoices.find(i => i.id === invoiceId);
     if (!orig || orig.type === 'credit_note') return null;
 
     const snap = captureSnapshot();
-    const creditNote = addZatcaInvoice({
+    const creditNote = tryIssueInvoice({
       customerName: orig.customerName,
       customerPhone: orig.customerPhone,
       vatNumber: orig.vatNumber,
@@ -2132,6 +2557,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       status: 'cleared',
       referenceInvoiceNumber: orig.invoiceNumber
     });
+    if (!creditNote) return null;
 
     setZatcaInvoices(prev => prev.map(i => i.id === invoiceId ? { ...i, status: 'refunded' } : i));
     setVinStock(prev => prev.map(item => item.vin === orig.vinNumber ? { ...item, status: 'in_stock' } : item));
@@ -2151,21 +2577,45 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const q = quotations.find(item => item.id === quotationId);
     if (!q) return null;
 
-    const matchingStock = vinStock.find(s => s.status !== 'sold' && (s.model.includes(q.vehicleName) || q.vehicleName.includes(s.model)));
-    const assignedVin = customVin || matchingStock?.vin || ('JT3' + Math.random().toString(36).substring(2, 12).toUpperCase());
+    if (isIsoDateExpired(q.validUntil)) {
+      if (typeof window !== 'undefined') {
+        window.alert(`عرض السعر (${q.quotationNumber}) منتهي الصلاحية منذ ${q.validUntil}. يرجى تجديد عرض السعر قبل إصدار الفاتورة.`);
+      }
+      return null;
+    }
 
-    const createdInvoice = addZatcaInvoice({
+    const matchingStock = vinStock.find(
+      s =>
+        s.status !== 'sold' &&
+        (s.reservedForQuotationId === q.id ||
+          (q.reservedVin && normalizeVin(s.vin) === normalizeVin(q.reservedVin)) ||
+          s.model.includes(q.vehicleName) ||
+          q.vehicleName.includes(s.model))
+    );
+    const candidateVin = customVin ? normalizeVin(customVin) : matchingStock?.vin;
+    // Never invent a VIN: an invoice must reference a real chassis number from stock or user input.
+    if (!candidateVin || !isValidVin(candidateVin)) {
+      if (typeof window !== 'undefined') {
+        window.alert('لا توجد مركبة متاحة في المخزون برقم هيكل (VIN) صالح لهذا العرض. أضف المركبة إلى مخزون VIN أولاً ثم أعد المحاولة.');
+      }
+      return null;
+    }
+    const assignedVin = candidateVin;
+    const vatSplit = splitVatInclusive(q.totalWithVat, settings.vatRatePercent ?? DEFAULT_VAT_RATE_PERCENT);
+
+    const createdInvoice = tryIssueInvoice({
       customerName: q.fullName,
       customerPhone: q.phone,
       vehicleModel: `${q.vehicleName} — ${q.gradeName}`,
       vinNumber: assignedVin,
-      baseAmount: Number((q.totalWithVat / 1.15).toFixed(2)),
-      vatAmount: Number((q.totalWithVat - q.totalWithVat / 1.15).toFixed(2)),
+      baseAmount: vatSplit.base,
+      vatAmount: vatSplit.vat,
       totalAmount: q.totalWithVat,
       type: 'simplified_invoice',
       status: 'cleared',
       sourceQuotationId: q.id
     });
+    if (!createdInvoice) return null;
 
     setQuotations(prev => prev.map(item => item.id === quotationId ? {
       ...item,
@@ -2180,8 +2630,12 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const card = jobCards.find(c => c.id === jobCardId);
     if (!card) return null;
 
-    const total = card.totalCost > 0 ? card.totalCost : 345;
-    const createdInvoice = addZatcaInvoice({
+    if (!(card.totalCost > 0)) {
+      if (typeof window !== 'undefined') window.alert(`لا يمكن إصدار فاتورة لأمر العمل ${card.cardNumber} بدون تكلفة فعلية. أدخل تكلفة الخدمة والقطع أولاً.`);
+      return null;
+    }
+    const total = card.totalCost;
+    const createdInvoice = tryIssueInvoice({
       customerName: card.customerName,
       customerPhone: card.customerPhone,
       vehicleModel: `خدمات صيانة وقطع غيار: ${card.vehicleModel} (${card.serviceType})`,
@@ -2191,6 +2645,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       status: 'reported',
       sourceJobCardId: card.id
     });
+    if (!createdInvoice) return null;
 
     updateJobCardStatus(jobCardId, 'delivered');
     setJobCards(prev => prev.map(c => c.id === jobCardId ? { ...c, status: 'delivered', invoiceId: createdInvoice.invoiceNumber } : c));
@@ -2204,8 +2659,15 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const deleteZatcaInvoice = (id: string) => {
-    const snap = captureSnapshot();
     const target = zatcaInvoices.find(inv => inv.id === id);
+    // Issued invoices are legal documents: they can only be reversed by a credit note, never deleted.
+    if (target && target.status !== 'draft') {
+      if (typeof window !== 'undefined') {
+        window.alert(`لا يمكن حذف الفاتورة ${target.invoiceNumber} بعد إصدارها. استخدم "إشعار دائن" لعكسها نظامياً.`);
+      }
+      return;
+    }
+    const snap = captureSnapshot();
     setZatcaInvoices(prev => prev.filter(inv => inv.id !== id));
     appendLog('zatca', 'delete', `حذف مسودة الفاتورة: ${target?.invoiceNumber || id}`, `Deleted invoice record: ${target?.invoiceNumber || id}`, undefined, undefined, snap);
   };
@@ -2217,12 +2679,11 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     custody: Omit<CustodyRecord, 'id' | 'custodyNumber' | 'remainingBalance' | 'lastSettlementDate'>
   ): CustodyRecord => {
     const snap = captureSnapshot();
-    const nextNum = 801 + custodies.length;
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatKsaDate();
     const newCustody: CustodyRecord = {
       ...custody,
-      id: `cus-${Date.now()}`,
-      custodyNumber: `CUS-2026-${nextNum}`,
+      id: generateId('cus'),
+      custodyNumber: nextDocumentNumber('CUS', custodies.map(c => c.custodyNumber), 3),
       remainingBalance: Math.max(0, custody.allocatedAmount - (custody.spentAmount || 0)),
       lastSettlementDate: today
     };
@@ -2230,10 +2691,10 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // Also create a payment voucher for issuing the custody
     const vch: AccountingVoucher = {
-      id: `vch-${Date.now()}-cus`,
-      voucherNumber: `PV-2026-${301 + vouchers.length}`,
+      id: generateId('vch'),
+      voucherNumber: nextDocumentNumber('PV', vouchers.map(v => v.voucherNumber), 3),
       type: 'payment',
-      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      date: formatKsaDateTime(),
       partyName: custody.employeeName,
       description: `صرف عهدة مالية جديدة (${newCustody.custodyNumber}) — ${custody.notes || custody.branchName}`,
       accountCode: '1104',
@@ -2269,7 +2730,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const target = custodies.find(c => c.id === custodyId);
     if (!target || expenseAmount <= 0) return;
     const snap = captureSnapshot();
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatKsaDate();
 
     setCustodies(prev =>
       prev.map(c => {
@@ -2286,14 +2747,15 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       })
     );
 
-    const baseAmt = vatIncluded ? Number((expenseAmount / 1.15).toFixed(2)) : expenseAmount;
-    const vatAmt = vatIncluded ? Number((expenseAmount - baseAmt).toFixed(2)) : 0;
+    const expenseSplit = splitVatInclusive(expenseAmount, settings.vatRatePercent ?? DEFAULT_VAT_RATE_PERCENT);
+    const baseAmt = vatIncluded ? expenseSplit.base : expenseAmount;
+    const vatAmt = vatIncluded ? expenseSplit.vat : 0;
 
     const expenseVoucher: AccountingVoucher = {
-      id: `vch-${Date.now()}`,
-      voucherNumber: `PV-2026-${301 + vouchers.length}`,
+      id: generateId('vch'),
+      voucherNumber: nextDocumentNumber('PV', vouchers.map(v => v.voucherNumber), 3),
       type: 'payment',
-      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      date: formatKsaDateTime(),
       partyName: target.employeeName,
       description: `تسوية مصروف من عهدة ${target.custodyNumber}: ${description}`,
       accountCode: '5203',
@@ -2323,7 +2785,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const target = custodies.find(c => c.id === custodyId);
     if (!target || amountToAdd <= 0) return;
     const snap = captureSnapshot();
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatKsaDate();
 
     setCustodies(prev =>
       prev.map(c =>
@@ -2340,10 +2802,10 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     );
 
     const replenishVoucher: AccountingVoucher = {
-      id: `vch-${Date.now()}-rep`,
-      voucherNumber: `PV-2026-${301 + vouchers.length}`,
+      id: generateId('vch'),
+      voucherNumber: nextDocumentNumber('PV', vouchers.map(v => v.voucherNumber), 3),
       type: 'payment',
-      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      date: formatKsaDateTime(),
       partyName: target.employeeName,
       description: `تغذية وزيادة سقف العهدة المالية ${target.custodyNumber} — ${target.branchName}`,
       accountCode: '1104',
@@ -2373,7 +2835,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const target = custodies.find(c => c.id === custodyId);
     if (!target) return;
     const snap = captureSnapshot();
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatKsaDate();
 
     setCustodies(prev =>
       prev.map(c =>
@@ -2418,16 +2880,22 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const addVoucher = (
     voucher: Omit<AccountingVoucher, 'id' | 'voucherNumber' | 'date'>
   ): AccountingVoucher => {
+    const nowStr = formatKsaDateTime();
+    if (isDateInLockedPeriod(nowStr, settings.lockedThroughDate)) {
+      if (typeof window !== 'undefined') {
+        window.alert(`الفترة المحاسبية مقفلة حتى ${settings.lockedThroughDate} — لا يمكن ترحيل سندات في فترة مقفلة.`);
+      }
+      throw new Error(`الفترة المحاسبية مقفلة حتى ${settings.lockedThroughDate}`);
+    }
     const snap = captureSnapshot();
     const prefix = voucher.type === 'receipt' ? 'RV' : voucher.type === 'payment' ? 'PV' : 'JV';
-    const baseNum = voucher.type === 'receipt' ? 501 : voucher.type === 'payment' ? 301 : 101;
-    const nextNum = baseNum + vouchers.length;
-    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
     const newVoucher: AccountingVoucher = {
       ...voucher,
-      id: `vch-${Date.now()}`,
-      voucherNumber: `${prefix}-2026-${nextNum}`,
+      debitAccountCode: voucher.debitAccountCode || (voucher.type === 'receipt' ? '1101' : voucher.accountCode),
+      creditAccountCode: voucher.creditAccountCode || (voucher.type === 'receipt' ? voucher.accountCode : '1101'),
+      id: generateId('vch'),
+      voucherNumber: nextDocumentNumber(prefix, vouchers.map(v => v.voucherNumber), 3),
       date: nowStr
     };
 
@@ -2460,13 +2928,30 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const deleteVoucher = (id: string) => {
     const target = vouchers.find(v => v.id === id);
+    if (!target) return;
     const snap = captureSnapshot();
+    // Posted accounting vouchers are never hard-deleted (soft-cancelled instead to preserve audit trail).
+    if (target.status === 'posted') {
+      setVouchers(prev =>
+        prev.map(v => (v.id === id ? { ...v, status: 'cancelled', deletedAt: formatKsaDateTime() } : v))
+      );
+      appendLog(
+        'accounting',
+        'status_change',
+        `إلغاء عكسي للسند المرحّل (حذف منطقي): ${target.voucherNumber}`,
+        `Soft-cancelled posted voucher ${target.voucherNumber}`,
+        undefined,
+        undefined,
+        snap
+      );
+      return;
+    }
     setVouchers(prev => prev.filter(v => v.id !== id));
     appendLog(
       'accounting',
       'delete',
-      `حذف السند المحاسبي: ${target?.voucherNumber || id}`,
-      `Deleted accounting voucher ${target?.voucherNumber || id}`,
+      `حذف مسودة السند المحاسبي: ${target.voucherNumber || id}`,
+      `Deleted draft accounting voucher ${target.voucherNumber || id}`,
       undefined,
       undefined,
       snap
@@ -3087,6 +3572,33 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     if (format === 'xml') {
+      const matchedInv = zatcaInvoices.find(i => i.invoiceNumber === docNumber);
+      if (matchedInv) {
+        const ublXml = buildZatcaUblXml({
+          invoiceNumber: matchedInv.invoiceNumber,
+          uuid: matchedInv.uuid,
+          issueDateTimeKsa: matchedInv.date,
+          type: matchedInv.type,
+          sellerNameAr: settings.companyNameAr,
+          sellerVatNumber: settings.vatNumber,
+          sellerCrNumber: settings.crNumber,
+          customerName: matchedInv.customerName,
+          customerVatNumber: matchedInv.vatNumber,
+          description: matchedInv.vehicleModel,
+          vinNumber: matchedInv.vinNumber,
+          baseAmount: matchedInv.baseAmount,
+          vatAmount: matchedInv.vatAmount,
+          totalAmount: matchedInv.totalAmount,
+          vatRatePercent: settings.vatRatePercent ?? DEFAULT_VAT_RATE_PERCENT,
+          taxCategory: matchedInv.taxCategory ?? 'S',
+          icv: matchedInv.icv ?? 1,
+          previousInvoiceHash: matchedInv.previousInvoiceHash ?? ZATCA_GENESIS_PIH,
+          zatcaQrBase64: matchedInv.zatcaQrBase64,
+          referenceInvoiceNumber: matchedInv.referenceInvoiceNumber
+        });
+        triggerBlobDownload(ublXml, 'application/xml;charset=utf-8;', `${baseFilename}_UBL21.xml`);
+        return;
+      }
       const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <SolinaDocument number="${escapeXml(docNumber)}" title="${escapeXml(titleAr)}" vatNumber="${escapeXml(settings.vatNumber)}">
   <Metadata>
@@ -3187,12 +3699,25 @@ ${tableRows.map((r, idx) => `    <Item index="${idx + 1}">\n${tableHeaders.map((
   };
 
   const clearAuditLogs = () => {
-    setAuditLogs([]);
-    undoSnapshotsRef.current = {};
-    localStorage.removeItem('solina_admin_audit_logs');
+    // Audit logs are append-only in financial/ERP systems — never wipe them.
+    if (typeof window !== 'undefined') {
+      window.alert('سجل التدقيق المحاسبي (Audit Log) محمي بسلسلة تجزئة SHA-256 وغير قابل للمسح أو الحذف التزاماً بمتطلبات الرقابة المالية وهيئة الزكاة والضريبة والجمارك.');
+    }
   };
 
   const resetToDefaultData = () => {
+    if (adminRole !== 'gm') {
+      if (typeof window !== 'undefined') {
+        window.alert('إعادة ضبط النظام تتطلب صلاحية «المدير العام التنفيذي» فقط.');
+      }
+      return;
+    }
+    // Automatically export a JSON backup before resetting so data is never lost accidentally.
+    try {
+      exportFullBackupJSON();
+    } catch (e) {
+      console.error('Auto-backup before reset failed:', e);
+    }
     setVehicles(VEHICLES);
     setOffers(OFFERS);
     setCpoVehicles(CERTIFIED_PRE_OWNED);

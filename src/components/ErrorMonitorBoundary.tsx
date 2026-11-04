@@ -37,7 +37,6 @@ export class ErrorMonitorBoundary extends Component<Props, State> {
 
   private handleResetCacheAndReload = () => {
     try {
-      localStorage.clear();
       sessionStorage.clear();
     } catch {
       // ignore storage errors
@@ -57,30 +56,30 @@ export class ErrorMonitorBoundary extends Component<Props, State> {
               </div>
               <div>
                 <span className="text-[11px] font-bold text-[#707070] uppercase tracking-wider block">
-                  SOLINA ERROR MONITOR
+                  SOLINA RECOVERY GUARD
                 </span>
                 <h1 className="text-lg font-bold text-[#141414]">
-                  مراقب الأخطاء الذكي واستعادة الجلسة
+                  عذراً، حدث خطأ غير متوقع في عرض هذه الصفحة
                 </h1>
               </div>
             </div>
 
             <p className="text-xs text-[#707070] leading-relaxed">
-              تم رصد خطأ عارض في حالة الواجهة وتم عزله تلقائياً لحماية بياناتك. يمكنك تحديث الصفحة أو إعادة تهيئة الذاكرة المؤقتة للمتصفح بنقرة واحدة.
+              تم عزل الخطأ تلقائياً مع الحفاظ الكامل على سجلات الفواتير والمخزون والحجوزات المحفوظة. يمكنك إعادة تحميل الواجهة للمتابعة فوراً.
             </p>
 
-            <div className="p-4 rounded-[16px] bg-[#f3f3f3] border border-[#e0e0e0] text-left" dir="ltr">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-bold text-[#707070] uppercase">Diagnostic Trace</span>
+            <details className="p-3.5 rounded-[16px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs">
+              <summary className="cursor-pointer font-semibold text-[#707070] flex items-center justify-between">
+                <span>التفاصيل التقنية للدعم الفني (للمختصين فقط)</span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#141414]">
                   <CheckCircle2 className="w-3 h-3" strokeWidth={1.75} />
-                  Isolated
+                  معزول
                 </span>
-              </div>
-              <code className="text-[11px] font-mono text-[#141414] break-all block">
+              </summary>
+              <code dir="ltr" className="mt-2 pt-2 border-t border-[#e0e0e0] text-[11px] font-mono text-[#141414] break-all block text-left">
                 {this.state.errorMessage}
               </code>
-            </div>
+            </details>
 
             <div className="flex flex-wrap items-center gap-2.5 pt-2">
               <button

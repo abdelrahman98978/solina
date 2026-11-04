@@ -38,7 +38,8 @@ import {
   PanelRightClose,
   PanelRightOpen,
   Maximize2,
-  Wallet
+  Wallet,
+  Lock
 } from 'lucide-react';
 import { 
   useAdminData, 
@@ -49,21 +50,22 @@ import {
 } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { SaudiRiyalPrice, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
+import { sha256Hex } from '../../utils/erpCore';
 import './mobbin-admin.css';
 
 // Tabs
 import { AdminOverviewTab } from './AdminOverviewTab';
-const AdminFleetTab = lazy(() => import('./AdminFleetTab').then(m => ({ default: m.AdminFleetTab })));
-const AdminLeadsTab = lazy(() => import('./AdminLeadsTab').then(m => ({ default: m.AdminLeadsTab })));
-const AdminOffersTab = lazy(() => import('./AdminOffersTab').then(m => ({ default: m.AdminOffersTab })));
-const AdminCPOTab = lazy(() => import('./AdminCPOTab').then(m => ({ default: m.AdminCPOTab })));
-const AdminPartsTab = lazy(() => import('./AdminPartsTab').then(m => ({ default: m.AdminPartsTab })));
-const AdminShowroomsTab = lazy(() => import('./AdminShowroomsTab').then(m => ({ default: m.AdminShowroomsTab })));
-const AdminZatcaInvoicingTab = lazy(() => import('./AdminZatcaInvoicingTab').then(m => ({ default: m.AdminZatcaInvoicingTab })));
-const AdminAccountingTab = lazy(() => import('./AdminAccountingTab').then(m => ({ default: m.AdminAccountingTab })));
-const AdminWorkshopJobCardsTab = lazy(() => import('./AdminWorkshopJobCardsTab').then(m => ({ default: m.AdminWorkshopJobCardsTab })));
-const AdminVINInventoryTab = lazy(() => import('./AdminVINInventoryTab').then(m => ({ default: m.AdminVINInventoryTab })));
-const AdminSettingsTab = lazy(() => import('./AdminSettingsTab').then(m => ({ default: m.AdminSettingsTab })));
+import { AdminFleetTab } from './AdminFleetTab';
+import { AdminLeadsTab } from './AdminLeadsTab';
+import { AdminOffersTab } from './AdminOffersTab';
+import { AdminCPOTab } from './AdminCPOTab';
+import { AdminPartsTab } from './AdminPartsTab';
+import { AdminShowroomsTab } from './AdminShowroomsTab';
+import { AdminZatcaInvoicingTab } from './AdminZatcaInvoicingTab';
+import { AdminAccountingTab } from './AdminAccountingTab';
+import { AdminWorkshopJobCardsTab } from './AdminWorkshopJobCardsTab';
+import { AdminVINInventoryTab } from './AdminVINInventoryTab';
+import { AdminSettingsTab } from './AdminSettingsTab';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -235,6 +237,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
   const [previewSection, setPreviewSection] = useState<'fleet' | 'live_site' | 'live_app' | 'offers' | 'cpo' | 'parts' | 'showrooms' | 'zatca' | 'accounting'>('fleet');
   const [previewSearchQuery, setPreviewSearchQuery] = useState('');
+
+  // Showroom Terminal Session Lock & 15-Minute Inactivity Auto-Lock (#1, #10)
+  const [isSessionLocked, setIsSessionLocked] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const DEMO_PIN_HASH = useMemo(() => sha256Hex('2026'), []);
+
+  useEffect(() => {
+    const INACTIVITY_LIMIT_MS = 15 * 60 * 1000;
+    let timerId: ReturnType<typeof setTimeout> = setTimeout(() => setIsSessionLocked(true), INACTIVITY_LIMIT_MS);
+    const resetTimer = () => {
+      clearTimeout(timerId);
+      timerId = setTimeout(() => setIsSessionLocked(true), INACTIVITY_LIMIT_MS);
+    };
+    const events: Array<keyof WindowEventMap> = ['mousemove', 'keydown', 'click', 'touchstart'];
+    events.forEach(ev => window.addEventListener(ev, resetTimer, { passive: true }));
+    return () => {
+      clearTimeout(timerId);
+      events.forEach(ev => window.removeEventListener(ev, resetTimer));
+    };
+  }, []);
+
+  const handleUnlockSession = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (sha256Hex(pinInput.trim()) === DEMO_PIN_HASH) {
+      setIsSessionLocked(false);
+      setPinInput('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
 
   // Keyboard shortcut Ctrl+K / Cmd+K for Command Palette
   useEffect(() => {
@@ -759,6 +793,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <span className="hidden 2xl:inline">{language === 'ar' ? 'استعادة الافتراضي' : 'Reset'}</span>
             </button>
 
+            {/* Lock Terminal Session Button (#1, #10) */}
+            <button
+              onClick={() => setIsSessionLocked(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-xs font-semibold text-[#141414] border border-[#e0e0e0] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              title={language === 'ar' ? 'قفل الجلسة الإدارية (تلقائي بعد 15 دقيقة خمول)' : 'Lock Terminal Session'}
+            >
+              <Lock className="w-3.5 h-3.5 text-[#707070]" />
+              <span className="hidden xl:inline">{language === 'ar' ? 'قفل الجلسة' : 'Lock'}</span>
+            </button>
+
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
@@ -966,6 +1010,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
         {/* Content Tab Stage — Stretches to 100% of remaining viewport width */}
         <main className="flex-1 min-w-0 w-full">
+          {!allowedTabsForRole.includes(activeTab) ? (
+            <div className="p-8 md:p-12 text-center bg-[#ffffff] rounded-[24px] border border-[#f0f0f0] space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center mx-auto">
+                <Lock className="w-6 h-6" />
+              </div>
+              <h3 className="mobbin-heading text-lg text-[#141414]">
+                {language === 'ar' ? 'هذا القسم مقيّد بصلاحية الدور الوظيفي الحالي.' : 'Access restricted for current role.'}
+              </h3>
+              <p className="text-xs text-[#707070] max-w-md mx-auto">
+                {language === 'ar'
+                  ? `الدور الحالي (${ADMIN_ROLES_META[adminRole].titleAr}) لا يملك صلاحية الوصول إلى هذا القسم. يمكنك العودة إلى لوحة المؤشرات أو التبديل إلى دور مخوّل.`
+                  : 'Your active role does not have permission to view this module.'}
+              </p>
+              <button
+                onClick={() => setActiveTab('overview')}
+                className="mobbin-ink-pill px-5 py-2.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer"
+              >
+                {language === 'ar' ? 'العودة للوحة المؤشرات' : 'Back to Overview'}
+              </button>
+            </div>
+          ) : (
           <Suspense
             fallback={
               <div className="p-12 text-center bg-[#ffffff] rounded-[24px] border border-[#f0f0f0] text-xs font-bold text-[#707070]">
@@ -1025,9 +1090,69 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <AdminSettingsTab />
             )}
           </Suspense>
+          )}
         </main>
 
       </div>
+
+      {/* Session Lock Modal (Auto-locks after 15m inactivity or manual Lock click) */}
+      {isSessionLocked && (
+        <div className="fixed inset-0 z-50 bg-[#141414]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <form
+            onSubmit={handleUnlockSession}
+            className="mobbin-modal-card bg-[#ffffff] rounded-[24px] p-6 md:p-8 max-w-md w-full space-y-5 text-center border border-[#e0e0e0]"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center mx-auto">
+              <Lock className="w-6 h-6" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="mobbin-heading text-lg text-[#141414]">
+                {language === 'ar' ? 'تم قفل جلسة المحطة الإدارية.' : 'Terminal Session Locked.'}
+              </h3>
+              <p className="text-xs text-[#707070]">
+                {language === 'ar'
+                  ? 'لحماية بيانات العملاء والفواتير في صالات العرض، يرجى إدخال رمز الدخول الإداري (الرمز التجريبي: 2026).'
+                  : 'Enter your administrative PIN to unlock the session (Demo PIN: 2026).'}
+              </p>
+            </div>
+            <div>
+              <input
+                type="password"
+                inputMode="numeric"
+                maxLength={8}
+                value={pinInput}
+                onChange={(e) => {
+                  setPinInput(e.target.value);
+                  setPinError(false);
+                }}
+                placeholder="••••"
+                className="w-full text-center font-mono text-lg tracking-widest py-2.5 rounded-xl border border-[#e0e0e0]"
+                autoFocus
+              />
+              {pinError && (
+                <p className="text-xs text-red-600 font-semibold mt-1.5">
+                  {language === 'ar' ? 'رمز الدخول غير صحيح (استخدم 2026).' : 'Invalid PIN (use 2026).'}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="submit"
+                className="flex-1 py-2.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer"
+              >
+                {language === 'ar' ? 'فتح الجلسة' : 'Unlock Session'}
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2.5 rounded-full bg-[#f3f3f3] text-[#141414] text-xs font-semibold cursor-pointer"
+              >
+                {language === 'ar' ? 'الموقع العام' : 'Exit'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* 3. Full-Width Polarity-Inverted Mobbin Footer Block (#141414 with 24px top corners) */}
       <footer className="mobbin-footer-inverse mt-10 px-4 sm:px-6 lg:px-10 py-8 w-full">

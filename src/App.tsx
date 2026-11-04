@@ -19,24 +19,34 @@ import { SolinaAIAssistant } from './components/SolinaAIAssistant';
 
 import { type Vehicle, type VehicleGrade } from './data/toyotaData';
 
-// Lazy-loaded Standalone Pages & Heavy Modules (Code Splitting)
-const VehicleModelPage = lazy(() => import('./components/VehicleModelPage').then(m => ({ default: m.VehicleModelPage })));
-const OffersPage = lazy(() => import('./pages/OffersPage').then(m => ({ default: m.OffersPage })));
-const OwnersPage = lazy(() => import('./pages/OwnersPage').then(m => ({ default: m.OwnersPage })));
-const DiscoverPage = lazy(() => import('./pages/DiscoverPage').then(m => ({ default: m.DiscoverPage })));
-const ShowroomsPage = lazy(() => import('./pages/ShowroomsPage').then(m => ({ default: m.ShowroomsPage })));
-const SolinaAppPage = lazy(() => import('./pages/SolinaAppPage').then(m => ({ default: m.SolinaAppPage })));
-const SolinaAppExperience = lazy(() => import('./components/SolinaAppExperience').then(m => ({ default: m.SolinaAppExperience })));
-const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
-
-// Lazy-loaded Modals
-const TestDriveModal = lazy(() => import('./components/TestDriveModal').then(m => ({ default: m.TestDriveModal })));
-const ServiceBookingModal = lazy(() => import('./components/ServiceBookingModal').then(m => ({ default: m.ServiceBookingModal })));
-const VehicleDetailModal = lazy(() => import('./components/VehicleDetailModal').then(m => ({ default: m.VehicleDetailModal })));
-const ComparisonDrawer = lazy(() => import('./components/ComparisonDrawer').then(m => ({ default: m.ComparisonDrawer })));
-const QuotationModal = lazy(() => import('./components/QuotationModal').then(m => ({ default: m.QuotationModal })));
+import { VehicleModelPage } from './components/VehicleModelPage';
+import { OffersPage } from './pages/OffersPage';
+import { OwnersPage } from './pages/OwnersPage';
+import { DiscoverPage } from './pages/DiscoverPage';
+import { ShowroomsPage } from './pages/ShowroomsPage';
+import { SolinaAppPage } from './pages/SolinaAppPage';
+import { SolinaAppExperience } from './components/SolinaAppExperience';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+import { TestDriveModal } from './components/TestDriveModal';
+import { ServiceBookingModal } from './components/ServiceBookingModal';
+import { VehicleDetailModal } from './components/VehicleDetailModal';
+import { ComparisonDrawer } from './components/ComparisonDrawer';
+import { QuotationModal } from './components/QuotationModal';
 
 type AppRoute = 'home' | 'offers' | 'owners' | 'discover' | 'showrooms' | 'vehicle' | 'app' | 'mobile-app' | 'erp' | 'admin';
+
+function detectInitialRoute(): AppRoute {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  if (path.includes('/erp') || path.includes('/admin') || hash.includes('erp') || hash.includes('admin')) return 'erp';
+  if (path.includes('/offers') || hash.includes('offers')) return 'offers';
+  if (path.includes('/owners') || hash.includes('owners')) return 'owners';
+  if (path.includes('/discover') || hash.includes('discover')) return 'discover';
+  if (path.includes('/showrooms') || path.includes('/locations') || hash.includes('showrooms')) return 'showrooms';
+  if (path.includes('/app') || path.includes('/mobile-app') || hash.includes('app')) return 'app';
+  return 'home';
+}
 
 const PageFallback: React.FC = () => (
   <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
@@ -49,8 +59,8 @@ const MainAppContent: React.FC = () => {
   const { vehicles } = useAdminData();
   const [selectedCategory, setSelectedCategory] = useState<string>('sedan');
   
-  // Active Navigation Route
-  const [currentRoute, setCurrentRoute] = useState<AppRoute>('home');
+  // Active Navigation Route (initialized synchronously from URL so /erp never mounts Home first)
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>(() => detectInitialRoute());
   const [dedicatedVehicle, setDedicatedVehicle] = useState<Vehicle | null>(null);
 
   // Screen type detection (Mobile vs Desktop)

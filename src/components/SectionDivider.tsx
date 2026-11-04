@@ -13,7 +13,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
     <div className={`w-full flex items-center justify-center py-4 md:py-8 overflow-hidden bg-transparent ${className}`}>
       <div className="max-w-[1720px] w-full px-4 sm:px-6 flex items-center justify-center">
         <img
-          src="/section-divider.png"
+          src="/section-divider.png" width={1200} height={80}
           alt="فاصل الأقسام سولينا للسيارات"
           className={`w-full ${maxWidth} h-auto max-h-16 md:max-h-20 object-contain select-none pointer-events-none drop-shadow-sm transition-all duration-300`}
           loading="lazy"

@@ -52,6 +52,8 @@ export const SolinaFleetShowcase: React.FC<SolinaFleetShowcaseProps> = ({
           <img
             src="/solina-showroom-floor.png"
             alt="صالة عرض أسطول سولينا للسيارات 2026"
+            width={1600}
+            height={900}
             className="w-full h-auto object-contain block select-none"
             loading="lazy"
           />

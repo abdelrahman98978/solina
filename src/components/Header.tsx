@@ -323,22 +323,21 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          {/* Official Solina Motors Left Brand Link */}
+          {/* Official Solina ERP Portal Quick Access Pill */}
           <button 
-            onClick={() => onNavigate ? onNavigate('home') : window.location.href = '/'}
-            className="flex items-center gap-2 group cursor-pointer"
-            title="سولينا للسيارات"
+            onClick={() => onNavigate ? onNavigate('erp') : window.location.href = '/erp'}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold transition-colors cursor-pointer"
+            title={language === 'ar' ? 'منصة إدارة الوكالة والنظام المحاسبي ERP' : 'Solina ERP & ZATCA Portal'}
           >
-            <img
-              src="/solina-logo.png"
-              alt="سولينا للسيارات"
-              className="h-10 md:h-11 w-auto object-contain transition-transform group-hover:scale-105"
-            />
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>{language === 'ar' ? 'منصة الإدارة ERP' : 'ERP Portal'}</span>
           </button>
 
           {/* Mobile Menu Button */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={language === 'ar' ? 'القائمة الرئيسية' : 'Main Menu'}
+            title={language === 'ar' ? 'القائمة الرئيسية' : 'Main Menu'}
             className="lg:hidden p-2 text-gray-800 hover:text-black rounded-lg"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}

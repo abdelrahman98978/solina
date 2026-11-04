@@ -20,7 +20,7 @@ export const SolinaQualitySection: React.FC<SolinaQualitySectionProps> = ({
         {/* Main Banner Visual Container */}
         <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80 bg-white group">
           <img
-            src="/solina-quality-banner.png"
+            src="/solina-quality-banner.png" width={1600} height={900}
             alt="جودة تتجاوز التوقعات - سولينا للسيارات"
             className="w-full h-auto object-contain block select-none"
             loading="lazy"

@@ -15,6 +15,17 @@ import {
 import { useLanguage } from '../../context/LanguageContext';
 import { useAdminData, InvoiceItem } from '../../context/AdminDataContext';
 import { SaudiRiyalPrice, formatSaudiRiyalText } from '../SaudiRiyalSymbol';
+import { ZatcaQrCode } from './ZatcaQrCode';
+import {
+  DEFAULT_VAT_RATE_PERCENT,
+  ZATCA_GENESIS_PIH,
+  buildZatcaUblXml,
+  isValidSaudiVatNumber,
+  isValidVin,
+  normalizeVin,
+  parseAmount,
+  splitVatInclusive
+} from '../../utils/erpCore';
 
 export const AdminZatcaInvoicingTab: React.FC = () => {
   const { language } = useLanguage();
@@ -28,8 +39,10 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
     updateVinStock,
     createReceiptFromInvoice,
     exportSingleDocument,
-    exportDataToCSV
+    exportDataToCSV,
+    settings
   } = useAdminData();
+  const vatRate = settings.vatRatePercent ?? DEFAULT_VAT_RATE_PERCENT;
 
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceItem | null>(null);
   const [showNewInvoiceModal, setShowNewInvoiceModal] = useState(false);
@@ -66,23 +79,41 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
 
   const handleCreateInvoice = (e: React.FormEvent) => {
     e.preventDefault();
-    const total = Number(newInvoiceForm.amount);
-    const base = Number((total / 1.15).toFixed(2));
-    const vat = Number((total - base).toFixed(2));
-    const finalVin = newInvoiceForm.vinNumber || ('JT3' + Math.random().toString(36).substring(2, 12).toUpperCase());
+    const total = parseAmount(newInvoiceForm.amount);
+    if (!Number.isFinite(total) || total <= 0) {
+      alert('يرجى إدخال مبلغ صحيح أكبر من صفر.');
+      return;
+    }
+    // Never invent a VIN — the invoice must reference the real chassis number.
+    const finalVin = normalizeVin(newInvoiceForm.vinNumber || '');
+    if (!isValidVin(finalVin)) {
+      alert('رقم الهيكل (VIN) غير صالح: يجب أن يكون 17 خانة (حروف إنجليزية وأرقام بدون I و O و Q). اختر مركبة من المخزون أو أدخل الرقم الصحيح.');
+      return;
+    }
+    if (newInvoiceForm.type === 'tax_invoice' && !isValidSaudiVatNumber(newInvoiceForm.vatNumber)) {
+      alert('الرقم الضريبي للعميل غير صالح: يجب أن يكون 15 رقماً يبدأ بـ 3 وينتهي بـ 3.');
+      return;
+    }
+    const { base, vat } = splitVatInclusive(total, vatRate);
 
-    const created = addZatcaInvoice({
-      customerName: newInvoiceForm.customerName || 'عميل نقدي متميز',
-      customerPhone: newInvoiceForm.customerPhone || '0500000000',
-      vatNumber: newInvoiceForm.type === 'tax_invoice' ? (newInvoiceForm.vatNumber || '310984729100003') : undefined,
-      vehicleModel: newInvoiceForm.vehicleModel,
-      vinNumber: finalVin,
-      baseAmount: base,
-      vatAmount: vat,
-      totalAmount: total,
-      type: newInvoiceForm.type,
-      status: newInvoiceForm.type === 'tax_invoice' ? 'cleared' : 'reported'
-    });
+    let created: InvoiceItem;
+    try {
+      created = addZatcaInvoice({
+        customerName: newInvoiceForm.customerName || 'عميل نقدي متميز',
+        customerPhone: newInvoiceForm.customerPhone || '0500000000',
+        vatNumber: newInvoiceForm.type === 'tax_invoice' ? newInvoiceForm.vatNumber.trim() : undefined,
+        vehicleModel: newInvoiceForm.vehicleModel,
+        vinNumber: finalVin,
+        baseAmount: base,
+        vatAmount: vat,
+        totalAmount: total,
+        type: newInvoiceForm.type,
+        status: newInvoiceForm.type === 'tax_invoice' ? 'cleared' : 'reported'
+      });
+    } catch (err) {
+      alert(`تعذّر إصدار الفاتورة: ${err instanceof Error ? err.message : String(err)}`);
+      return;
+    }
 
     if (newInvoiceForm.selectedVinId) {
       updateVinStock(newInvoiceForm.selectedVinId, { status: 'sold' });
@@ -112,31 +143,6 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
     return matchesSearch && matchesType;
   });
 
-  // Deterministic visual QR matrix generator from string seed
-  const renderVisualQrMatrix = (seed: string) => {
-    const size = 13;
-    const cells: boolean[] = [];
-    for (let i = 0; i < size * size; i++) {
-      const charCode = seed.charCodeAt(i % seed.length) || 65;
-      cells.push(((charCode + i * 7) % 3) !== 0);
-    }
-    return (
-      <div className="w-24 h-24 bg-white p-2 rounded-xl shadow-inner grid grid-cols-13 gap-0.5 shrink-0" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
-        {cells.map((filled, idx) => {
-          const row = Math.floor(idx / size);
-          const col = idx % size;
-          const isCorner = (row < 3 && col < 3) || (row < 3 && col >= size - 3) || (row >= size - 3 && col < 3);
-          return (
-            <div
-              key={idx}
-              className={`w-full h-full rounded-[1px] ${isCorner ? 'bg-[#141414]' : filled ? 'bg-[#141414]' : 'bg-white'}`}
-            />
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-6 text-start font-arabic animate-in fade-in duration-300">
       {/* 1. Header & Summary KPIs */}
@@ -149,11 +155,11 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
             <div>
               <h2 className="text-lg font-black text-[#141414]">
                 {language === 'ar'
-                  ? 'نظام سولينا للفوترة الضريبية الإلكترونية المعتمد (المرحلة الثانية)'
-                  : 'Solina ZATCA E-Invoicing System (Phase 2)'}
+                  ? 'نظام سولينا للفوترة الضريبية الإلكترونية (رمز QR — المرحلة الأولى)'
+                  : 'Solina E-Invoicing (Phase 1 QR — Phase 2 integration pending)'}
               </h2>
               <p className="text-xs text-[#707070] mt-0.5">
-                إصدار ومطابقة الفواتير الضريبية والمبسطة المتوافقة 100% مع هيئة الزكاة والضريبة والجمارك بالمملكة العربية السعودية.
+                إصدار الفواتير الضريبية والمبسطة مع رمز QR بصيغة TLV. الربط مع منصة «فاتورة» (المرحلة الثانية: XML/UBL، الختم التشفيري، شهادة CSID) يتطلب خادماً ولم يُفعّل بعد.
               </p>
             </div>
           </div>
@@ -204,7 +210,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none space-y-1">
-          <span className="text-[11px] font-bold text-[#707070]">ضريبة القيمة المضافة المحصلة (15%)</span>
+          <span className="text-[11px] font-bold text-[#707070]">ضريبة القيمة المضافة المحصلة ({vatRate}%)</span>
           <div className="text-xl font-black text-[#141414] font-mono">
             <SaudiRiyalPrice amount={zatcaInvoices.reduce((acc, curr) => acc + curr.vatAmount, 0).toLocaleString('ar-SA')} />
           </div>
@@ -214,10 +220,10 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
         <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none space-y-1">
           <span className="text-[11px] font-bold text-[#707070]">حالة الربط والاعتماد الضريبي</span>
           <div className="text-base font-black text-[#141414] flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#141414] animate-pulse" />
-            <span>متصل بنجاح 100%</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+            <span>غير مربوط بمنصة فاتورة بعد</span>
           </div>
-          <span className="text-[10px] text-[#adadad] font-mono">الرقم الضريبي: 310984729100003</span>
+          <span className="text-[10px] text-[#adadad] font-mono">الرقم الضريبي: {settings.vatNumber}</span>
         </div>
       </div>
 
@@ -389,17 +395,19 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                           إشعار دائن
                         </button>
                       )}
+                      {inv.status === 'draft' && (
                       <button
                         onClick={() => {
-                          if (confirm(`هل أنت متأكد من حذف الفاتورة ${inv.invoiceNumber}؟`)) {
+                          if (confirm(`هل أنت متأكد من حذف مسودة الفاتورة ${inv.invoiceNumber}؟`)) {
                             deleteZatcaInvoice(inv.id);
                           }
                         }}
                         className="p-1.5 rounded-xl bg-[#f0f0f0] hover:bg-red-600 hover:text-white text-[#adadad] transition-colors cursor-pointer"
-                        title="حذف الفاتورة"
+                        title="حذف المسودة"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -496,13 +504,15 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
             {/* QR Code & Total Summary Box */}
             <div className="p-5 bg-[#141414] rounded-2xl text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                {renderVisualQrMatrix(selectedInvoice.zatcaQrBase64 + selectedInvoice.invoiceNumber)}
+                <ZatcaQrCode payloadBase64={selectedInvoice.zatcaQrBase64} size={96} />
                 <div className="space-y-1 text-xs">
                   <span className="text-[11px] text-white font-bold flex items-center gap-1">
-                    رمز QR مشفر بنظام TLV Base64 المعتمد (Phase 2)
+                    رمز QR بصيغة TLV Base64 + سلسلة تجزئة ZATCA (ICV #{selectedInvoice.icv ?? 1})
                   </span>
-                  <span className="text-[10px] text-[#adadad] block">الختم المشفر: ECDSA secp256k1 Digital Signature</span>
-                  <span className="text-[9px] text-[#adadad] block font-mono truncate max-w-[240px]">
+                  <span className="text-[10px] text-[#adadad] block font-mono truncate max-w-[260px]" title={selectedInvoice.previousInvoiceHash}>
+                    PIH (تجزئة الفاتورة السابقة): {(selectedInvoice.previousInvoiceHash || ZATCA_GENESIS_PIH).slice(0, 28)}…
+                  </span>
+                  <span className="text-[9px] text-[#adadad] block font-mono truncate max-w-[260px]" title={selectedInvoice.zatcaQrBase64}>
                     TLV: {selectedInvoice.zatcaQrBase64}
                   </span>
                 </div>
@@ -525,7 +535,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                   type="button"
                   onClick={() =>
                     exportSingleDocument(
-                      selectedInvoice.type === 'tax_invoice' ? 'فاتورة ضريبية معتمدة (ZATCA Phase 2)' : 'فاتورة ضريبية مبسطة (ZATCA)',
+                      selectedInvoice.type === 'tax_invoice' ? 'فاتورة ضريبية (ZATCA)' : 'فاتورة ضريبية مبسطة (ZATCA)',
                       selectedInvoice.invoiceNumber,
                       [
                         ['تاريخ الإصدار', selectedInvoice.date],
@@ -555,7 +565,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
                     selectedInvoice.type === 'credit_note'
                       ? 'إشعار دائن ضريبي معتمد (ZATCA Credit Note)'
                       : selectedInvoice.type === 'tax_invoice'
-                      ? 'فاتورة ضريبية معتمدة (ZATCA Phase 2)'
+                      ? 'فاتورة ضريبية (ZATCA)'
                       : 'فاتورة ضريبية مبسطة (ZATCA)',
                     selectedInvoice.invoiceNumber,
                     [
@@ -582,19 +592,40 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>\n<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">\n  <ID>${selectedInvoice.invoiceNumber}</ID>\n  <UUID>${selectedInvoice.uuid}</UUID>\n  <IssueDate>${selectedInvoice.date}</IssueDate>\n  <Seller>شركة سولينا للسيارات - Solina Motors (310984729100003)</Seller>\n  <Customer>${selectedInvoice.customerName}</Customer>\n  <LineItem VIN="${selectedInvoice.vinNumber}">${selectedInvoice.vehicleModel}</LineItem>\n  <TaxExclusiveAmount currencyID="SAR">${selectedInvoice.baseAmount}</TaxExclusiveAmount>\n  <TaxAmount currencyID="SAR">${selectedInvoice.vatAmount}</TaxAmount>\n  <TaxInclusiveAmount currencyID="SAR">${selectedInvoice.totalAmount}</TaxInclusiveAmount>\n  <QRCodeTLV>${selectedInvoice.zatcaQrBase64}</QRCodeTLV>\n</Invoice>`;
+                  const xmlContent = buildZatcaUblXml({
+                    invoiceNumber: selectedInvoice.invoiceNumber,
+                    uuid: selectedInvoice.uuid,
+                    issueDateTimeKsa: selectedInvoice.date,
+                    type: selectedInvoice.type,
+                    sellerNameAr: settings.companyNameAr,
+                    sellerVatNumber: settings.vatNumber,
+                    sellerCrNumber: settings.crNumber,
+                    customerName: selectedInvoice.customerName,
+                    customerVatNumber: selectedInvoice.vatNumber,
+                    description: selectedInvoice.vehicleModel,
+                    vinNumber: selectedInvoice.vinNumber,
+                    baseAmount: selectedInvoice.baseAmount,
+                    vatAmount: selectedInvoice.vatAmount,
+                    totalAmount: selectedInvoice.totalAmount,
+                    vatRatePercent: vatRate,
+                    taxCategory: selectedInvoice.taxCategory ?? 'S',
+                    icv: selectedInvoice.icv ?? 1,
+                    previousInvoiceHash: selectedInvoice.previousInvoiceHash ?? ZATCA_GENESIS_PIH,
+                    zatcaQrBase64: selectedInvoice.zatcaQrBase64,
+                    referenceInvoiceNumber: selectedInvoice.referenceInvoiceNumber
+                  });
                   const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8;' });
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `${selectedInvoice.invoiceNumber}_ZATCA.xml`;
+                  a.download = `${selectedInvoice.invoiceNumber}_UBL21_ZATCA.xml`;
                   a.click();
                   URL.revokeObjectURL(url);
                 }}
                 className="px-4 py-2.5 bg-[#141414] hover:bg-black text-white text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-none"
               >
                 <Download className="w-4 h-4" />
-                <span>تحميل XML / PDF المعتمد</span>
+                <span>تحميل XML بصيغة UBL 2.1</span>
               </button>
             </div>
           </div>
@@ -741,11 +772,11 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
               <div className="p-3.5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-between text-xs">
                 <div>
                   <span className="text-[#707070] block">المبلغ الصافي قبل الضريبة:</span>
-                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={(newInvoiceForm.amount / 1.15).toFixed(2)} /></strong>
+                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={splitVatInclusive(Number(newInvoiceForm.amount) || 0, vatRate).base.toFixed(2)} /></strong>
                 </div>
                 <div>
                   <span className="text-[#707070] block">ضريبة القيمة المضافة (15%):</span>
-                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={(newInvoiceForm.amount - newInvoiceForm.amount / 1.15).toFixed(2)} /></strong>
+                  <strong className="font-mono text-[#141414]"><SaudiRiyalPrice amount={splitVatInclusive(Number(newInvoiceForm.amount) || 0, vatRate).vat.toFixed(2)} /></strong>
                 </div>
                 <div className="text-end">
                   <span className="text-[#707070] block">الإجمالي النهائي:</span>
@@ -758,7 +789,7 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
               type="submit"
               className="w-full py-3 bg-[#141414] hover:bg-black text-white text-xs font-black rounded-xl shadow-none cursor-pointer transition-all"
             >
-              تأكيد واعتماد الفاتورة في منصة فاتورة ZATCA
+              إصدار الفاتورة وتوليد رمز QR
             </button>
           </form>
         </div>

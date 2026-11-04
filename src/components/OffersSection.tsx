@@ -60,7 +60,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onOpenTestDrive })
               onClick={() => onOpenTestDrive(offer.title)}
             >
               <img
-                src={offer.image}
+                src={offer.image} width={647} height={485}
                 alt={offer.title}
                 className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
                 loading="lazy"

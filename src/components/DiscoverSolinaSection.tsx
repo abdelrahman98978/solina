@@ -56,7 +56,7 @@ export const DiscoverSolinaSection: React.FC = () => {
               <picture className="absolute inset-0 z-0">
                 <source media="(max-width: 767px)" srcSet={story.mobileImage} />
                 <img
-                  src={story.desktopImage}
+                  src={story.desktopImage} width={478} height={717}
                   alt={story.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90"
                   loading="lazy"

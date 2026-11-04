@@ -107,7 +107,7 @@ export const SolinaBrandHeritage: React.FC<SolinaBrandHeritageProps> = ({
           <div className="lg:col-span-6">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80 group bg-white">
               <img
-                src="/solina-flag.png"
+                src="/solina-flag.png" width={1200} height={800}
                 alt="علم وهوية سولينا للسيارات الرسمية"
                 className="w-full h-auto object-cover max-h-[560px] select-none transition-transform duration-700 group-hover:scale-102"
                 loading="lazy"

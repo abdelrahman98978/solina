@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
-import { X, Car, Calendar, Clock, MapPin, CheckCircle2, User, Phone, Sparkles, Shield, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Car, CheckCircle2, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 import { useAdminData } from '../context/AdminDataContext';
+import {
+  checkRateLimit,
+  isValidSaudiPhone,
+  normalizeSaudiPhone,
+  isValidSaudiNationalIdOrIqama,
+  normalizeDigits
+} from '../utils/erpCore';
 
 interface TestDriveModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultModelName?: string;
 }
+
+const DRAFT_KEY = 'solina_draft_test_drive_v1';
 
 export const TestDriveModal: React.FC<TestDriveModalProps> = ({
   isOpen,
@@ -24,9 +33,39 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
   const [timeSlot, setTimeSlot] = useState<string>('morning');
   const [fullName, setFullName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [nationalId, setNationalId] = useState<string>('');
   const [hasLicense, setHasLicense] = useState<boolean>(true);
+  const [pdplConsent, setPdplConsent] = useState<boolean>(true);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [bookingRef, setBookingRef] = useState<string>('');
+
+  // Load saved draft on mount (#89)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.fullName) setFullName(parsed.fullName);
+        if (parsed.phoneNumber) setPhoneNumber(parsed.phoneNumber);
+        if (parsed.nationalId) setNationalId(parsed.nationalId);
+        if (parsed.driveDate) setDriveDate(parsed.driveDate);
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
+
+  // Save draft when typing (#89)
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ fullName, phoneNumber, nationalId, driveDate })
+      );
+    } catch {
+      // ignore storage errors
+    }
+  }, [fullName, phoneNumber, nationalId, driveDate]);
 
   if (!isOpen) return null;
 
@@ -38,21 +77,47 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
       alert(language === 'ar' ? 'يشترط وجود رخصة قيادة سارية لتجربة القيادة' : 'A valid driving license is required');
       return;
     }
+    if (!pdplConsent) {
+      alert(language === 'ar' ? 'يرجى الموافقة على سياسة حماية البيانات الشخصية (PDPL) للمتابعة.' : 'Please accept the PDPL privacy policy.');
+      return;
+    }
+    if (!isValidSaudiPhone(phoneNumber)) {
+      alert(language === 'ar' ? 'يرجى إدخال رقم جوال سعودي صحيح (مثال: 05XXXXXXXX).' : 'Please enter a valid Saudi mobile number (05XXXXXXXX).');
+      return;
+    }
+    if (nationalId.trim() && !isValidSaudiNationalIdOrIqama(nationalId)) {
+      alert(language === 'ar' ? 'رقم الهوية الوطنية أو الإقامة يجب أن يتكون من 10 أرقام ويبدأ بـ 1 أو 2.' : 'Saudi National ID / Iqama must be 10 digits starting with 1 or 2.');
+      return;
+    }
+    const rate = checkRateLimit('test_drive_submit', 5, 60_000);
+    if (!rate.allowed) {
+      alert(language === 'ar' ? 'تم تجاوز الحد المسموح للطلبات المتتالية. يرجى الانتظار دقيقة والمحاولة مجدداً.' : 'Too many requests. Please wait a minute.');
+      return;
+    }
+
     const ref = `TD-SOL-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     setBookingRef(ref);
 
     // Save to Admin Data store
     addTestDrive({
       fullName: fullName || 'عميل تجربة قيادة',
-      phone: phoneNumber || '0500000000',
+      phone: normalizeSaudiPhone(phoneNumber),
       city: activeBranch.city,
       preferredShowroom: activeBranch.name,
       modelId: selectedVehicle,
       modelName: selectedVehicle,
       preferredDate: driveDate || new Date().toISOString().split('T')[0],
       preferredTimeSlot: timeSlot === 'morning' ? '10:00 ص - 12:00 م' : timeSlot === 'afternoon' ? '04:00 م - 06:00 م' : '07:00 م - 09:00 م',
-      notes: 'طلب مسجل عبر الموقع الرسمي'
+      notes: nationalId.trim()
+        ? `طلب مسجل عبر الموقع الرسمي • هوية/إقامة: ${normalizeDigits(nationalId.trim())}`
+        : 'طلب مسجل عبر الموقع الرسمي'
     });
+
+    try {
+      sessionStorage.removeItem(DRAFT_KEY);
+    } catch {
+      // ignore
+    }
 
     setIsSuccess(true);
     confetti({
@@ -196,7 +261,7 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1.5">
                   {language === 'ar' ? 'الاسم الكريم:' : 'Full Name:'}
@@ -220,23 +285,55 @@ export const TestDriveModal: React.FC<TestDriveModalProps> = ({
                   required
                   placeholder="05XXXXXXXX"
                   value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  onChange={(e) => setPhoneNumber(normalizeDigits(e.target.value))}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                  {language === 'ar' ? 'رقم الهوية / الإقامة (اختياري):' : 'National ID / Iqama:'}
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={10}
+                  placeholder="10XXXXXXXX"
+                  value={nationalId}
+                  onChange={(e) => setNationalId(normalizeDigits(e.target.value))}
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-xs text-gray-900 focus:ring-2 focus:ring-[#141414] focus:bg-white outline-none font-mono"
                 />
               </div>
             </div>
 
-            <div className="p-3 bg-red-50/50 rounded-xl border border-red-100 flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="license"
-                checked={hasLicense}
-                onChange={(e) => setHasLicense(e.target.checked)}
-                className="w-4 h-4 text-[#141414] accent-[#141414] rounded"
-              />
-              <label htmlFor="license" className="text-xs text-gray-700 cursor-pointer">
-                {language === 'ar' ? 'أؤكد امتلاكي رخصة قيادة سعودية أو دولية سارية المفعول' : 'I confirm holding a valid driving license'}
-              </label>
+            <div className="space-y-2">
+              <div className="p-3 bg-red-50/50 rounded-xl border border-red-100 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="license"
+                  checked={hasLicense}
+                  onChange={(e) => setHasLicense(e.target.checked)}
+                  className="w-4 h-4 text-[#141414] accent-[#141414] rounded"
+                />
+                <label htmlFor="license" className="text-xs text-gray-700 cursor-pointer">
+                  {language === 'ar' ? 'أؤكد امتلاكي رخصة قيادة سعودية أو دولية سارية المفعول' : 'I confirm holding a valid driving license'}
+                </label>
+              </div>
+
+              <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="pdpl-consent"
+                  checked={pdplConsent}
+                  onChange={(e) => setPdplConsent(e.target.checked)}
+                  className="w-4 h-4 text-[#141414] accent-[#141414] rounded"
+                />
+                <label htmlFor="pdpl-consent" className="text-[11px] text-gray-600 cursor-pointer">
+                  {language === 'ar'
+                    ? 'أوافق على معالجة بياناتي للتواصل بشأن الحجز وفق نظام حماية البيانات الشخصية السعودي (PDPL).'
+                    : 'I consent to processing my contact details under the Saudi Personal Data Protection Law (PDPL).'}
+                </label>
+              </div>
             </div>
 
             <button

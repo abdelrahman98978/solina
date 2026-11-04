@@ -52,7 +52,7 @@ export const SolinaHeadquartersShowcase: React.FC<SolinaHeadquartersShowcaseProp
         {/* Big Dual-View Showcase Visual */}
         <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-800 group bg-gray-900">
           <img
-            src="/solina-headquarters.png"
+            src="/solina-headquarters.png" width={1600} height={900}
             alt="المقر الرئيسي وصالات عرض شركة سولينا للسيارات"
             className="w-full h-auto object-contain block select-none"
             loading="lazy"

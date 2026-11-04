@@ -19,6 +19,7 @@ import { useAdminData, BankPartnerConfig } from '../../context/AdminDataContext'
 import { useLanguage } from '../../context/LanguageContext';
 import { AUTOMOTIVE_DICTIONARY, ERP_ZATCA_DICTIONARY } from '../../utils/autoTranslation';
 import { SaudiRiyalPrice } from '../SaudiRiyalSymbol';
+import { isValidSaudiVatNumber, validateUploadFile } from '../../utils/erpCore';
 
 export const AdminSettingsTab: React.FC = () => {
   const {
@@ -63,6 +64,8 @@ export const AdminSettingsTab: React.FC = () => {
   const [zatcaEnvironment, setZatcaEnvironment] = useState<'production' | 'simulation'>(settings.zatcaEnvironment);
   const [zatcaCsidSerial, setZatcaCsidSerial] = useState(settings.zatcaCsidSerial);
   const [announcementAr, setAnnouncementAr] = useState(settings.announcementAr);
+  const [vatRatePercent, setVatRatePercent] = useState<number>(settings.vatRatePercent ?? 15);
+  const [lockedThroughDate, setLockedThroughDate] = useState<string>(settings.lockedThroughDate ?? '2026-07-31');
 
   // Financing Engine State
   const [defaultAprPercent, setDefaultAprPercent] = useState(settings.defaultAprPercent);
@@ -96,17 +99,23 @@ export const AdminSettingsTab: React.FC = () => {
 
   const handleSaveIdentity = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidSaudiVatNumber(vatNumber)) {
+      window.alert('الرقم الضريبي السعودي يجب أن يتكون من 15 رقماً ويبدأ وينتهي بالرقم 3.');
+      return;
+    }
     updateSettings({
       companyNameAr,
       companyNameEn,
-      vatNumber,
-      crNumber,
+      vatNumber: vatNumber.trim(),
+      crNumber: crNumber.trim(),
       unifiedPhone,
       whatsappNumber,
       headquartersAr,
       zatcaEnvironment,
       zatcaCsidSerial,
-      announcementAr
+      announcementAr,
+      vatRatePercent: Number(vatRatePercent),
+      lockedThroughDate
     });
     triggerSaveFeedback();
   };
@@ -129,6 +138,12 @@ export const AdminSettingsTab: React.FC = () => {
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const validation = validateUploadFile(file, 10 * 1024 * 1024);
+    if (!validation.valid) {
+      window.alert(validation.errorAr || 'ملف غير صالح.');
+      setImportStatus('error');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (ev) => {
       const content = ev.target?.result as string;
@@ -302,6 +317,8 @@ export const AdminSettingsTab: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setBankPartners(prev => prev.filter((_, i) => i !== idx))}
+                          aria-label={`حذف ${bank.nameAr}`}
+                          title={`حذف ${bank.nameAr}`}
                           className="p-1.5 rounded-full bg-[#ffffff] hover:bg-[#e0e0e0] text-[#707070] cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -442,6 +459,27 @@ export const AdminSettingsTab: React.FC = () => {
             <div>
               <label className="font-semibold text-[#141414] block mb-1.5">معرف شهادة التشفير الرقمي (CSID Serial)</label>
               <input type="text" value={zatcaCsidSerial} onChange={(e) => setZatcaCsidSerial(e.target.value)} className="w-full font-mono" />
+            </div>
+            <div>
+              <label className="font-semibold text-[#141414] block mb-1.5">نسبة ضريبة القيمة المضافة المعتمدة (VAT %)</label>
+              <input
+                type="number"
+                step="0.5"
+                min={0}
+                max={30}
+                value={vatRatePercent}
+                onChange={(e) => setVatRatePercent(Number(e.target.value))}
+                className="w-full font-mono font-semibold"
+              />
+            </div>
+            <div>
+              <label className="font-semibold text-[#141414] block mb-1.5">إقفال الفترة المحاسبية حتى تاريخ (Period Lock)</label>
+              <input
+                type="date"
+                value={lockedThroughDate}
+                onChange={(e) => setLockedThroughDate(e.target.value)}
+                className="w-full font-mono"
+              />
             </div>
           </div>
 

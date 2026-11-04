@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { TRANSLATIONS, type Language } from '../data/translations';
 import {
   autoTranslate as autoTranslateUtil,
@@ -89,6 +89,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Initial pass when language or glossary changes
     runTranslationPass();
 
+    // Base UI is authored in Arabic; only attach continuous DOM observer when translating into English
+    if (language === 'ar') {
+      return;
+    }
+
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -158,7 +163,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     []
   );
 
-  const translationStats = getTranslationLibraryStats();
+  const translationStats = useMemo(() => getTranslationLibraryStats(), [customGlossary]);
 
   return (
     <LanguageContext.Provider

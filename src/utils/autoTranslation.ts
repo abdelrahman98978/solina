@@ -377,6 +377,16 @@ export function autoTranslate(text: string, targetLang: 'ar' | 'en'): string {
   const trimmed = text.trim();
   if (!trimmed) return text;
 
+  // Never mutate technical identifiers: VINs, 15-digit VAT numbers, UUIDs, or ERP document codes (#81)
+  if (
+    /^[A-HJ-NPR-Z0-9]{17}$/i.test(trimmed) ||
+    /^3\d{13}3$/.test(trimmed) ||
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed) ||
+    /^(SOL-INV|SOL-CN|SOL-RV|SOL-PV|SOL-JV|JC|QT|TRF|CUST|TD-SOL|SRV)-[A-Z0-9-]+$/i.test(trimmed)
+  ) {
+    return text;
+  }
+
   const customEntries = getCustomGlossary();
 
   if (targetLang === 'en') {

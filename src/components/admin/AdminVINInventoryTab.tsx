@@ -311,15 +311,21 @@ export const AdminVINInventoryTab: React.FC = () => {
                           onClick={() => {
                             const buyerName = prompt('أدخل اسم المشتري / المنشأة لإصدار الفاتورة الضريبية وعقد التسليم:', 'عميل صالة سولينا المميز');
                             if (!buyerName) return;
-                            const inv = addZatcaInvoice({
-                              customerName: buyerName,
-                              customerPhone: '0500000000',
-                              vehicleModel: `${car.model} — ${car.trim} (${car.color})`,
-                              vinNumber: car.vin,
-                              totalAmount: car.price,
-                              type: 'simplified_invoice',
-                              status: 'cleared'
-                            });
+                            let inv;
+                            try {
+                              inv = addZatcaInvoice({
+                                customerName: buyerName,
+                                customerPhone: '0500000000',
+                                vehicleModel: `${car.model} — ${car.trim} (${car.color})`,
+                                vinNumber: car.vin,
+                                totalAmount: car.price,
+                                type: 'simplified_invoice',
+                                status: 'cleared'
+                              });
+                            } catch (err) {
+                              alert(`تعذّر إصدار الفاتورة: ${err instanceof Error ? err.message : String(err)}`);
+                              return;
+                            }
                             alert(`تم بيع المركبة (${car.vin}) وإصدار الفاتورة الضريبية رقم ${inv.invoiceNumber} وسند القبض المحاسبي بنجاح.`);
                           }}
                           className="px-2.5 py-1.5 rounded-xl bg-[#141414] hover:bg-black text-white text-[10px] font-bold transition-colors cursor-pointer"

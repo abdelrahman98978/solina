@@ -96,6 +96,8 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onOpenTestDrive, onExplo
               <img
                 src={slide.desktopImage}
                 alt={slide.title}
+                width={1870}
+                height={850}
                 className="w-full h-full object-cover object-center"
                 loading={index === 0 ? 'eager' : 'lazy'}
               />

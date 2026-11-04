@@ -2561,16 +2561,24 @@ export const SolinaAppExperience: React.FC<SolinaAppExperienceProps> = ({
 
                 <button
                   onClick={() => {
-                    const inv = addZatcaInvoice({
-                      customerName: depositCustomerName.trim() || 'ضيف تطبيق سولينا',
-                      customerPhone: depositCustomerPhone.trim() || '0501234567',
-                      vehicleModel: `عربون حجز ${formatVehicleTitle(depositVehicle)}`,
-                      vinNumber: `SOL-VIN-${Math.floor(100000 + Math.random() * 900000)}`,
-                      totalAmount: 2500,
-                      type: 'simplified_invoice',
-                      status: 'cleared'
-                    });
-                    const ref = inv?.invoiceNumber || `SOL-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
+                    let inv;
+                    try {
+                      inv = addZatcaInvoice({
+                        customerName: depositCustomerName.trim() || 'ضيف تطبيق سولينا',
+                        customerPhone: depositCustomerPhone.trim() || '0501234567',
+                        vehicleModel: `عربون حجز ${formatVehicleTitle(depositVehicle)}`,
+                        // Advance-payment invoice: no chassis is allocated yet, so no VIN is recorded (never invent one).
+                        vinNumber: '',
+                        totalAmount: 2500,
+                        type: 'simplified_invoice',
+                        status: 'cleared'
+                      });
+                    } catch (err) {
+                      console.error('Deposit invoice failed', err);
+                      showAppToast('تعذّر إصدار فاتورة العربون', err instanceof Error ? err.message : 'خطأ غير متوقع', 'warning');
+                      return;
+                    }
+                    const ref = inv.invoiceNumber;
                     setDepositReference(ref);
                     setDepositSuccess(true);
                     showAppToast('تم سداد العربون وتوثيق الفاتورة', `رقم السند: ${ref}`, 'success');

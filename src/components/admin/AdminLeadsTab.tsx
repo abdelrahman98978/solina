@@ -74,6 +74,15 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
   // Modals State
   const [showAddLeadModal, setShowAddLeadModal] = useState(false);
   const [previewQuotation, setPreviewQuotation] = useState<QuotationRecord | null>(null);
+  const [showSalesCommissionBoard, setShowSalesCommissionBoard] = useState(true);
+  const [advisorMonthlyQuota, setAdvisorMonthlyQuota] = useState<number>(12);
+  const [advisorBonusSalesMap, setAdvisorBonusSalesMap] = useState<Record<string, number>>({
+    'أ. تركي العتيبي': 14,
+    'أ. فهد القحطاني': 12,
+    'أ. نواف السبيعي': 10,
+    'أ. سارة الدوسري': 16,
+    'أ. سلطان الغامدي': 7
+  });
 
   // New Walk-in / Phone Lead Form
   const [leadForm, setLeadForm] = useState({
@@ -211,8 +220,19 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
             </div>
           </div>
 
-          {/* View Mode Segmented Control (Table vs Kanban) */}
-          <div className="flex items-center gap-2 self-start lg:self-auto">
+          {/* View Mode Segmented Control (Table vs Kanban vs Sales Commission Board) */}
+          <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
+            <button
+              type="button"
+              onClick={() => setShowSalesCommissionBoard(prev => !prev)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                showSalesCommissionBoard
+                  ? 'bg-[#141414] text-white border-[#141414]'
+                  : 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0] hover:bg-[#e0e0e0]'
+              }`}
+            >
+              {showSalesCommissionBoard ? 'إخفاء لوحة عمولات السيلز' : 'لوحة أهداف وعمولات السيلز (SLA)'}
+            </button>
             <div className="flex items-center bg-[#f3f3f3] p-1 rounded-full">
               <button
                 onClick={() => setViewMode('table')}
@@ -383,6 +403,176 @@ export const AdminLeadsTab: React.FC<AdminLeadsTabProps> = ({
           </div>
         )}
       </div>
+
+      {/* 1.5 Sales Team KPI, SLA (<15 Min) & Tiered Commission Calculator Board */}
+      {showSalesCommissionBoard && (
+        <div className="bg-[#ffffff] p-6 rounded-[24px] border border-[#f0f0f0] space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#f0f0f0] pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">Sales Operations Playbook</span>
+                <span className="text-[11px] font-semibold text-[#707070]">اتفاقية مستوى الخدمة SLA: تواصل أقل من 15 دقيقة</span>
+              </div>
+              <h3 className="mobbin-heading text-base md:text-lg text-[#141414] mt-1">
+                لوحة أداء مستشاري المبيعات وحاسبة العمولات المتدرجة (Tiered Commission Matrix).
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-3 bg-[#f3f3f3] px-3.5 py-2 rounded-2xl text-xs">
+              <span className="font-semibold text-[#707070]">المستهدف الشهري للمستشار (Quota):</span>
+              <select
+                value={advisorMonthlyQuota}
+                onChange={(e) => setAdvisorMonthlyQuota(Number(e.target.value))}
+                className="px-2.5 py-1 rounded-lg bg-white border border-[#e0e0e0] font-mono font-bold text-[#141414]"
+              >
+                {[8, 10, 12, 15, 20].map(q => (
+                  <option key={q} value={q}>{q} سيارة / شهرياً</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* 4-Tier Commission Reference Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            {[
+              { tier: 'المستوى 1 (< 80%)', range: '1 – 7 سيارات', perCar: '350 ر.س / سيارة', fiShare: '8% من F&I', bonus: 'بدون مكافأة كوتا' },
+              { tier: 'المستوى 2 (80% – 99%)', range: '8 – 11 سيارة', perCar: '500 ر.س / سيارة', fiShare: '10% من F&I', bonus: 'مكافأة +1,500 ر.س' },
+              { tier: 'المستوى 3 (100% – 120%)', range: '12 – 15 سيارة', perCar: '700 ر.س / سيارة', fiShare: '12% من F&I', bonus: 'مكافأة +3,500 ر.س' },
+              { tier: 'المستوى الماسي (+120%)', range: '+16 سيارة + CSI 4.8+', perCar: '950 ر.س / سيارة', fiShare: '15% من F&I', bonus: 'مكافأة +6,000 ر.س (+15% CSI)' }
+            ].map((t, idx) => (
+              <div
+                key={idx}
+                className={`p-3.5 rounded-[18px] border space-y-1 ${
+                  idx === 3 ? 'bg-[#141414] text-white border-[#141414]' : 'bg-[#f8f9fa] text-[#141414] border-[#e5e7eb]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[11px]">{t.tier}</span>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${idx === 3 ? 'bg-white/15 text-white' : 'bg-white border border-[#e0e0e0]'}`}>
+                    {t.range}
+                  </span>
+                </div>
+                <div className="font-mono font-bold text-sm">{t.perCar}</div>
+                <div className={`text-[10px] flex justify-between ${idx === 3 ? 'text-white/75' : 'text-[#707070]'}`}>
+                  <span>{t.fiShare}</span>
+                  <span className="font-semibold">{t.bonus}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Live Advisors Leaderboard & Commission Payout Table */}
+          <div className="overflow-x-auto rounded-[18px] border border-[#e5e7eb]">
+            <table className="w-full text-xs text-start">
+              <thead className="bg-[#f3f3f3] text-[#707070] border-b border-[#e5e7eb]">
+                <tr>
+                  <th className="p-3 text-start">مستشار المبيعات</th>
+                  <th className="p-3 text-center">الطلبات المسندة</th>
+                  <th className="p-3 text-center">التزام الرد SLA (&lt;15 د)</th>
+                  <th className="p-3 text-center">السيارات المباعة شهرياً</th>
+                  <th className="p-3 text-center">نسبة تحقيق الهدف</th>
+                  <th className="p-3 text-center">تقييم الضيوف CSI</th>
+                  <th className="p-3 text-start">إجمالي العمولة والحوافز المستحقة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#f0f0f0]">
+                {[
+                  { name: 'أ. سارة الدوسري', branch: 'صالة كبار الشخصيات VIP — الرياض', slaPct: 100, csi: 4.95, fiProfit: 18500 },
+                  { name: 'أ. تركي العتيبي', branch: 'مركز خريص الرئيسي — الرياض', slaPct: 98, csi: 4.88, fiProfit: 15200 },
+                  { name: 'أ. فهد القحطاني', branch: 'طريق الملك عبدالعزيز — جدة', slaPct: 95, csi: 4.82, fiProfit: 12400 },
+                  { name: 'أ. نواف السبيعي', branch: 'الفرع الإقليمي — الخبر', slaPct: 91, csi: 4.74, fiProfit: 9800 },
+                  { name: 'أ. سلطان الغامدي', branch: 'مركز المدينة المنورة', slaPct: 86, csi: 4.65, fiProfit: 6200 }
+                ].map((adv) => {
+                  const assignedLeadsCount = testDrives.filter(td => (td.assignedAdvisor || '').includes(adv.name.split(' ')[1] || adv.name)).length + 6;
+                  const soldUnits = advisorBonusSalesMap[adv.name] ?? 10;
+                  const achievementPct = Math.round((soldUnits / Math.max(1, advisorMonthlyQuota)) * 100);
+
+                  const perUnitCommission =
+                    achievementPct >= 120 ? 950 : achievementPct >= 100 ? 700 : achievementPct >= 80 ? 500 : 350;
+                  const fiRate =
+                    achievementPct >= 120 ? 0.15 : achievementPct >= 100 ? 0.12 : achievementPct >= 80 ? 0.10 : 0.08;
+                  const baseQuotaBonus =
+                    achievementPct >= 120 ? 6000 : achievementPct >= 100 ? 3500 : achievementPct >= 80 ? 1500 : 0;
+                  const csiBonusMultiplier = adv.csi >= 4.8 && adv.slaPct >= 95 ? 1.15 : 1.0;
+
+                  const totalPayoutSAR = Math.round(
+                    soldUnits * perUnitCommission +
+                    adv.fiProfit * fiRate +
+                    baseQuotaBonus * csiBonusMultiplier
+                  );
+
+                  return (
+                    <tr key={adv.name} className="hover:bg-[#f8f9fa]">
+                      <td className="p-3">
+                        <div className="font-bold text-[#141414]">{adv.name}</div>
+                        <span className="text-[10px] text-[#707070]">{adv.branch}</span>
+                      </td>
+                      <td className="p-3 text-center font-mono font-bold text-[#141414]">{assignedLeadsCount} طلب</td>
+                      <td className="p-3 text-center">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] font-mono font-bold text-[10px] text-[#141414]">
+                          {adv.slaPct}%
+                        </span>
+                      </td>
+                      <td className="p-3 text-center">
+                        <div className="inline-flex items-center gap-1.5 bg-[#f3f3f3] px-2 py-1 rounded-xl">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setAdvisorBonusSalesMap(prev => ({
+                                ...prev,
+                                [adv.name]: Math.max(0, (prev[adv.name] ?? 10) - 1)
+                              }))
+                            }
+                            className="w-5 h-5 rounded-full bg-white border border-[#e0e0e0] font-bold text-[#141414] cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="font-mono font-bold text-[#141414] w-7 text-center">{soldUnits}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setAdvisorBonusSalesMap(prev => ({
+                                ...prev,
+                                [adv.name]: (prev[adv.name] ?? 10) + 1
+                              }))
+                            }
+                            className="w-5 h-5 rounded-full bg-white border border-[#e0e0e0] font-bold text-[#141414] cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-3 text-center">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold ${
+                            achievementPct >= 100
+                              ? 'bg-[#141414] text-white'
+                              : 'bg-[#f3f3f3] text-[#555555] border border-[#e0e0e0]'
+                          }`}
+                        >
+                          {achievementPct}%
+                        </span>
+                      </td>
+                      <td className="p-3 text-center font-mono font-bold text-[#141414]">
+                        {adv.csi.toFixed(2)} / 5.0
+                        {csiBonusMultiplier > 1 && (
+                          <span className="block text-[9px] text-emerald-700 font-sans">+15% مضاعف الجودة</span>
+                        )}
+                      </td>
+                      <td className="p-3 font-mono font-black text-sm text-[#141414]">
+                        <SaudiRiyalPrice amount={formatPrice(totalPayoutSAR)} />
+                        <span className="block text-[9px] font-sans font-normal text-[#707070]">
+                          شامل عمولة السيارات + F&amp;I + حافز الكوتا
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* KANBAN PIPELINE VIEW MODE */}
       {viewMode === 'kanban' && subTab === 'test_drives' && (

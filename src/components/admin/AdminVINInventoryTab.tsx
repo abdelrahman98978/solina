@@ -36,6 +36,89 @@ export const AdminVINInventoryTab: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingStock, setEditingStock] = useState<VehicleStockItem | null>(null);
   const [selectedVinSticker, setSelectedVinSticker] = useState<VehicleStockItem | null>(null);
+  const [showProcurementPanel, setShowProcurementPanel] = useState(true);
+
+  // Landed Cost & Purchase Order Simulator State
+  const [poModel, setPoModel] = useState('سولينا كامري 2026 هايبرد');
+  const [poQuantity, setPoQuantity] = useState(5);
+  const [fobPriceSAR, setFobPriceSAR] = useState(92000);
+  const [freightAndInsuranceSAR, setFreightAndInsuranceSAR] = useState(3800);
+  const [portAndSasoSAR, setPortAndSasoSAR] = useState(1450);
+  const [inlandAndPdiSAR, setInlandAndPdiSAR] = useState(1150);
+  const [purchaseOrders, setPurchaseOrders] = useState([
+    {
+      id: 'po-1',
+      poNumber: 'PO-2026-8801',
+      supplier: 'Solina Global Motors Corp (Japan)',
+      model: 'سولينا كامري 2026 هايبرد — فئة A (سريعة الدوران)',
+      qty: 12,
+      unitLandedCost: 103000,
+      minFloorPrice: 106605,
+      status: 'received' as 'lc_approved' | 'ocean_transit' | 'customs_saso' | 'received',
+      etaDate: '2026-10-28'
+    },
+    {
+      id: 'po-2',
+      poNumber: 'PO-2026-8802',
+      supplier: 'Jetour & BYD Regional Hub (Port Jebel Ali / Dammam)',
+      model: 'جيتور T2 2026 دبل + بي واي دي هان — فئة B',
+      qty: 8,
+      unitLandedCost: 112500,
+      minFloorPrice: 116438,
+      status: 'customs_saso' as 'lc_approved' | 'ocean_transit' | 'customs_saso' | 'received',
+      etaDate: '2026-11-08'
+    },
+    {
+      id: 'po-3',
+      poNumber: 'PO-2026-8803',
+      supplier: 'European Luxury Spec Export (Stuttgart / Munich)',
+      model: 'مرسيدس S500 + لكزس LX600 VIP — فئة C (طلب خاص)',
+      qty: 3,
+      unitLandedCost: 485000,
+      minFloorPrice: 501975,
+      status: 'ocean_transit' as 'lc_approved' | 'ocean_transit' | 'customs_saso' | 'received',
+      etaDate: '2026-11-19'
+    }
+  ]);
+
+  const customsDutySAR = Math.round(fobPriceSAR * 0.05);
+  const unitLandedCostSAR = fobPriceSAR + freightAndInsuranceSAR + customsDutySAR + portAndSasoSAR + inlandAndPdiSAR;
+  const minSellingFloorSAR = Math.round(unitLandedCostSAR * 1.035);
+  const recommendedRetailInclVatSAR = Math.round(unitLandedCostSAR * 1.12 * 1.15);
+
+  const handleIssuePoAndReceiveVin = () => {
+    const newPoNumber = `PO-2026-${Math.floor(8810 + Math.random() * 900)}`;
+    setPurchaseOrders(prev => [
+      {
+        id: `po-${Date.now()}`,
+        poNumber: newPoNumber,
+        supplier: 'التوريد المركزي المعتمد — اعتماد مستندي L/C',
+        model: poModel,
+        qty: poQuantity,
+        unitLandedCost: unitLandedCostSAR,
+        minFloorPrice: minSellingFloorSAR,
+        status: 'received',
+        etaDate: new Date().toISOString().split('T')[0]
+      },
+      ...prev
+    ]);
+
+    // Also add 1 representative VIN into live vinStock with exact costPrice
+    addVinStock({
+      vin: 'JT3' + Math.random().toString(36).substring(2, 16).toUpperCase().padEnd(14, '8').slice(0, 14),
+      model: poModel,
+      category: 'سيدان / SUV',
+      trim: `دفعة توريد ${newPoNumber}`,
+      color: 'أبيض لؤلؤي كريستالي',
+      engine: '2026 Official Spec',
+      location: 'المستودع المركزي - الرياض',
+      status: 'in_stock',
+      price: recommendedRetailInclVatSAR,
+      costPrice: unitLandedCostSAR,
+      daysInInventory: 1,
+      arrivalDate: new Date().toISOString().substring(0, 10)
+    });
+  };
 
   const [newCarForm, setNewCarForm] = useState({
     vin: 'JT3' + Math.random().toString(36).substring(2, 12).toUpperCase(),
@@ -123,6 +206,17 @@ export const AdminVINInventoryTab: React.FC = () => {
           ))}
 
           <button
+            onClick={() => setShowProcurementPanel(prev => !prev)}
+            className={`px-3.5 py-2.5 rounded-2xl border text-xs font-bold cursor-pointer transition-colors ${
+              showProcurementPanel
+                ? 'bg-[#141414] text-white border-[#141414]'
+                : 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0] hover:bg-[#e0e0e0]'
+            }`}
+          >
+            {showProcurementPanel ? 'إخفاء وحدة المشتريات والتكلفة الاستيرادية' : 'أوامر الشراء وحاسبة التكلفة (Landed Cost)'}
+          </button>
+
+          <button
             onClick={() => setShowAddModal(true)}
             className="px-4 py-2.5 rounded-2xl bg-[#141414] hover:bg-black active:scale-95 text-white text-xs font-bold shadow-none  flex items-center gap-2 cursor-pointer"
           >
@@ -173,6 +267,221 @@ export const AdminVINInventoryTab: React.FC = () => {
           <span className="text-[10px] text-[#adadad] font-light">ميناء الملك عبد العزيز والمستودعات</span>
         </div>
       </div>
+
+      {/* 2.5 Procurement Purchase Orders, ABC Matrix & Vehicle Landed Cost Calculator */}
+      {showProcurementPanel && (
+        <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f0f0f0] pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">Procurement &amp; Supply Chain</span>
+                <span className="text-[11px] text-[#707070] font-bold">مصفوفة ABC • الاعتمادات المستندية L/C • حاسبة Landed Cost</span>
+              </div>
+              <h3 className="text-base font-black text-[#141414] mt-1">
+                إدارة المشتريات وأوامر التوريد وحاسبة التكلفة الاستيرادية الفعلية للمركبة (Vehicle Landed Cost)
+              </h3>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] font-bold">
+              <span className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+                الفئة A (سريعة الدوران): 55%
+              </span>
+              <span className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+                الفئة B (SUV / EV): 30%
+              </span>
+              <span className="px-3 py-1.5 rounded-full bg-[#141414] text-white">
+                الفئة C (VIP طلب خاص): 15%
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left: Interactive Landed Cost Calculator (5 Cols) */}
+            <div className="lg:col-span-5 bg-[#f8f9fa] p-4 rounded-2xl border border-[#e5e7eb] space-y-3 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-black text-[#141414]">حاسبة تكلفة الاستيراد والتسعير الأدنى (Landed Cost)</span>
+                <span className="text-[10px] font-mono bg-white px-2 py-0.5 rounded-full border border-[#e0e0e0]">Customs 5% + VAT 15%</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">الطراز المطلوب توريده:</label>
+                  <select
+                    value={poModel}
+                    onChange={(e) => setPoModel(e.target.value)}
+                    className="w-full p-2 rounded-xl bg-white border border-[#e0e0e0] font-bold text-[#141414]"
+                  >
+                    {vehicles.slice(0, 18).map(v => (
+                      <option key={v.id} value={v.nameAr}>{v.nameAr}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">سعر المصنع FOB (ر.س):</label>
+                  <input
+                    type="number"
+                    value={fobPriceSAR}
+                    onChange={(e) => setFobPriceSAR(Number(e.target.value))}
+                    className="w-full p-2 rounded-xl bg-white border border-[#e0e0e0] font-mono font-bold text-[#141414]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">الكمية بأمر الشراء:</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={poQuantity}
+                    onChange={(e) => setPoQuantity(Math.max(1, Number(e.target.value)))}
+                    className="w-full p-2 rounded-xl bg-white border border-[#e0e0e0] font-mono font-bold text-[#141414]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">الشحن البحري والتأمين:</label>
+                  <input
+                    type="number"
+                    value={freightAndInsuranceSAR}
+                    onChange={(e) => setFreightAndInsuranceSAR(Number(e.target.value))}
+                    className="w-full p-2 rounded-xl bg-white border border-[#e0e0e0] font-mono font-bold text-[#141414]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">الفسح والمواصفات SASO:</label>
+                  <input
+                    type="number"
+                    value={portAndSasoSAR}
+                    onChange={(e) => setPortAndSasoSAR(Number(e.target.value))}
+                    className="w-full p-2 rounded-xl bg-white border border-[#e0e0e0] font-mono font-bold text-[#141414]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">النقل الداخلي وفحص PDI:</label>
+                  <input
+                    type="number"
+                    value={inlandAndPdiSAR}
+                    onChange={(e) => setInlandAndPdiSAR(Number(e.target.value))}
+                    className="w-full p-2 rounded-xl bg-white border border-[#e0e0e0] font-mono font-bold text-[#141414]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-[#707070] mb-1">الرسوم الجمركية (5% تلقائي):</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${customsDutySAR.toLocaleString('en-US')} SAR`}
+                    className="w-full p-2 rounded-xl bg-[#f0f0f0] border border-[#e0e0e0] font-mono font-bold text-[#555555]"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-[#141414] text-white space-y-2">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-white/75">التكلفة الاستيرادية الفعلية للسيارة (Landed Cost):</span>
+                  <strong className="font-mono"><SaudiRiyalPrice amount={unitLandedCostSAR.toLocaleString('en-US')} /></strong>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-white/75">الحد الأدنى المسموح للبيع (+3.5% Floor):</span>
+                  <strong className="font-mono text-amber-300"><SaudiRiyalPrice amount={minSellingFloorSAR.toLocaleString('en-US')} /></strong>
+                </div>
+                <div className="flex justify-between text-xs pt-1.5 border-t border-white/15">
+                  <span className="font-bold">سعر البيع المقترح شامل الضريبة 15%:</span>
+                  <strong className="font-mono text-emerald-400"><SaudiRiyalPrice amount={recommendedRetailInclVatSAR.toLocaleString('en-US')} /></strong>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleIssuePoAndReceiveVin}
+                className="w-full py-2.5 rounded-xl bg-[#141414] hover:bg-black text-white font-bold text-xs cursor-pointer transition-colors"
+              >
+                اعتماد أمر الشراء ({poQuantity} مركبات) وإدراج VIN بالمستودع
+              </button>
+            </div>
+
+            {/* Right: Active OEM Purchase Orders & Aging Stock Action Table (7 Cols) */}
+            <div className="lg:col-span-7 space-y-3 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-black text-[#141414]">سجل أوامر الشراء والاعتمادات المستندية (OEM Purchase Orders)</span>
+                <span className="text-[10px] text-[#707070] font-mono">{purchaseOrders.length} أوامر توريد نشطة</span>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-[#e5e7eb]">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-[#f3f3f3] text-[#707070] border-b border-[#e5e7eb]">
+                    <tr>
+                      <th className="p-2.5 text-start">رقم أمر الشراء والمورد</th>
+                      <th className="p-2.5 text-start">الطراز والفئة ABC</th>
+                      <th className="p-2.5 text-center">الكمية</th>
+                      <th className="p-2.5 text-start">تكلفة الوحدة / السقف الأدنى</th>
+                      <th className="p-2.5 text-center">حالة التوريد</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#f0f0f0]">
+                    {purchaseOrders.map((po) => (
+                      <tr key={po.id} className="hover:bg-[#f8f9fa]">
+                        <td className="p-2.5">
+                          <div className="font-mono font-bold text-[#141414]">{po.poNumber}</div>
+                          <span className="text-[10px] text-[#707070] block truncate max-w-[180px]">{po.supplier}</span>
+                        </td>
+                        <td className="p-2.5">
+                          <div className="font-bold text-[#141414]">{po.model}</div>
+                          <span className="text-[10px] text-[#707070] font-mono">وصول: {po.etaDate}</span>
+                        </td>
+                        <td className="p-2.5 text-center font-mono font-bold text-[#141414]">{po.qty}</td>
+                        <td className="p-2.5 font-mono">
+                          <div className="font-bold text-[#141414]">
+                            <SaudiRiyalPrice amount={po.unitLandedCost.toLocaleString('en-US')} />
+                          </div>
+                          <span className="text-[9px] text-[#707070]">
+                            أدنى بيع: <SaudiRiyalPrice amount={po.minFloorPrice.toLocaleString('en-US')} />
+                          </span>
+                        </td>
+                        <td className="p-2.5 text-center">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                              po.status === 'received'
+                                ? 'bg-[#141414] text-white'
+                                : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                            }`}
+                          >
+                            {po.status === 'received'
+                              ? 'تم الاستلام بالمستودع'
+                              : po.status === 'customs_saso'
+                                ? 'فسح جمركي SASO'
+                                : 'في الشحن البحري'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Aging VIN Spiff Bonus Policy Alert */}
+              <div className="p-3.5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span className="font-bold text-[#141414] block">سياسة تصريف المخزون المتقادم (+45 يوماً بالمستودع)</span>
+                  <span className="text-[11px] text-[#707070]">
+                    يوجد حالياً {stats.agingVinCount} مركبة متقادمة — يتم منح عمولة فورية (Spiff Bonus: 1,500 ر.س) لمستشار السيلز عند تصريفها أو نقلها للفرع الأعلى طلباً.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('in_stock')}
+                  className="px-3.5 py-2 rounded-xl bg-[#141414] text-white text-[11px] font-bold shrink-0 cursor-pointer"
+                >
+                  عرض المركبات الجاهزة للتصريف
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3. Filters & Table */}
       <div className="bg-white rounded-3xl border border-[#e0e0e0] shadow-none overflow-hidden">

@@ -14,6 +14,7 @@ import {
 import { useAdminData } from '../../context/AdminDataContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Offer } from '../../data/toyotaData';
+import { SaudiRiyalPrice } from '../SaudiRiyalSymbol';
 
 export const AdminOffersTab: React.FC = () => {
   const { offers, addOffer, deleteOffer, updateOffer, exportDataToCSV } = useAdminData();
@@ -23,6 +24,8 @@ export const AdminOffersTab: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'سيارات' | 'صيانة' | 'تمويل'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
+  const [showMarketingRoiBoard, setShowMarketingRoiBoard] = useState(true);
+  const [monthlyMarketingBudget, setMonthlyMarketingBudget] = useState<number>(180000);
 
   // Offer Form State
   const [title, setTitle] = useState('');
@@ -138,6 +141,18 @@ export const AdminOffersTab: React.FC = () => {
 
         <div className="flex flex-wrap items-center gap-2">
           <button
+            type="button"
+            onClick={() => setShowMarketingRoiBoard(prev => !prev)}
+            className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold cursor-pointer transition-all ${
+              showMarketingRoiBoard
+                ? 'bg-[#141414] text-white border-[#141414]'
+                : 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0] hover:bg-[#e0e0e0]'
+            }`}
+          >
+            {showMarketingRoiBoard ? 'إخفاء تحليلات التسويق و ROAS' : 'لوحة ميزانية التسويق و ROAS / CAC'}
+          </button>
+
+          <button
             onClick={() => exportDataToCSV('offers')}
             className="flex items-center gap-1.5 bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
           >
@@ -154,6 +169,117 @@ export const AdminOffersTab: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* 1.5 Omnichannel Marketing Budget, CAC, CPL & ROAS Analytics Board */}
+      {showMarketingRoiBoard && (
+        <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#f0f0f0] pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[10px]">Omnichannel Demand Generation</span>
+                <span className="text-[11px] font-bold text-[#707070]">تحليل تكلفة الاستحواذ (CAC) وعائد الإنفاق الإعلاني (ROAS)</span>
+              </div>
+              <h3 className="text-base font-black text-[#141414] mt-1">
+                خطة التسويق الرقمي والميداني وتوزيع الميزانية حسب القنوات والمواسم (2026 Marketing Plan)
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2 bg-[#f3f3f3] px-3.5 py-2 rounded-2xl text-xs">
+              <span className="font-bold text-[#707070]">الميزانية التسويقية الشهرية:</span>
+              <input
+                type="number"
+                step={10000}
+                value={monthlyMarketingBudget}
+                onChange={(e) => setMonthlyMarketingBudget(Math.max(20000, Number(e.target.value)))}
+                className="w-28 p-1.5 rounded-lg bg-white border border-[#e0e0e0] font-mono font-bold text-center text-[#141414]"
+              />
+              <span className="font-bold text-[#141414]">ر.س</span>
+            </div>
+          </div>
+
+          {/* 4 Channel Allocation & ROI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            {[
+              {
+                channel: 'إعلانات الأداء (Google / Snap / TikTok)',
+                sharePct: 45,
+                cpl: 65,
+                convRate: 0.085,
+                avgVehicleMargin: 9800
+              },
+              {
+                channel: 'محركات البحث والذكاء الاصطناعي (SEO / GEO)',
+                sharePct: 20,
+                cpl: 28,
+                convRate: 0.11,
+                avgVehicleMargin: 10500
+              },
+              {
+                channel: 'الفعاليات الميدانية وتجارب القيادة VIP',
+                sharePct: 20,
+                cpl: 140,
+                convRate: 0.22,
+                avgVehicleMargin: 16400
+              },
+              {
+                channel: 'أتمتة الولاء وإعادة الاستهداف (CRM & WhatsApp)',
+                sharePct: 15,
+                cpl: 18,
+                convRate: 0.14,
+                avgVehicleMargin: 8900
+              }
+            ].map((ch, idx) => {
+              const allocatedSAR = Math.round((monthlyMarketingBudget * ch.sharePct) / 100);
+              const estLeads = Math.max(1, Math.round(allocatedSAR / ch.cpl));
+              const estClosedCars = Math.max(1, Math.round(estLeads * ch.convRate));
+              const cacSAR = Math.round(allocatedSAR / estClosedCars);
+              const grossProfitSAR = estClosedCars * ch.avgVehicleMargin;
+              const roasMultiple = (grossProfitSAR / Math.max(1, allocatedSAR)).toFixed(1);
+
+              return (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-2xl border space-y-2 ${
+                    idx === 0 ? 'bg-[#141414] text-white border-[#141414]' : 'bg-[#f8f9fa] text-[#141414] border-[#e5e7eb]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[11px]">{ch.channel}</span>
+                    <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${idx === 0 ? 'bg-white/15 text-white' : 'bg-white border border-[#e0e0e0]'}`}>
+                      {ch.sharePct}%
+                    </span>
+                  </div>
+                  <div className="font-mono font-black text-base">
+                    <SaudiRiyalPrice amount={allocatedSAR.toLocaleString('en-US')} />
+                  </div>
+                  <div className={`grid grid-cols-2 gap-1 text-[10px] pt-1 border-t ${idx === 0 ? 'border-white/15 text-white/80' : 'border-[#e0e0e0] text-[#555555]'}`}>
+                    <span>الطلبات المتوقعة: <strong className="font-mono">{estLeads}</strong></span>
+                    <span>المبيعات المقدرة: <strong className="font-mono">{estClosedCars} سيارة</strong></span>
+                    <span>تكلفة العميل CAC: <strong className="font-mono">{cacSAR.toLocaleString('en-US')}</strong></span>
+                    <span>العائد ROAS: <strong className="font-mono">{roasMultiple}x</strong></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Seasonal Saudi Campaign Calendar Strip */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2.5 text-xs pt-1">
+            {[
+              { q: 'Q1 — يوم التأسيس والانطلاقة', offer: '0% دفعة أولى + 0% رسوم إدارية', target: 'تصريف السيدان والهايبرد (فئة A)' },
+              { q: 'Q2 — موسم رمضان المبارك', offer: 'قسطك علينا أول شهرين + صيانة سنتين', target: 'تحقيق 35% من مبيعات الأفراد السنوية' },
+              { q: 'Q3 — الصيف والعودة للمدارس', offer: 'كاش باك حتى 12,000 ر.س + عروض SUV', target: 'تنشيط العائلات والسيارات الكهربائية' },
+              { q: 'Q4 — اليوم الوطني وتصفية العام', offer: 'أقل هامش مرابحة 3.49% + استبدال فوري', target: 'إغلاق عقود أساطيل الشركات B2B' }
+            ].map((season, i) => (
+              <div key={i} className="p-3 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-1">
+                <span className="font-bold text-[#141414] block text-[11px]">{season.q}</span>
+                <span className="text-[10px] font-semibold text-[#141414] block">{season.offer}</span>
+                <span className="text-[10px] text-[#707070] block">{season.target}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 2. Search & Category Filter Bar */}
       <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none flex flex-col md:flex-row items-center justify-between gap-3">

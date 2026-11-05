@@ -1,12 +1,14 @@
 {
-  "name": "سولينا للسيارات | Solina Motors",
+  "name": "سولينا للسيارات | Solina Motors ERP & Storefront",
   "short_name": "سولينا",
-  "description": "تطبيق سولينا للسيارات الرسمي - استكشف أحدث سيارات وموديلات 2026، عروض التمويل، حجز الصيانة وتجربة القيادة.",
+  "description": "المنصة الرسمية لشركة سولينا للسيارات 2026 — استعراض الأسطول، حاسبة تمويل المرابحة SAMA، حجز الصيانة السريعة، ومنصة إدارة الوكالة الشاملة ERP & ZATCA.",
+  "lang": "ar",
+  "dir": "rtl",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0B0F19",
-  "theme_color": "#DC2626",
-  "orientation": "portrait",
+  "background_color": "#141414",
+  "theme_color": "#141414",
+  "orientation": "any",
   "icons": [
     {
       "src": "/solina-logo.png",
@@ -19,6 +21,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "منصة إدارة الوكالة ERP",
+      "short_name": "ERP",
+      "url": "/erp",
+      "icons": [{ "src": "/solina-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "تطبيق سولينا الذكي",
+      "short_name": "تطبيق سولينا",
+      "url": "/solina-app",
+      "icons": [{ "src": "/solina-logo.png", "sizes": "192x192" }]
     }
   ]
 }

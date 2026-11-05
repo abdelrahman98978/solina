@@ -46,8 +46,33 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
 
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceItem | null>(null);
   const [showNewInvoiceModal, setShowNewInvoiceModal] = useState(false);
+  const [showSalesStrategyBoard, setShowSalesStrategyBoard] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'tax_invoice' | 'simplified_invoice' | 'credit_note'>('all');
+
+  // Interactive B2B Fleet Discount & F&I Back-End Gross Calculator State
+  const [calcUnitPriceInclVat, setCalcUnitPriceInclVat] = useState(118500);
+  const [calcFleetQty, setCalcFleetQty] = useState(1);
+  const [selectedFiPackages, setSelectedFiPackages] = useState<{ ppf: boolean; maintenance: boolean; warranty: boolean }>({
+    ppf: true,
+    maintenance: true,
+    warranty: false
+  });
+
+  const fleetDiscountPercent =
+    calcFleetQty >= 50 ? 10.5 : calcFleetQty >= 16 ? 7.5 : calcFleetQty >= 5 ? 4.5 : 0;
+  const fiGrossPerUnit =
+    (selectedFiPackages.ppf ? 4200 : 0) +
+    (selectedFiPackages.maintenance ? 3800 : 0) +
+    (selectedFiPackages.warranty ? 2900 : 0);
+  const fiNetProfitPerUnit =
+    (selectedFiPackages.ppf ? Math.round(4200 * 0.6) : 0) +
+    (selectedFiPackages.maintenance ? Math.round(3800 * 0.45) : 0) +
+    (selectedFiPackages.warranty ? Math.round(2900 * 0.55) : 0);
+  const discountedVehiclePricePerUnit = Math.round(calcUnitPriceInclVat * (1 - fleetDiscountPercent / 100));
+  const finalDealUnitTotal = discountedVehiclePricePerUnit + fiGrossPerUnit;
+  const finalDealTotalSAR = finalDealUnitTotal * calcFleetQty;
+  const estimatedLandedCostFloor = Math.round((calcUnitPriceInclVat / 1.15) * 0.84 * 1.035 * 1.15);
 
   const [newInvoiceForm, setNewInvoiceForm] = useState({
     customerName: '',
@@ -184,6 +209,17 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
           ))}
 
           <button
+            onClick={() => setShowSalesStrategyBoard(prev => !prev)}
+            className={`px-3.5 py-2.5 rounded-2xl text-xs font-bold border transition-all cursor-pointer ${
+              showSalesStrategyBoard
+                ? 'bg-[#141414] text-white border-[#141414]'
+                : 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0] hover:bg-[#e5e5e5]'
+            }`}
+          >
+            <span>قنوات البيع وحاسبة الأساطيل والإضافات (B2B & F&I)</span>
+          </button>
+
+          <button
             onClick={() => setShowNewInvoiceModal(true)}
             className="px-4 py-2.5 rounded-2xl bg-[#141414] hover:bg-black active:scale-95 text-white text-xs font-bold shadow-none  flex items-center gap-2 cursor-pointer transition-all"
           >
@@ -192,6 +228,163 @@ export const AdminZatcaInvoicingTab: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* 1.5 Sales Channels Mix, B2B Tiered Fleet Discounts & F&I Back-End Gross Calculator */}
+      {showSalesStrategyBoard && (
+        <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-5">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#f0f0f0] pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[11px]">استراتيجية المبيعات والتمويل 2026</span>
+                <h3 className="text-sm font-black text-[#141414]">
+                  توزيع قنوات المبيعات الأربع + حاسبة خصومات الأساطيل (B2B) وباقات القيمة المضافة (F&I Back-End)
+                </h3>
+              </div>
+              <p className="text-xs text-[#707070] mt-1">
+                تعظيم صافي ربح المركبة عبر باقات الحماية والصيانة المسبقة وتطبيق خصم الكميات المتدرج للشركات مع درع حماية الحد الأدنى للهامش (Landed Cost + 3.5%).
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold">
+              <span className="px-3 py-1.5 rounded-xl bg-[#f8f9fa] border border-[#e5e7eb] text-[#141414]">
+                تأجير تمويلي ومرابحة: 50%
+              </span>
+              <span className="px-3 py-1.5 rounded-xl bg-[#f8f9fa] border border-[#e5e7eb] text-[#141414]">
+                مبيعات نقدية (Cash): 20%
+              </span>
+              <span className="px-3 py-1.5 rounded-xl bg-[#f8f9fa] border border-[#e5e7eb] text-[#141414]">
+                شركات وأساطيل (B2B): 20%
+              </span>
+              <span className="px-3 py-1.5 rounded-xl bg-[#f8f9fa] border border-[#e5e7eb] text-[#141414]">
+                مستعمل معتمد واستبدال: 10%
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Column 1: Vehicle Price & B2B Fleet Quantity */}
+            <div className="p-4 rounded-2xl bg-[#f8f9fa] border border-[#e5e7eb] space-y-3">
+              <span className="text-xs font-black text-[#141414] block">1. تسعير المركبة وخصم الأساطيل (B2B Tiered)</span>
+              <div className="space-y-2 text-xs">
+                <div>
+                  <label className="text-[11px] text-[#707070] font-bold block mb-1">سعر المركبة الأساسي (شامل 15% ضريبة)</label>
+                  <input
+                    type="number"
+                    value={calcUnitPriceInclVat}
+                    onChange={(e) => setCalcUnitPriceInclVat(Math.max(40000, Number(e.target.value) || 0))}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 font-mono font-bold text-[#141414]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-[#707070] font-bold block mb-1">عدد المركبات في الصفقة (شرائح 1-4 / 5-15 / 16-50 / +50)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={200}
+                      value={calcFleetQty}
+                      onChange={(e) => setCalcFleetQty(Math.max(1, Number(e.target.value) || 1))}
+                      className="w-24 bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 font-mono font-bold text-[#141414]"
+                    />
+                    {[1, 5, 16, 50].map(q => (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => setCalcFleetQty(q)}
+                        className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold cursor-pointer ${
+                          calcFleetQty === q ? 'bg-[#141414] text-white' : 'bg-white border border-[#e0e0e0] text-[#707070]'
+                        }`}
+                      >
+                        {q === 1 ? 'مفرد' : `+${q}`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="pt-1 flex items-center justify-between text-[11px]">
+                  <span className="text-[#707070]">نسبة خصم الأسطول المطبقة:</span>
+                  <span className="font-mono font-black text-[#141414]">{fleetDiscountPercent}%</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-[#707070]">الحد الأدنى المسموح للبيع (Landed + 3.5%):</span>
+                  <span className="font-mono font-bold text-[#707070]"><SaudiRiyalPrice amount={estimatedLandedCostFloor.toLocaleString('ar-SA')} /></span>
+                </div>
+              </div>
+            </div>
+
+            {/* Column 2: F&I Back-End Value-Added Packages */}
+            <div className="p-4 rounded-2xl bg-[#f8f9fa] border border-[#e5e7eb] space-y-2.5">
+              <span className="text-xs font-black text-[#141414] block">2. باقات القيمة المضافة للعميل (F&I Back-End Menu)</span>
+              {[
+                { key: 'ppf' as const, title: 'باقة الحماية الملكية (PPF + نانو سيراميك + عازل)', price: 4200, margin: 'هامش ربح 60%' },
+                { key: 'maintenance' as const, title: 'عقد الصيانة المسبقة (3 سنوات / 60,000 كم)', price: 3800, margin: 'ولاء ورشة 100%' },
+                { key: 'warranty' as const, title: 'تمديد الضمان المصنعي 10 سنوات + مساعدة طريق VIP', price: 2900, margin: 'هامش ربح 55%' }
+              ].map(pkg => (
+                <label
+                  key={pkg.key}
+                  className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-white border border-[#e0e0e0] cursor-pointer hover:border-[#141414] transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedFiPackages[pkg.key]}
+                      onChange={(e) => setSelectedFiPackages(prev => ({ ...prev, [pkg.key]: e.target.checked }))}
+                      className="accent-[#141414] w-4 h-4"
+                    />
+                    <div>
+                      <span className="text-[11px] font-bold text-[#141414] block">{pkg.title}</span>
+                      <span className="text-[10px] text-[#707070]">{pkg.margin}</span>
+                    </div>
+                  </div>
+                  <span className="font-mono font-black text-xs text-[#141414] shrink-0">
+                    +<SaudiRiyalPrice amount={pkg.price.toLocaleString('ar-SA')} />
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            {/* Column 3: Deal Summary & 1-Click Invoice Pre-fill */}
+            <div className="p-4 rounded-2xl bg-[#141414] text-white flex flex-col justify-between space-y-3">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#a0a0a0]">صافي سعر المركبة الواحدة بعد الخصم:</span>
+                  <span className="font-mono font-bold text-xs"><SaudiRiyalPrice amount={discountedVehiclePricePerUnit.toLocaleString('ar-SA')} /></span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#a0a0a0]">إيراد باقات الإضافات (F&I) للوحدة:</span>
+                  <span className="font-mono font-bold text-xs text-emerald-400">+<SaudiRiyalPrice amount={fiGrossPerUnit.toLocaleString('ar-SA')} /></span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#a0a0a0]">صافي ربح الوكالة الإضافي من F&I:</span>
+                  <span className="font-mono font-bold text-xs text-amber-300">
+                    <SaudiRiyalPrice amount={(fiNetProfitPerUnit * calcFleetQty).toLocaleString('ar-SA')} />
+                  </span>
+                </div>
+                <div className="pt-2 border-t border-white/15 flex items-center justify-between">
+                  <span className="text-xs font-bold">إجمالي الصفقة ({calcFleetQty} مركبة شاملة الضريبة):</span>
+                  <span className="font-mono font-black text-base">
+                    <SaudiRiyalPrice amount={finalDealTotalSAR.toLocaleString('ar-SA')} />
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setNewInvoiceForm(prev => ({
+                    ...prev,
+                    amount: finalDealTotalSAR,
+                    type: calcFleetQty >= 5 ? 'tax_invoice' : 'simplified_invoice',
+                    vehicleModel: `سولينا 2026 (${calcFleetQty} مركبة) ${fiGrossPerUnit > 0 ? '+ باقة F&I' : ''}`
+                  }));
+                  setShowNewInvoiceModal(true);
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f0f0f0] text-[#141414] font-black text-xs cursor-pointer transition-colors"
+              >
+                اعتماد التسعير وفتح الفاتورة الضريبية فوراً
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. ZATCA Compliance Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">

@@ -24,6 +24,20 @@ export const AdminCPOTab: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCPO, setEditingCPO] = useState<PreOwnedVehicle | null>(null);
+  const [showTradeInPanel, setShowTradeInPanel] = useState(true);
+
+  // Interactive Trade-In Valuation (<= 82% Cap) & 170-Point Mojaz Inspection State
+  const [tradeInModel, setTradeInModel] = useState('تويوتا برادو TXL 2023');
+  const [tradeInMarketValue, setTradeInMarketValue] = useState(145000);
+  const [tradeInMileage, setTradeInMileage] = useState(42000);
+  const [tradeInReconditioningCost, setTradeInReconditioningCost] = useState(4500);
+  const [mojazCleanRecord, setMojazCleanRecord] = useState(true);
+
+  const maxPurchaseCap82 = Math.round(tradeInMarketValue * 0.82);
+  const mileagePenalty = tradeInMileage > 60000 ? Math.round((tradeInMileage - 60000) * 0.25) : 0;
+  const recommendedTradeInOffer = Math.max(25000, maxPurchaseCap82 - mileagePenalty - (mojazCleanRecord ? 0 : 12000));
+  const totalCpoUnitCost = recommendedTradeInOffer + tradeInReconditioningCost;
+  const targetCpoRetailPrice = Math.round(totalCpoUnitCost * 1.125); // 12.5% target CPO margin
 
   // CPO Form State
   const [titleAr, setTitleAr] = useState('');
@@ -145,6 +159,17 @@ export const AdminCPOTab: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setShowTradeInPanel(prev => !prev)}
+            className={`px-3.5 py-2.5 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+              showTradeInPanel
+                ? 'bg-[#141414] text-white border-[#141414]'
+                : 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0] hover:bg-[#e5e5e5]'
+            }`}
+          >
+            <span>حاسبة تثمين الاستبدال (Trade-In ≤ 82% & موجز 170 نقطة)</span>
+          </button>
+
+          <button
             onClick={openAddModal}
             className="flex items-center gap-2 bg-[#141414] hover:bg-black text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-none transition-all cursor-pointer"
           >
@@ -153,6 +178,135 @@ export const AdminCPOTab: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* 1.5 Interactive Trade-In Valuation (<= 82% Cap) & 170-Point Mojaz Inspection Calculator */}
+      {showTradeInPanel && (
+        <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#f0f0f0] pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="mobbin-badge-popular px-2.5 py-0.5 text-[11px]">مشتريات المستعمل والاستبدال (CPO Trade-In)</span>
+                <h3 className="text-sm font-black text-[#141414]">
+                  حاسبة تثمين وشراء السيارات المستعملة (سقف شراء 82% من القيمة السوقية + فحص 170 نقطة وموجز)
+                </h3>
+              </div>
+              <p className="text-xs text-[#707070] mt-0.5">
+                تضمن هذه الحاسبة تحقيق هامش ربح مستهدف (10% – 14%) بعد خصم تكاليف التجديد والضمان وفحص خلو السجل من الحوادث الجسيمة.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-[#f8f9fa] border border-[#e5e7eb] space-y-2.5 text-xs">
+              <span className="font-black text-[#141414] block">1. بيانات سيارة الضيف والقيمة السوقية</span>
+              <div>
+                <label className="text-[11px] text-[#707070] font-bold block mb-1">طراز السيارة وسنة الصنع</label>
+                <input
+                  type="text"
+                  value={tradeInModel}
+                  onChange={(e) => setTradeInModel(e.target.value)}
+                  className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 font-bold text-[#141414]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] text-[#707070] font-bold block mb-1">القيمة السوقية العادلة (ر.س)</label>
+                  <input
+                    type="number"
+                    value={tradeInMarketValue}
+                    onChange={(e) => setTradeInMarketValue(Math.max(20000, Number(e.target.value) || 0))}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 font-mono font-bold text-[#141414]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-[#707070] font-bold block mb-1">الممشى الحالي (كم)</label>
+                  <input
+                    type="number"
+                    value={tradeInMileage}
+                    onChange={(e) => setTradeInMileage(Math.max(0, Number(e.target.value) || 0))}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 font-mono font-bold text-[#141414]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#f8f9fa] border border-[#e5e7eb] space-y-2.5 text-xs">
+              <span className="font-black text-[#141414] block">2. فحص 170 نقطة وتكلفة التجديد والضمان</span>
+              <div>
+                <label className="text-[11px] text-[#707070] font-bold block mb-1">تكلفة التجديد، الإطارات، والضمان (ر.س)</label>
+                <input
+                  type="number"
+                  value={tradeInReconditioningCost}
+                  onChange={(e) => setTradeInReconditioningCost(Math.max(0, Number(e.target.value) || 0))}
+                  className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 font-mono font-bold text-[#141414]"
+                />
+              </div>
+              <label className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#e0e0e0] cursor-pointer">
+                <div>
+                  <span className="text-[11px] font-bold text-[#141414] block">تقرير «موجز» خالٍ من الحوادث الجسيمة</span>
+                  <span className="text-[10px] text-[#707070]">اجتياز فحص الشاصيه والمحرك (170 نقطة)</span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={mojazCleanRecord}
+                  onChange={(e) => setMojazCleanRecord(e.target.checked)}
+                  className="accent-[#141414] w-4 h-4"
+                />
+              </label>
+              <div className="flex items-center justify-between text-[11px] pt-1">
+                <span className="text-[#707070]">سقف الشراء الأعلى المسموح (82%):</span>
+                <span className="font-mono font-black text-[#141414]"><SaudiRiyalPrice amount={maxPurchaseCap82.toLocaleString('ar-SA')} /></span>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#141414] text-white flex flex-col justify-between space-y-3 text-xs">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#a0a0a0]">عرض الشراء/الاستبدال للضيف:</span>
+                  <span className="font-mono font-black text-sm text-emerald-400">
+                    <SaudiRiyalPrice amount={recommendedTradeInOffer.toLocaleString('ar-SA')} />
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#a0a0a0]">التكلفة الكلية بعد التجديد:</span>
+                  <span className="font-mono font-bold"><SaudiRiyalPrice amount={totalCpoUnitCost.toLocaleString('ar-SA')} /></span>
+                </div>
+                <div className="pt-2 border-t border-white/15 flex items-center justify-between">
+                  <span className="font-bold">سعر البيع المعتمد بالمعرض (+12.5% ربح):</span>
+                  <span className="font-mono font-black text-base text-amber-300">
+                    <SaudiRiyalPrice amount={targetCpoRetailPrice.toLocaleString('ar-SA')} />
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  addCPOVehicle({
+                    id: `cpo-${Date.now()}`,
+                    titleAr: tradeInModel,
+                    titleEn: tradeInModel,
+                    year: 2024,
+                    mileage: tradeInMileage,
+                    price: targetCpoRetailPrice,
+                    monthlyInstallment: Math.round((targetCpoRetailPrice * 0.9) / 60),
+                    location: 'الرياض - مركز سولينا خريص',
+                    color: 'أبيض لؤلؤي',
+                    grade: 'مفحوصة 170 نقطة (استبدال معتمد)',
+                    image: 'https://edge.sitecorecloud.io/abdullatifj9343-aljmotorsb309-aljprod6e5f-d335/media/project/alj/alj-motors/toyota/toyota-ksa/vehicles/suv/prado/thumbnail/prado-513x289.png',
+                    inspectionPoints: 170,
+                    warrantyMonths: 24,
+                    isCertified: true
+                  });
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f0f0f0] text-[#141414] font-black text-xs cursor-pointer transition-colors"
+              >
+                اعتماد التثمين وإدراج السيارة في المستعمل المعتمد
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0] shadow-none flex flex-col sm:flex-row items-center justify-between gap-3">

@@ -159,6 +159,43 @@ export const AdminPartsTab: React.FC = () => {
         </div>
       </div>
 
+      {/* 1.5 Automated Reorder Point (ROP <= 15 Units) Supply Chain Bar */}
+      <div className="bg-white p-5 rounded-3xl border border-[#e0e0e0] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="mobbin-badge-popular px-2.5 py-0.5 text-[11px]">نظام التوريد الآلي (ROP ≤ 15)</span>
+            <h3 className="text-sm font-black text-[#141414]">
+              مراقبة نقطة إعادة الطلب لقطع الغيار السريعة الاستهلاك (فلاتر، مكابح، زيوت، بطاريات)
+            </h3>
+          </div>
+          <p className="text-xs text-[#707070]">
+            يتم ربط خصم القطع تلقائياً بأوامر العمل في الورشة، وتنبيه المشتريات عند انخفاض الرصيد عن 15 وحدة لضمان توفر القطع بنسبة 99%.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="px-3.5 py-2 rounded-2xl bg-[#f8f9fa] border border-[#e5e7eb] text-xs font-bold text-[#141414]">
+            قطع تحت حد الأمان (≤15):{' '}
+            <span className="font-mono font-black">
+              {spareParts.filter(p => (partQuantities[p.id] ?? 20) <= 15).length}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              spareParts.forEach(p => {
+                const currentQty = partQuantities[p.id] ?? 20;
+                if (currentQty < 25) {
+                  adjustPartQuantity(p.id, 30 - currentQty);
+                }
+              });
+            }}
+            className="px-4 py-2.5 rounded-2xl bg-[#141414] hover:bg-black text-white text-xs font-bold cursor-pointer transition-colors"
+          >
+            إصدار أمر توريد جماعي (رفع كافة القطع الحرجة إلى 30 وحدة)
+          </button>
+        </div>
+      </div>
+
       {/* 2. Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">

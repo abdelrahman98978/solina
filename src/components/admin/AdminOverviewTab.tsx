@@ -378,6 +378,85 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onSwitchTab 
         })}
       </div>
 
+      {/* 2.5 Executive 6-KPI Target Scorecard (Sales, Procurement, Marketing & Service SLA) */}
+      <div className="bg-[#ffffff] p-6 rounded-[24px] border border-[#f0f0f0] space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f0f0f0] pb-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="mobbin-badge-popular px-2.5 py-0.5 text-[11px]">مؤشرات الأداء التنفيذية (Executive KPIs 2026)</span>
+              <h2 className="text-sm font-black text-[#141414]">
+                بطاقة الأداء القياسي للمبيعات والمشتريات والتمويل وما بعد البيع
+              </h2>
+            </div>
+            <p className="text-xs text-[#707070] mt-0.5">
+              مقارنة الأداء الفعلي للوكالة بالمستهدفات القياسية المعتمدة في خطة التشغيل لعام 2026.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            {
+              title: 'التحويل لتجربة قيادة',
+              code: 'Lead-to-Test Drive',
+              actual: '38.4%',
+              target: '≥ 35%',
+              tab: 'test_drives' as const
+            },
+            {
+              title: 'إغلاق عروض الأسعار',
+              code: 'Quote-to-Invoice',
+              actual: '31.2%',
+              target: '≥ 28%',
+              tab: 'quotations' as const
+            },
+            {
+              title: 'سرعة استجابة السيلز',
+              code: 'Speed-to-Lead SLA',
+              actual: '9.5 دقيقة',
+              target: '< 15 دقيقة',
+              tab: 'test_drives' as const
+            },
+            {
+              title: 'دوران مخزون الشاسيه',
+              code: 'Inventory Turn Days',
+              actual: '34 يوماً',
+              target: '≤ 38 يوماً',
+              tab: 'vin_inventory' as const
+            },
+            {
+              title: 'تغلغل التمويل والإضافات',
+              code: 'F&I Penetration',
+              actual: '68.5%',
+              target: '≥ 65%',
+              tab: 'zatca' as const
+            },
+            {
+              title: 'استبقاء عملاء الصيانة',
+              code: 'Service Retention',
+              actual: '81.0%',
+              target: '≥ 78%',
+              tab: 'workshop' as const
+            }
+          ].map((item) => (
+            <div
+              key={item.code}
+              onClick={() => onSwitchTab(item.tab)}
+              className="p-3.5 rounded-2xl bg-[#f8f9fa] hover:bg-[#f0f0f0] border border-[#e5e7eb] cursor-pointer transition-colors space-y-1"
+            >
+              <span className="text-[11px] font-bold text-[#141414] block">{item.title}</span>
+              <span className="text-[10px] font-mono text-[#707070] block">{item.code}</span>
+              <div className="pt-1 flex items-baseline justify-between">
+                <strong className="font-mono font-black text-base text-[#141414]">{item.actual}</strong>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-white border border-[#e0e0e0] text-[#141414]">
+                  المستهدف {item.target}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* 3. Sales Conversion Funnel & Revenue Split Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Sales Conversion Funnel (6 Cols) */}
